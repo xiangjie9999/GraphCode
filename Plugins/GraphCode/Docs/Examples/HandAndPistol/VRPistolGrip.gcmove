@@ -1,0 +1,96 @@
+gcmove 1 character:/Game/GraphCodeExamples/VRHandRig_20261001/BP_VRHandPistol part:Hand
+         ik_rig:/Game/GraphCodeExamples/VRHandRig_20261001/IKR_VRHand
+         into:/Game/GraphCodeExamples/VRHandRig_20261001 fps:48
+build {
+  A_VRPistolTrigger = $Trigger
+  A_VRPistolReady = $Ready
+}
+# A one-handed pistol grip (user, 2026-10-01: "then try on guns. theoretically, character holding guns
+# can be done right"). What "right" is, read 2026-10-01 (FM 3-23.35 ch. 2; pistol grip guides): the web
+# of the hand high on the back of the grip, the middle, ring and little fingers wrapped round the front
+# with the middle finger up under the trigger guard, the forefinger's pad on the trigger (or laid
+# straight along the frame until a shot is wanted), and the thumb brought round the other side.
+#
+# HELD AS A PERSON TAKES IT (user, 2026-10-04: "open the skin with thumb and forefinger as big as possible, put
+# it there, and close it", "This isn't grab. This is a multi step pose"): ONE pose made of steps, each from where
+# the one before ended. The gun goes into the web of the hand (web to web, contact()), the forefinger lies along
+# the frame and its pad touches the trigger, the other three fingers close, then the thumb wraps round. No step
+# types where the gun goes or how far a finger bends. The gun is built in its own frame, never turned in its
+# .gcshape ("Drop the tilt"). Docs/Guides/HANDS.md, Step 6; GC-MOVE-GRIP-SEATING.md.
+Gun = surface(part=Pistol)
+TriggerFace = point(socket=$Gun.Trigger)
+IndexRest = point(socket=$Gun.IndexRest)
+MCP = bones(index_01_r,middle_01_r,ring_01_r,pinky_01_r)
+PIP = bones(index_02_r,middle_02_r,ring_02_r,pinky_02_r)
+DIP = bones(index_03_r,middle_03_r,ring_03_r,pinky_03_r)
+WrapMCP = bones(middle_01_r,ring_01_r,pinky_01_r)
+WrapPIP = bones(middle_02_r,ring_02_r,pinky_02_r)
+WrapDIP = bones(middle_03_r,ring_03_r,pinky_03_r)
+# The hand open: fingers straight, the thumb spread away from the forefinger and forward of the palm, so the web
+# between them stands open in front of the palm where a backstrap goes; each asked past its limit so the rig decides.
+Open = pose() {
+  shift(palm_r,axis=(0.09,0.97,-0.23),by=5)
+  swing($MCP,axis=fold,by=-18)
+  swing($PIP,axis=fold,by=-10)
+  swing($DIP,axis=fold,by=-10)
+  swing(thumb_01_r,axis=fold,by=30)
+  swing(thumb_opp_r,axis=fold,by=45)
+  swing(thumb_02_r,axis=fold,by=-90)
+  swing(thumb_03_r,axis=fold,by=-90)
+}
+# The gun comes in from 5 cm off the palm until it touches (2026-10-06: the web-region seat, contact($Gun.Web,
+# on=web_fold_r), followed a thumb-weighted skin point and left the little finger poking the handle; this touch seat
+# wraps every finger. GC-MOVE-ARM-LADDER.md, "THE REGRESSION IS THE 10-04 SEAT").
+Seat = pose(collision=$Gun) {
+  shift(palm_r,axis=(0.09,0.97,-0.23),by=-6)
+}
+# The trigger finger first (user: "put forefinger first"): its knuckle closes until the finger lies on the frame.
+IndexAlong = pose(collision=(self,$Gun)) {
+  swing(index_01_r,axis=fold,by=120)
+}
+# Middle, ring and little fingers round the front of the grip, each stopped where it touches.
+Close = pose(collision=(self,$Gun)) {
+  swing($WrapMCP,axis=fold,by=73)
+  swing($WrapPIP,axis=fold,by=85)
+  swing($WrapDIP,axis=fold,by=75)
+}
+# The thumb round the other side, curled (user: "remember to curl the thumb", "The thumb needs to wrap around the
+# pistol"): where it ENDS, measured from rest, so Open's -90 does not cancel the curl; collision() puts it there and
+# pushes it out onto the gun and the fingers.
+ThumbAcross = pose(from=reference) {
+  swing(thumb_opp_r,axis=fold,by=80)
+  swing(thumb_roll_r,axis=twist,by=35)
+  swing(thumb_01_r,axis=fold,by=-40)
+  swing(thumb_02_r,axis=fold,by=0)
+  swing(thumb_03_r,axis=fold,by=0)
+}
+# Then curled onto the far side (2026-10-06, user: "why the thumb cant wrap back": swung and curled at once, its
+# curled tip met the frame's side before it got round).
+ThumbCurl = pose() {
+  swing(thumb_02_r,axis=fold,by=90)
+  swing(thumb_03_r,axis=fold,by=90)
+}
+Hold = pose(steps) {
+  $Open
+  $Seat
+  $IndexAlong
+  $Close
+  $ThumbAcross
+  $ThumbCurl
+}
+# WRAP FIRST, THEN THE TRIGGER (user, 2026-10-06: "wrap around the hand across the handle first, then reach onto the
+# trigger", "collision free to touch trigger"): the whole hold is made, then over the last 30% the forefinger's TIP goes onto
+# the trigger. collision=none: the gun does not stop that finger and the build reports how deep it goes; the tip, because
+# with the middle joint at a real finger's 110 degrees the pad ends 1.4 cm short and the tip 0.8 cm (Docs/Guides/HANDS.md,
+# "Holding any weapon").
+Last = profile(0=0, 0.7=0, 1=1)
+Trigger = clip(frames=48) {
+  $Hold
+  reach(index_r, contact=IndexTip, to=$TriggerFace, collision=none, weight=$Last)
+  collision(self, $Gun)
+}
+# The same grip with the forefinger laid along the frame, its pad on the frame's side, until a shot is
+# wanted. It starts from Trigger (user-ruled 2026-10-02) and gives the forefinger its other place.
+Ready = clip(from=$Trigger) {
+  reach(index_r, contact=IndexPad, to=$IndexRest)
+}

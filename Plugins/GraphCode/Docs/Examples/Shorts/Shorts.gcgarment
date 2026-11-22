@@ -1,0 +1,193 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/Shorts/Built
+# Shorts: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_Shorts = $Shorts
+  T_ShortsStitches = bake(decal, resolution=2048)
+}
+
+Twill = fabric(weight=281.88, thickness=0.70mm, stretch=(3.2%, 2.3%), shear=148, stiffness=(2.24, 1.84), friction=0.53)
+Kit = shape('/Game/GraphCodeExamples/Garment/Shorts/ShortsParts')
+Own = shape('/Game/GraphCodeExamples/Garment/Shorts/JeansParts')
+
+Waist = ring((0, 10.134, 93.30), (0, -11.034, 97.80)) {
+  expand(0.27)
+}
+LoopRow = ring($Waist) {
+  move((0, 0, 1.125))
+  expand(1)
+}
+BandMiddle = ring($Waist) {
+  move((0, 0, 2.1))
+  expand(1)
+}
+
+Crotch = ring((-16.87, 0, 76.44), (16.87, 0, 76.44)) {
+  expand(2.315)
+}
+Top_R = ring((-16.87, 0, 76.44), (-2.13, 0, 76.44)) {
+  expand(2.315)
+}
+Top_L = ring((16.87, 0, 76.44), (2.13, 0, 76.44)) {
+  expand(2.315)
+}
+
+UpperThigh_R = ring((-16.73, 0, 71), (-2.27, 0, 71)) {
+  expand(2.163)
+}
+UpperThigh_L = ring((16.73, 0, 71), (2.27, 0, 71)) {
+  expand(2.163)
+}
+Thigh_R = ring((-16.30, 0, 66), (-2.70, 0, 66)) {
+  expand(2.339)
+}
+Thigh_L = ring((16.30, 0, 66), (2.70, 0, 66)) {
+  expand(2.339)
+}
+Leg61_R = ring((-15.85, 0, 61.5), (-3.15, 0, 61.5)) {
+  expand(2.568)
+}
+Leg61_L = ring((15.85, 0, 61.5), (3.15, 0, 61.5)) {
+  expand(2.568)
+}
+Hem_R = ring((-15.43, 0, 57.33), (-3.57, 0, 57.33)) {
+  expand(2.781)
+}
+Hem_L = ring((15.43, 0, 57.33), (3.57, 0, 57.33)) {
+  expand(2.781)
+}
+
+Seat = profile(0=0, 0.318=0.72, 1=0)
+
+Leg_R = garment($Top_R, $UpperThigh_R, $Thigh_R, $Leg61_R, $Hem_R, loose=100%, fabric=$Twill)
+Leg_L = garment($Top_L, $UpperThigh_L, $Thigh_L, $Leg61_L, $Hem_L, loose=100%, fabric=$Twill)
+Shorts = garment($Waist, $Crotch, loose=100%, clearance=$Seat, fabric=$Twill) {
+  join($Crotch@0.25, $Crotch@0.75, $Top_L@0.5, $Top_R@0.5)
+  add($Leg_L)
+  add($Leg_R)
+  construct(rim=(turned=3cm, layers=3))
+  band($Waist, width=4.2cm, fabric=$Twill, cut=100%)
+
+  Front = line($Waist@0, $Crotch@0.78)
+  Back = line($Waist@0.5, $Crotch@0.25)
+  SideR = line($Waist@0.25, $Crotch@0)
+  SideL = line($Waist@0.75, $Crotch@0.5)
+
+  press($Waist, -1cm)
+  stitch($Waist, offset=-0.2cm)
+  stitch($Waist, offset=-4.0cm)
+  stitch($Hem_R, offset=2.8cm)
+  stitch($Hem_L, offset=2.8cm)
+
+  J1 = line($Front@0cm offset=-2.571cm, $Front@7.049cm offset=-2.571cm)
+  J2 = line($Front@7.049cm offset=-2.571cm, $Front@7.74cm offset=-2.54cm)
+  J3 = line($Front@7.74cm offset=-2.54cm, $Front@8.41cm offset=-2.40cm)
+  J4 = line($Front@8.41cm offset=-2.40cm, $Front@9.02cm offset=-2.07cm)
+  J5 = line($Front@9.02cm offset=-2.07cm, $Front@9.40cm offset=-1.51cm)
+  stitch($J1)
+  stitch($J2)
+  stitch($J3)
+  stitch($J4)
+  stitch($J5)
+  J1b = line($Front@0cm offset=-3.171cm, $Front@7.049cm offset=-3.171cm)
+  J2b = line($Front@7.049cm offset=-3.171cm, $Front@7.97cm offset=-3.11cm)
+  J3b = line($Front@7.97cm offset=-3.11cm, $Front@8.86cm offset=-2.87cm)
+  J4b = line($Front@8.86cm offset=-2.87cm, $Front@9.61cm offset=-2.32cm)
+  J5b = line($Front@9.61cm offset=-2.32cm, $Front@10.03cm offset=-1.51cm)
+  stitch($J1b)
+  stitch($J2b)
+  stitch($J3b)
+  stitch($J4b)
+  stitch($J5b)
+
+  ScoopR1 = line($SideR@5.35cm, $SideR@5.31cm offset=-3.07cm)
+  ScoopR2 = line($SideR@5.31cm offset=-3.07cm, $SideR@4.80cm offset=-6.69cm)
+  ScoopR3 = line($SideR@4.80cm offset=-6.69cm, $SideR@3.23cm offset=-9.74cm)
+  ScoopR4 = line($SideR@3.23cm offset=-9.74cm, $SideR@0cm offset=-11.04cm)
+  ScoopL1 = line($SideL@5.35cm, $SideL@5.31cm offset=3.07cm)
+  ScoopL2 = line($SideL@5.31cm offset=3.07cm, $SideL@4.80cm offset=6.69cm)
+  ScoopL3 = line($SideL@4.80cm offset=6.69cm, $SideL@3.23cm offset=9.74cm)
+  ScoopL4 = line($SideL@3.23cm offset=9.74cm, $SideL@0cm offset=11.04cm)
+  stitch($ScoopR1)
+  stitch($ScoopR2)
+  stitch($ScoopR3)
+  stitch($ScoopR4)
+  stitch($ScoopL1)
+  stitch($ScoopL2)
+  stitch($ScoopL3)
+  stitch($ScoopL4)
+  ScoopR1b = line($SideR@5.95cm, $SideR@5.91cm offset=-3.11cm)
+  ScoopR2b = line($SideR@5.91cm offset=-3.11cm, $SideR@5.38cm offset=-6.84cm)
+  ScoopR3b = line($SideR@5.38cm offset=-6.84cm, $SideR@3.67cm offset=-10.16cm)
+  ScoopR4b = line($SideR@3.67cm offset=-10.16cm, $SideR@0cm offset=-11.64cm)
+  ScoopL1b = line($SideL@5.95cm, $SideL@5.91cm offset=3.11cm)
+  ScoopL2b = line($SideL@5.91cm offset=3.11cm, $SideL@5.38cm offset=6.84cm)
+  ScoopL3b = line($SideL@5.38cm offset=6.84cm, $SideL@3.67cm offset=10.16cm)
+  ScoopL4b = line($SideL@3.67cm offset=10.16cm, $SideL@0cm offset=11.64cm)
+  stitch($ScoopR1b)
+  stitch($ScoopR2b)
+  stitch($ScoopR3b)
+  stitch($ScoopR4b)
+  stitch($ScoopL1b)
+  stitch($ScoopL2b)
+  stitch($ScoopL3b)
+  stitch($ScoopL4b)
+
+  YokeR = line($Back@7.207cm, $SideR@1.607cm)
+  YokeL = line($Back@7.207cm, $SideL@1.607cm)
+  YokeRb = line($Back@7.826cm, $SideR@2.226cm)
+  YokeLb = line($Back@7.826cm, $SideL@2.226cm)
+  stitch($YokeR)
+  stitch($YokeL)
+  stitch($YokeRb)
+  stitch($YokeLb)
+  BackR1 = line($Back@6.98cm offset=-4.24cm, $Back@6.98cm offset=-19.59cm)
+  BackR2 = line($Back@6.98cm offset=-19.59cm, $Back@19.22cm offset=-18.83cm)
+  BackR3 = line($Back@19.22cm offset=-18.83cm, $Back@20.44cm offset=-11.92cm)
+  BackR4 = line($Back@20.44cm offset=-11.92cm, $Back@19.22cm offset=-5.01cm)
+  BackR5 = line($Back@19.22cm offset=-5.01cm, $Back@6.98cm offset=-4.24cm)
+  BackL1 = line($Back@6.98cm offset=4.24cm, $Back@6.98cm offset=19.59cm)
+  BackL2 = line($Back@6.98cm offset=19.59cm, $Back@19.22cm offset=18.83cm)
+  BackL3 = line($Back@19.22cm offset=18.83cm, $Back@20.44cm offset=11.92cm)
+  BackL4 = line($Back@20.44cm offset=11.92cm, $Back@19.22cm offset=5.01cm)
+  BackL5 = line($Back@19.22cm offset=5.01cm, $Back@6.98cm offset=4.24cm)
+  stitch($BackR1)
+  stitch($BackR2)
+  stitch($BackR3)
+  stitch($BackR4)
+  stitch($BackR5)
+  stitch($BackL1)
+  stitch($BackL2)
+  stitch($BackL3)
+  stitch($BackL4)
+  stitch($BackL5)
+  BackR1b = line($Back@7.58cm offset=-4.88cm, $Back@7.58cm offset=-18.96cm)
+  BackR2b = line($Back@7.58cm offset=-18.96cm, $Back@18.71cm offset=-18.26cm)
+  BackR3b = line($Back@18.71cm offset=-18.26cm, $Back@19.83cm offset=-11.92cm)
+  BackR4b = line($Back@19.83cm offset=-11.92cm, $Back@18.71cm offset=-5.58cm)
+  BackR5b = line($Back@18.71cm offset=-5.58cm, $Back@7.58cm offset=-4.88cm)
+  BackL1b = line($Back@7.58cm offset=4.88cm, $Back@7.58cm offset=18.96cm)
+  BackL2b = line($Back@7.58cm offset=18.96cm, $Back@18.71cm offset=18.26cm)
+  BackL3b = line($Back@18.71cm offset=18.26cm, $Back@19.83cm offset=11.92cm)
+  BackL4b = line($Back@19.83cm offset=11.92cm, $Back@18.71cm offset=5.58cm)
+  BackL5b = line($Back@18.71cm offset=5.58cm, $Back@7.58cm offset=4.88cm)
+  stitch($BackR1b)
+  stitch($BackR2b)
+  stitch($BackR3b)
+  stitch($BackR4b)
+  stitch($BackR5b)
+  stitch($BackL1b)
+  stitch($BackL2b)
+  stitch($BackL3b)
+  stitch($BackL4b)
+  stitch($BackL5b)
+
+  add($Own.Button, at=$BandMiddle@0)
+  add($Kit.BeltLoop, at=$LoopRow@0.10)
+  add($Kit.BeltLoop, at=$LoopRow@0.90)
+  add($Kit.BeltLoop, at=$LoopRow@0.25)
+  add($Kit.BeltLoop, at=$LoopRow@0.75)
+  add($Kit.BeltLoop, at=$LoopRow@0.375)
+  add($Kit.BeltLoop, at=$LoopRow@0.625)
+  add($Kit.BeltLoop, at=$LoopRow@0.5)
+}

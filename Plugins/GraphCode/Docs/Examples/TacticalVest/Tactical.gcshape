@@ -1,0 +1,174 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/TacticalVest  smooth:0.05
+# Hard parts for the TacticalVest example.
+
+build {
+  SM_FrontBag = $FrontBag
+  SM_BackBag = $BackBag
+  SM_MagPouch = $MagPouch
+  SM_AdminPouch = $AdminPouch
+  SM_StrapBuckle = $StrapBuckle
+  SM_PalsLoop = $PalsLoop
+  SM_StrapPiece = $StrapPiece
+}
+
+PlateW = 24.13
+PlateH = 31.75
+PlateT = 2.54
+BagT = 3.175
+Wall = ($BagT - $PlateT) * 0.5
+BagW = $PlateW + 2.0 * $Wall
+BagH = $PlateH + 2.0 * $Wall
+Web = 2.54
+RowPitch = 5.08
+Column = 3.81
+WebT = 0.117
+Columns = 6.0
+Rows = 6.0
+Tack = 0.3
+Sink = 0.1
+Seat = 0.3
+Edge = $Wall
+Ply = 0.24
+Seam = 2.0 * $WebT
+Plate = 8.0
+
+GridW = $Columns * $Column
+GridBottom = -($Rows - 1.0) * $RowPitch * 0.5
+GridTop = -$GridBottom + $Web * 0.5
+Cut = $BagW * 0.5 + $BagH * 0.5 - ($GridW * 0.5 + $GridTop) - $Edge * 1.4142
+
+MagW = 8.0
+MagH = 13.5
+MagD = 5.0
+Bungee = mesh() {
+  rect(w=$MagW - 1.0, h=0.5)
+  round(0.24)
+  extrude(height=0.5)
+}
+PullTab = mesh() {
+  rect(w=2.0, h=3.0)
+  round($Seam)
+  extrude(height=$Ply)
+}
+MagPouch = mesh(Host = $Flat) {
+  rect(w=$MagW, h=$MagH)
+  round($Seam)
+  extrude(height=$MagD)
+  round($Seam) [top]
+  add($Bungee, at=(0, $MagH * 0.5 - 1.2, $MagD - 0.25))
+  add($PullTab, at=(0, $MagH * 0.5 - 2.6, $MagD - $Sink))
+  conform(to=$Host, project=-Z) [bottom, smooth=$Plate]
+}
+
+AdminW = 12.0
+AdminH = 12.0
+AdminD = 5.0
+PatchPanel = mesh() {
+  rect(w=7.62, h=5.08)
+  round($Seam)
+  extrude(height=$Ply + $Sink)
+}
+ZipTrack = mesh() {
+  rect(w=$AdminW - 1.6, h=0.62)
+  round(0.29)
+  extrude(height=0.3 + $Sink)
+}
+AdminPouch = mesh(Host = $Flat) {
+  rect(w=$AdminW, h=$AdminH)
+  round($Seam)
+  extrude(height=$AdminD)
+  round($Seam) [top]
+  add($PatchPanel, at=(0, -1.0, $AdminD - $Sink))
+  add($ZipTrack, at=(0, $AdminH * 0.5 - 1.2, $AdminD - $Sink))
+  conform(to=$Host, project=-Z) [bottom, smooth=$Plate]
+}
+
+WebRow = mesh() {
+  rect(w=$GridW, h=$Web)
+  extrude(height=$WebT + $Sink)
+}
+TackSlot = mesh() {
+  rect(w=$Tack, h=$Web + 0.4)
+  extrude(height=$WebT + 0.2)
+}
+
+Bag = mesh() {
+  points((-$BagW * 0.5, -$BagH * 0.5), ($BagW * 0.5, -$BagH * 0.5), ($BagW * 0.5, $BagH * 0.5 - $Cut), ($BagW * 0.5 - $Cut, $BagH * 0.5), (-$BagW * 0.5 + $Cut, $BagH * 0.5), (-$BagW * 0.5, $BagH * 0.5 - $Cut), loop=true)
+  round(1.5)
+  extrude(height=$BagT)
+  round($Edge) [top]
+}
+PalsBag = mesh() {
+  add($Bag)
+  add($WebRow, at=(0, $GridBottom, $BagT - $Sink), repeat=6, step=(0, $RowPitch, 0))
+  subtract($TackSlot, at=(-$GridW * 0.5, $GridBottom, $BagT - $Sink * 0.5), repeat=(7, 6), step=(($Column, 0, 0), (0, $RowPitch, 0)))
+}
+
+Grip = mesh() {
+  rect(w=4.0 * $Column, h=$Web)
+  round(1.2)
+  extrude(height=1.2)
+  round(0.5) [top]
+}
+
+Flat = mesh() {
+  rect(w=200.0, h=200.0)
+  fill()
+}
+
+MagRow = $GridBottom - $Web * 0.5 + $MagH * 0.5
+AdminRow = $GridBottom + 3.0 * $RowPitch - $Web * 0.5 + $AdminH * 0.5
+FrontBag = mesh(Host = $Flat) {
+  add($PalsBag)
+  conform(to=$Host) [bottom, carry=!bottom, smooth=$Plate]
+}
+
+BackBag = mesh(Host = $Flat) {
+  add($PalsBag)
+  add($Grip, at=(0, $BagH * 0.5 - $Edge - $Web * 0.5, $BagT - $Seat))
+  conform(to=$Host) [bottom, carry=!bottom, smooth=$Plate]
+}
+
+BuckleL = 8.09
+BuckleW = 6.01
+BuckleT = 1.7
+StrapWeb = 0.114
+Housing = mesh() {
+  rect(w=$BuckleL * 0.55, h=$BuckleW)
+  round($Seam)
+  extrude(height=$BuckleT)
+  round($Seam) [top]
+}
+Male = mesh() {
+  rect(w=$BuckleL * 0.5, h=$BuckleW)
+  round($Seam)
+  extrude(height=$BuckleT * 0.6)
+  round($Seam) [top]
+}
+StrapSlot = mesh() {
+  rect(w=0.49, h=5.12)
+  extrude(height=$BuckleT * 2.0)
+}
+ThroughWeb = mesh() {
+  rect(w=$BuckleL + 2.0, h=5.08)
+  extrude(height=$StrapWeb + $Sink)
+}
+StrapBuckle = mesh() {
+  add($ThroughWeb)
+  add($Housing, at=(-$BuckleL * 0.5 + $BuckleL * 0.275, 0, $StrapWeb))
+  add($Male, at=($BuckleL * 0.5 - $BuckleL * 0.25, 0, $StrapWeb))
+  subtract($StrapSlot, at=(-$BuckleL * 0.5 + 0.7, 0, $StrapWeb + 0.05))
+  subtract($StrapSlot, at=($BuckleL * 0.5 - 0.7, 0, $StrapWeb + 0.05))
+}
+
+StrapPieceL = 3.799
+StrapPiece = mesh(Host = $Flat) {
+  rect(w=$StrapPieceL, h=5.08)
+  extrude(height=$StrapWeb)
+  conform(to=$Host) [bottom, carry=!bottom, smooth=0.98]
+}
+
+PalsLoop = mesh() {
+  rect(w=$Column - $Tack, h=$Web)
+  extrude(height=$WebT)
+}

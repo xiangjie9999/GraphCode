@@ -1,0 +1,98 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/SuitTrousers/Built
+# SuitTrousers: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_SuitTrousers = $Trousers
+}
+
+WoolSuit = fabric(weight=232, thickness=0.83mm, stretch=(2.96%, 4.68%), shear=32.25, stiffness=(1.83, 1.61), friction=0.815, crease=108)
+
+Waist = ring((0, 10.17, 92.05), (0, -11.077, 97.55)) {
+  expand(0.14)
+}
+Crotch = ring((-16.795, 0.8, 76.44), (16.795, 0.8, 76.44)) {
+  expand(1.62)
+}
+Top_R = ring((-16.795, 0.8, 76.44), (-2.205, 0.8, 76.44)) {
+  expand(1.62)
+}
+Top_L = ring((16.795, 0.8, 76.44), (2.205, 0.8, 76.44)) {
+  expand(1.62)
+}
+Thigh_R = ring((-16.7, 0, 70), (-2.3, 0, 70)) {
+  expand((0.75, 1.91))
+}
+Thigh_L = ring((16.7, 0, 70), (2.3, 0, 70)) {
+  expand((0.75, 1.91))
+}
+Leg63_R = ring((-16.01, 0, 63.1), (-2.99, 0, 63.1)) {
+  expand(1.89)
+}
+Leg63_L = ring((16.01, 0, 63.1), (2.99, 0, 63.1)) {
+  expand(1.89)
+}
+MidThigh_R = ring((-15.2, 0, 55), (-3.8, 0, 55)) {
+  expand(2.48)
+}
+MidThigh_L = ring((15.2, 0, 55), (3.8, 0, 55)) {
+  expand(2.48)
+}
+Leg48_R = ring((-14.51, 0, 48.1), (-4.49, 0, 48.1)) {
+  expand(2.98)
+}
+Leg48_L = ring((14.51, 0, 48.1), (4.49, 0, 48.1)) {
+  expand(2.98)
+}
+Knee_R = ring((-14.698, 0, 40.88), (-4.302, 0, 40.88)) {
+  expand(2.56)
+}
+Knee_L = ring((14.698, 0, 40.88), (4.302, 0, 40.88)) {
+  expand(2.56)
+}
+Calf_R = ring((-14.944, 0, 32), (-4.056, 0, 32)) {
+  expand(2.02)
+}
+Calf_L = ring((14.944, 0, 32), (4.056, 0, 32)) {
+  expand(2.02)
+}
+Leg26_R = ring((-14.74, 0, 25.6), (-4.26, 0, 25.6)) {
+  expand(2.03)
+}
+Leg26_L = ring((14.74, 0, 25.6), (4.26, 0, 25.6)) {
+  expand(2.03)
+}
+Shin_R = ring((-14.35, 0, 19), (-4.65, 0, 19)) {
+  expand(2.22)
+}
+Shin_L = ring((14.35, 0, 19), (4.65, 0, 19)) {
+  expand(2.22)
+}
+Leg13_R = ring((-13.972, 0, 12.6), (-5.028, 0, 12.6)) {
+  expand(2.41)
+}
+Leg13_L = ring((13.972, 0, 12.6), (5.028, 0, 12.6)) {
+  expand(2.41)
+}
+Ankle_R = ring((-13.775, 0, 6), (-5.225, 0, 6)) {
+  expand(2.28)
+}
+Ankle_L = ring((13.775, 0, 6), (5.225, 0, 6)) {
+  expand(2.28)
+}
+
+Seat = profile(0=0, 0.31=0.72, 1=0)
+
+Leg_R = garment($Top_R, $Thigh_R, $Leg63_R, $MidThigh_R, $Leg48_R, $Knee_R, $Calf_R, $Leg26_R, $Shin_R, $Leg13_R, $Ankle_R, loose=100%, fabric=$WoolSuit)
+Leg_L = garment($Top_L, $Thigh_L, $Leg63_L, $MidThigh_L, $Leg48_L, $Knee_L, $Calf_L, $Leg26_L, $Shin_L, $Leg13_L, $Ankle_L, loose=100%, fabric=$WoolSuit)
+Trousers = garment($Waist, $Crotch, loose=100%, clearance=$Seat, fabric=$WoolSuit) {
+  join($Crotch@0.25, $Crotch@0.75, $Top_L@0.5, $Top_R@0.5)
+  add($Leg_L)
+  add($Leg_R)
+  construct()
+  band($Waist, width=4cm, fabric=$WoolSuit, cut=100%)
+
+  CreaseR = line($Top_R@0.75, $Ankle_R@0.75)
+  CreaseL = line($Top_L@0.75, $Ankle_L@0.75)
+  press($CreaseR)
+  press($CreaseL)
+}

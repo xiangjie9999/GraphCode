@@ -1,0 +1,59 @@
+gc 1  kind:blueprint  asset:/Game/StairsInAGame/BP_StairWalker
+parent: /Script/Engine.Character
+
+settings {
+}
+
+defaults {
+  blueprint_defaults
+  instance_editable = false
+  expose_on_spawn = false
+}
+
+properties {
+  StopX: double = 285.0 [instance_editable]
+}
+
+interfaces {
+}
+
+dispatchers {
+}
+
+timelines {
+}
+
+class_defaults {
+}
+
+components {
+  CharacterMesh0 = SkeletalMeshComponent(AnimClass=obj'/Game/StairsInAGame/ABP_StairLegs.ABP_StairLegs_C', SkinnedAsset=obj'/Engine/Tutorial/SubEditors/TutorialAssets/Character/TutorialTPP.TutorialTPP', VisibilityBasedAnimTickOption=AlwaysTickPoseAndRefreshBones)
+    @attach[RelativeLocation=(X=0.0,Y=0.0,Z=-96.0), RelativeRotation=(Pitch=0.0,Yaw=-90.0,Roll=0.0)]
+    @native[property=Mesh]
+  CharMoveComp = CharacterMovementComponent(bRunPhysicsWithNoController=true, MaxStepHeight=40.0, MaxWalkSpeed=100.0)
+    @native[property=CharacterMovement]
+  CollisionCylinder = CapsuleComponent(CapsuleHalfHeight=96.0, CapsuleRadius=24.0)
+    @native[property=CapsuleComponent]
+}
+
+graph {
+  eventgraph EventGraph {
+    n1 = Event ReceiveTick() [bOverrideFunction=True] : ->n2
+    n2 = IfThenElse(Condition=n3.ReturnValue) : then->n7, else->_
+    n3 = CallFunction KismetMathLibrary:Less_DoubleDouble(A=n4.X, B=n6.StopX)
+    n4 = CallFunction KismetMathLibrary:BreakVector(InVec=n5.ReturnValue)
+    n5 = CallFunction Actor:K2_GetActorLocation()
+    n6 = VariableGet StopX()
+    n7 = CallFunction Pawn:AddMovementInput(WorldDirection=n8.ReturnValue, bForce=True) : ->_
+    n8 = CallFunction Actor:GetActorForwardVector()
+  }
+}
+
+functions {
+  function UserConstructionScript {
+    n1 = FunctionEntry() : ->_
+  }
+}
+
+macros {
+}

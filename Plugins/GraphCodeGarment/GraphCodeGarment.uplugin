@@ -1,0 +1,63 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.13",
+  "FriendlyName": "GraphCode Garment",
+  "Description": "Clothing made on a body — a .gcgarment declares rings on a mesh and the garments between them, and builds a mesh from that.",
+  "Category": "Editor",
+  "CreatedBy": "OraStudio",
+  "CanContainContent": true,
+  "IsBetaVersion": true,
+  "Modules": [
+    {
+      "Name": "GraphCodeGarment",
+      "Type": "Editor",
+      "LoadingPhase": "Default",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "GraphCode",
+      "Enabled": true
+    },
+    {
+      "Name": "GeometryScripting",
+      "Enabled": true
+    },
+    {
+      "Name": "GeometryProcessing",
+      "Enabled": true
+    },
+    {
+      "Name": "GraphCodeShape",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "ChaosClothAsset",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "ChaosCloth",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "ChaosCaching",
+      "Enabled": false,
+      "Optional": true
+    }
+  ],
+  "Installed": true,
+  "EnabledByDefault": false,
+  "EngineVersion": "5.7.0",
+  "SupportedTargetPlatforms": [
+    "Win64"
+  ]
+}

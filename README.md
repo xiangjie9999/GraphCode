@@ -1,966 +1,359 @@
-# GraphCode
+<h1 align="center">GraphCode</h1>
 
-**Unreal Engine, as text you can review.**
+<p align="center"><b>Let your AI build in Unreal Engine, and review every change it makes like code.</b></p>
 
-Unreal's authored content is binary. Code review stops at the content boundary, `git blame` has no
-answer, and merges are a coin flip. GraphCode writes deterministic text beside the binary — so
-content lives in code review, in `git log`, in CI, and in a grep.
+<p align="center">
+<a href="https://github.com/xiangjie9999/GraphCode/releases/latest"><b>Download 0.1.13</b></a> ·
+<a href="https://graphcode.dev/start"><b>Start the 14-day trial</b></a> ·
+<a href="#what-you-can-make">Products</a> ·
+<a href="#how-it-works">How it works</a> ·
+<a href="#trust-and-privacy">Trust</a> ·
+<a href="https://graphcode.dev/pricing">Pricing</a> ·
+<a href="https://graphcode.dev">graphcode.dev</a>
+</p>
 
-GraphCode is **four products over one format**. One grammar, one determinism guarantee, one
-honesty contract. They differ in what they point at.
+GraphCode is a set of Unreal Engine editor plugins that give each supported asset (a Blueprint, a
+widget, a material, a data table, a level, a Niagara effect) **one readable text document**, and build
+meshes, animations, rigs, hair and clothing from short readable recipes. Your AI client reads a
+document whole, changes the lines it means to change, and writes it back into the real asset. A write
+is checked before it lands: one made against an out-of-date copy is refused, and by default one that
+would break a working Blueprint is not saved. Every change shows up in your version control as a diff
+you can review.
 
----
-
-## The product line
-
-| | Points at | Extension | Status |
-|---|---|---|---|
-| **GraphCode** | authored assets — Blueprints, widgets, materials, schemas | `.gc` | **shipping** |
-| **GraphCode Play** | the *running* game — capture, replay, branch, restore | `.gcp` | snapshot writer built; runner designed |
-| **GraphCode Move** | animation, navigation, AI behaviour | `.gc` | partial; AnimGraph projects today |
-| **GraphCode World** | levels and the heavy families — Niagara, Groom, PCG, audio, data | `.gc` / `.gcw` | designed; level writer started |
-
-**GraphCode is the essential one.** The other three are worthless without it — they all emit the
-same grammar, inherit the same determinism gates, and are read by the same tools. Play, Move and
-World are scope, not architecture.
-
-Read [§1](#1-the-shared-foundation) once. Then read the product you care about.
-
----
-
-## Table of contents
-
-- [1. The shared foundation](#1-the-shared-foundation) — what all four inherit
-- [2. GraphCode — assets as text](#2-graphcode--assets-as-text) *(the core product)*
-- [3. GraphCode Play — the running game as text](#3-graphcode-play--the-running-game-as-text)
-- [4. GraphCode Move — animation, navigation, AI](#4-graphcode-move--animation-navigation-ai)
-- [5. GraphCode World — levels and the heavy families](#5-graphcode-world--levels-and-the-heavy-families)
-- [6. Extensions and naming](#6-extensions-and-naming)
-- [7. Architecture](#7-architecture)
-- [8. Status at a glance](#8-status-at-a-glance)
-- [9. Packaging four products](#9-packaging-four-products)
-- [10. Website source material](#10-website-source-material)
-- [11. Document index](#11-document-index)
-
----
-
-# 1. The shared foundation
-
-Everything below is true of all four products. It is the reason they are one product line rather
-than four tools with a shared prefix.
-
-## 1.1 Determinism, or the whole thing is noise
-
-A text dump of a `.uasset` is worthless for diffing. The bytes carry authoring order, node GUIDs,
-node positions and export-table indices — all of which move for reasons that have nothing to do
-with what the content *means*. Open a Blueprint, drag a node, save: a naive dump diffs.
-
-GraphCode's readers were built to a round-trip invariant, and the properties that invariant needed
-are exactly the properties a git projection needs:
-
-| Property | Why it matters |
+| | |
 |---|---|
-| Aliases `n0, n1, …` assigned by **structural traversal**, never array position | authoring order is not reproducible; a re-save must not diff |
-| Entry points sorted by title, GUID only as a tie-break | a graph with two events reads the same in either authoring order |
-| **No node positions in the emitted text** | moving a node is not a change, and produces no diff |
-| **No GUIDs in the emitted text** | a write path minting fresh GUIDs must not rewrite the file |
-| `sig:` is a BLAKE3 digest of a full canonical read | one line that moves exactly when content moves |
-| `read(apply(read(G))) == read(G)` is an automated spec suite | the projection is stable under a write cycle |
-| Values equal to the correct baseline are omitted | adding an unrelated object must not rewrite its neighbours |
+| **Runs on** | Unreal Engine **5.7.4**, Windows 64-bit. Blueprint-only projects work; no compiler needed. |
+| **You bring** | An AI client that speaks MCP (we build and test with Claude Code and Codex). GraphCode never calls an AI provider itself. |
+| **You get** | Ten products in one package: Blueprints, UI, materials, data, levels, terrain and PCG, procedural meshes, animation and effects, rigs, hair, clothing, MetaHumans, Blender import, and a free Market of ready-made packs. |
+| **Try it** | 14 days of everything with just an email: no card, no code. |
+| **Then** | A [one-time licence](https://graphcode.dev/pricing) per product or for all of them. One PC at a time per licence. |
+| **What it is** | Closed-source, precompiled plugins with their public C++ headers. What leaves your PC is listed [below](#trust-and-privacy), and it never includes your project. |
 
-The acceptance test for the entire product line is one line: **a no-op re-save must be
-byte-identical.** If a re-save diffs, every claim above is void and the tool is a noise generator.
-
-## 1.2 `omits:` — the honesty contract
-
-This is the part that decides whether a projection tool is useful or actively harmful.
-
-> **A diff that shows nothing must mean "nothing changed."**
-
-It can only mean that for the facets the file actually represents. So a facet may be missing — but
-it may never be **missing *and* undeclared**. Every gap is named in `omits:`, in the file, on every
-write. Silence about a gap is the failure mode that makes a tool like this worse than none.
-
-Concretely: a Blueprint whose Timeline curves changed produces no diff. That is why every
-Blueprint's envelope carries `omits: … timelines …`, and why the write path refuses a graph that
-owns a Timeline rather than writing a partial one.
-
-The rule is enforced as a test, not a convention: one spec asserts the declared omission ledger
-token-by-token, and a second asserts that a **real projection** declares what the ledger promises.
-
-## 1.3 One grammar, three statement shapes
-
-Every product emits the same language. An audit against the fifteen inherited rules, over the
-219-file corpus and every emitter, confirmed that three statement shapes carry every asset kind:
-
-```gc
-Health: float = 100.0 [instance_editable]        ← a declaration; lives in the block that
-                                                   says what it is, carries no keyword
-
-Title = TextBlock(Font.Size=32)                  ← an authored object, with { children }
-  @slot[Padding.Bottom=24.0]                       and @slot / @placement / @attach relations
-
-n0 = CallFunction Actor:K2_SetActorRotation(NewRotation=n1.ReturnValue) : ->n2
-                                                 ← a graph statement
-```
-
-Which is why a Material graph, a widget tree, a Niagara emitter stack and a placed-actor list are
-one language and not four. A reviewer learns it once.
-
-## 1.4 The envelope
-
-```
-gc 1  kind:<kind>  asset:<package>  sig:<body digest>  bin:<uasset digest>
-parent: <class path>
-omits: <token ...>
-source: <project> <engine version>  ir: <irname/version ...>
-```
-
-- **Line 1 owns identity.** The format version comes first so a parser can refuse a future format.
-  A stray file is self-describing and a filename/asset mismatch is detectable.
-- **`sig:` is the body digest; `bin:` is the `.uasset` digest.** Two independent questions — "was
-  this file edited?" and "did the asset move underneath it?" — get two independent answers. `bin:`
-  equal means *definitely* unchanged; `bin:` different means *may* have changed. Never wrong in
-  the direction that matters.
-- **Block order is fixed, and a covered-but-empty facet writes an empty block.** Presence means
-  coverage. A facet with no block at all is named in `omits:`.
-- **Deterministic bytes:** fixed block order, fixed field order, structural traversal, LF, UTF-8
-  without BOM, trailing newline.
-
-## 1.5 Properties every product keeps
-
-- **Reads work with the editor closed.** The committed text is the read path.
-- **The binary always wins.** A projection is generated and safe to delete. If text and asset
-  disagree, the asset is right.
-- **A projection failure never fails an asset save.** It is logged, retried within a bounded
-  queue, and the check commandlet is the enforcement point.
-- **No telemetry, no cloud account, no network path.** The AI layer is optional and loopback-only.
+<table>
+<tr>
+<td width="33%"><img src="docs/media/manor-hall.jpg" alt="A manor hall with velvet furniture, rugs, wallpaper and parquet"><br><sub><b>Materials.</b> Velvet, rugs, wallpaper and wood. Every surface here is a material written as GraphCode. <a href="https://graphcode.dev/features/assets#materials">Case study</a></sub></td>
+<td width="33%"><img src="docs/media/river-town.gif" alt="A steampunk town on a canal with a ferris wheel"><br><sub><b>Levels.</b> A walled canal town whose layout is two text files; its level document holds 2,648 actors. <a href="https://graphcode.dev/features/worlds#levels">Case study</a></sub></td>
+<td width="33%"><img src="docs/media/portal.gif" alt="A blue cloud portal effect on a street at night"><br><sub><b>Effects.</b> A Niagara system written as text: emitters, modules and user parameters. <a href="https://graphcode.dev/features/assets#vfx">Case study</a></sub></td>
+</tr>
+<tr>
+<td><img src="docs/media/violin.gif" alt="A MetaHuman violinist playing"><br><sub><b>Animation.</b> A MetaHuman violinist whose bow, fingers, face and sway are curves written from a recording. <a href="https://graphcode.dev/features/characters#animation">Case study</a></sub></td>
+<td><img src="docs/media/jungle.jpg" alt="Aerial view of a jungle valley with a river and footbridge"><br><sub><b>Worlds.</b> A jungle valley about 1 km square, planted from about 130 lines in one level file. <a href="https://graphcode.dev/features/worlds#pcg">Case study</a></sub></td>
+<td><img src="docs/media/market-clay.jpg" alt="Clay renders of six Market packs"><br><sub><b>Meshes.</b> Clay renders of free Market packs, each an ordinary Static Mesh built from a <code>.gcshape</code> recipe. <a href="https://graphcode.dev/marketplace">Market</a></sub></td>
+</tr>
+</table>
+<sub>Captures from the case studies on graphcode.dev, made in Unreal Engine 5.7 with GraphCode. Violin and bow model by RafalTlalka (Sketchfab), CC BY 4.0.</sub>
 
 ---
 
-# 2. GraphCode — assets as text
+## One edit, one diff
 
-**The essential product.** Everything else depends on it.
+An 18 m airship first flew with a dark, closed cabin. Replacing it with a lit, glazed bridge was a
+few lines in the airship Blueprint's document, rebuilt in Unreal with the same ship and the same camera:
 
+<table>
+<tr>
+<td width="50%"><img src="docs/media/airship-before.jpg" alt="Airship with a dark closed cabin"><br><sub>Before</sub></td>
+<td width="50%"><img src="docs/media/airship-after.jpg" alt="Airship with a lit glazed bridge"><br><sub>After</sub></td>
+</tr>
+</table>
+
+```diff
+-  Cabin = StaticMeshComponent(StaticMesh=…SM_AirshipCabin)
++  BridgeFrame = StaticMeshComponent(StaticMesh=…SM_AirshipBridge)
++  BridgeGlass = StaticMeshComponent(StaticMesh=…SM_AirshipBridgeGlass)
++  BridgeLight1 = PointLightComponent(Intensity=700.0, …)
 ```
-Content/Blueprints/BP_Door.uasset      ← binary. `git diff` says "Binary files differ".
-Content/Blueprints/BP_Door.gc          ← the same authored meaning as text. Diffable. Blameable.
+<sub>`BP_Airship.gc`, excerpt as published in the <a href="https://graphcode.dev/features/assets#geometry">airship case study</a>. The bridge's meshes themselves are <code>.gcshape</code> recipes.</sub>
+
+This is what a reviewer sees in place of `Binary files differ`, and the same holds for a material.
+An ivy material in our test project looked like plastic, and this was the whole change:
+
+```diff
+-gc 1  kind:material_instance  asset:/Game/__MCPTests/Leaf/MI_GcLeafSurf_Ivy  sig:da7e2352…  bin:2dea5279…
++gc 1  kind:material_instance  asset:/Game/__MCPTests/Leaf/MI_GcLeafSurf_Ivy  sig:bf179c71…  bin:21b1866e…
+ omits: none
+@@ parameters {
+-  Roughness: float = 0.3
+-  RoughnessFromMap: float = 1.0
++  Roughness: float = 0.62
++  RoughnessFromMap: float = 0.55
 ```
 
-Written automatically on every save. Works with no Node process, no network, no account, and no AI.
+The first line changes on every write (new `sig` and `bin`); the rest is the real edit. Most kinds
+declare something they leave out (the Blueprint below does); a material instance declares nothing, so
+for this asset the diff is the whole authored change.
 
-## 2.1 Show me
+## One asset, one document
 
-Real files from the reference project. Nothing here is hand-written.
-
-**A user enum** — reorder two entries and the diff is two lines:
+A whole Character Blueprint, as shipped in the package's
+[StairsInAGame](Plugins/GraphCode/Docs/Examples/StairsInAGame/BP_StairWalker.gc) example. It walks
+forward each tick until it passes `StopX`:
 
 ```gc
-gc 1  kind:user_enum  asset:/Game/Blueprints/Enums/BevelType  sig:82e3645134a35bcc…  bin:65124fbaf619b784…
-omits: none
-source: OraStudio 5.7.4-51494982+++UE5+Release-5.7  ir: schemacode/1
+gc 1  kind:blueprint  asset:/Game/StairsInAGame/BP_StairWalker
+parent: /Script/Engine.Character
 
-settings {
-  description = ""
-}
-
-entries {
-  `Corner Bevel` = 0
-  `Horizontal Edge Bevel` = 1
-  `Verticel Edge Bevel` = 2
-}
-```
-
-**An Actor Blueprint** — component tree, class defaults, comments and a real event graph, abridged
-from `BP_TeleportVisualizer.gc`:
-
-```gc
-gc 1  kind:blueprint  asset:/Game/XRFramework/Blueprints/BP_TeleportVisualizer  sig:9bf3fd44…  bin:a8127795…
-parent: /Script/Engine.Actor
-omits: timelines blueprint_extensions blueprint_settings fixed_size_arrays
-source: OraStudio 5.7.4…  ir: blueprintir/2 actorir/1
-
-class_defaults {
-  PrimaryActorTick.bCanEverTick = true
+properties {
+  StopX: double = 285.0 [instance_editable]
 }
 
 components {
-  Root = SceneComponent()
-  {
-    NS_PlayAreaBounds = NiagaraComponent(
-      Asset=obj'/Game/XRFramework/VFX/NS_PlayAreaBounds.NS_PlayAreaBounds'
-    )
-  }
+  CharMoveComp = CharacterMovementComponent(bRunPhysicsWithNoController=true, MaxStepHeight=40.0, MaxWalkSpeed=100.0)
+    @native[property=CharacterMovement]
+  CollisionCylinder = CapsuleComponent(CapsuleHalfHeight=96.0, CapsuleRadius=24.0)
+    @native[property=CapsuleComponent]
 }
 
 graph {
-  eventgraph EventGraph  sig:30cb4e31e002cc2a-16 {
-    c0 = comment("See NPC_VRTemplate for TeleportColor") color(0.00,0.32,0.81,1.00)
-    c2 = comment("Move the Play Area Bounds relative to the Players HMD Location")
-         color(0.03,0.03,0.03,1.00) covers[n4, n5, n6, n7]
-
-    n0 = Event ReceiveBeginPlay() [bOverrideFunction=True] : ->n1
-    n1 = CallFunction HeadMountedDisplayFunctionLibrary:GetPlayAreaBounds() : ->n2
-    n2 = CallFunction NiagaraComponent:SetVariableVec3(self=n3.NS_PlayAreaBounds,
-           InVariableName="User.PlayAreaBounds",
-           InValue.InValue_X=n1.ReturnValue_X) : ->_
-    n3 = VariableGet NS_PlayAreaBounds()
-    // Get the Pawn's relative camera location
-    n8 = CallFunction KismetMathLibrary:InverseTransformLocation(T=n9.ReturnValue)
+  eventgraph EventGraph {
+    n1 = Event ReceiveTick() [bOverrideFunction=True] : ->n2
+    n2 = IfThenElse(Condition=n3.ReturnValue) : then->n7, else->_
+    n3 = CallFunction KismetMathLibrary:Less_DoubleDouble(A=n4.X, B=n6.StopX)
+    n4 = CallFunction KismetMathLibrary:BreakVector(InVec=n5.ReturnValue)
+    n5 = CallFunction Actor:K2_GetActorLocation()
+    n6 = VariableGet StopX()
+    n7 = CallFunction Pawn:AddMovementInput(WorldDirection=n8.ReturnValue, bForce=True) : ->_
+    n8 = CallFunction Actor:GetActorForwardVector()
   }
 }
 ```
+<sub>Shortened for this page: the mesh component and the empty blocks are left out. The whole file is 1,658 bytes, roughly 400 tokens.</sub>
 
-Note what is *not* there: no node positions, no GUIDs, no export-table indices, no compiled
-products. Drag a node three pixels and save — the file does not change.
+Each node is one line. `->n2` is an execution wire and `n4.X` a data wire, and the names are the
+engine's real functions. The AI reads the whole Blueprint in one call and sends back only the block
+it changed. Nodes it did not change keep their GUIDs and positions.
 
-**A Widget Blueprint** is one document carrying **both** the Designer tree and the graph. The
-authored name is the left-hand side and the document's only handle on the widget:
-
-```gc
-widgets {
-  design DesignTimeSize=(X=1920.000000,Y=1080.000000)
-
-  Root = CanvasPanel()
-  {
-    Form = VerticalBox(variable=true)
-      @slot[Anchors=(0.500000,0.500000,0.500000,0.500000)]
-    {
-      Title = TextBlock(Font.Size=32, Text=text("Sign in"))
-        @slot[Padding.Bottom=24.000000, HorizontalAlignment=HAlign_Center]
-      Submit = Button(variable=true, IsFocusable=false)
-    }
-  }
-}
-```
-
-**A Material Instance** is its override list and nothing else:
+When GraphCode projects an asset you already have, the document's first lines carry what makes it
+safe to edit. This header is real:
 
 ```gc
-gc 1  kind:material_instance  asset:/Game/Materials/Instances/Fluted/M_FlutedOak  sig:490e42d8…  bin:97bb581c…
-parent: /Game/Materials/M_Fluted
-omits: instance_settings material_layers scalar_atlas
-
-parameters {
-  RefractionDepthBias: float = 0.000000
-}
+gc 1  kind:blueprint  asset:/Game/GraphCodeExamples/HouseDoor_20261024/BP_HouseDoorStage  sig:193cc0e7…  bin:98c81306…  seal:2.47bc…
+omits: blueprint_extensions blueprint_metadata variable_metadata collision_geometry
+source: OraStudio 5.7.4-51494982+++UE5+Release-5.7  projector:32  ir: blueprintir/2 actorir/1
 ```
 
-## 2.2 Coverage
+- `sig:` is a digest of this exact text. A write computed against an older one is refused.
+- `bin:` is a digest of the binary asset the text describes.
+- `omits:` is everything this document does not carry for this kind of asset. Of the 60 kinds,
+  16 omit nothing; [docs/KINDS.md](docs/KINDS.md) lists the rest, generated from the registry
+  that ships in the release.
+- `seal:` signs the last write to the licence and PC that made it.
 
-Seven kinds project. In the reference project that is **251 `.gc` files**: 100 Blueprints,
-54 Widget Blueprints, 32 Materials, 30 enums, 18 Material Instances, 15 structs, 2 Material
-Functions.
+## When the AI gets it wrong
 
-| Kind | IR | `omits:` | Writable blocks |
-|---|---|---|---|
-| `blueprint` | `blueprintir/2` | components, cdo_defaults, timelines, blueprint_extensions, blueprint_settings | graphs, properties |
-| `blueprint` (Actor parent) | `blueprintir/2` + `actorir/1` | timelines, blueprint_extensions, blueprint_settings, fixed_size_arrays | graphs, properties, **components, class_defaults** |
-| `widget_blueprint` | `widgetir/2` + `blueprintir/2` | the Blueprint tokens + widget_bindings, widget_animations, widget_navigation, orphan_widgets, fixed_size_arrays | graphs, properties, widgets |
-| `user_struct` | `schemacode/1` | none | settings, properties |
-| `user_enum` | `schemacode/1` | none | settings, entries |
-| `material_instance` | `materialir/1` | instance_settings, material_layers, scalar_atlas | parameters (runtime families; static permutations refuse) |
-| `material` | `materialir/1` | comments, exec_wires, material_settings, parameter_declarations, subgraphs | settings; graph (identity-preserving edits + expression create/delete) |
-| `material_function` | `materialir/1` | comments, exec_wires, parameter_declarations, subgraphs | settings; graph |
+These are the protections, with the messages your AI actually receives, taken from the tools' own
+help and source:
 
-`interfaces { }` and `dispatchers { }` project for every Blueprint and are **read-only** — each
-hides a two-object engine operation that a text patch cannot express safely, so the write path
-refuses them by name with that reason rather than a generic error. Binding, unbinding and calling
-a dispatcher *are* ordinary graph statements and *are* writable.
-
-## 2.3 Text back into the asset
-
-The input is **the file on disk**, whatever edited it. `sed`, a patch, a person, an AI: they all
-produce the same artefact — a changed file — and one command lands it.
-
-```bash
-UnrealEditor-Cmd.exe MyProject.uproject -run=GcApply -Asset=/Game/Blueprints/BP_Door [-DryRun]
-```
-
-- **It is a block diff against the live asset, never a rebuild.** `omits:` means the text is not
-  the whole asset, so the writers are identity-preserving. An unchanged block is not rewritten —
-  it is not even parsed.
-- **Two staleness questions, both answered before anything is written.** Was the *file* edited?
-  (body digest vs. `sig:`). Did the *asset* move? (`sig:` vs. what the asset projects to **now**).
-  The second is the race that matters: read a `.gc`, edit it for two minutes, and if a designer
-  saved that asset meanwhile, a naive apply silently overwrites their work. It is refused instead.
-- **Every refusal is collected before anything is written.** A block with no writer, a block the
-  file invented, a block the file dropped — all found first, and any one means nothing at all is
-  written. A refusal discovered after the third block landed is a half-applied asset.
-- **Block order is not cosmetic.** Declarations, then the Designer tree, then anything that can
-  reference either — a graph statement can read a variable `properties` declares.
-- **Renames preserve identity.** A rename is never lowered to remove + add. UE repairs a stale
-  variable reference from the variable's GUID, which lets referencing assets that were never
-  loaded fix themselves; a fresh GUID breaks them silently, with nothing logged anywhere.
-- **Destructive edits are gated.** Removals and type changes with live references need an explicit
-  `allow_breaking_changes` flag, and a removal reports every node it orphans — blueprint, graph,
-  GUID, and the lost declaration's name/type/default — on refusals and dry runs too, because after
-  the apply it cannot be recomputed.
-
-Blocks with **no writer**: `inherited { }`, `defaults { }`, `interfaces { }`, `dispatchers { }`,
-and any graph that owns a Timeline.
-
-## 2.4 Lifecycle
-
-The projection is triggered from **one place in the engine** —
-`UPackage::PackageSavedWithContextEvent` — not from the tools that write assets. Every save reaches
-it: Ctrl+S, Save All, the Content Browser, and whatever writes a package next year. A new write
-tool inherits the behaviour without knowing this feature exists.
-
-| Asset event | Sidecar result |
+| What goes wrong | What GraphCode does |
 |---|---|
-| successful manual save | enqueue a canonical projection beside the `.uasset` |
-| autosave, cook, procedural or failed save | do nothing |
-| rename or move within eligible content | move the `.gc`, then regenerate so its envelope names the new package |
-| move into an excluded prefix | remove the old `.gc`, create none |
-| asset deletion | cancel queued work and remove the matching `.gc` |
-| deletion while the editor was closed | report an orphan in `GcCheck`; remove only with explicit `-Prune` |
+| The AI edits an out-of-date copy, or two edits race | The write carries the `sig` it was computed against. *"A stale value is refused, never merged."* |
+| The AI wants to try something first | `dry_run: true`: *"Validate everything against the live asset and touch nothing - including the .gc on disk."* |
+| A write breaks a Blueprint that compiled | Not saved (unless you pass `allow_broken`): *"this write left a Blueprint that compiled before it with compile errors, so it was NOT saved … the file on disk is still the version that compiled."* |
+| A partial payload would silently drop entries | Leaving an entry out keeps it (`patch`, the default). Four blocks (actors, rows, components, widgets) refuse a partial write rather than guess; removal is always an explicit `delete` line. |
+| The AI asks for something that does not exist | It is refused by name, with the valid choices: *"'editor' is not a section of unreal_info."* followed by the list of sections. |
+| The AI deletes an asset | It moves to `/Game/__MCPTrash`, which GraphCode never empties. Referenced assets refuse unless the exact impact is accepted. |
+| You want yesterday's version back | `gc_versions` keeps the previous text on every changing save and restores through a plan you confirm (`plan_sig`). The plan lists anything the restore would remove. |
+| You need to see the result, not the text | `gc_render` renders materials, meshes, Actor Blueprints, effects and the level from named views. For widgets it paints several screen sizes and reports overlap, clipping and contrast. `gc_play` drives Play-in-Editor and captures the world to text. |
 
-That last row is deliberately not automatic startup cleanup. Source-control operations leave the
-tree temporarily inconsistent during a checkout, merge or branch switch. Detection is safe;
-unrequested deletion is not.
+Epic's [experimental MCP plugin in Unreal Engine 5.8](https://engadget.com/2196807/epic-games-details-how-its-embracing-gen-ai-in-unreal-engine) and the community MCP servers let an AI operate
+the editor step by step. GraphCode works on whole documents with the checks above. Try both on the
+same task; that comparison is what the trial is for.
 
-**Save All is the performance case that decides adoption.** A full canonical read costs roughly
-half a second for a substantial Blueprint; across 300 assets, inside a save the user is waiting on,
-that is minutes — and it lands as "the editor hangs when I save", which is how a feature gets
-switched off and never switched back on. So the save delegate does **no work**: it enqueues,
-deduplicated by package, and a ticker services the queue against a per-frame budget (20 ms).
+## What you can make
 
-## 2.5 Command line and CI
+Ten products, one package, one trial. Full detail for each is in [docs/PRODUCTS.md](docs/PRODUCTS.md)
+and on its graphcode.dev page.
 
-```bash
-# Rewrite every eligible sidecar. Orphans preserved; exits non-zero unless you pass -Prune.
-UnrealEditor-Cmd.exe MyProject.uproject -run=GcRegenerate [-Prune]
+| | Product | You write | You get | Worth knowing |
+|---|---|---|---|---|
+| **Worlds** | [Core: levels](docs/PRODUCTS.md#graphcode-core-levels) | The level's `.gc`: actors, components, volumes, splines, Level Blueprint | The level, changed only where the text changed | Place by intent (`@anchor`, `@surface`, `@facing`). World Partition and HLOD partly covered |
+| | [World](docs/PRODUCTS.md#graphcode-world) | `.gcw` regions, terrain, water, navigation, populate rules; PCG graphs | Landscape, Water, foliage, navigation, PCG | `gcw_ask` answers "can this agent walk there". Render and walk the result |
+| | [Shape](docs/PRODUCTS.md#graphcode-shape) | `.gcshape` recipes: outlines, lofts, cuts, joins, profiles, edge finishes, LODs | Ordinary Static Meshes | One number changes every part built from it. Geometry only: surfaces come from your materials |
+| | [Market](docs/PRODUCTS.md#graphcode-market-free) | Nothing: search and install | 36 free signed packs: walls, timber, roofs, rope, gears, vegetation, pose libraries | Updating a pack does not yet update its dependencies |
+| **Characters** | [Move](docs/PRODUCTS.md#graphcode-move) | `.gcmove` motion programs; Niagara, sequences, behaviour and state trees as `.gc` | Animation Sequences, montages, blend spaces, effects, cinematics | Motion is measured, not guaranteed natural. Long clips take minutes |
+| | [Rig](docs/PRODUCTS.md#graphcode-rig) | `.gcrig`: where a mesh bends, ranges, contacts, grips | Skeleton, skin weights, physics bodies, IK rig, Control Rig | Deep folds can still show artefacts |
+| | [Groom](docs/PRODUCTS.md#graphcode-groom) | `.gcgroom`: layers, zones, combing, braids, cards, feathers | Unreal Groom assets and bindings | Needs the Groom plugin; judge on a GPU render |
+| | [Garment](docs/PRODUCTS.md#graphcode-garment) | `.gcgarment`: how a garment is cut, sewn and hangs | Static, skinned or MetaHuman clothing | The newest product: of the 19 examples only the T-shirt has been render-checked so far, and Dress and Button Shirt may fail to build |
+| | [Core Extension](docs/PRODUCTS.md#graphcode-core-extension) | `.gchuman` identities; MetaSounds, EQS, vegetation graphs | MetaHumans, audio graphs, queries, trees | MetaHuman rigging uses Epic's services |
+| **Gameplay, UI, data** | [Core](docs/PRODUCTS.md#graphcode-core-blueprints-widgets-materials-data) | Blueprints, widgets, materials, data tables, curves, input as `.gc` | The same assets, written back | Each kind declares what it omits ([KINDS.md](docs/KINDS.md)) |
+| | [Play](docs/PRODUCTS.md#graphcode-play) | Steps for `gc_play`: inputs, calls, waits | A driven Play session and `.gcp` world captures you can diff | Runs the tests you write; not an autonomous tester |
+| **Bring work in** | [Integrate](docs/PRODUCTS.md#graphcode-integrate) | Nothing: pick meshes in Blender | Static meshes with materials translated to Unreal | Static meshes only, Blender only |
 
-# The same pass, writing nothing. Non-zero if any sidecar is absent, stale, invalid or orphaned.
-# This is your pre-commit hook and your CI gate.
-UnrealEditor-Cmd.exe MyProject.uproject -run=GcCheck
-
-# Push one asset's edited .gc back into the .uasset.
-UnrealEditor-Cmd.exe MyProject.uproject -run=GcApply -Asset=/Game/Path/Name [-DryRun]
-```
-
-`GcCheck` deliberately re-projects rather than trusting `bin:`. A matching binary digest proves the
-*binary* is unchanged, not that the *projection* of it is — change the projector and the same bytes
-yield different text while `bin:` still matches. A digest-only check would report "current" for a
-sidecar that is now wrong, which is precisely the silent drift the check exists to catch.
-
-## 2.6 Git setup
-
-```gitattributes
-*.gc      text eol=lf merge=binary
-*.uasset  binary
-*.umap    binary
-```
-
-**`merge=binary` on a text file is deliberate.** Git marks a conflict rather than producing a
-text-merged file that describes no asset that exists. The resolution is to merge the `.uasset` (by
-picking a side, as today) and re-save; the sidecar regenerates. A `union` or `ours` merge would
-produce a plausible-looking lie.
-
-**Sidecars are committed, not generated-and-ignored.** Ignoring them keeps the tree clean and gives
-up review history and blame, which are the entire value.
-
-**The `.gitignore` trap, which will bite you exactly once:** git cannot re-include a file whose
-*parent directory* is excluded. `!Content/Fab/**/*.gc` does nothing if `/Content/Fab/` is ignored.
-The fix is not a gitignore trick — it is **not writing them there**. The excluded-prefix list
-defaults to the directories already excluded from the repo.
-
-## 2.7 Settings
-
-Project Settings → Plugins → GraphCode (`UGraphCodeSettings`, `Config=Editor`):
-
-| Setting | Default | Meaning |
-|---|---|---|
-| `bEnableSidecars` | `true` | master switch |
-| `ExcludedPackagePrefixes` | project-seeded | long-package prefixes that never receive a `.gc` |
-| `TickBudgetMilliseconds` | `20.0` | per-frame game-thread budget for save-triggered projection |
-| `MaxWriteRetries` | `3` | failed writes retried this many times before the next real save |
-
-## 2.8 Limitations
-
-- **Timelines do not round-trip, and a graph holding one cannot be written.** A `UK2Node_Timeline`
-  reads as a graph statement, but the `UTimelineTemplate` holding its tracks and curves is not
-  projected. The write path re-reads the live graph and refuses the whole-graph write when it finds
-  one, *before* the mode branch, so a differential write is refused too. **The refusal is per
-  graph**: other graphs in the same Blueprint stay writable. This is the largest declared gap.
-- **A C-array `UPROPERTY`** — `FLinearColor Tints[8]` — is declared as `fixed_size_arrays`. The
-  grammar has no spelling for an indexed slot, so the diagnostic carries the array's *length*,
-  never its values: editing one element produces no diff.
-- **Widget bindings, animations, navigation and orphan widgets are declared but not carried.** The
-  in-body diagnostic is a **count**: adding or deleting a binding moves it; *repointing* one at a
-  different property does not.
-- **`blueprint_settings` and `blueprint_extensions` are omitted for every Blueprint** — the asset's
-  description/category/namespace/deprecation, a subclass's own fields, and
-  `UBlueprint::GetExtensions()`, where MVVM keeps its entire viewmodel graph.
-- **A `MathExpression`'s collapsed body is not projected, and that is deliberate.** The node
-  re-parses its own `Expression` string into a fresh inner graph on every reconstruct, so the body
-  is derived state — reading it back made two projections of an unchanged asset disagree, and was
-  the one measured byte-stability failure in the corpus. The statement carries `[Expression=…]`,
-  which is the whole input. Nothing authored is missing, so this is not an `omits:` facet.
-- **Open guard.** The sync fast path compares kind, IR versions, `omits:`, project and engine
-  version, then trusts `bin:`. None of those move when the **projector** changes — so a projector
-  fix leaves committed sidecars certifying themselves as current while having been generated by
-  code that no longer exists. A projector-version field in the envelope closes it, at the cost of
-  one header line every sidecar rewrites once. Not yet decided.
-
----
-
-# 3. GraphCode Play — the running game as text
-
-**Scope:** the *verification* loop. Core closes authoring — read logic, change it, apply it.
-It does not answer whether the door actually opens when the player steps on the plate. That
-question has only ever been answered by a human with the editor open.
-
-> Start the game, act on it, read the resulting world state as text, and stop — in one submitted
-> unit of work, with a guaranteed stop.
-
-If that exists, the loop is **build → play → act → observe → fix**, and the observation step costs
-tokens comparable to reading a Blueprint, not a screenshot.
-
-Acting on a game is a solved engine problem with published APIs. **Reading the result cheaply and
-honestly is where the design work is**, and it is most of what has been built.
-
-## 3.1 The capture — `.gcp`
-
-A `.gcp` is one world, one selector set, one quantisation, at one instant.
+## How it works
 
 ```
-gcp 1  world:/Game/Maps/Test  pie:UEDPIE_0_Test
-at: frame 1284  time 21.35
-select: class:BP_Door class:BP_PressurePlate name:PlayerCharacter
-found: 4 actors, 31 properties
-precision: 0.01
-baseline: none
-omits: transient non_visible
-
-actors {
-  BP_Door_1 : BP_Door {
-    Location = (150.00, 200.00, 0.00)
-    Rotation = (0.00, 90.00, 0.00)
-    IsOpen = true
-    LinkedPlate = /Game/Maps/Test.Test:PersistentLevel.BP_PressurePlate_1
-    OpenAngle = 90.00
-    DoorMesh : StaticMeshComponent {
-      RelativeLocation = (0.00, 0.00, 0.00)
-      Visible = true
-    }
-  }
-
-  BP_PressurePlate_1 : BP_PressurePlate {
-    Location = (150.00, 200.00, 0.00)
-    IsPressed = true
-    Overlapping = [/Game/Maps/Test.Test:PersistentLevel.PlayerCharacter_0]
-  }
-}
+your AI client  --stdio-->  graphcode-bridge.exe  --HTTP, this machine only-->  Unreal Editor + GraphCode
+ (Claude Code, Codex,        (in the package; no                                (reads and writes the real
+  any MCP client)             Node.js needed)                                    assets; writes .gc on save)
 ```
 
-Every envelope field exists to prevent one specific wrong reading:
+The plugins also write a `.gc` sidecar next to each supported asset whenever you save, with no AI
+involved. Those files are what your version control diffs.
 
-- **`at:` is on its own line**, and that placement is load-bearing. Two captures a second apart are
-  at different frames *by construction*, so a whole-file comparison of an unchanged world would
-  always fail. Everything else in the envelope is a function of the *request*, not the *instant* —
-  so "nothing changed" reads as exactly one differing line.
-- **`select:` is echoed back.** Without it, a file with no matches reads as "nothing happened"
-  instead of "looked for BP_Door and found none".
-- **`found:`** makes a mis-typed selector obvious at a glance rather than after a diff.
-- **`precision:`** states the quantisation *actually used*, written on every capture including the
-  default one — a field that appears only when overridden is a field nobody checks.
-- **`baseline: none`** says absent-means-*filtered*, not absent-means-default. A capture prints
-  every visible property, always, because two captures get diffed and both sides need the line to
-  be there. This is the opposite of the core sidecar's rule, which is why the header must declare
-  which rule produced the file.
-- **No `sig:`, no `bin:`, no `asset:`.** A capture is not a projection of an asset; their absence
-  is the point.
+**Fifteen tools.** Their definitions total 26 KB, roughly 6,500 tokens of your AI's context. That
+was measured by asking the shipped bridge for its tool list.
 
-**The selector is mandatory and there is no default.** `class:` (subclass-inclusive), `name:`,
-`tag:`, `near:<actor>,<radius>`, `widget:`, and `*` — which is opt-in, warns, and is a debugging
-tool rather than a test tool.
+| Tool | What it does |
+|---|---|
+| `gc_read` | Read an asset, level or actor as its document: `saved` on disk or `live` with unsaved edits. |
+| `gc_apply` | **The one write.** Apply a document to an asset or create a new one, with dry runs, patch or snapshot. |
+| `gc_describe` | The grammar of a kind or block, a native type, or one node of an asset. Works with the editor closed. |
+| `gc_search` | Find assets, nodes, declarations, widgets, callable functions and presets. |
+| `gc_render` | See or hear the result: renders, widget layouts, motion trails, short videos, audio, "what is at this pixel". |
+| `gc_versions` | List and compare earlier versions; restore one through a confirmed plan. |
+| `gc_play` | Drive and capture the running game. |
+| `gc_sync` · `gc_asset` · `gc_import` · `gc_invoke` · `gc_open` · `gc_market` · `gcw_ask` · `unreal_info` | Sidecars; rename, move or recoverable delete; imports; press a button or call a function; show you an asset; Market packs; spatial questions; what is installed and running. |
 
-One deliberate divergence from the core value rules: **`FText` writes its displayed string, not its
-key.** A sidecar carries the key because it must round-trip without orphaning the translation. A
-capture answers "what does the score text say", so it writes `"1250"`.
-
-## 3.2 The scenario runner — designed, not built
-
-One tool, not five. A closed nine-step grammar inside a single submitted unit of work:
+**Each tool teaches itself**, from help generated from the code you are calling, with no editor needed:
 
 ```jsonc
-run_scenario {
-  ceiling_seconds: 30,
-  steps: [
-    { start:      { mode: "viewport", map: "/Game/Maps/Test" } },
-    { wait:       { seconds: 1 } },
-    { snapshot:   { as: "before", select: "class:BP_Door" } },
-    { input:      { layer: "player", key: "W", hold_seconds: 2 } },
-    { wait_until: { property: "BP_Door_1.IsOpen", equals: true, timeout_seconds: 5 } },
-    { snapshot:   { as: "after", select: "class:BP_Door" } },
-    { stop:       {} }
-  ]
-}
+{ "help": true }                                  // what the verb does, one line per parameter
+{ "help": "omission" }                            // what that parameter accepts
+{ "help": "omission", "omission": "snapshot" }    // what one value does and what it brings
 ```
 
-`start`, `stop`, `wait`, `wait_until`, `input`, `snapshot`, `capture`, `log_mark`, `console`.
-The set is **closed** — a step list that can invoke any registered tool is arbitrary script
-execution with extra syntax, and inherits its permission problem.
+The package carries 96 guides and the worked examples. The AI reads them as it needs them, starting
+from [`GRAPHCODE.md`](Plugins/GraphCode/GRAPHCODE.md), and the MCP server tells every client to
+read that first. You can read the same guides [here](Plugins/GraphCode/Docs/Guides/README.md).
 
-Design points that are not obvious and are already settled:
+## Get started
 
-- **`stop` runs on every exit path** — success, step failure, ceiling, cancellation, exception. A
-  scenario that leaves PIE running has failed even if every step passed. The transcript reports
-  `pie_stopped` as an assertion rather than an assumption.
-- **A timed-out predicate reports the value it actually observed**, not just "timed out". That is
-  the difference between a useful failure and a useless one.
-- **Every step reports `frames` alongside `seconds`.** Two seconds and zero frames is a frozen
-  engine; two seconds and 120 frames with no movement is a gameplay bug. Those must be
-  distinguishable without anyone having to diagnose it.
-- **`input` exists only inside a scenario.** A one-shot "press W" returns before the engine has
-  ticked, so it can report that a key was delivered and nothing about what the key did. That is a
-  tool whose success value is misleading in the exact case people reach for it.
+**You need:** Windows 64-bit, Unreal Engine **5.7.4**, an MCP-capable AI client, and a project you
+are happy to experiment in (start with a copy).
 
-## 3.3 The save/load/branch direction — the open decision
+1. **Download** `graphcode-0.1.13-win64.tar.xz` (130 MB), `release.json` and `release.sig.json` from
+   the [latest release](https://github.com/xiangjie9999/GraphCode/releases/latest).
+2. **Verify it** (optional). Clone this repository (or download `tools/Verify-GraphCodeRelease.ps1`
+   and `release/release-keys.json` keeping that layout) and run the verifier from it. It checks our
+   signature and the archive hash, and sends nothing anywhere:
+   ```powershell
+   .\tools\Verify-GraphCodeRelease.ps1 -Archive "$HOME\Downloads\graphcode-0.1.13-win64.tar.xz"
+   ```
+3. **Install.** Close Unreal, unpack with Windows' built-in `tar`, and copy the plugin folders into your project:
+   ```powershell
+   mkdir GraphCode-0.1.13; tar -xf graphcode-0.1.13-win64.tar.xz -C GraphCode-0.1.13
+   Copy-Item GraphCode-0.1.13\Plugins\* "C:\Path\To\YourProject\Plugins\" -Recurse
+   ```
+   Check your engine is exactly 5.7.4 (**Help > About Unreal Editor**). Open the project, enable
+   **GraphCode** (Core) and any other GraphCode products you want in **Edit > Plugins**, accept the
+   engine plugins they ask for, and restart. Each product's page lists what it needs. Windows may ask about the unsigned bridge program the first time it runs.
+4. **Start the trial.** Enter your email at [graphcode.dev/start](https://graphcode.dev/start) to get
+   `graphcode-activation-<your email>.txt`. Save it as `%USERPROFILE%\.graphcode\activation.txt`
+   (or drop it in place of `Plugins/GraphCode/activation.txt`; the first use moves it there, out of
+   your project). It holds your email and the licence server address, not a password, but keep it
+   out of version control. GraphCode needs it before first use; activation starts the 14 days.
+5. **Connect your AI.** Opening the project writes `Saved/UnrealAIBridge/mcp-config.json`, a
+   standard `mcpServers` entry named `unreal`:
 
-The product goal is larger than capture: **a diffable save/load system** — snapshot a game state,
-branch it, restore it, diff two branches.
+   | Client | Where the entry goes |
+   |---|---|
+   | Claude Code | Copy the file to `.mcp.json` in the project folder (or merge it in), then approve the server when Claude Code asks. |
+   | Cursor | Merge its `mcpServers` into `.cursor/mcp.json` in the project folder. |
+   | Claude Desktop | Merge its `mcpServers` into `%APPDATA%\Claude\claude_desktop_config.json`. |
+   | Codex | Add `[mcp_servers.unreal]` to `~/.codex/config.toml` with `command = '<bridge path>'` and `env = { UNREAL_PROJECT_PATH = '<.uproject path>' }`. Single quotes keep Windows backslashes literal. |
+   | Anything else | Add a stdio server with the generated `command`, `args` and `env`. |
 
-**This requires reopening a ruling, and the counter-argument has to be answered rather than
-skipped.** The current design says a capture is **never** written back, for two reasons that are
-still true:
+   Keep `UNREAL_PROJECT_PATH`: it is how the bridge finds the right editor. The port can change
+   between sessions, and the bridge finds it by itself.
+6. **Ask for something.**
+   - *"Read `Plugins/GraphCode/SETUP.md` and set up this project for GraphCode."*
+   - *"Read BP_Player as GraphCode and explain what it does."* (This only reads.)
+   - *"Find a stone wall in the GraphCode Market, install it and build one in this level."*
 
-1. A capture has no asset to write back *to*. It names a moment, not a package.
-2. A capture's property rule is **absolute** — it prints every visible property, including ones
-   equal to their default. Applying such a file would write hundreds of properties nobody authored,
-   which is a very different operation from the core product's identity-preserving block diff.
+## The trial and the licence
 
-Neither of those forbids save/load. They say that **restore is a different mechanism from apply**,
-and it needs its own design:
-
-- **Restore is state, not authoring.** It targets a live world, not a `.uasset`. It should not
-  route through `gc_apply`, and `gc_apply` should keep refusing the extension.
-- **The text stays the review artefact.** What makes this a GraphCode product rather than a save
-  system is that the branch point is *readable* — you diff two states and see which nine properties
-  differ, then choose.
-- **The property rule needs a third mode.** Capture is absolute, projection is delta-against-
-  archetype; a restorable save probably wants delta-against-*a named baseline capture*, so a branch
-  is small and a diff is meaningful. That is a `baseline:` value that does not exist yet.
-- **Identity across a restore is the hard question**, and it is the same question the level format
-  faces: an actor's label at capture time is not a stable identity across a reload.
-
-Recommendation: build capture-diff first (it is nearly done), ship it as the reviewable-playtest
-product, and treat restore as its own milestone with its own baseline mode — rather than widening
-the capture format and discovering the property rule was wrong after files exist.
-
-## 3.4 Status
-
-| Piece | State |
+| | |
 |---|---|
-| Capture writer (`FGraphCodeWorldSnapshot`) | **built and observed** — 11 actors / 1,778 properties on first live run |
-| `export_world_snapshot` tool, registered and catalogued | **built; called live over HTTP, refusals and warnings exercised** |
-| Determinism gates | **3 specs, 0 failures** — including an idle gate that waits with a latent command, not a sleep |
-| Runtime fixture (`Content/__RuntimeFixture/`) | built, loaded and captured |
-| PIE capture (`pie:`) | **not written** — next milestone |
-| PIE lifecycle, input, scenario runner | designed, unstarted |
-| Save / restore / branch | **not designed** — §3.3 |
+| **Trial** | 14 days of all ten products from the first activation. One trial per email and one per PC. No card. |
+| **When it ends** | Reading, help, sidecars, search and renders keep working. Writes, restores and AI dry runs stop until you buy. Your assets are untouched. |
+| **Licence** | One-time purchase, per product or all products, for individuals or per studio seat: [pricing](https://graphcode.dev/pricing). |
+| **One PC at a time** | A licence writes from one PC at a time. Moving it can take up to 15 minutes to free the old PC. |
+| **Offline** | Reading, help, search, renders and sidecars work offline. Writes use a short-lived token from the licence server and pause, saying why, while it cannot be reached; Market downloads and MetaHuman service steps need the network too. |
+| **Clock** | Keep Windows' clock set automatically. Writes are refused while the PC clock is more than 5 minutes off. |
+| **Updates** | The editor offers a new release with a notice. Nothing installs until you click, and the previous version is kept so you can go back. |
 
-**What the first live run found**, since the value of running something is what it tells you that
-reading it did not: two captures 13 seconds and 1,567 frames apart were byte-identical apart from
-`at:`. No property moved on its own — the two predictions on record about which one would were both
-wrong, and are kept rather than quietly corrected. One real defect surfaced that only execution
-could have found: an *unset* soft object reference printed `<unsupported>`, because its empty
-`SubPathString` exports no text.
+## Trust and privacy
 
-## 3.5 The constraint anyone estimating this must read first
+You are being asked to load closed-source DLLs into your editor, so here is exactly what they send
+and how to check what you downloaded.
 
-**Every tool call today is a blocking game-thread call.** "Hold W for two seconds" inside a tool
-freezes the engine instead of moving anything. And the task queue runs **one tool, not a step
-list**. The scenario runner is therefore a new capability, not a new parameter — that is the single
-biggest reason Play is a separate product with its own milestones rather than three more tools.
-
-Two engine traps worth knowing before you start: there is no `PIE` console command, and enabling
-the Slate automation driver **takes the user's real mouse and keyboard away** until it is disabled.
-
----
-
-# 4. GraphCode Move — animation, navigation, AI
-
-**Scope:** how things move and decide. Animation Blueprints, state machines, montages, skeletons
-and control rigs; navigation; behaviour trees and blackboards; and the input bindings that drive
-them.
-
-This is the product with the most **already true and least noticed**.
-
-## 4.1 What already works
-
-**An Animation Blueprint gets a `.gc` today.** `UAnimBlueprint` derives from `UBlueprint`, so it
-projects as `kind:blueprint` and its AnimGraph renders in full — observed on a real asset with
-`AnimGraphNode_LayeredBoneBlend`, `AnimGraphNode_SequencePlayer`, `AnimGraphNode_TwoWayBlend`,
-`AnimGraphNode_Mirror` and `AnimGraphNode_Root`, each carrying its complete `[Node=(…)]` reflection
-property channel, with **zero unsupported notes**.
-
-That is not a special case anyone wrote. The reflection-driven property channel built so that a
-*plugin's* custom node could carry its own state handles anim nodes with no per-class table — the
-design working as intended. It is the strongest single piece of evidence that Move is a scope
-expansion rather than a rewrite.
-
-The MCP layer also already carries `anim`, `character` and `enhanced_input` domains.
-
-## 4.2 What is missing, honestly
-
-| Gap | State |
-|---|---|
-| **State machines** | **unmeasured, not unsupported.** The reader recurses through `GetSubGraphs()`, which both `UAnimGraphNode_StateMachine` and `UAnimStateNode` implement, so the graphs are reachable. Whether transitions and state structure round-trip is an open probe. **Do not write it into `omits:` until it is measured** — that is the rule the coverage ledger exists to enforce. |
-| **Target skeleton, preview mesh** | omitted, under `blueprint_settings`. An Animation Blueprint's own subclass fields are not projected — each reader assumed the other owned them |
-| Behavior Tree, Blackboard | no projection at all |
-| Navigation settings, NavMesh volumes | no projection at all |
-| Control Rig, Physics Asset, Skeleton, Animation Montage | no projection at all |
-| Input Action, Input Mapping Context | no projection at all |
-
-## 4.3 The first question to answer
-
-**Should an Animation Blueprint keep projecting as `kind:blueprint`?**
-
-Right now it does, which means the write path can route a graph write into an AnimGraph on the
-assumption it is a K2 graph. Nobody has proved that assumption holds. Giving Anim Blueprints their
-own kind is the first decision in this product, and it is a decision about safety rather than
-taxonomy.
-
-Then, in order: measure state machines; close `blueprint_settings` so a skeleton change is
-reviewable; then Behavior Tree and Blackboard, which are the two families with the clearest text
-form and the highest review value — an AI decision tree is exactly the kind of logic that gets
-changed by one person and breaks for another.
-
----
-
-# 5. GraphCode World — levels and the heavy families
-
-**Scope:** the content families that are complex, specific, and currently invisible in review —
-levels and placed actors, Niagara, Groom, PCG, audio, and the data families (Data Assets, Data
-Tables, curves).
-
-## 5.1 The level
-
-`Content/MainLevel.umap` is binary, so a placed-actor change is unreviewable — git shows a size
-delta and nothing else. Every argument for a Blueprint sidecar applies unchanged to a level. Levels
-were scoped out of v1 as a *timing* decision, not a finding that they are unprojectable.
-
-A level `.gc` and a Play capture both write actors-with-properties, which is exactly why the seam
-had to be decided before the second one was built:
-
-| | Play capture (`.gcp`) | Level projection (`.gc`) |
-|---|---|---|
-| names | a moment: `at: frame 16290 time 42.40` | an asset: `asset:`, `sig:` |
-| property rule | **absolute** — every visible property, always | **delta** — only deviation from the archetype |
-| one `BP_FixtureDoor` costs | 167 lines | around four |
-| committed | no | yes, beside the `.umap` |
-| applied back | never | that is the entire point |
-
-**The property rule is the load-bearing row**, and the two rules are opposites. So the header
-declares which one produced the file — `baseline: none` for a capture, `baseline: archetype` for a
-projection — because "this property is not in the file" otherwise means two different things, and a
-reader that cannot tell them apart is worse than two separate formats.
-
-**What genuinely merges is the writer**, with a baseline parameter: given an actor, a baseline
-object (or none), a precision and a property policy, emit one `actors {}` entry. A value that
-formats correctly in a capture then formats correctly in a projection, the sort order and
-quantisation are solved once, and `omits:` stays one vocabulary.
-
-**Started:** that unified writer's grammar landed 2026-07-29 — actors write as
-`Name = FullClassPath(props)` with braces for child components, keyed `(X=,Y=,Z=)` / `(Pitch=,Yaw=,Roll=)`
-values, the world transform once as `@placement`, and `baseline:` / `source:` / `ir:` in the header.
-Four specs pass. The one grammar extension it forced is worth knowing about: rule 7's inline form
-makes one captured actor an 8 KB line, so **layout follows from baseline** — `archetype` writes
-inline, `none` writes the same tokens wrapped one per line.
-
-**World Partition is refused by name** rather than guessed at. Splitting an actor per package under
-`__ExternalActors__` is a storage scheme, not a second syntax, and it needs its own ruling.
-
-## 5.2 Niagara
-
-Fully specified, not built. The design decision that matters: **model the authored stack, not a raw
-node dump.** A System projects as `emitters {}` handles with per-handle overrides plus
-`renderers {}`; Scratch Pad internals are deliberately out of the first slice.
-
-## 5.3 The data families
-
-Data Assets (`values {}`), Data Tables (`rows {}`), Curve Tables and standalone curves
-(`curves {}`) are specified and unbuilt. They are the **cheapest real wins in the whole product
-line** — a Data Table is already tabular, the value codec already exists, and "which balance number
-changed in this patch" is a question every team asks and no team can currently answer from a diff.
-
-## 5.4 Groom, PCG, audio
-
-**Not designed, not proposed, no code.** They are named here because they are in the product's
-scope, and naming them without a design is more honest than a matrix that implies otherwise.
-
-Before any of them is built, one policy question needs a ruling, and it applies to this whole
-product: **a Texture or a Static Mesh has no authored *text* worth diffing, only import settings.**
-`omits: everything` is a file that costs a save and says nothing. "Every asset gets a `.gc`" is a
-promise worth keeping only where the projection is meaningful — so World's supported list must be
-chosen, not enumerated.
-
-## 5.5 Order
-
-1. Levels — the highest-value gap, and the writer is started.
-2. Data Assets / Tables / curves — cheapest, on the shared value and curve codecs.
-3. Niagara System and Emitter — specified, no code.
-4. Actor identity and World Partition storage — **before** claiming any level write support.
-5. Groom, PCG, audio — after the §5.4 ruling.
-
----
-
-# 6. Extensions and naming
-
-| Extension | Product | Committed? | Applied back? |
+| When | To | Sent | Never sent |
 |---|---|---|---|
-| `.gc` | Core, Move, World | **yes**, beside the asset | yes |
-| `.gcp` | Play | no — written under `/Saved/` | no (see §3.3) |
-| `.gcw` | World, for level projection | yes, beside the `.umap` | that is the point |
+| Before a write, if no recent token covers it | GraphCode licence service | Your email, licence id, this PC's device id and public key, a session secret, a request id, and a signature over a server challenge | Project content, asset text, file names |
+| First activation, or moving to another PC | GraphCode licence service | Your email, the activation code if you bought one, this PC's public key | Same |
+| Editor start, then every 24 h (switch off in **Project Settings > Plugins > GraphCode Updates**) | GraphCode update service | A signed proof of this PC | Version, project, usage |
+| When you search or install Market packs | graphcode.dev | Your search, the pack you chose | Project content |
+| When you request a trial file on graphcode.dev/start | graphcode.dev | The email (and optional name and studio) you typed, plus the country and referring page our host adds | — |
+| When you rig or assemble a MetaHuman (Core Extension) | Epic's MetaHuman services, through Unreal's MetaHuman plugin | What Epic's service needs, under Epic's terms | — |
 
-**Note for anyone reading the source before the rename lands:** the in-tree runtime capture code,
-its specs and `.gitattributes` still spell the Play format `.gcw`, from the original ruling that
-read it as "GraphCode World". Under the four-product line that name belongs to World's level
-projection, and the capture is `.gcp`. The rename is cheap precisely because captures are never
-committed — there is no corpus to migrate, only the writer, the extension refusal in the apply
-path, and one `.gitattributes` line.
+- **GraphCode never calls an AI provider** and sends no usage data. Your AI client sends what it
+  reads to the provider *you* chose, under that provider's terms. That is the only path for your project's content.
+- **Who can reach the editor:** only programs on this machine. Tool requests from web pages
+  (a browser `Origin` header) are refused. GraphCode trusts your local user account, the same as the
+  editor itself does, so treat a shared or multi-user PC accordingly.
+  [Threat model](docs/STUDIOS.md#threat-model-who-can-talk-to-the-editor).
+- **Signed releases:** each `release.json` is signed (ES256) by one of our published release keys,
+  and it carries the archive's SHA-256. [`release/0.1.13/BUNDLE-SHA256.txt`](release/0.1.13/BUNDLE-SHA256.txt)
+  lists every file. The [verify script](tools/Verify-GraphCodeRelease.ps1) checks all of it,
+  prints the key's fingerprint, and flags any file that is not ours. 0.1.13 is signed with our
+  backup key, [for a reason we explain](docs/STUDIOS.md#release-signing-and-keys).
+- **What you can and cannot inspect:** every public header, build rule, plugin descriptor, guide and
+  example is in this repository. The implementation source is not, and we say so rather than imply otherwise.
+- [PRIVACY.md](PRIVACY.md) (draft) · [SECURITY.md](SECURITY.md) · [THIRD-PARTY-NOTICES.md](Plugins/GraphCode/THIRD-PARTY-NOTICES.md)
 
-Why separate extensions at all, rather than one format with a `kind:`:
+## Known limits
 
-- The sidecar reader **requires** `kind`, `asset` and `sig`, and refuses without all three.
-  `asset:` names the package the file projects, and the apply path writes the file back to it. A
-  capture has no asset. To share the extension it would have to name an asset it is not a
-  projection of, or force that check to be relaxed — and that check is the identity contract that
-  makes the write path safe to point at an arbitrary edited file.
-- `GcCheck` and `GcRegenerate` walk `.gc` files and verify each against its asset. A shared
-  extension means both need a kind filter forever, and the first time someone forgets it, CI fails
-  trying to verify a capture against an asset that never existed.
-- `.gitattributes` and `.gitignore` make "projections are committed, captures are not" a property
-  of the **filename** rather than of a path convention somebody has to remember.
+We would rather you read these now than find them in week two.
 
-**The grammar is shared and should be.** One value formatter is what makes `(150.00, 200.00, 0.00)`
-render identically in a sidecar and a capture, which is what makes them comparable by eye. Share
-the formatter. Do not share the envelope, the reader, or the write door.
+- **Windows 64-bit and Unreal Engine 5.7.4 only.** A new engine version needs a matching release.
+- **Closed source**, and the binaries are not yet Authenticode-signed; use the release signature to verify them.
+- **The editor must be running** for writes, renders, searches and live reads. Saved reads, help and
+  grammar work with it closed. Renders need a GPU editor session, not a headless one.
+- **The `.uasset` is still the source of truth.** Binary assets still conflict in Git merges, and the
+  safe default is `merge=binary`. A semantic text merge is built and in validation, not enabled.
+- **Not every facet is text.** Each kind lists what it omits. Meshes, textures, sound waves,
+  skeletons, imported animations, MetaHumans and grooms are built or imported, then patched.
+- **Generated content is measured, not guaranteed.** Motion, rigs, hair and clothing come with build
+  notes and renders to judge by, and the shipped examples state their own remaining defects. Garment is the newest product.
+- **Licence:** writes need the licence server, a correct clock and one PC at a time per licence.
+- **Perforce** is not integrated or tested yet.
 
----
+## For studios
 
-# 7. Architecture
+[docs/STUDIOS.md](docs/STUDIOS.md) covers the threat model, release keys, CI, Perforce, packaged
+games, version pinning and uninstalling. The short version:
 
-```
-GraphCode/
-  Source/
-    GraphCode/            product startup, settings, save hook, sidecar writer/reader,
-                          projector, sync, apply, commandlets, world snapshot
-    AuthoringCore/        shared property/value/signature primitives + reflection codec
-    BlueprintIR/          deterministic Blueprint read/write language  (blueprintir/2)
-    WidgetIR/             deterministic Widget Designer language      (widgetir/2)
-    MaterialIR/           deterministic Material language             (materialir/1)
-    UnrealClaude/         bundled MCP/HTTP backend  (optional)
-  Resources/
-    mcp-bridge/           provider-neutral Node/stdio bridge (optional)
-    Fixtures/             .gc fixtures for the reader/writer specs
-```
+- **CI:** `UnrealEditor-Cmd.exe MyGame.uproject "-run=GraphCode.GcCheck"` checks every sidecar
+  headlessly, with **no licence and no network**, and exits 1 on anything missing or stale.
+- **Packaged games:** what GraphCode makes are ordinary assets. A few small runtime modules are packaged
+  while the plugins are enabled; only Groom feature sockets and Play test nodes reference them.
+- **Pinning:** keep this release's archive and switch the update check off. Nothing ever installs without a click.
+- **If we disappear:** your assets and games are ordinary Unreal content and need nothing from us to open,
+  build or ship. Your `.gc` documents and recipes stay readable text; rebuilding from a recipe is a GraphCode write.
 
-Dependency arrows are one-way and enforced:
+## What is in this repository
 
-- Sidecar generation may call the IR modules.
-- The MCP backend may adapt the IR modules into tools.
-- **The IR modules never include MCP, HTTP, product UI, or backend types.**
-- **The sidecar module never includes MCP backend headers.** They merely ship in the same package,
-  so `.gc` still works when the MCP integration is disabled or absent.
+The browsable half of the download. Binaries are attached to each
+[release](https://github.com/xiangjie9999/GraphCode/releases) and never committed.
 
-| Type | Role |
+| Path | What it is |
 |---|---|
-| `FGraphCodeService` | save/rename/delete hooks, the dedup queue, the budgeted ticker |
-| `FGraphCodeProjector` | asset → one canonical document; owns the canonical option set |
-| `FGraphCodeSidecarWriter` | document → bytes; envelope, BLAKE3 body digest, atomic write |
-| `FGraphCodeSidecarReader` | bytes → envelope + named blocks, digest recomputed |
-| `FGraphCodeApply` | block routing, staleness checks, refusal collection |
-| `FGraphCodeActorWriter` | actor emission — shared by `components{}`, captures, and level projection |
-| `FGraphCodeWorldSnapshot` | Play's capture writer |
-| `FGraphCodePolicy` | eligibility: kinds, excluded prefixes, transient/procedural saves |
+| `Plugins/<Product>/` | The ten plugin descriptors, every public C++ header and `.Build.cs` rule, exactly as shipped. |
+| `Plugins/GraphCode/GRAPHCODE.md`, `SETUP.md` | What your AI reads first, and the project setup it follows. |
+| `Plugins/GraphCode/Docs/` | All 96 shipped guides and the worked examples. |
+| `Plugins/GraphCode/Resources/mcp-bridge/` | The capability registry and the tool catalog. |
+| `docs/` | [PRODUCTS.md](docs/PRODUCTS.md), [KINDS.md](docs/KINDS.md) (generated), [STUDIOS.md](docs/STUDIOS.md). |
+| `release/` | Signed manifests, public keys and per-file checksums. |
+| `tools/` | The download verifier and the kinds generator. |
 
-The sidecar reader **deliberately does not understand a statement.** `widgets { … }` is widgetir/2
-and `graph { … }` is blueprintir/2, and both already have a parser that owns their grammar. A third
-one here would be a third place for the language to drift. A block's body comes back as bytes, and
-whoever wants to interpret it hands it to the IR that wrote it.
+## Support and legal
 
-One thing that fell out of building that reader: **a brace is not always a brace.** A designer's
-label can be `"{ not a block }"`, a UMG display name can be `` `Handle (Pull) }` ``, and an
-unsupported-note is free text. The scanner tracks strings, backtick identifiers and comments —
-counting braces without that state truncates a document at the wrong byte, and since this feeds a
-write path the symptom would be a half-applied asset rather than a parse error.
+- **Questions and bugs:** [GitHub Issues](https://github.com/xiangjie9999/GraphCode/issues). Include
+  the version, the tool call and the full reply, since a refusal message usually explains itself.
+- **Licences and billing:** support@graphcode.dev · **Security:** [SECURITY.md](SECURITY.md), please not as a public issue.
+- [LICENSE.md](LICENSE.md) (end-user licence agreement) · [PRIVACY.md](PRIVACY.md) · [CHANGELOG.md](CHANGELOG.md).
+  The licence agreement and privacy policy are drafts under legal review and are marked as such.
+- Unreal Engine is a trademark of Epic Games, Inc. GraphCode is independent and not affiliated with or
+  endorsed by Epic Games. Your use of Unreal Engine is governed by Epic's EULA.
 
-## The optional AI layer
-
-All four products expose a provider-neutral MCP backend, so an agent can read and write through the
-same text. It is **bundled, not required** — the sidecar pipeline never calls HTTP and never
-depends on the permission system.
-
-| Tool | Does |
-|---|---|
-| `gc_help` | the grammar, on demand, per kind and per block. **Works with the editor closed.** |
-| `gc_read` | one asset as text. `source:"saved"` works with the editor closed; `source:"live"` projects the running editor including unsaved edits |
-| `gc_describe` | what a prospective node or widget would really look like — real property paths, value sets, the slot class the parent actually creates |
-| `gc_sync` | create or refresh one asset's `.gc` |
-| `gc_apply` | write text back, whole file or one block, with `graph_name:` to target a single graph |
-
-Two design points worth stealing regardless of the AI angle: **"live vs saved" is a parameter, not
-an architecture** — the same projector serves both, which is why editor-closed reads work at all.
-And **a `.gc` has exactly one legal rendering per asset**, which is what makes `sig:` a digest — so
-any diagnostic knob producing something other than that rendering returns `sig: "none"` plus a list
-naming what did it. Text that is *not* the file can never be mistaken for the file.
-
-Security baseline, all products: loopback binding only, browser-origin mutation rejected, bounded
-request bodies, arbitrary script and console execution hidden and deny-by-default, asset deletion
-recoverable and reference-checked, no telemetry, no cloud account.
-
----
-
-# 8. Status at a glance
-
-| | Built and verified | Designed | Not designed |
-|---|---|---|---|
-| **GraphCode** | 7 asset kinds, 251-file corpus, save/rename/delete lifecycle, reader, binary binding, block-filtered read, file-is-the-input write path, 3 commandlets, 47 specs | timelines, non-Actor components, `blueprint_settings` | — |
-| **Play** | capture writer, export tool, 3 determinism gates, runtime fixture | PIE capture, PIE lifecycle, input, 9-step scenario runner | save / restore / branch |
-| **Move** | AnimGraph projection (as `kind:blueprint`), anim/character/input MCP domains | own kind for Anim Blueprints, `blueprint_settings` | Behavior Tree, Blackboard, nav, Control Rig, Physics Asset, Skeleton, Montage |
-| **World** | unified actor writer grammar, 4 specs | level `.gc`, Niagara System/Emitter, Data Asset/Table/curve, actor identity | Groom, PCG, audio, World Partition storage |
-
-Plugin: `VersionName 0.1.0`, `IsBetaVersion: true`, UE 5.7. Win64, Linux and Mac are declared —
-with the honest caveat that only Win64 has an automated verification gate today.
-
----
-
-# 9. Packaging four products
-
-This is a structural decision worth taking before the website, because the site's pricing page and
-the repository layout have to agree.
-
-**The constraint:** a marketplace listing is one ZIP containing one self-contained plugin. Four
-products cannot be four listings that all require the buyer to also find and install a fifth thing
-by hand — and equally, Play/Move/World cannot each bundle their own copy of the core, or a buyer
-with two of them has two projectors racing for the same save hook.
-
-**Recommendation: one core plugin, three extension plugins that declare it as a dependency.**
-
-```
-graphcode/                        ← one repository
-  GraphCode/                      ← the core plugin. Standalone, sells alone.
-  GraphCodePlay/                  ← declares GraphCode as a plugin dependency
-  GraphCodeMove/
-  GraphCodeWorld/
-  docs/
-  examples/                       ← real .gc files next to the assets they came from
-  .github/workflows/              ← GcCheck as a CI gate
-  LICENSE  THIRD_PARTY_NOTICES  CHANGELOG.md  README.md
-```
-
-What that buys, and what it costs:
-
-- **The core sells alone and is the upgrade path.** Every extension listing's description can say
-  "requires GraphCode", which is a normal and well-understood marketplace shape.
-- **One save hook, one projector, one settings page.** Extensions register asset kinds *into* the
-  core's projector rather than owning a pipeline. This is the load-bearing reason not to ship four
-  independent plugins.
-- **The IR modules live in the core**, so an extension is genuinely small — a projector, a writer,
-  a help topic, a capability entry, and specs.
-- **The cost is a per-engine-version build matrix multiplied by four.** Marketplaces require a new
-  code-plugin package for each engine release, so four products is four submissions per engine
-  version. Budget for it, and start the supported matrix at one engine version and one platform.
-
-**Before any of it ships**, the core has to become extractable from the host project: fold the IR
-modules and the MCP backend in as `Source/` modules keeping their existing module and API names
-(the move must not become a rewrite); move project-specific excluded prefixes into project config,
-because a customer path must never be silently excluded for sharing a name with a common
-marketplace folder; and turn the development descriptor into a release descriptor — real version,
-vendor, documentation and support URLs, `EnabledByDefault: false`, no sibling plugin dependencies.
-
-**Add a capability manifest per product**: one release-owned record per kind — IR version,
-implemented blocks, supported operations, `covers`/`omits`, minimum engine version, the help
-revision that describes it — generated or validated in CI and used as the source for the offline
-help index. A proposed topic may be visible only when it is labelled proposed *and* explicitly
-rejected as write input. **This is the mechanism that stops four products' marketing from drifting
-away from four products' code.**
-
----
-
-# 10. Website source material
-
-## 10.1 The line for the whole line
-
-**Unreal you can actually review.** GraphCode turns binary content into deterministic text — so
-Blueprints, materials, playtests, animation and levels live in code review, in `git blame`, and in
-CI, instead of behind `Binary files differ`.
-
-## 10.2 One line each
-
-| | Line | The promise underneath |
-|---|---|---|
-| **GraphCode** | *Your assets, in your diff.* | A Blueprint change shows up as changed lines, automatically, on every save. |
-| **GraphCode Play** | *Playtests you can diff.* | Capture the running game as text. Two runs, one diff, and you see which nine properties differed. |
-| **GraphCode Move** | *Animation and AI, in review.* | The state machine, the behaviour tree and the montage stop being a black box in the PR. |
-| **GraphCode World** | *Levels and effects, finally reviewable.* | A moved actor, a retuned emitter, a changed balance row — all of it as text. |
-
-## 10.3 The three things the landing page has to land
-
-1. **The before/after.** One screenshot of `Binary files differ`, one of a real `.gc` diff showing
-   a single changed statement. That contrast is the entire pitch and needs no explanation. Put it
-   above everything, including the product line.
-2. **"It does not lie to you."** Every gap is declared in the file, on every write, enforced by
-   tests. This is the trust argument and it is the one that separates GraphCode from a `.uasset`
-   dumper. The sceptical reader's first question is *"how do I know the diff is complete?"* and the
-   answer is a line in the file.
-3. **"It works without the AI."** Sidecars, diffs, CI checks and the commandlets need no Node, no
-   network, no account. The AI layer is an upgrade path, not a dependency. Say so above the fold —
-   a plugin that appears to require a cloud subscription is dead in a studio procurement review.
-
-## 10.4 Structure the page around the core, not the line
-
-A four-product grid at the top is a mistake. Someone who does not yet believe that a Blueprint can
-be meaningfully diffed will not be persuaded by learning there are four of them.
-
-Suggested order: the before/after → what the core does → the honesty contract → **then** the
-product line as "and the same thing, pointed at four places" → per-product pages.
-
-Each product page should carry its own honest status band. "Capture built, runner designed" is not
-a weakness on a page whose entire credibility rests on declaring gaps — it is the argument.
-
-## 10.5 Objections to answer
-
-| Objection | Answer |
-|---|---|
-| "Unreal already has an asset diff tool." | It is one asset, in a GUI, for someone who already has the project open. It is not in your PR, your CI, your `git log`, or your grep. |
-| "How do I know the text is complete?" | You do not have to trust it — read `omits:`. Every gap is in the file, on every write, asserted by two automated specs. |
-| "Will this slow down Save All?" | The save hook does no work. It enqueues, deduplicates by package, and a ticker services the queue against a per-frame budget. |
-| "What happens on a merge conflict?" | The projection is marked `merge=binary`, so git conflicts rather than producing a text merge describing no asset that exists. Merge the binary, re-save, the text regenerates. |
-| "Does it need an AI subscription?" | No. The core has no network path at all. |
-| "What if it's wrong?" | The binary always wins. A projection is generated and safe to delete. |
-| "Why four products instead of one?" | They are one format and one guarantee. They differ in what they point at, and in how much of each is built — which the status band on every page tells you. |
-
-## 10.6 What the page must not claim
-
-Coverage it does not have. The kind matrix in §2.2 and the limitations in §2.8 are the marketing
-copy too — an accurate supported-list is worth more than a broad one, because the first customer
-whose Timeline changes vanish silently is also the last.
-
-Specifically: do not put Groom, PCG or audio on a feature list. They are scope, not features. Do
-not imply Play can restore state — it captures. Do not imply Move covers behaviour trees.
-
----
-
-# 11. Document index
-
-The design record. Each of these is a working document, not marketing.
-
-| Document | Product | What it is |
-|---|---|---|
-| `GC-SIDECAR-DESIGN.md` | Core | the core spec. §13 the merged document format, §14 reading a `.gc` back, §14.6 the write door, §15 what the projection leaves out |
-| `GRAPHCODE-ROADMAP.md` | Core | product and migration plan. **Track G is the coverage ledger** — read it before claiming any asset or facet is covered |
-| `GRAPHCODE-FAB-RELEASE-PLAN.md` | Core | release architecture, package profile, verification matrix, submission materials |
-| `GRAPHCODE-SIDECAR-LIFECYCLE.md` | Core | the save/rename/delete contract and its required specs |
-| `GC-GRAMMAR-AUDIT.md` | All | is the grammar one language across kinds? Audit against the fifteen rules, with the deliberate divergences recorded so nobody "fixes" them |
-| `GC-MERGE-HANDOFF.md` | Core | pick-up-here state: what landed, what it disproved, ordered next steps |
-| `BLUEPRINT-IR-STATUS.md` | Core, Move | the Blueprint IR itself |
-| `UI-AUTHORING-DESIGN.md` | Core | the Widget IR. §26 is the current grammar; §5/§10/§21 describe the superseded one |
-| `GRAPHCODE-MATERIAL-PLAN.md` | Core | the Material IR, and §11's open identity questions |
-| `RUNTIME-DRIVE-DESIGN.md` | **Play** | the whole product. §5 the capture spec, §5.5 the five sources of diff noise, §6 the scenario runner, §12.0 pick-up-here |
-| `WORLD-GC-DESIGN.md` | **World** | the level as text, and where it meets the capture. §10 the conformance audit, §11 the task list |
-| `GRAPHCODE-EXTENDED-ASSET-SYNTAX-PROPOSAL.md` | **World** | Niagara (§4), placed actors (§6), timelines (§7), data families (§8). Non-authoritative except the implemented Actor subset |
+<p align="center"><sub>GraphCode 0.1.13 · Unreal Engine 5.7.4 · Win64 · <a href="https://graphcode.dev">graphcode.dev</a></sub></p>

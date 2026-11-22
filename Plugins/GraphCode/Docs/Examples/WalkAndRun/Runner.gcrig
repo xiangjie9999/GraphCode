@@ -1,0 +1,418 @@
+gcrig 1  mesh:/Game/GraphCodeExamples/RifleWalk_20261003/SM_RifleManBody  into:/Game/__MCPTests/Gait_20261007/Runner
+         faces:+Y  mirror:false  stance:t_pose  binds:tight  influences:8
+         body_speed:400  body_accel:850
+# body_speed / body_accel (MOVE-ROOT1 R7, Docs/GC-MOVE-ROOT-STATE-PLAN.md "R7 END TARGET", 2026-10-12): 400 cm/s is this rig's
+# source subject's measured run (Hamner, 3.96 m/s; Docs/Research/human-running-gait.md). body_accel bounds the body's horizontal
+# acceleration at every support knot, an instantaneous bound, so it is the PEAK of maximal braking, -850 +/- 107 cm/s^2, not its
+# whole-stop mean -445 +/- 61 that this line first held (Harper et al., Docs/Research/body-momentum-references.md). User 2026-10-12:
+# "Raise it as you wish". Measured on native9's exact body-state inputs (Saved/Research/MoveTimingMethod/root-state-independent-v001/
+# leg-recovery-v001/cap-sweep): the drawn strides ask mean 415-985 cm/s^2 per stance; at 450 the capped body ran 47 cm behind and
+# 26 cm under RunKick's drawing at the kick, at 850 26 cm and 13 cm, ordinary strides within 7 cm / 3 cm, no clip worse.
+# MOVE-GAIT1 G4/G5 TEST RIG (Docs/GC-MOVE-GAIT-PLAN.md), a copy of RifleWalk_20261003/RifleMan.gcrig built into __MCPTests:
+# the same joints and skin, with the ranges a walking and running person uses (codex's cited curves,
+# Docs/Research/gait-reference-curves.md): the ankle plantarflexes to 50 (RifleMan stops at 10; a walk's push-off needs 17,
+# a run's 23-31), the thighs and the three spine joints twist (RifleMan locks both; a walk turns the hip -13..+6 and the
+# trunk counter-turns 13-21), and the feet carry heel, ball and toe contacts on their own bones for plant(..., roll=).
+# Proven here first; RifleMan gets the same ranges once the run and the full-body walk are accepted.
+
+# THE RIFLE WALKER'S RIG (user, 2026-10-03: "choose any one even if it's not rig, then rig it. I don't want you
+# to waste anymore time hard coding things"). Epic's tutorial mannequin (SK_RifleMan, a copy) REBUILT as a rig: its
+# joints stay where Epic put them and keep their names, every bone now points down its limb and bends where its
+# region says, so a .gcmove says axis=fold, a contact by name and a grip, never a raw bone axis or sign. The
+# keep-the-skin route was tried first and refused: a region there re-aims an imported bone, which is not built.
+#
+# Joint places: gc_read kind:"rig" of the same import (SK_LowSwing). Creases, pads and soles: the closing side of
+# each joint on the skin and the pads SwordContacts.gcrig measured, in reference component space (faces +Y, up +Z,
+# its left +X). Ranges are pairs with zero straight. Written by make_rig.py from those numbers.
+#
+# influences:8 (2026-10-05, Docs/GC-MOVE-ARM-LADDER.md rung 3): the fewest the twist spread allows. At 12 the voxel
+# bind kept about 0.5% of each finger's skin on fingers two away, and once one fingertip rested on a held part, the
+# collision fit refused every other finger's step for that tip's skin; the support hand on a staff stayed open.
+build {
+  SK_Runner = skeletal_mesh()
+  IKR_Runner   = ik_rig() [iterations=200]
+  # gives= is how far a held thing may press into the skin, in cm, as VRHand.gcrig says it (0.35): with none, the
+  # rifle grab refused fingers resting 0.001 to 0.3 cm into the gun.
+  PHAT_Runner  = physics_asset() [bodies=hull, gives=0.35]
+}
+points {
+  Root = (0.000, 0.000, 0.000)
+  pelvis = (0.000, 0.100, 113.996)
+  spine_01 = (0.000, 0.385, 123.271)
+  spine_02 = (0.000, -0.395, 138.978)
+  spine_03 = (0.000, -1.738, 151.226)
+  neck_01 = (0.000, -0.666, 165.838)
+  head = (0.000, 1.614, 174.263)
+  clavicle_l = (2.281, -3.927, 164.227)
+  upperarm_l = (20.867, -1.748, 153.696)
+  lowerarm_l = (44.989, -1.748, 153.696)
+  hand_l = (76.246, -1.866, 153.702)
+  index_01_l = (88.739, 1.371, 154.483)
+  index_02_l = (92.286, 1.836, 154.017)
+  index_03_l = (95.547, 2.073, 153.234)
+  middle_01_l = (89.062, -1.097, 154.908)
+  middle_02_l = (92.656, -0.538, 154.704)
+  middle_03_l = (95.841, -0.340, 154.341)
+  ring_01_l = (89.052, -2.763, 154.573)
+  ring_02_l = (92.509, -2.761, 154.376)
+  ring_03_l = (95.733, -2.390, 153.806)
+  pinky_01_l = (88.775, -4.795, 153.781)
+  pinky_02_l = (92.089, -4.515, 153.423)
+  pinky_03_l = (94.621, -4.272, 152.988)
+  thumb_01_l = (79.262, -0.460, 154.084)
+  thumb_02_l = (81.642, 2.705, 152.397)
+  thumb_03_l = (84.719, 5.865, 150.635)
+  thigh_l = (11.570, 0.758, 106.541)
+  calf_l = (9.219, 0.282, 53.484)
+  foot_l = (7.616, -4.040, 10.481)
+  ball_l = (7.694, 5.362, 1.104)
+  clavicle_r = (-2.281, -3.927, 164.227)
+  upperarm_r = (-20.867, -1.748, 153.696)
+  lowerarm_r = (-44.989, -1.748, 153.696)
+  hand_r = (-76.246, -1.866, 153.702)
+  index_01_r = (-88.739, 1.371, 154.483)
+  index_02_r = (-92.286, 1.836, 154.017)
+  index_03_r = (-95.547, 2.073, 153.234)
+  middle_01_r = (-89.062, -1.097, 154.908)
+  middle_02_r = (-92.656, -0.538, 154.704)
+  middle_03_r = (-95.841, -0.340, 154.341)
+  ring_01_r = (-89.052, -2.763, 154.573)
+  ring_02_r = (-92.509, -2.761, 154.376)
+  ring_03_r = (-95.733, -2.390, 153.806)
+  pinky_01_r = (-88.775, -4.795, 153.781)
+  pinky_02_r = (-92.089, -4.515, 153.423)
+  pinky_03_r = (-94.621, -4.272, 152.988)
+  thumb_01_r = (-79.262, -0.460, 154.084)
+  thumb_02_r = (-81.642, 2.705, 152.397)
+  thumb_03_r = (-84.719, 5.865, 150.635)
+  thigh_r = (-11.570, 0.758, 106.541)
+  calf_r = (-9.219, 0.282, 53.484)
+  foot_r = (-7.616, -4.040, 10.481)
+  ball_r = (-7.694, 5.362, 1.104)
+  index_tip_l = (97.875, 2.242, 152.675)
+  middle_tip_l = (98.419, -0.180, 154.047)
+  ring_tip_l = (98.179, -2.109, 153.374)
+  pinky_tip_l = (96.681, -4.074, 152.634)
+  thumb_tip_l = (86.533, 7.728, 149.596)
+  toe_l = (7.694, 13.200, 1.100)
+  index_tip_r = (-97.875, 2.242, 152.675)
+  middle_tip_r = (-98.419, -0.180, 154.047)
+  ring_tip_r = (-98.179, -2.109, 153.374)
+  pinky_tip_r = (-96.681, -4.074, 152.634)
+  thumb_tip_r = (-86.533, 7.728, 149.596)
+  toe_r = (-7.694, 13.200, 1.100)
+  head_tip = (0.000, 1.000, 186.000)
+  # the side each joint closes toward
+  collar_front_l = (11.574, 3.163, 158.962)
+  shoulder_front_l = (20.867, 3.752, 153.696)
+  elbow_front_l = (44.989, 2.252, 153.696)
+  wrist_palm_l = (76.246, -1.866, 151.302)
+  index_01_palm_l = (88.739, 1.371, 153.583)
+  index_02_palm_l = (92.286, 1.836, 153.117)
+  index_03_palm_l = (95.547, 2.073, 152.334)
+  middle_01_palm_l = (89.062, -1.097, 154.008)
+  middle_02_palm_l = (92.656, -0.538, 153.804)
+  middle_03_palm_l = (95.841, -0.340, 153.441)
+  ring_01_palm_l = (89.052, -2.763, 153.673)
+  ring_02_palm_l = (92.509, -2.761, 153.476)
+  ring_03_palm_l = (95.733, -2.390, 152.906)
+  pinky_01_palm_l = (88.775, -4.795, 152.881)
+  pinky_02_palm_l = (92.089, -4.515, 152.523)
+  pinky_03_palm_l = (94.621, -4.272, 152.088)
+  thumb_01_in_l = (79.262, -1.060, 153.184)
+  thumb_02_in_l = (81.642, 2.105, 151.497)
+  thumb_03_in_l = (84.719, 5.265, 149.735)
+  hip_front_l = (11.570, 9.258, 106.541)
+  knee_back_l = (9.219, -5.218, 53.484)
+  ankle_front_l = (7.616, 0.460, 10.481)
+  toe_top_l = (7.694, 5.362, 3.704)
+  collar_front_r = (-11.574, 3.163, 158.962)
+  shoulder_front_r = (-20.867, 3.752, 153.696)
+  elbow_front_r = (-44.989, 2.252, 153.696)
+  wrist_palm_r = (-76.246, -1.866, 151.302)
+  index_01_palm_r = (-88.739, 1.371, 153.583)
+  index_02_palm_r = (-92.286, 1.836, 153.117)
+  index_03_palm_r = (-95.547, 2.073, 152.334)
+  middle_01_palm_r = (-89.062, -1.097, 154.008)
+  middle_02_palm_r = (-92.656, -0.538, 153.804)
+  middle_03_palm_r = (-95.841, -0.340, 153.441)
+  ring_01_palm_r = (-89.052, -2.763, 153.673)
+  ring_02_palm_r = (-92.509, -2.761, 153.476)
+  ring_03_palm_r = (-95.733, -2.390, 152.906)
+  pinky_01_palm_r = (-88.775, -4.795, 152.881)
+  pinky_02_palm_r = (-92.089, -4.515, 152.523)
+  pinky_03_palm_r = (-94.621, -4.272, 152.088)
+  thumb_01_in_r = (-79.262, -1.060, 153.184)
+  thumb_02_in_r = (-81.642, 2.105, 151.497)
+  thumb_03_in_r = (-84.719, 5.265, 149.735)
+  hip_front_r = (-11.570, 9.258, 106.541)
+  knee_back_r = (-9.219, -5.218, 53.484)
+  ankle_front_r = (-7.616, 0.460, 10.481)
+  toe_top_r = (-7.694, 5.362, 3.704)
+  waist_front = (0.000, 12.000, 120.000)
+  chest_front = (0.000, 13.500, 136.000)
+  upper_chest_front = (0.000, 14.000, 148.000)
+  neck_front = (0.000, 6.000, 164.000)
+  head_front = (0.000, 9.000, 172.000)
+  # what touches: palm centres (down in the T-pose), finger pads, the lowest foot skin
+  palm_l = (82.500, -1.800, 151.400)
+  palm_r = (-82.500, -1.800, 151.400)
+  index_pad_l = (97.200, 2.200, 152.800)
+  middle_pad_l = (97.600, -0.200, 153.800)
+  ring_pad_l = (97.400, -2.200, 153.300)
+  little_pad_l = (96.200, -4.100, 152.500)
+  index_pad_r = (-97.200, 2.200, 152.800)
+  middle_pad_r = (-97.600, -0.200, 153.800)
+  ring_pad_r = (-97.400, -2.200, 153.300)
+  little_pad_r = (-96.200, -4.100, 152.500)
+  sole_l = (7.540, -8.640, 0.000)
+  sole_r = (-7.550, -8.640, 0.000)
+  ball_sole_l = (7.694, 5.362, 0.000)
+  toe_sole_l = (7.694, 13.200, 0.000)
+  ball_sole_r = (-7.694, 5.362, 0.000)
+  toe_sole_r = (-7.694, 13.200, 0.000)
+  # The crotch of the web between thumb and forefinger, on the palm's skin, where a gun's backstrap goes
+  # (2026-10-04, web meets web as VRHand.gcrig). Measured with gc_render ask on SM_RifleManBody from below:
+  # the palm's thumb-side edge turns into the thumb at X -83.3, Y 2.8, and the palm's skin there is at Z 151.4.
+  web_r = (-83.300, 2.800, 151.400)
+  # The heel of the palm on the little finger's side, where a held handle's lower end presses (2026-10-04). Measured
+  # the same way: the palm's skin at its corner by the wrist, facing down. A handle lies across the palm from here to
+  # the web, about 24 degrees off square to the hand toward the fingers, which is the slant a fist holds it at.
+  heel_r = (-79.900, -4.700, 151.400)
+  # The same two on the left hand, mirrored across X: the mesh is symmetric (every joint pair in this file mirrors
+  # exactly). They give the support palm's socket its handle line (2026-10-04).
+  web_l = (83.300, 2.800, 151.400)
+  heel_l = (79.900, -4.700, 151.400)
+  # The right shoulder pocket, where a rifle's stock sits (2026-10-04): the hollow between the chest's front and the
+  # shoulder's, on the skin. Measured with gc_render ask on SM_RifleManBody from the front: the chest beside it at
+  # (-15.2, 8.8, 149.3) facing forward and out, the shoulder's front at (-20.0, 6.0, 152.9).
+  shoulder_pocket_r = (-16.500, 8.200, 150.000)
+  # The middle of each forearm, on its own line half way from the elbow to the wrist: where the band its roll goes
+  # down is centred, as TwistArm.gcrig's forearm band is (2026-10-04).
+  forearm_mid_l = (60.618, -1.807, 153.699)
+  forearm_mid_r = (-60.618, -1.807, 153.699)
+}
+chains {
+  body = Root -> pelvis -> spine_01 -> spine_02 -> spine_03 -> neck_01 -> head -> head_tip
+  collar_L = spine_03 -> clavicle_l -> upperarm_l
+  arm_L = upperarm_l -> lowerarm_l -> hand_l
+  # Each finger twice (2026-10-05): from the wrist, which gives the bones their parents, and from its own knuckle,
+  # which is the chain its contact moves, so a reach bends the finger and not the hand (VRHand.gcrig's index_r). It ends
+  # at the last finger bone: the tip is a skinless, unlimited leaf, and a chain ending there turned it, not the finger.
+  index_L_hand = hand_l -> index_01_l -> index_02_l -> index_03_l -> index_tip_l
+  index_L = index_01_l -> index_02_l -> index_03_l
+  middle_L_hand = hand_l -> middle_01_l -> middle_02_l -> middle_03_l -> middle_tip_l
+  middle_L = middle_01_l -> middle_02_l -> middle_03_l
+  ring_L_hand = hand_l -> ring_01_l -> ring_02_l -> ring_03_l -> ring_tip_l
+  ring_L = ring_01_l -> ring_02_l -> ring_03_l
+  little_L_hand = hand_l -> pinky_01_l -> pinky_02_l -> pinky_03_l -> pinky_tip_l
+  little_L = pinky_01_l -> pinky_02_l -> pinky_03_l
+  thumb_L_hand = hand_l -> thumb_01_l -> thumb_02_l -> thumb_03_l -> thumb_tip_l
+  thumb_L = thumb_01_l -> thumb_02_l -> thumb_03_l
+  leg_L = pelvis -> thigh_l -> calf_l -> foot_l -> ball_l -> toe_l
+  collar_R = spine_03 -> clavicle_r -> upperarm_r
+  arm_R = upperarm_r -> lowerarm_r -> hand_r
+  index_R_hand = hand_r -> index_01_r -> index_02_r -> index_03_r -> index_tip_r
+  index_R = index_01_r -> index_02_r -> index_03_r
+  middle_R_hand = hand_r -> middle_01_r -> middle_02_r -> middle_03_r -> middle_tip_r
+  middle_R = middle_01_r -> middle_02_r -> middle_03_r
+  ring_R_hand = hand_r -> ring_01_r -> ring_02_r -> ring_03_r -> ring_tip_r
+  ring_R = ring_01_r -> ring_02_r -> ring_03_r
+  little_R_hand = hand_r -> pinky_01_r -> pinky_02_r -> pinky_03_r -> pinky_tip_r
+  little_R = pinky_01_r -> pinky_02_r -> pinky_03_r
+  thumb_R_hand = hand_r -> thumb_01_r -> thumb_02_r -> thumb_03_r -> thumb_tip_r
+  thumb_R = thumb_01_r -> thumb_02_r -> thumb_03_r
+  leg_R = pelvis -> thigh_r -> calf_r -> foot_r -> ball_r -> toe_r
+}
+regions {
+  waist = region($waist_front, long=8, wide=45%) [along=($pelvis, $spine_02)]
+  mid_back = region($chest_front, long=8, wide=45%) [along=($spine_01, $spine_03)]
+  thorax = region($upper_chest_front, long=8, wide=45%) [along=($spine_02, $neck_01)]
+  neck_base = region($neck_front, long=4, wide=45%) [along=($spine_03, $head)]
+  head_base = region($head_front, long=4, wide=45%) [along=($neck_01, $head_tip)]
+  collar_band_l = region($collar_front_l, long=6, wide=45%) [along=($spine_03, $upperarm_l)]
+  shoulder_band_l = region($shoulder_front_l, long=6, wide=45%) [along=($clavicle_l, $lowerarm_l)]
+  elbow_band_l = region($elbow_front_l, long=5, wide=45%) [along=($upperarm_l, $hand_l)]
+  wrist_band_l = region($wrist_palm_l, long=3, wide=45%) [along=($lowerarm_l, $middle_01_l)]
+  index_mcp_l = region($index_01_palm_l, long=1.4, wide=45%) [along=($hand_l, $index_02_l)]
+  index_pip_l = region($index_02_palm_l, long=1.1, wide=45%) [along=($index_01_l, $index_03_l)]
+  index_dip_l = region($index_03_palm_l, long=0.9, wide=45%) [along=($index_02_l, $index_tip_l)]
+  middle_mcp_l = region($middle_01_palm_l, long=1.4, wide=45%) [along=($hand_l, $middle_02_l)]
+  middle_pip_l = region($middle_02_palm_l, long=1.1, wide=45%) [along=($middle_01_l, $middle_03_l)]
+  middle_dip_l = region($middle_03_palm_l, long=0.9, wide=45%) [along=($middle_02_l, $middle_tip_l)]
+  ring_mcp_l = region($ring_01_palm_l, long=1.4, wide=45%) [along=($hand_l, $ring_02_l)]
+  ring_pip_l = region($ring_02_palm_l, long=1.1, wide=45%) [along=($ring_01_l, $ring_03_l)]
+  ring_dip_l = region($ring_03_palm_l, long=0.9, wide=45%) [along=($ring_02_l, $ring_tip_l)]
+  pinky_mcp_l = region($pinky_01_palm_l, long=1.4, wide=45%) [along=($hand_l, $pinky_02_l)]
+  pinky_pip_l = region($pinky_02_palm_l, long=1.1, wide=45%) [along=($pinky_01_l, $pinky_03_l)]
+  pinky_dip_l = region($pinky_03_palm_l, long=0.9, wide=45%) [along=($pinky_02_l, $pinky_tip_l)]
+  thumb_cmc_l = region($thumb_01_in_l, long=1.4, wide=45%) [along=($hand_l, $thumb_02_l)]
+  thumb_mcp_l = region($thumb_02_in_l, long=1.2, wide=45%) [along=($thumb_01_l, $thumb_03_l)]
+  thumb_ip_l = region($thumb_03_in_l, long=1.0, wide=45%) [along=($thumb_02_l, $thumb_tip_l)]
+  hip_band_l = region($hip_front_l, long=10, wide=45%) [along=($pelvis, $calf_l)]
+  knee_band_l = region($knee_back_l, long=8, wide=45%) [along=($thigh_l, $foot_l)]
+  ankle_band_l = region($ankle_front_l, long=4, wide=45%) [along=($calf_l, $ball_l)]
+  toes_l = region($toe_top_l, long=2, wide=45%) [along=($foot_l, $toe_l)]
+  collar_band_r = region($collar_front_r, long=6, wide=45%) [along=($spine_03, $upperarm_r)]
+  shoulder_band_r = region($shoulder_front_r, long=6, wide=45%) [along=($clavicle_r, $lowerarm_r)]
+  elbow_band_r = region($elbow_front_r, long=5, wide=45%) [along=($upperarm_r, $hand_r)]
+  wrist_band_r = region($wrist_palm_r, long=3, wide=45%) [along=($lowerarm_r, $middle_01_r)]
+  index_mcp_r = region($index_01_palm_r, long=1.4, wide=45%) [along=($hand_r, $index_02_r)]
+  index_pip_r = region($index_02_palm_r, long=1.1, wide=45%) [along=($index_01_r, $index_03_r)]
+  index_dip_r = region($index_03_palm_r, long=0.9, wide=45%) [along=($index_02_r, $index_tip_r)]
+  middle_mcp_r = region($middle_01_palm_r, long=1.4, wide=45%) [along=($hand_r, $middle_02_r)]
+  middle_pip_r = region($middle_02_palm_r, long=1.1, wide=45%) [along=($middle_01_r, $middle_03_r)]
+  middle_dip_r = region($middle_03_palm_r, long=0.9, wide=45%) [along=($middle_02_r, $middle_tip_r)]
+  ring_mcp_r = region($ring_01_palm_r, long=1.4, wide=45%) [along=($hand_r, $ring_02_r)]
+  ring_pip_r = region($ring_02_palm_r, long=1.1, wide=45%) [along=($ring_01_r, $ring_03_r)]
+  ring_dip_r = region($ring_03_palm_r, long=0.9, wide=45%) [along=($ring_02_r, $ring_tip_r)]
+  pinky_mcp_r = region($pinky_01_palm_r, long=1.4, wide=45%) [along=($hand_r, $pinky_02_r)]
+  pinky_pip_r = region($pinky_02_palm_r, long=1.1, wide=45%) [along=($pinky_01_r, $pinky_03_r)]
+  pinky_dip_r = region($pinky_03_palm_r, long=0.9, wide=45%) [along=($pinky_02_r, $pinky_tip_r)]
+  thumb_cmc_r = region($thumb_01_in_r, long=1.4, wide=45%) [along=($hand_r, $thumb_02_r)]
+  thumb_mcp_r = region($thumb_02_in_r, long=1.2, wide=45%) [along=($thumb_01_r, $thumb_03_r)]
+  thumb_ip_r = region($thumb_03_in_r, long=1.0, wide=45%) [along=($thumb_02_r, $thumb_tip_r)]
+  hip_band_r = region($hip_front_r, long=10, wide=45%) [along=($pelvis, $calf_r)]
+  knee_band_r = region($knee_back_r, long=8, wide=45%) [along=($thigh_r, $foot_r)]
+  ankle_band_r = region($ankle_front_r, long=4, wide=45%) [along=($calf_r, $ball_r)]
+  toes_r = region($toe_top_r, long=2, wide=45%) [along=($foot_r, $toe_r)]
+  # The web between thumb and forefinger, where a gun's backstrap is pressed (as VRHand.gcrig): from the thumb's base out
+  # through the web's edge. Soft below.
+  web_fold_r = region($web_r, long=8, wide=3) [along=($thumb_01_r, $web_r)]
+  # Where each forearm's roll goes (2026-10-04, user: "I remember we solved candy wrapper skinning issue isn't it"):
+  # down the forearm, 28 of its 31 cm. Taken in the 5 cm elbow fold band it was in before, a 150 degree palm-up turn
+  # wrung the arm into a neck at the elbow (ForearmTwist150.gcmove).
+  forearm_l = region($forearm_mid_l, long=28) [along=($lowerarm_l, $hand_l)]
+  forearm_r = region($forearm_mid_r, long=28) [along=($lowerarm_r, $hand_r)]
+}
+
+# The web is about 2 cm of muscle (the first intermetacarpal space) and a backstrap is pressed deep into it; it gives
+# half that at its edge, faded to the hand's 0.35 at its border (GC-MOVE-GRIP-SEATING.md, 2026-10-04).
+skin {
+  web_fold_r [gives=1.0]
+}
+joints {
+  Root
+  pelvis
+  spine_01 [turns_in=$waist, closes=forward, range=(-15, 30), side=(-15, 15), twists=(-15, 15)]
+  spine_02 [turns_in=$mid_back, closes=forward, range=(-15, 25), side=(-15, 15), twists=(-15, 15)]
+  spine_03 [turns_in=$thorax, closes=forward, range=(-15, 20), side=(-15, 15), twists=(-15, 15)]
+  neck_01 [turns_in=$neck_base, closes=forward, range=(-25, 35), side=(-25, 25)]
+  head [turns_in=$head_base, closes=forward, range=(-20, 25), side=(-20, 20)]
+  head_tip
+  clavicle_l [turns_in=$collar_band_l, closes=forward, range=(145, 178), side=(-10, 10)]
+  # A shoulder lets the arm hang (side 90, 2026-10-05, Docs/GC-MOVE-ARM-LADDER.md rung 1): at 75 an arm by the side
+  # stood 10 cm out from it.
+  upperarm_l [turns_in=$shoulder_band_l, closes=forward, range=(-60, 150), side=(-90, 90), twists=(-60, 60)]
+  # A forearm's NEUTRAL turn is the T-pose's palm-down: arm out to the side, thumb forward; lowered without turning,
+  # that palm faces the thigh. A person turns about 85 degrees each way from there, so +-95 (rung 1b, 2026-10-05).
+  # It was (-10, 160), on the belief that palm-down was the end of the turn, and every palm-down hold in front then
+  # pushed the elbow out. Twist turns about the bone's length toward the hand.
+  lowerarm_l [turns_in=$elbow_band_l, closes=forward, range=(-5, 145), twists=(-95, 95), twists_in=$forearm_l]
+  hand_l [turns_in=$wrist_band_l, closes=down, range=(-70, 80), side=(-30, 30)]
+  index_01_l [turns_in=$index_mcp_l, closes=down, range=(-20, 90), side=(-15, 15)]
+  index_02_l [turns_in=$index_pip_l, closes=down, range=(-5, 110)]
+  index_03_l [turns_in=$index_dip_l, closes=down, range=(-5, 80)]
+  index_tip_l
+  middle_01_l [turns_in=$middle_mcp_l, closes=down, range=(-20, 90), side=(-15, 15)]
+  middle_02_l [turns_in=$middle_pip_l, closes=down, range=(-5, 110)]
+  middle_03_l [turns_in=$middle_dip_l, closes=down, range=(-5, 80)]
+  middle_tip_l
+  ring_01_l [turns_in=$ring_mcp_l, closes=down, range=(-20, 90), side=(-15, 15)]
+  ring_02_l [turns_in=$ring_pip_l, closes=down, range=(-5, 110)]
+  ring_03_l [turns_in=$ring_dip_l, closes=down, range=(-5, 80)]
+  ring_tip_l
+  pinky_01_l [turns_in=$pinky_mcp_l, closes=down, range=(-20, 90), side=(-15, 15)]
+  pinky_02_l [turns_in=$pinky_pip_l, closes=down, range=(-5, 110)]
+  pinky_03_l [turns_in=$pinky_dip_l, closes=down, range=(-5, 80)]
+  pinky_tip_l
+  # The thumb's base turns three ways (2026-10-05, Docs/GC-MOVE-ARM-LADDER.md "The thumbs"; VRHand.gcrig's three
+  # hinges): out in front of the palm (fold, closes=down: the T-pose palm faces down), across in the palm's plane
+  # (side, + toward the forefinger) and rolled so the pad faces the fingers (twist, - on the left, + on the right).
+  # With one hinge it could not come round a grip and its curl folded it onto itself.
+  thumb_01_l [turns_in=$thumb_cmc_l, closes=down, range=(-40, 60), side=(-30, 30), twists=(-45, 10)]
+  thumb_02_l [turns_in=$thumb_mcp_l, range=(-10, 60)]
+  thumb_03_l [turns_in=$thumb_ip_l, range=(-10, 80)]
+  thumb_tip_l
+  thigh_l [turns_in=$hip_band_l, closes=forward, range=(-30, 120), side=(-35, 35), twists=(-40, 40)]
+  calf_l [turns_in=$knee_band_l, closes=back, range=(-5, 150)]
+  foot_l [turns_in=$ankle_band_l, closes=forward, range=(-50, 85), side=(-20, 20)]
+  ball_l [turns_in=$toes_l, closes=up, range=(-15, 90)]
+  toe_l
+  clavicle_r [turns_in=$collar_band_r, closes=forward, range=(145, 178), side=(-10, 10)]
+  upperarm_r [turns_in=$shoulder_band_r, closes=forward, range=(-60, 150), side=(-90, 90), twists=(-60, 60)]
+  lowerarm_r [turns_in=$elbow_band_r, closes=forward, range=(-5, 145), twists=(-95, 95), twists_in=$forearm_r]
+  hand_r [turns_in=$wrist_band_r, closes=down, range=(-70, 80), side=(-30, 30)]
+  index_01_r [turns_in=$index_mcp_r, closes=down, range=(-20, 90), side=(-15, 15)]
+  index_02_r [turns_in=$index_pip_r, closes=down, range=(-5, 110)]
+  index_03_r [turns_in=$index_dip_r, closes=down, range=(-5, 80)]
+  index_tip_r
+  middle_01_r [turns_in=$middle_mcp_r, closes=down, range=(-20, 90), side=(-15, 15)]
+  middle_02_r [turns_in=$middle_pip_r, closes=down, range=(-5, 110)]
+  middle_03_r [turns_in=$middle_dip_r, closes=down, range=(-5, 80)]
+  middle_tip_r
+  ring_01_r [turns_in=$ring_mcp_r, closes=down, range=(-20, 90), side=(-15, 15)]
+  ring_02_r [turns_in=$ring_pip_r, closes=down, range=(-5, 110)]
+  ring_03_r [turns_in=$ring_dip_r, closes=down, range=(-5, 80)]
+  ring_tip_r
+  pinky_01_r [turns_in=$pinky_mcp_r, closes=down, range=(-20, 90), side=(-15, 15)]
+  pinky_02_r [turns_in=$pinky_pip_r, closes=down, range=(-5, 110)]
+  pinky_03_r [turns_in=$pinky_dip_r, closes=down, range=(-5, 80)]
+  pinky_tip_r
+  thumb_01_r [turns_in=$thumb_cmc_r, closes=down, range=(-40, 60), side=(-30, 30), twists=(-10, 45)]
+  thumb_02_r [turns_in=$thumb_mcp_r, range=(-10, 60)]
+  thumb_03_r [turns_in=$thumb_ip_r, range=(-10, 80)]
+  thumb_tip_r
+  thigh_r [turns_in=$hip_band_r, closes=forward, range=(-30, 120), side=(-35, 35), twists=(-40, 40)]
+  calf_r [turns_in=$knee_band_r, closes=back, range=(-5, 150)]
+  foot_r [turns_in=$ankle_band_r, closes=forward, range=(-50, 85), side=(-20, 20)]
+  ball_r [turns_in=$toes_r, closes=up, range=(-15, 90)]
+  toe_r
+}
+contacts {
+  Palm_L = contact(chain=arm_L, at=$palm_l)
+  Palm_R = contact(chain=arm_R, at=$palm_r)
+  IndexPad_L = contact(chain=index_L, at=$index_pad_l)
+  MiddlePad_L = contact(chain=middle_L, at=$middle_pad_l)
+  RingPad_L = contact(chain=ring_L, at=$ring_pad_l)
+  LittlePad_L = contact(chain=little_L, at=$little_pad_l)
+  IndexPad_R = contact(chain=index_R, at=$index_pad_r)
+  MiddlePad_R = contact(chain=middle_R, at=$middle_pad_r)
+  RingPad_R = contact(chain=ring_R, at=$ring_pad_r)
+  LittlePad_R = contact(chain=little_R, at=$little_pad_r)
+  Sole_L = contact(chain=leg_L, at=$sole_l)
+  Sole_R = contact(chain=leg_R, at=$sole_r)
+  Heel_L = contact(chain=leg_L, at=$sole_l, bone=foot_l)
+  Ball_L = contact(chain=leg_L, at=$ball_sole_l, bone=ball_l)
+  Toe_L = contact(chain=leg_L, at=$toe_sole_l, bone=toe_l)
+  Heel_R = contact(chain=leg_R, at=$sole_r, bone=foot_r)
+  Ball_R = contact(chain=leg_R, at=$ball_sole_r, bone=ball_r)
+  Toe_R = contact(chain=leg_R, at=$toe_sole_r, bone=toe_r)
+}
+# Where a held gun hangs (GC-MOVE-GRIP-SEATING.md, web meets web): at the web, in a GUN's frame, +X out of the palm,
+# +Y along the hand toward the fingers (the bore), +Z the thumb side (the gun's top). hand_r is built aiming at its
+# fingers with +Z the back of the hand (the rig's rule: +X toward the children, +Z nearest up), so out of the palm is
+# its -Z and the thumb side its -Y. The gun is built untilted in its own frame (user, 2026-10-04: "Drop the tilt"), so
+# its grip's own 22 degree rake lays the grip from the palm's heel to the web, the slant a fist holds a handle at. Was
+# up=($heel_r, $web_r) with the rifle turned -22 in Rifle2H.gcshape to stand its grip along that slant: the same hold
+# within 2 degrees, but the angle typed into the gun.
+sockets {
+  # On a bone of its own, grip_r, with no skin (user, 2026-10-04: "can't we refer to pistol example for proper hand
+  # placement"): the rifle hangs on it, so RifleReady seats the rifle web to web by moving grip_r, as the pistol's clip
+  # moves Epic's palm_r, and the hand stays on its wrist.
+  web_grip_r = hand_r [at=$web_r, toward=-Z, up=-Y, bone=grip_r]
+  # Where the support hand takes the handguard (user, 2026-10-04: "Why the other hand not connected? Should have
+  # another socket isn't it?"): the palm's centre, +X out of the palm, +Z along the palm from its heel to the web, the
+  # line a handle lies across a hand on. A .gcmove puts this frame on the rifle's PalmL by reach(from=), socket to
+  # socket, where a palm POINT and a facing typed in the hand bone's axes left the arm 99 degrees off and its elbow
+  # over the top of the rifle.
+  palm_grip_l = hand_l [at=$palm_l, toward=-Z, up=($heel_l, $web_l)]
+  # Rides the chest, so a stock held in it goes where the chest goes as the body walks.
+  shoulder_pocket_r = spine_03 [at=$shoulder_pocket_r]
+}
+grips {
+  # two palms on one long thing: the rifle at low ready
+  carry = grip(contacts=($Palm_R, $Palm_L), required=($Palm_R, $Palm_L))
+  fingers_R = grip(contacts=($MiddlePad_R, $RingPad_R, $LittlePad_R))
+  fingers_L = grip(contacts=($IndexPad_L, $MiddlePad_L, $RingPad_L, $LittlePad_L))
+}

@@ -1,0 +1,37 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/Joggers  smooth:0.02
+# Hard parts for the Joggers example.
+
+build { }
+
+Flat = mesh() {
+  rect(w=200.0, h=200.0)
+  fill()
+}
+
+Cord = 0.635
+Tail = 16.0
+EyeletHole = 0.4
+EyeletBar = 0.1
+Aglet = 2.5
+AgletWide = 0.85
+
+Eyelet = mesh() {
+  circle(radius=$EyeletBar)
+  revolve(offset=$EyeletHole + $EyeletBar)
+}
+
+AgletTip = mesh() {
+  rect(w=$AgletWide, h=$Aglet, at=(0, -$Tail + $Aglet * 0.5))
+  round($AgletWide * 0.45)
+  extrude(height=$AgletWide)
+  round($AgletWide * 0.4) [top]
+}
+
+DrawcordEnd = mesh(Host = $Flat) {
+  rect(w=$Cord, h=$Tail, at=(0, -$Tail * 0.5))
+  round($Cord * 0.45)
+  extrude(height=$Cord)
+  round($Cord * 0.45) [top]
+  add($AgletTip)
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=0.5]
+}

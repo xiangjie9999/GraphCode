@@ -1,0 +1,85 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/CargoTrousers  smooth:0.02
+# Hard parts for the CargoTrousers example.
+
+build { }
+
+ButtonRadius = 0.9525
+ButtonDepth  = 0.508
+EyeRadius    = 0.113
+EyeStep      = 0.44
+
+Eye = mesh() {
+  circle(radius=$EyeRadius, segments=10)
+  extrude(height=$ButtonDepth * 3.0)
+}
+
+Button = mesh() {
+  circle(radius=$ButtonRadius, segments=32)
+  extrude(height=$ButtonDepth, to=85%)
+  round(0.08, segments=2) [sharp]
+  subtract($Eye, at=(-0.22, -0.22, -$ButtonDepth), repeat=(2, 2), step=(($EyeStep, 0, 0), (0, $EyeStep, 0)))
+}
+
+LoopWidth = 1.11
+LoopHeight = 5.08
+LoopProud = 0.21
+
+BeltLoop = mesh() {
+  rect(w=$LoopWidth, h=$LoopHeight)
+  round(0.25)
+  extrude(height=$LoopProud)
+  round(0.1) [top]
+}
+
+PocketW = 18.5
+PocketH = 21.0
+PocketD = 3.0
+FlapW = 17.5
+PocketChord = 16.12
+FlapChord = 15.50
+FlapH = 6.5
+FlapAbove = 2.0
+PlyTwo = 0.14
+Corner = 0.42
+FlapMid = $PocketH * 0.5 + $FlapAbove - $FlapH * 0.5
+ButtonUp = 1.27
+ButtonY = $PocketH * 0.5 + $FlapAbove - $FlapH + $ButtonUp
+ButtonStep = 2.92
+PocketSink = 0.02
+
+Flat = mesh() {
+  rect(w=200.0, h=200.0)
+  fill()
+}
+
+PocketBody = mesh() {
+  rect(w=$PocketChord, h=$PocketH)
+  round($Corner)
+  extrude(height=$PocketD)
+  warp(to=(point.x, point.y, point.z * ($PlyTwo + ($PocketD - $PlyTwo) * ($PocketH * 0.5 - point.y) / $PocketH) / $PocketD))
+}
+
+PocketFlap = mesh() {
+  rect(w=$FlapChord, h=$FlapH)
+  round($Corner)
+  extrude(height=1.0)
+  warp(to=(point.x, point.y + $FlapMid, point.z * ($PlyTwo + clamp($PlyTwo + ($PocketD - $PlyTwo) * ($PocketH * 0.5 - (point.y + $FlapMid)) / $PocketH, 0, 100))))
+}
+
+CargoPocket = mesh(Host = $Flat) {
+  add($PocketBody)
+  add($PocketFlap)
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=1.0]
+}
+
+HipFlapW = 10.66
+HipFlapChord = 10.20
+HipFlapH = 3.8
+
+HipFlap = mesh(Host = $Flat) {
+  rect(w=$HipFlapChord, h=$HipFlapH)
+  round($Corner)
+  extrude(height=$PlyTwo)
+  round(0.04) [top]
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=1.0]
+}

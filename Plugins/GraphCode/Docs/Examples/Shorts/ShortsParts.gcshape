@@ -1,0 +1,13 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/Shorts  smooth:0.02
+# Hard parts for the Shorts example.
+
+build { }
+
+LoopWidth = 1.05
+LoopHeight = 5.25
+LoopProud = 0.21
+
+BeltLoop = mesh() {
+  rect(w=$LoopWidth, h=$LoopHeight)
+  extrude(height=$LoopProud)
+}

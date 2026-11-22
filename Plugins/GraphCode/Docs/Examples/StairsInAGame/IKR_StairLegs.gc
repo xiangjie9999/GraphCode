@@ -1,0 +1,22 @@
+gc 1  kind:ik_rig  asset:/Game/StairsInAGame/IKR_StairLegs
+parent: /Script/IKRig.IKRigDefinition
+
+settings {
+  PreviewSkeletalMesh = soft'/Engine/Tutorial/SubEditors/TutorialAssets/Character/TutorialTPP.TutorialTPP'
+}
+
+goals {
+  FootL = (bExposePosition=true, bExposeRotation=true, BoneName=foot_l)
+  FootR = (bExposePosition=true, bExposeRotation=true, BoneName=foot_r)
+}
+
+retarget_definition {
+  $pelvis = pelvis
+  leg_L = (Start=thigh_l, End=foot_l, Goal=FootL)
+  leg_R = (Start=thigh_r, End=foot_r, Goal=FootR)
+}
+
+solvers {
+  IKRigLimbSolver(Settings.EndBone=foot_l, Settings.GoalName=FootL, Settings.HingeRotationAxis=Z, Settings.StartBone=thigh_l)
+  IKRigLimbSolver(Settings.EndBone=foot_r, Settings.GoalName=FootR, Settings.HingeRotationAxis=Z, Settings.StartBone=thigh_r)
+}

@@ -1,0 +1,165 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.13",
+  "FriendlyName": "GraphCode Core Extension",
+  "Description": "Framework-backed authoring for MVVM, MetaSound, CommonUI and Gameplay Ability System.",
+  "Category": "Editor",
+  "CreatedBy": "OraStudio",
+  "CanContainContent": true,
+  "IsBetaVersion": true,
+  "Modules": [
+    {
+      "Name": "GraphCodePve",
+      "Type": "Editor",
+      "LoadingPhase": "None",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "GraphCodeCoreExtension",
+      "Type": "Editor",
+      "LoadingPhase": "PostEngineInit",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "GraphCodeMetaSound",
+      "Type": "Editor",
+      "LoadingPhase": "None",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "GraphCodeMetaHuman",
+      "Type": "Editor",
+      "LoadingPhase": "None",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "GraphCodeMvvm",
+      "Type": "Editor",
+      "LoadingPhase": "None",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "GraphCodeEnvQuery",
+      "Type": "Editor",
+      "LoadingPhase": "None",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "EnvironmentQueryEditor",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "ProceduralVegetationEditor",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "PCG",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "DynamicWind",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "GeometryProcessing",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "HairStrands",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "GeometryScripting",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "GraphCode",
+      "Enabled": true
+    },
+    {
+      "Name": "GraphCodeGroom",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "ModelViewViewModel",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "Metasound",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "CommonUI",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "MetaHumanCharacter",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "MetaHuman",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "RigLogic",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "ChaosClothAsset",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "ChaosOutfitAsset",
+      "Enabled": false,
+      "Optional": true
+    }
+  ],
+  "Installed": true,
+  "EnabledByDefault": false,
+  "EngineVersion": "5.7.0",
+  "SupportedTargetPlatforms": [
+    "Win64"
+  ]
+}

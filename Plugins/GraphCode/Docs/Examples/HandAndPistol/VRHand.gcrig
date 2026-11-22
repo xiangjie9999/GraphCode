@@ -1,0 +1,146 @@
+gcrig 1  mesh:/Game/GraphCodeExamples/VRHandRig_20261001/SKM_MannyXR_right  into:/Game/GraphCodeExamples/VRHandRig_20261001  mirror:false
+
+# EPIC'S UE5 VR HAND, KEPT AS IMPORTED (GC-RIG-IMPORTED-MESH.md). The mesh, its skeleton and Epic's
+# grasp clip are COPIES from /Game/XRMannequins, re-pointed at the copied skeleton, because this route
+# writes sockets and joint axes onto the skeleton it is given and the template's is not ours.
+#
+# The skin is the import's: same vertices and weights. Every bone is inherited from the import; this
+# file states only what it adds, which is limits, one socket and ONE BONE: a second hinge at the
+# thumb's base. The build line names the import itself, so that bone is added to it in place.
+#
+# Ranges are a pair in degrees with zero straight (the grammar's ruling). Fingers copy
+# MoveLimits_20260928/Hand.gcrig: knuckle (-20, 90), middle joint (0, 110), tip (0, 80). The thumb is
+# an authored anatomical choice with no precedent in the tree: middle (0, 60), tip (-10, 80), and the
+# base's two hinges below. Metacarpals stay rigid.
+
+# The thumb's base joint is a saddle: it swings in the palm's plane and it swings across the palm.
+# One bone there could not hold both (side= on it was clamped, twists= needs a helper a kept skin
+# refuses; 2026-10-01). thumb_opp_r stands at thumb_01_r's own place, so the two are two plain hinges
+# of one joint: thumb_01_r keeps the in-plane swing the import bends it by, thumb_opp_r closes toward
+# the palm, which in this mesh's space is down. Its point is thumb_01_r's, from the readout.
+points {
+  thumb_opp_r = (2.581, 1.993, -1.357)
+  # A third hinge at the same place: the thumb's roll about its own length (2026-10-01). Measured, a
+  # thumb tucked into a fist stopped 2.92 cm short of the palm with both hinges and its curl at their
+  # limits: without a roll its curl sweeps toward the heel of the palm, not the fingers. A real
+  # thumb's base turns about 17 degrees on its own and 45-60 as part of opposition (Kapandji; PMC
+  # 3940763, 4574857), so its pad comes round to face them.
+  thumb_roll_r = (2.581, 1.993, -1.357)
+  # The thumb's pad: halfway along its last segment, on the side that faces the fingers. It is where a
+  # contact starts looking; the solver takes the nearest skin (thumb_03_r is at (6.29, 7.81, -3.79) and
+  # the segment runs on about 2.8 cm the way thumb_02_r -> thumb_03_r points).
+  thumb_pad_r = (5.9, 9.0, -4.4)
+  # The forefinger's pad, placed the thumb's way: 1 cm on from index_03_r (3.44, 15.10, -2.74) along
+  # index_02_r -> index_03_r, and 0.8 cm in toward the palm (-Z here). Where a pistol's trigger meets
+  # it (VRPistolGrip.gcmove reaches it to the gun's Trigger socket).
+  index_pad_r = (3.5, 15.4, -4.0)
+  # The forefinger's TIP: 0.8 cm further along the last segment than the pad. In a full pistol grip the trigger sits
+  # too close to the knuckle for the pad (the middle joint already at a real finger's 110 degrees), and the tip reaches
+  # nearer (2026-10-06, VRPistolGrip.gcmove; Docs/Guides/HANDS.md, "Holding any weapon").
+  index_tip_r = (3.6, 15.85, -4.6)
+  # The crotch of the web between thumb and forefinger, where a pistol's backstrap sits (2026-10-02, web
+  # meets web, GC-MOVE-GRIP-SEATING.md). Measured with gc_render ask from the fingertips back down -Y,
+  # everything past Y 8 cut away, on an 8x8 grid: the web's free edge is the skin facing the fingertips
+  # (normal mostly +Y) between the two, and its point nearest the wrist is at X 5.09-5.49, Y 6.72-6.73,
+  # Z -1.49 to -1.89. (A first reading from above the hand, 0.6 cm toward the forefinger, was the
+  # forefinger overlapping the thumb in that view.)
+  web_r = (5.3, 6.72, -1.7)
+}
+
+# The web between thumb and forefinger is soft: about 2 cm of muscle fills it (the first intermetacarpal space,
+# 20.7 +/- 2.1 mm by ultrasound, Balkan Med J 2011) where a palm or a pad has millimetres, and a pistol's
+# backstrap is pressed deep into it (GC-MOVE-GRIP-SEATING.md, 2026-10-04). The region runs from the thumb's base
+# out through the web's edge, the line splitting the V; it gives half that muscle at the edge, faded to the
+# hand's 0.35 at its border.
+regions {
+  web_fold_r = region($web_r, long=8, wide=3) [along=($thumb_opp_r, $web_r)]
+}
+
+skin {
+  web_fold_r [gives=1.0]
+}
+
+# What touches. A .gcmove says `contact(thumb_r, contact=ThumbPad, on=<finger bones>)` and the
+# thumb is brought onto the finger by the solver: no angle is typed for it (user, 2026-10-01: "use
+# contact on finger instead of hardcoded").
+contacts {
+  # Each pad is the patch of its fingertip's own skin within 1.25 cm of the point, facing within 35 degrees of it
+  # (GC-MOVE-ARM-LADDER-PLAN.md 9.14; codex's measured rule, Docs/Research/contact-patch-authoring.md: 7 drawn
+  # vertices / 5 triangles on each, all on the palmar flesh). A touch facing a surface rolls over it.
+  ThumbPad = contact(chain=thumb_r, at=$thumb_pad_r) [radius=1.25, cone=35]
+  IndexPad = contact(chain=index_r, at=$index_pad_r) [radius=1.25, cone=35]
+  IndexTip = contact(chain=index_r, at=$index_tip_r) [radius=1.0, cone=35]
+}
+
+chains {
+  thumb_03_r = root -> hand_r -> thumb_01_r -> thumb_opp_r -> thumb_roll_r -> thumb_02_r -> thumb_03_r
+  # The thumb as a limb of its own, from its base: a contact's limb is everything below its chain's
+  # first bone, and the chain above starts at the root, which made every finger part of the thumb.
+  thumb_r    = thumb_01_r -> thumb_opp_r -> thumb_roll_r -> thumb_02_r -> thumb_03_r
+  # The forefinger the same way, from its knuckle, so a reach bends the finger and not the hand.
+  index_r    = index_01_r -> index_02_r -> index_03_r
+}
+
+joints {
+  # The palm's own bones are rigid, as the header says: a bare name has neither region nor limit. That
+  # reaches the ragdoll; the IK rig deliberately does not lock it (GraphCodeRigBuild.cpp: PBIK answers a
+  # lock by turning the parent), so a reach may still turn these and Move's fit has to be able to too.
+  hand_r
+  index_metacarpal_r
+  middle_metacarpal_r
+  ring_metacarpal_r
+  pinky_metacarpal_r
+
+  # A forefinger's knuckle also swings sideways (about 20 degrees each way on a real hand): without it a
+  # finger above a pistol's trigger guard can only curl over the frame, never angle down into the guard.
+  index_01_r  [range=(-20, 90), side=(-15, 15)]
+  index_02_r  [range=(0, 110)]
+  index_03_r  [range=(0, 80)]
+
+  middle_01_r [range=(-20, 90)]
+  middle_02_r [range=(0, 110)]
+  middle_03_r [range=(0, 80)]
+
+  ring_01_r   [range=(-20, 90)]
+  ring_02_r   [range=(0, 110)]
+  ring_03_r   [range=(0, 80)]
+
+  pinky_01_r  [range=(-20, 90)]
+  pinky_02_r  [range=(0, 110)]
+  pinky_03_r  [range=(0, 80)]
+
+  # Seen in VRThumbAxes (2026-10-01): thumb_01_r's fold is the swing in the palm's plane, positive
+  # AWAY from the index (it rests 11.9 bent the other way), so the fist needs its negative half: about
+  # 37 more degrees lays the thumb along the index side. thumb_opp_r positive carries it in front of
+  # the palm.
+  thumb_01_r  [range=(-50, 25)]
+  thumb_opp_r [range=(-30, 60), closes=down]
+  # Its roll about its own length, the line to thumb_02_r. Positive turns the pad toward the fingers
+  # (probed 2026-10-01, VRThumbRollProbe.gcmove: +40 curls the thumb across the palm toward the finger
+  # roots, -40 down its heel). A thumb's base turns about 17 degrees on its own and 45-60 inward in
+  # opposition, outward little (PMC 3940763, 4574857).
+  thumb_roll_r [twists=(-10, 45)]
+  thumb_02_r  [range=(0, 60)]
+  thumb_03_r  [range=(-10, 80)]
+}
+
+# Where a held prop's grip point lands (GC-MOVE-GRIP-SEATING.md). On the skin nearest Epic's own
+# palm_r bone. Its +X goes out of the palm, measured; its +Z is the way a handle runs to the blade,
+# which on this hand is palm_r's -X, toward the index side.
+sockets {
+  palm_grip_r = palm_r [on=surface, up=-X]
+  # A pistol is held by the web of the hand, not the palm's centre: its own Web socket is its origin and
+  # it hangs here, in palm_grip_r's measured frame, so only the place differs (ruled 2026-10-02).
+  web_grip_r  = palm_grip_r [at=$web_r]
+}
+
+# Hull bodies: each bone's body is its own skin, and bodies stop on each other, so a fist closes on
+# the palm (VRFist.gcmove). The metacarpals split the palm into four pieces and the thumb base its own.
+# gives= is how far a held thing may press into the skin, in cm: a real hand's flesh compresses about
+# 3 mm round what it holds (GRAB, ECCV 2020: 3.25 +/- 0.68 mm), and a rigid hand has to be let in that
+# far to hold it the same way (GC-MOVE-GRIP-SEATING.md).
+build {
+  SKM_MannyXR_right = skeletal_mesh()
+  IKR_VRHand        = ik_rig()
+  PHAT_VRHand       = physics_asset() [bodies=hull, gives=0.35]
+}

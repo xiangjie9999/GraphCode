@@ -1,0 +1,46 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/Robe  smooth:0.05
+# Hard parts for the Robe example.
+
+build { }
+
+CordR = 0.635
+
+SegPath = plane() {
+  points((-1.025, 0, 0.635), (1.025, 0, 0.635))
+}
+CordLength = mesh() {
+  circle(radius=$CordR)
+  sweep(along=$SegPath)
+}
+
+KnotR = 2.200
+OverhandR = 1.746
+Ball = mesh() {
+  arc(radius=1.0, from=-90, to=90)
+  revolve()
+}
+TailPathL = plane() {
+  curve((-0.27, 0.44, 1.54), (0.24, -10.54, 6.83), (0.70, -21.56, 11.94), (1.12, -32.63, 16.90), (1.54, -43.70, 21.85), (1.96, -54.76, 26.80), (2.38, -65.83, 31.76), (2.86, -78.52, 37.43))
+}
+TailPathR = plane() {
+  curve((0.97, 0.36, 1.25), (1.47, -10.62, 6.55), (1.93, -21.64, 11.66), (2.35, -32.71, 16.61), (2.78, -43.78, 21.56), (3.20, -54.85, 26.52), (3.62, -65.91, 31.47), (4.10, -78.60, 37.15))
+}
+TailL = mesh() {
+  circle(radius=$CordR)
+  sweep(along=$TailPathL)
+}
+TailR = mesh() {
+  circle(radius=$CordR)
+  sweep(along=$TailPathR)
+}
+Knot = mesh() {
+  add($Ball, scale=($KnotR, $KnotR, $KnotR), at=(0, 0, $KnotR))
+  add($TailL, join=none)
+  add($TailR, join=none)
+  add($Ball, scale=($OverhandR, $OverhandR, $OverhandR), at=(2.99, -74.58, 36.84), join=none)
+  add($Ball, scale=($OverhandR, $OverhandR, $OverhandR), at=(2.71, -67.28, 33.58), join=none)
+  add($Ball, scale=($OverhandR, $OverhandR, $OverhandR), at=(2.43, -59.98, 30.31), join=none)
+  add($Ball, scale=($OverhandR, $OverhandR, $OverhandR), at=(4.22, -74.66, 36.55), join=none)
+  add($Ball, scale=($OverhandR, $OverhandR, $OverhandR), at=(3.94, -67.36, 33.29), join=none)
+  add($Ball, scale=($OverhandR, $OverhandR, $OverhandR), at=(3.67, -60.07, 30.02), join=none)
+}

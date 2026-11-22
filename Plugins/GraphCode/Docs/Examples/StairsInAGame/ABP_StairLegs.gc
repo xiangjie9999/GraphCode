@@ -1,0 +1,196 @@
+gc 1  kind:animation_blueprint  asset:/Game/StairsInAGame/ABP_StairLegs
+parent: /Script/Engine.AnimInstance
+
+settings {
+  TargetSkeleton = obj'/Engine/Tutorial/SubEditors/TutorialAssets/Character/TutorialTPP_Skeleton.TutorialTPP_Skeleton'
+}
+
+defaults {
+  blueprint_defaults
+  instance_editable = false
+  expose_on_spawn = false
+}
+
+properties {
+  Speed: double
+  Moving: bool
+  SourceSpeed: double = 192.343097 [instance_editable]
+  OffsetL: double
+  OffsetR: double
+  Pelvis: double
+  LowestL: double = 1000.0
+  LowestR: double = 1000.0
+  DownL: bool
+  DownR: bool
+  Carry: double
+  DownMargin: double = 3.0 [instance_editable]
+  FootSpeed: double = 15.0 [instance_editable]
+  PelvisSpeed: double = 10.0 [instance_editable]
+  RestSpeed: double = 2.0 [instance_editable]
+  TraceReach: double = 60.0 [instance_editable]
+  LowerFootShare: double = 0.0 [instance_editable]
+}
+
+interfaces {
+}
+
+dispatchers {
+}
+
+timelines {
+}
+
+class_defaults {
+}
+
+components {
+}
+
+graph {
+  eventgraph EventGraph {
+    n1 = Event BlueprintUpdateAnimation() [bOverrideFunction=True] : ->n2
+    n2 = VariableSet Speed(Speed=n3.ReturnValue) : ->n6
+    n3 = CallFunction KismetMathLibrary:VSizeXY(A=n4.ReturnValue)
+    n4 = CallFunction Actor:GetVelocity(self=n5.ReturnValue)
+    n5 = CallFunction AnimInstance:GetOwningActor()
+    n6 = VariableSet Moving(Moving=n7.ReturnValue) : ->n9
+    n7 = CallFunction KismetMathLibrary:Greater_DoubleDouble(A=n8.Speed, B=5.0)
+    n8 = VariableGet Speed()
+    n9 = CallFunction KismetSystemLibrary:LineTraceSingle(Start=n10.ReturnValue, End=n18.ReturnValue, TraceChannel=/Script/Engine.ETraceTypeQuery::TraceTypeQuery1, bTraceComplex=True, DrawDebugType=/Script/Engine.EDrawDebugTrace::None) : ->n20
+    n10 = CallFunction KismetMathLibrary:MakeVector(X=n11.X, Y=n11.Y, Z=n14.ReturnValue)
+    n11 = CallFunction KismetMathLibrary:BreakVector(InVec=n12.ReturnValue)
+    n12 = CallFunction SceneComponent:GetSocketLocation(self=n13.ReturnValue, InSocketName="foot_l")
+    n13 = CallFunction AnimInstance:GetOwningComponent()
+    n14 = CallFunction KismetMathLibrary:Add_DoubleDouble(A=n15.Z, B=n17.TraceReach)
+    n15 = CallFunction KismetMathLibrary:BreakVector(InVec=n16.ReturnValue)
+    n16 = CallFunction SceneComponent:K2_GetComponentLocation(self=n13.ReturnValue)
+    n17 = VariableGet TraceReach()
+    n18 = CallFunction KismetMathLibrary:MakeVector(X=n11.X, Y=n11.Y, Z=n19.ReturnValue)
+    n19 = CallFunction KismetMathLibrary:Subtract_DoubleDouble(A=n15.Z, B=n17.TraceReach)
+    n20 = CallFunction KismetSystemLibrary:LineTraceSingle(Start=n21.ReturnValue, End=n24.ReturnValue, TraceChannel=/Script/Engine.ETraceTypeQuery::TraceTypeQuery1, bTraceComplex=True, DrawDebugType=/Script/Engine.EDrawDebugTrace::None) : ->n25
+    n21 = CallFunction KismetMathLibrary:MakeVector(X=n22.X, Y=n22.Y, Z=n14.ReturnValue)
+    n22 = CallFunction KismetMathLibrary:BreakVector(InVec=n23.ReturnValue)
+    n23 = CallFunction SceneComponent:GetSocketLocation(self=n13.ReturnValue, InSocketName="ball_l")
+    n24 = CallFunction KismetMathLibrary:MakeVector(X=n22.X, Y=n22.Y, Z=n19.ReturnValue)
+    n25 = VariableSet LowestL(LowestL=n26.ReturnValue) : ->n31
+    n26 = CallFunction KismetMathLibrary:FMin(A=n27.LowestL, B=n28.ReturnValue)
+    n27 = VariableGet LowestL()
+    n28 = CallFunction KismetMathLibrary:Subtract_DoubleDouble(A=n29.ReturnValue, B=n30.OffsetL)
+    n29 = CallFunction KismetMathLibrary:Subtract_DoubleDouble(A=n11.Z, B=n15.Z)
+    n30 = VariableGet OffsetL()
+    n31 = IfThenElse(Condition=n32.ReturnValue) : then->n38, else->n49
+    n32 = CallFunction KismetMathLibrary:BooleanAND(A=n33.ReturnValue, B=n36.ReturnValue)
+    n33 = CallFunction KismetMathLibrary:Less_DoubleDouble(A=n28.ReturnValue, B=n34.ReturnValue)
+    n34 = CallFunction KismetMathLibrary:Add_DoubleDouble(A=n27.LowestL, B=n35.DownMargin)
+    n35 = VariableGet DownMargin()
+    n36 = CallFunction KismetMathLibrary:Not_PreBool(A=n37.DownL)
+    n37 = VariableGet DownL()
+    n38 = VariableSet Carry(Carry=n39.ReturnValue) : ->n49
+    n39 = CallFunction KismetMathLibrary:SelectFloat(A=n40.ReturnValue, bPickA=n48.ReturnValue)
+    n40 = CallFunction KismetMathLibrary:Subtract_DoubleDouble(A=n41.ReturnValue, B=n15.Z)
+    n41 = CallFunction KismetMathLibrary:FMax(A=n42.ReturnValue, B=n45.ReturnValue)
+    n42 = CallFunction KismetMathLibrary:SelectFloat(A=n43.Z, B=-100000.0, bPickA=n9.ReturnValue)
+    n43 = CallFunction KismetMathLibrary:BreakVector(InVec=n44.ImpactPoint)
+    n44 = CallFunction GameplayStatics:BreakHitResult(Hit=n9.OutHit)
+    n45 = CallFunction KismetMathLibrary:SelectFloat(A=n46.Z, B=-100000.0, bPickA=n20.ReturnValue)
+    n46 = CallFunction KismetMathLibrary:BreakVector(InVec=n47.ImpactPoint)
+    n47 = CallFunction GameplayStatics:BreakHitResult(Hit=n20.OutHit)
+    n48 = CallFunction KismetMathLibrary:BooleanOR(A=n9.ReturnValue, B=n20.ReturnValue)
+    n49 = VariableSet DownL(DownL=n33.ReturnValue) : ->n50
+    n50 = VariableSet OffsetL(OffsetL=n51.ReturnValue) : ->n53
+    n51 = CallFunction KismetMathLibrary:FInterpTo(Current=n30.OffsetL, Target=n39.ReturnValue, DeltaTime=n1.DeltaTimeX, InterpSpeed=n52.FootSpeed)
+    n52 = VariableGet FootSpeed()
+    n53 = CallFunction KismetSystemLibrary:LineTraceSingle(Start=n54.ReturnValue, End=n62.ReturnValue, TraceChannel=/Script/Engine.ETraceTypeQuery::TraceTypeQuery1, bTraceComplex=True, DrawDebugType=/Script/Engine.EDrawDebugTrace::None) : ->n64
+    n54 = CallFunction KismetMathLibrary:MakeVector(X=n55.X, Y=n55.Y, Z=n58.ReturnValue)
+    n55 = CallFunction KismetMathLibrary:BreakVector(InVec=n56.ReturnValue)
+    n56 = CallFunction SceneComponent:GetSocketLocation(self=n57.ReturnValue, InSocketName="foot_r")
+    n57 = CallFunction AnimInstance:GetOwningComponent()
+    n58 = CallFunction KismetMathLibrary:Add_DoubleDouble(A=n59.Z, B=n61.TraceReach)
+    n59 = CallFunction KismetMathLibrary:BreakVector(InVec=n60.ReturnValue)
+    n60 = CallFunction SceneComponent:K2_GetComponentLocation(self=n57.ReturnValue)
+    n61 = VariableGet TraceReach()
+    n62 = CallFunction KismetMathLibrary:MakeVector(X=n55.X, Y=n55.Y, Z=n63.ReturnValue)
+    n63 = CallFunction KismetMathLibrary:Subtract_DoubleDouble(A=n59.Z, B=n61.TraceReach)
+    n64 = CallFunction KismetSystemLibrary:LineTraceSingle(Start=n65.ReturnValue, End=n68.ReturnValue, TraceChannel=/Script/Engine.ETraceTypeQuery::TraceTypeQuery1, bTraceComplex=True, DrawDebugType=/Script/Engine.EDrawDebugTrace::None) : ->n69
+    n65 = CallFunction KismetMathLibrary:MakeVector(X=n66.X, Y=n66.Y, Z=n58.ReturnValue)
+    n66 = CallFunction KismetMathLibrary:BreakVector(InVec=n67.ReturnValue)
+    n67 = CallFunction SceneComponent:GetSocketLocation(self=n57.ReturnValue, InSocketName="ball_r")
+    n68 = CallFunction KismetMathLibrary:MakeVector(X=n66.X, Y=n66.Y, Z=n63.ReturnValue)
+    n69 = VariableSet LowestR(LowestR=n70.ReturnValue) : ->n75
+    n70 = CallFunction KismetMathLibrary:FMin(A=n71.LowestR, B=n72.ReturnValue)
+    n71 = VariableGet LowestR()
+    n72 = CallFunction KismetMathLibrary:Subtract_DoubleDouble(A=n73.ReturnValue, B=n74.OffsetR)
+    n73 = CallFunction KismetMathLibrary:Subtract_DoubleDouble(A=n55.Z, B=n59.Z)
+    n74 = VariableGet OffsetR()
+    n75 = IfThenElse(Condition=n76.ReturnValue) : then->n82, else->n93
+    n76 = CallFunction KismetMathLibrary:BooleanAND(A=n77.ReturnValue, B=n80.ReturnValue)
+    n77 = CallFunction KismetMathLibrary:Less_DoubleDouble(A=n72.ReturnValue, B=n78.ReturnValue)
+    n78 = CallFunction KismetMathLibrary:Add_DoubleDouble(A=n71.LowestR, B=n79.DownMargin)
+    n79 = VariableGet DownMargin()
+    n80 = CallFunction KismetMathLibrary:Not_PreBool(A=n81.DownR)
+    n81 = VariableGet DownR()
+    n82 = VariableSet Carry(Carry=n83.ReturnValue) : ->n93
+    n83 = CallFunction KismetMathLibrary:SelectFloat(A=n84.ReturnValue, bPickA=n92.ReturnValue)
+    n84 = CallFunction KismetMathLibrary:Subtract_DoubleDouble(A=n85.ReturnValue, B=n59.Z)
+    n85 = CallFunction KismetMathLibrary:FMax(A=n86.ReturnValue, B=n89.ReturnValue)
+    n86 = CallFunction KismetMathLibrary:SelectFloat(A=n87.Z, B=-100000.0, bPickA=n53.ReturnValue)
+    n87 = CallFunction KismetMathLibrary:BreakVector(InVec=n88.ImpactPoint)
+    n88 = CallFunction GameplayStatics:BreakHitResult(Hit=n53.OutHit)
+    n89 = CallFunction KismetMathLibrary:SelectFloat(A=n90.Z, B=-100000.0, bPickA=n64.ReturnValue)
+    n90 = CallFunction KismetMathLibrary:BreakVector(InVec=n91.ImpactPoint)
+    n91 = CallFunction GameplayStatics:BreakHitResult(Hit=n64.OutHit)
+    n92 = CallFunction KismetMathLibrary:BooleanOR(A=n53.ReturnValue, B=n64.ReturnValue)
+    n93 = VariableSet DownR(DownR=n77.ReturnValue) : ->n94
+    n94 = VariableSet OffsetR(OffsetR=n95.ReturnValue) : ->n97
+    n95 = CallFunction KismetMathLibrary:FInterpTo(Current=n74.OffsetR, Target=n83.ReturnValue, DeltaTime=n1.DeltaTimeX, InterpSpeed=n96.FootSpeed)
+    n96 = VariableGet FootSpeed()
+    n97 = VariableSet Pelvis(Pelvis=n98.ReturnValue) : ->_
+    n98 = CallFunction KismetMathLibrary:FInterpTo(Current=n99.Pelvis, Target=n100.ReturnValue, DeltaTime=n1.DeltaTimeX, InterpSpeed=n107.ReturnValue)
+    n99 = VariableGet Pelvis()
+    n100 = CallFunction KismetMathLibrary:FMin(A=n101.ReturnValue)
+    n101 = CallFunction KismetMathLibrary:SelectFloat(A=n110.ReturnValue, B=n103.ReturnValue, bPickA=n106.Moving)
+    n110 = CallFunction KismetMathLibrary:Lerp(A=n102.Carry, B=n103.ReturnValue, Alpha=n111.LowerFootShare)
+    n102 = VariableGet Carry()
+    n103 = CallFunction KismetMathLibrary:FMin(A=n104.OffsetL, B=n105.OffsetR)
+    n104 = VariableGet OffsetL()
+    n105 = VariableGet OffsetR()
+    n111 = VariableGet LowerFootShare()
+    n106 = VariableGet Moving()
+    n107 = CallFunction KismetMathLibrary:SelectFloat(A=n108.PelvisSpeed, B=n109.RestSpeed, bPickA=n106.Moving)
+    n108 = VariableGet PelvisSpeed()
+    n109 = VariableGet RestSpeed()
+  }
+}
+
+functions {
+}
+
+macros {
+}
+
+animgraph {
+  animgraph AnimGraph {
+    n1 = AnimGraphNode_BlendListByBool(BlendPose_0=n2.Pose, BlendPose_1=n6.Pose, bActiveValue=n7.Moving)
+    n2 = AnimGraphNode_SequencePlayer(PlayRate=n3.ReturnValue) [Node=(Sequence="/Script/Engine.AnimSequence'/Engine/Tutorial/SubEditors/TutorialAssets/Character/Tutorial_Walk_Fwd.Tutorial_Walk_Fwd'",PlayRateBasis=1.000000,PlayRate=1.000000,PlayRateScaleBiasClampConstants=(InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000),bLoopAnimation=True,PlayRateScaleBiasClampState=(),InitialUpdateFunction=(),BecomeRelevantFunction=(),UpdateFunction=()), ShowPinForProperties=@(9=(bShowPin=True))]
+    n3 = CallFunction KismetMathLibrary:Divide_DoubleDouble(A=n4.Speed, B=n5.SourceSpeed)
+    n4 = VariableGet Speed()
+    n5 = VariableGet SourceSpeed()
+    n6 = AnimGraphNode_SequencePlayer() [Node=(Sequence="/Script/Engine.AnimSequence'/Engine/Tutorial/SubEditors/TutorialAssets/Character/Tutorial_Idle.Tutorial_Idle'",PlayRateBasis=1.000000,PlayRate=1.000000,PlayRateScaleBiasClampConstants=(InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000),bLoopAnimation=True,PlayRateScaleBiasClampState=(),InitialUpdateFunction=(),BecomeRelevantFunction=(),UpdateFunction=())]
+    n7 = VariableGet Moving()
+    n8 = AnimGraphNode_ComponentToLocalSpace(ComponentPose=n9.Pose)
+    n9 = AnimGraphNode_ModifyBone(ComponentPose=n10.Pose, Translation=n19.ReturnValue) [Node=(BoneToModify=(BoneName="pelvis"),Translation=(X=0.000000,Y=0.000000,Z=0.000000),Rotation=(Pitch=0.000000,Yaw=0.000000,Roll=0.000000),Scale=(X=1.000000,Y=1.000000,Z=1.000000),TranslationMode=BMM_Additive,TranslationSpace=BCS_ComponentSpace,RotationSpace=BCS_ComponentSpace,ScaleSpace=BCS_ComponentSpace,ComponentPose=(LinkID=-1,SourceLinkID=-1),LODThreshold=-1,bAlphaBoolEnabled=True,Alpha=1.000000,AlphaScaleBias=(Scale=1.000000),AlphaBoolBlend=(BlendOption=HermiteCubic),AlphaScaleBiasClamp=(InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000),InitialUpdateFunction=(),BecomeRelevantFunction=(),UpdateFunction=())]
+    n10 = AnimGraphNode_ModifyBone(ComponentPose=n11.Pose, Translation=n17.ReturnValue) [Node=(BoneToModify=(BoneName="ik_foot_r"),Translation=(X=0.000000,Y=0.000000,Z=0.000000),Rotation=(Pitch=0.000000,Yaw=0.000000,Roll=0.000000),Scale=(X=1.000000,Y=1.000000,Z=1.000000),TranslationMode=BMM_Additive,TranslationSpace=BCS_ComponentSpace,RotationSpace=BCS_ComponentSpace,ScaleSpace=BCS_ComponentSpace,ComponentPose=(LinkID=-1,SourceLinkID=-1),LODThreshold=-1,bAlphaBoolEnabled=True,Alpha=1.000000,AlphaScaleBias=(Scale=1.000000),AlphaBoolBlend=(BlendOption=HermiteCubic),AlphaScaleBiasClamp=(InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000),InitialUpdateFunction=(),BecomeRelevantFunction=(),UpdateFunction=())]
+    n11 = AnimGraphNode_ModifyBone(ComponentPose=n12.Pose, Translation=n15.ReturnValue) [Node=(BoneToModify=(BoneName="ik_foot_l"),Translation=(X=0.000000,Y=0.000000,Z=0.000000),Rotation=(Pitch=0.000000,Yaw=0.000000,Roll=0.000000),Scale=(X=1.000000,Y=1.000000,Z=1.000000),TranslationMode=BMM_Additive,TranslationSpace=BCS_ComponentSpace,RotationSpace=BCS_ComponentSpace,ScaleSpace=BCS_ComponentSpace,ComponentPose=(LinkID=-1,SourceLinkID=-1),LODThreshold=-1,bAlphaBoolEnabled=True,Alpha=1.000000,AlphaScaleBias=(Scale=1.000000),AlphaBoolBlend=(BlendOption=HermiteCubic),AlphaScaleBiasClamp=(InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000),InitialUpdateFunction=(),BecomeRelevantFunction=(),UpdateFunction=())]
+    n12 = AnimGraphNode_CopyBone(ComponentPose=n13.Pose, bCopyTranslation=True, bCopyRotation=True) [Node=(SourceBone=(BoneName="foot_r"),TargetBone=(BoneName="ik_foot_r"),bCopyTranslation=True,bCopyRotation=True,ControlSpace=BCS_ComponentSpace,ComponentPose=(LinkID=-1,SourceLinkID=-1),LODThreshold=-1,bAlphaBoolEnabled=True,Alpha=1.000000,AlphaScaleBias=(Scale=1.000000),AlphaBoolBlend=(BlendOption=HermiteCubic),AlphaScaleBiasClamp=(InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000),InitialUpdateFunction=(),BecomeRelevantFunction=(),UpdateFunction=())]
+    n13 = AnimGraphNode_CopyBone(ComponentPose=n14.ComponentPose, bCopyTranslation=True, bCopyRotation=True) [Node=(SourceBone=(BoneName="foot_l"),TargetBone=(BoneName="ik_foot_l"),bCopyTranslation=True,bCopyRotation=True,ControlSpace=BCS_ComponentSpace,ComponentPose=(LinkID=-1,SourceLinkID=-1),LODThreshold=-1,bAlphaBoolEnabled=True,Alpha=1.000000,AlphaScaleBias=(Scale=1.000000),AlphaBoolBlend=(BlendOption=HermiteCubic),AlphaScaleBiasClamp=(InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000),InitialUpdateFunction=(),BecomeRelevantFunction=(),UpdateFunction=())]
+    n14 = AnimGraphNode_LocalToComponentSpace(LocalPose=n1.Pose)
+    n15 = CallFunction KismetMathLibrary:MakeVector(Z=n16.OffsetL)
+    n16 = VariableGet OffsetL()
+    n17 = CallFunction KismetMathLibrary:MakeVector(Z=n18.OffsetR)
+    n18 = VariableGet OffsetR()
+    n19 = CallFunction KismetMathLibrary:MakeVector(Z=n20.Pelvis)
+    n20 = VariableGet Pelvis()
+    n21 = AnimGraphNode_IKRig(Source=n8.Pose, PositionAlpha_FootL=1.0, RotationAlpha_FootL=1.0, PositionAlpha_FootR=1.0, RotationAlpha_FootR=1.0) [Node=(Source=(LinkID=-1,SourceLinkID=-1),RigDefinitionAsset="/Script/IKRig.IKRigDefinition'/Game/StairsInAGame/IKR_StairLegs.IKR_StairLegs'",Goals=((Name="FootL",BoneName="foot_l",TransformSource=Bone,SourceBone=(BoneName="ik_foot_l")),(Name="FootR",BoneName="foot_r",TransformSource=Bone,SourceBone=(BoneName="ik_foot_r"))),DebugScale=5.000000,bAlphaBoolEnabled=True,Alpha=1.000000,AlphaScaleBias=(Scale=1.000000),AlphaBoolBlend=(BlendOption=HermiteCubic),AlphaScaleBiasClamp=(InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000),InitialUpdateFunction=(),BecomeRelevantFunction=(),UpdateFunction=())]
+    n22 = AnimGraphNode_Root(Result=n21.Pose)
+  }
+}

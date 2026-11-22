@@ -1,0 +1,37 @@
+gcshape 1 into:/Game/GraphCodeExamples/VRHandRig_20261001
+# A pistol built to be HELD, in its own frame and never turned here: bore along the forearm, top toward the
+# thumb, so hung on the hand's web its grip rakes down the palm by its own angle (user, 2026-10-04: "Drop the
+# tilt", "If tilt is needed, it should not be in gcshape but in gcmove"). The clip that holds it is
+# VRPistolGrip.gcmove, one pose made in steps (Docs/Guides/HANDS.md, Step 6). Its origin is where the hand takes it:
+# a pistol is held by the web of the hand high in the backstrap (FM 3-23.35), so the origin is the gun's
+# own Web socket below, and the Blueprint hangs it on the hand's web_grip_r (VRHand.gcrig). Ruled
+# 2026-10-02, web meets web (GC-MOVE-GRIP-SEATING.md); it replaces a typed grip point, "the palm centre
+# at the grip's middle height", that sat the hand a finger too low and too far forward. The gun itself
+# is the VR template's own /Game/Weapons/Pistol/Meshes/SM_Pistol, read and never edited (user,
+# 2026-10-01: "try on guns").
+#
+# Measured on SM_Pistol (gc_render ask, 2026-10-01): barrel +Y (muzzle at Y 18.9, Z 9.2), up +Z, its
+# RIGHT side is -X (a right palm presses there), the grip about 3.5 cm wide and 4.7 deep and leaning
+# 21 degrees back from upright, the trigger face at (0.1, 4.4, 4.8) and the web of the hand under the
+# frame's rear at about (Y -1.5, Z 5) (superseded by Web below, measured). Turned -21 about X once, to stand
+# the grip upright like a sword's handle, the trigger stood 3 cm above the forefinger's line with the web on
+# the backstrap; untilted, the forefinger's pad lands on it (GC-MOVE-GRIP-SEATING.md).
+build {
+  SM_VRPistol = $Gun [pivot=Web]
+}
+# Where a hand's pads go, named by the gun (GC-MOVE-GRIP-SEATING.md "Ruled 2026-10-01"): a .gcmove
+# reaches a pad to $Gun.Trigger. Written in SM_Pistol's own coordinates, measured with gc_render
+# mode:"ask" on it (2026-10-02), and carried by the pivot like the triangles. Trigger: the
+# trigger's front face at mid-height (front face Y 4.34-4.45, Z 4.4-5.0). ThumbRest: the frame's left
+# side above the guard, where a right thumb lies (flat at X 2.10-2.14). IndexRest: the frame's right
+# side ahead of the guard, where a straight forefinger lies until a shot is wanted (flat at X -2.0).
+# Web: where the web of the hand bears, the deepest point of the backstrap's pocket under the
+# beavertail, on the gun's centre plane (measured 2026-10-02: the rear outline is furthest forward, a
+# vertical patch at Y -0.50 from Z 5.52 to 5.66, so its normal there is -Y exactly).
+Gun = mesh() {
+  add(mesh('/Game/Weapons/Pistol/Meshes/SM_Pistol'))
+  socket(Web, at=(0, -0.5, 5.6), facing=-Y)
+  socket(Trigger, at=(0, 4.45, 4.7), facing=+Y)
+  socket(ThumbRest, at=(2.1, 4.0, 7.4), facing=+X)
+  socket(IndexRest, at=(-2.0, 8.0, 6.9), facing=-X)
+}

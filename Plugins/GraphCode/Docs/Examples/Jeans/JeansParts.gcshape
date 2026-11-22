@@ -1,0 +1,48 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/Jeans  smooth:0.02
+# Hard parts for the Jeans example.
+
+build { }
+
+Flat = mesh() {
+  rect(w=200.0, h=200.0)
+  fill()
+}
+
+LoopWidth = 1.0
+LoopHeight = 5.0
+LoopProud = 0.33
+
+BeltLoop = mesh(Host = $Flat) {
+  rect(w=$LoopWidth, h=$LoopHeight)
+  round(0.25)
+  extrude(height=$LoopProud)
+  round(0.1) [top]
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=1.0]
+}
+
+ButtonRadius = 0.85
+
+Button = mesh() {
+  circle(radius=$ButtonRadius)
+  extrude(height=0.3)
+  round(0.12) [top]
+}
+
+RivetRadius = 0.45
+
+Rivet = mesh() {
+  arc(radius=$RivetRadius, from=0.0, to=90.0)
+  revolve()
+}
+
+PatchWidth  = 6.0
+PatchHeight = 4.0
+PatchDepth  = 0.2
+
+Patch = mesh(Host = $Flat) {
+  rect(w=$PatchWidth, h=$PatchHeight)
+  round(0.3)
+  extrude(height=$PatchDepth)
+  round(0.05) [top]
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=1.0]
+}

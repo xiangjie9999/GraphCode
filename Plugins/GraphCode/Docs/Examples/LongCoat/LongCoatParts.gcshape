@@ -1,0 +1,42 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/LongCoat  smooth:0.02
+# Hard parts for the LongCoat example.
+
+build {
+  SM_LongCoatButton = $Button
+  SM_LongCoatPocketFlap = $PocketFlap
+}
+
+ButtonRadius = 1.45
+ButtonDepth  = 0.4
+EyeRadius    = 0.17
+EyeStep      = 0.66
+
+Eye = mesh() {
+  circle(radius=$EyeRadius, segments=10)
+  extrude(height=$ButtonDepth * 3.0)
+}
+
+Button = mesh() {
+  circle(radius=$ButtonRadius, segments=32)
+  extrude(height=$ButtonDepth, to=85%)
+  round(0.12, segments=2) [sharp]
+  subtract($Eye, at=(-0.33, -0.33, -$ButtonDepth), repeat=(2, 2), step=(($EyeStep, 0, 0), (0, $EyeStep, 0)))
+}
+
+FlapWidth  = 19.51
+FlapHeight = 6.67
+FlapRound  = 2.90
+FlapDepth  = 0.456
+
+Flat = mesh() {
+  rect(w=200.0, h=200.0)
+  fill()
+}
+
+PocketFlap = mesh(Host = $Flat) {
+  rect(w=$FlapWidth, h=$FlapHeight)
+  round(($FlapRound, $FlapRound, 0.5, 0.5))
+  extrude(height=$FlapDepth)
+  round(0.2, segments=2) [sharp]
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=1.0]
+}

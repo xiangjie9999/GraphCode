@@ -1,0 +1,206 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/LeatherArmour/Built
+# LeatherArmour: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_LeatherArmour = $Armour
+}
+
+HardLeather = fabric(weight=4200, thickness=4mm, stretch=(3.46%, 8.07%), shear=1758.5, stiffness=(23, 23), friction=0.54)
+Parts = shape('/Game/GraphCodeExamples/Garment/LeatherArmour/LeatherArmourParts')
+
+Neck = ring((0.000, 7.188, 146.391), (3.605, 6.244, 146.793), (6.002, 3.465, 147.598), (6.500, 0.000, 148.000), (6.002, -3.465, 147.598), (3.605, -6.244, 146.793), (0.000, -7.188, 146.391), (-3.605, -6.244, 146.793), (-6.002, -3.465, 147.598), (-6.500, 0.000, 148.000), (-6.002, 3.465, 147.598), (-3.605, 6.244, 146.793)) {
+  expand((0.478, 0.388))
+}
+Hem = ring((0.000, 10.000, 98.000), (15.300, 0.000, 98.000), (0.000, -11.000, 98.000), (-15.300, 0.000, 98.000)) {
+  expand(0.418)
+}
+TabRing = ring($Hem) {
+  shift((-1.2, 0, 0))
+}
+TabRivRing = ring($Hem) {
+  shift((-0.6, 0, 0))
+}
+Armhole_L = ring((14.800, 0.000, 142.952), (13.026, 9.039, 131.375), (16.527, 0.454, 125.000), (12.198, -7.201, 132.750)) {
+  expand(0.397)
+}
+Armhole_R = ring((-14.800, 0.000, 142.952), (-13.026, 9.039, 131.375), (-16.527, 0.454, 125.000), (-12.198, -7.201, 132.750)) {
+  expand(0.397)
+}
+
+StrapL = ring((10.800, 8.392, 141.000), (10.800, -0.600, 145.344), (10.800, -8.392, 141.000), (16.560, 0.000, 126.000))
+StrapR = ring((-10.800, 8.392, 141.000), (-10.800, -0.600, 145.344), (-10.800, -8.392, 141.000), (-16.560, 0.000, 126.000))
+StrapTopL = ring((12.500, -0.600, 144.307), (12.500, -4.500, 143.198), (16.560, 0.000, 126.000), (12.500, 4.500, 143.198))
+StrapTopR = ring((-12.500, -0.600, 144.307), (-12.500, -4.500, 143.198), (-16.560, 0.000, 126.000), (-12.500, 4.500, 143.198))
+StrapBackL = ring((11.500, -8.053, 141.000), (11.500, -0.600, 144.915), (11.500, 8.053, 141.000), (16.560, 0.000, 126.000))
+StrapBackR = ring((-11.500, -8.053, 141.000), (-11.500, -0.600, 144.915), (-11.500, 8.053, 141.000), (-16.560, 0.000, 126.000))
+LaceL1 = ring((15.931, 0.000, 119.000), (0.000, -10.173, 119.000), (-15.931, 0.000, 119.000), (0.000, 12.040, 119.000)) {
+  expand(0.405)
+}
+LaceL2 = ring((15.411, 0.000, 116.000), (0.000, -10.093, 116.000), (-15.411, 0.000, 116.000), (0.000, 11.560, 116.000)) {
+  expand(0.407)
+}
+LaceL3 = ring((14.889, 0.000, 113.000), (0.000, -10.013, 113.000), (-14.889, 0.000, 113.000), (0.000, 11.080, 113.000)) {
+  expand(0.409)
+}
+LaceL4 = ring((14.368, 0.000, 110.000), (0.000, -9.933, 110.000), (-14.368, 0.000, 110.000), (0.000, 10.600, 110.000)) {
+  expand(0.411)
+}
+LaceL5 = ring((13.847, 0.000, 107.000), (0.000, -9.853, 107.000), (-13.847, 0.000, 107.000), (0.000, 10.120, 107.000)) {
+  expand(0.413)
+}
+LaceL6 = ring((13.757, 0.000, 104.000), (0.000, -9.971, 104.000), (-13.757, 0.000, 104.000), (0.000, 9.829, 104.000)) {
+  expand(0.414)
+}
+LaceL7 = ring((14.528, 0.000, 101.000), (0.000, -10.486, 101.000), (-14.528, 0.000, 101.000), (0.000, 9.914, 101.000)) {
+  expand(0.416)
+}
+LaceR1 = ring((-15.931, 0.000, 119.000), (0.000, 12.040, 119.000), (15.931, 0.000, 119.000), (0.000, -10.173, 119.000)) {
+  expand(0.405)
+}
+LaceR2 = ring((-15.411, 0.000, 116.000), (0.000, 11.560, 116.000), (15.411, 0.000, 116.000), (0.000, -10.093, 116.000)) {
+  expand(0.407)
+}
+LaceR3 = ring((-14.889, 0.000, 113.000), (0.000, 11.080, 113.000), (14.889, 0.000, 113.000), (0.000, -10.013, 113.000)) {
+  expand(0.409)
+}
+LaceR4 = ring((-14.368, 0.000, 110.000), (0.000, 10.600, 110.000), (14.368, 0.000, 110.000), (0.000, -9.933, 110.000)) {
+  expand(0.411)
+}
+LaceR5 = ring((-13.847, 0.000, 107.000), (0.000, 10.120, 107.000), (13.847, 0.000, 107.000), (0.000, -9.853, 107.000)) {
+  expand(0.413)
+}
+LaceR6 = ring((-13.757, 0.000, 104.000), (0.000, 9.829, 104.000), (13.757, 0.000, 104.000), (0.000, -9.971, 104.000)) {
+  expand(0.414)
+}
+LaceR7 = ring((-14.528, 0.000, 101.000), (0.000, 9.914, 101.000), (14.528, 0.000, 101.000), (0.000, -10.486, 101.000)) {
+  expand(0.416)
+}
+BandF1 = ring((0.000, 9.920, 100.805), (14.579, 0.000, 100.805), (0.000, -10.519, 100.805), (-14.579, 0.000, 100.805)) {
+  expand(0.419)
+}
+BandB1 = ring((0.000, -10.519, 100.805), (-14.579, 0.000, 100.805), (0.000, 9.920, 100.805), (14.579, 0.000, 100.805)) {
+  expand(0.419)
+}
+BandF2 = ring((0.000, 9.978, 106.115), (13.694, 0.000, 106.115), (0.000, -9.830, 106.115), (-13.694, 0.000, 106.115)) {
+  expand(0.421)
+}
+BandB2 = ring((0.000, -9.830, 106.115), (-13.694, 0.000, 106.115), (0.000, 9.978, 106.115), (13.694, 0.000, 106.115)) {
+  expand(0.421)
+}
+BandF3 = ring((0.000, 10.828, 111.425), (14.616, 0.000, 111.425), (0.000, -9.971, 111.425), (-14.616, 0.000, 111.425)) {
+  expand(0.422)
+}
+BandB3 = ring((0.000, -9.971, 111.425), (-14.616, 0.000, 111.425), (0.000, 10.828, 111.425), (14.616, 0.000, 111.425)) {
+  expand(0.422)
+}
+BandF4 = ring((0.000, 11.678, 116.735), (15.538, 0.000, 116.735), (0.000, -10.113, 116.735), (-15.538, 0.000, 116.735)) {
+  expand(0.424)
+}
+BandB4 = ring((0.000, -10.113, 116.735), (-15.538, 0.000, 116.735), (0.000, 11.678, 116.735), (15.538, 0.000, 116.735)) {
+  expand(0.424)
+}
+BandF5 = ring((0.000, 12.507, 122.045), (16.260, 0.000, 122.045), (0.000, -10.302, 122.045), (-16.260, 0.000, 122.045)) {
+  expand(0.426)
+}
+BandB5 = ring((0.000, -10.302, 122.045), (-16.260, 0.000, 122.045), (0.000, 12.507, 122.045), (16.260, 0.000, 122.045)) {
+  expand(0.426)
+}
+BandF6 = ring((0.000, 13.303, 127.355), (16.663, 0.000, 127.355), (0.000, -10.568, 127.355), (-16.663, 0.000, 127.355)) {
+  expand(0.427)
+}
+BandB6 = ring((0.000, -10.568, 127.355), (-16.663, 0.000, 127.355), (0.000, 13.303, 127.355), (16.663, 0.000, 127.355)) {
+  expand(0.427)
+}
+BandF7 = ring((0.000, 13.700, 130.000), (16.863, 0.000, 130.000), (0.000, -10.700, 130.000), (-16.863, 0.000, 130.000)) {
+  expand(0.429)
+}
+BandB7 = ring((0.000, -10.700, 130.000), (-16.863, 0.000, 130.000), (0.000, 13.700, 130.000), (16.863, 0.000, 130.000)) {
+  expand(0.429)
+}
+
+Armour = garment($Neck, $Hem, loose=0%, fabric=$HardLeather) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  construct()
+  BackNeck = line($Neck@0.004, $Neck@0.5, $Neck@0.996)
+  Collar = extend($BackNeck, 6.26)
+  Front = line($Neck@0, $Hem@0)
+  GapFrontL = line($Front@0.57 offset=22.45cm, $Hem@0.2344)
+  GapBackL = line($Front@0.57 offset=24.15cm, $Hem@0.2546)
+  GapBackR = line($Front@0.57 offset=-24.15cm, $Hem@0.7454)
+  GapFrontR = line($Front@0.57 offset=-22.45cm, $Hem@0.7656)
+  cut($GapFrontL, $GapBackL)
+  cut($GapBackR, $GapFrontR)
+  add($Parts.Lacing, at=$LaceL1@0, hold=0)
+  add($Parts.Lacing, at=$LaceL2@0, hold=0)
+  add($Parts.Lacing, at=$LaceL3@0, hold=0)
+  add($Parts.Lacing, at=$LaceL4@0, hold=0)
+  add($Parts.Lacing, at=$LaceL5@0, hold=0)
+  add($Parts.Lacing, at=$LaceL6@0, hold=0)
+  add($Parts.Lacing, at=$LaceL7@0, hold=0)
+  add($Parts.Lacing, at=$LaceR1@0, hold=0)
+  add($Parts.Lacing, at=$LaceR2@0, hold=0)
+  add($Parts.Lacing, at=$LaceR3@0, hold=0)
+  add($Parts.Lacing, at=$LaceR4@0, hold=0)
+  add($Parts.Lacing, at=$LaceR5@0, hold=0)
+  add($Parts.Lacing, at=$LaceR6@0, hold=0)
+  add($Parts.Lacing, at=$LaceR7@0, hold=0)
+  add($Parts.ShoulderBuckle, at=$StrapL@0)
+  add($Parts.ShoulderBuckle, at=$StrapR@0, rotate=(0, 0, 180))
+  add($Parts.ShoulderStrap, at=$StrapTopL@0)
+  add($Parts.ShoulderStrap, at=$StrapTopR@0, rotate=(0, 0, 180))
+  add($Parts.StrapRoot, at=$StrapBackL@0, rotate=(0, 0, 180))
+  add($Parts.StrapRoot, at=$StrapBackR@0)
+  add($Parts.LameSeg, along=$BandF1, repeat=9, spread=39.56%)
+  add($Parts.LameSeg, along=$BandB1, repeat=8, spread=38.87%)
+  add($Parts.LameSeg, along=$BandF2, repeat=8, spread=41.07%)
+  add($Parts.LameSeg, along=$BandB2, repeat=8, spread=39.61%)
+  add($Parts.LameSeg, along=$BandF3, repeat=9, spread=40.78%)
+  add($Parts.LameSeg, along=$BandB3, repeat=9, spread=39.22%)
+  add($Parts.LameSeg, along=$BandF4, repeat=10, spread=42.77%)
+  add($Parts.LameSeg, along=$BandB4, repeat=9, spread=40.58%)
+  add($Parts.LameSeg, along=$BandF5, repeat=11, spread=44.72%)
+  add($Parts.LameSeg, along=$BandB5, repeat=10, spread=41.50%)
+  add($Parts.LameSeg, along=$BandF6, repeat=7, spread=29.54%)
+  add($Parts.LameSeg, along=$BandB6, repeat=7, spread=28.13%)
+  add($Parts.LameSegUp, along=$BandF7, repeat=6, spread=23.97%)
+  add($Parts.LameSegUp, along=$BandB7, repeat=7, spread=24.84%)
+  add($Parts.Rivet, along=$BandF1, repeat=9, spread=39.56%, gap=0.4, hold=0)
+  add($Parts.Rivet, along=$BandB1, repeat=8, spread=38.87%, gap=0.4, hold=0)
+  add($Parts.Rivet, along=$BandF2, repeat=8, spread=41.07%, gap=0.4, hold=0)
+  add($Parts.Rivet, along=$BandB2, repeat=8, spread=39.61%, gap=0.4, hold=0)
+  add($Parts.Rivet, along=$BandF3, repeat=9, spread=40.78%, gap=0.4, hold=0)
+  add($Parts.Rivet, along=$BandB3, repeat=9, spread=39.22%, gap=0.4, hold=0)
+  add($Parts.Rivet, along=$BandF4, repeat=10, spread=42.77%, gap=0.4, hold=0)
+  add($Parts.Rivet, along=$BandB4, repeat=9, spread=40.58%, gap=0.4, hold=0)
+  add($Parts.Rivet, along=$BandF5, repeat=11, spread=44.72%, gap=0.4, hold=0)
+  add($Parts.Rivet, along=$BandB5, repeat=10, spread=41.50%, gap=0.4, hold=0)
+  add($Parts.Rivet, along=$BandF6, repeat=7, spread=29.54%, gap=0.4, hold=0)
+  add($Parts.Rivet, along=$BandB6, repeat=7, spread=28.13%, gap=0.4, hold=0)
+  add($Parts.RivetUp, along=$BandF7, repeat=6, spread=23.97%, gap=0.4, hold=0)
+  add($Parts.RivetUp, along=$BandB7, repeat=7, spread=24.84%, gap=0.4, hold=0)
+  add($Parts.Tab, at=$TabRing@0.8047, gap=0.4, hold=0, rotate=(4.14, 0, 0))
+  add($Parts.Tab, at=$TabRing@0.8828, gap=0.4, hold=0)
+  add($Parts.Tab, at=$TabRing@0.9609, gap=0.4, hold=0)
+  add($Parts.Tab, at=$TabRing@0.0391, gap=0.4, hold=0)
+  add($Parts.Tab, at=$TabRing@0.1172, gap=0.4, hold=0)
+  add($Parts.Tab, at=$TabRing@0.1953, gap=0.4, hold=0, rotate=(5.30, 0, 0))
+  add($Parts.Tab, at=$TabRing@0.2955, gap=0.4, hold=0, rotate=(6.03, 0, 0))
+  add($Parts.Tab, at=$TabRing@0.3773, gap=0.4, hold=0, rotate=(2.95, 0, 0))
+  add($Parts.Tab, at=$TabRing@0.4591, gap=0.4, hold=0, rotate=(2.27, 0, 0))
+  add($Parts.Tab, at=$TabRing@0.5409, gap=0.4, hold=0, rotate=(2.56, 0, 0))
+  add($Parts.Tab, at=$TabRing@0.6227, gap=0.4, hold=0, rotate=(2.90, 0, 0))
+  add($Parts.Tab, at=$TabRing@0.7045, gap=0.4, hold=0, rotate=(5.95, 0, 0))
+  add($Parts.Rivet, at=$TabRivRing@0.8047, gap=0.8, hold=0)
+  add($Parts.Rivet, at=$TabRivRing@0.8828, gap=0.8, hold=0)
+  add($Parts.Rivet, at=$TabRivRing@0.9609, gap=0.8, hold=0)
+  add($Parts.Rivet, at=$TabRivRing@0.0391, gap=0.8, hold=0)
+  add($Parts.Rivet, at=$TabRivRing@0.1172, gap=0.8, hold=0)
+  add($Parts.Rivet, at=$TabRivRing@0.1953, gap=0.8, hold=0)
+  add($Parts.Rivet, at=$TabRivRing@0.2955, gap=0.8, hold=0)
+  add($Parts.Rivet, at=$TabRivRing@0.3773, gap=0.8, hold=0)
+  add($Parts.Rivet, at=$TabRivRing@0.4591, gap=0.8, hold=0)
+  add($Parts.Rivet, at=$TabRivRing@0.5409, gap=0.8, hold=0)
+  add($Parts.Rivet, at=$TabRivRing@0.6227, gap=0.8, hold=0)
+  add($Parts.Rivet, at=$TabRivRing@0.7045, gap=0.8, hold=0)
+}

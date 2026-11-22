@@ -1,0 +1,48 @@
+gcmove 1 character:/Game/GraphCodeExamples/VRHandRig_20261001/SKM_MannyXR_right part:mesh
+         ik_rig:/Game/GraphCodeExamples/VRHandRig_20261001/IKR_VRHand
+         physics_asset:/Game/GraphCodeExamples/VRHandRig_20261001/PHAT_VRHand
+         into:/Game/GraphCodeExamples/VRHandRig_20261001 fps:48
+build {
+  A_VRFist = $Fist
+}
+# The acceptance GC-RIG-IMPORTED-MESH.md owes: a fist on Epic's VR hand, rigged by VRHand.gcrig with
+# its skin kept. Every angle is about the joint's own fold axis (the record the rig wrote), counted
+# from the rest pose. Each asks for nearly its limit and self-collision decides where it stops.
+MCP = bones(index_01_r,middle_01_r,ring_01_r,pinky_01_r)
+PIP = bones(index_02_r,middle_02_r,ring_02_r,pinky_02_r)
+DIP = bones(index_03_r,middle_03_r,ring_03_r,pinky_03_r)
+Fingers = pose(collision=self) {
+  swing($MCP,axis=fold,by=55)
+  swing($PIP,axis=fold,by=85)
+  swing($DIP,axis=fold,by=75)
+}
+# The thumb goes after the fingers, in four moves, each its own pose so it keeps this order: out in
+# front of the palm, rolled so its pad faces the fingers, curled, and only then swung across. Swung
+# first, while it still lay in the palm's plane, it met the forefinger's SIDE and hung down it; swung
+# last it lies across the forefinger and middle finger, its tip on the middle finger's middle segment,
+# as a clenched fist's does (user, 2026-10-01: "but why still look weird"; VRFistThumbOverTrials).
+FingersClose = profile(0=0,0.45=1,1=1)
+ThumbOut = profile(0=0,0.45=0,0.55=1,1=1)
+ThumbRolls = profile(0=0,0.5=0,0.6=1,1=1)
+ThumbCurls = profile(0=0,0.58=0,0.7=1,1=1)
+ThumbSwings = profile(0=0,0.7=0,0.92=1,1=1)
+Out = pose(collision=self) {
+  swing(thumb_opp_r,axis=fold,by=58)
+}
+Roll = pose(collision=self) {
+  swing(thumb_roll_r,axis=twist,by=40)
+}
+Curl = pose(collision=self) {
+  swing(thumb_02_r,axis=fold,by=50)
+  swing(thumb_03_r,axis=fold,by=70)
+}
+Across = pose(collision=self) {
+  swing(thumb_01_r,axis=fold,by=-50)
+}
+Fist = clip(frames=48) {
+  $Fingers@$FingersClose
+  $Out@$ThumbOut
+  $Roll@$ThumbRolls
+  $Curl@$ThumbCurls
+  $Across@$ThumbSwings
+}

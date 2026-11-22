@@ -1,0 +1,65 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment  smooth:0.3
+# the same body with the arms hanging 20 degrees out from the sides (the standing position of EN ISO 20685-1 Annex A); the arm pivot sits where the arm clears the torso below the armpit.
+
+build {
+  SM_ArmsDownBody = $Body [pivot=(0,0,0)]
+}
+
+Skin = material('/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial')
+
+Trunk = mesh() {
+  circle(radius=10, segments=48)
+  $Round = plane
+  circle(radius=10, scale=(1.2, .75, 1), segments=48)
+  loft(to=$Round, scale=(1.55, 1.0, 1), at=(0, -.5, 5))
+  loft(to=$Round, scale=(1.72, 1.12, 1), at=(0, -1, 13))
+  loft(to=$Round, scale=(1.35, .98, 1), at=(0, 0, 27))
+  loft(to=$Round, scale=(1.62, 1.12, 1), at=(0, 1, 42))
+  loft(to=$Round, scale=(1.7, 1.22, 1), at=(0, 1.5, 52))
+  loft(to=$Round, scale=(1.8, 1.05, 1), at=(0, 0, 63))
+  loft(to=$Round, scale=(.65, .62, 1), at=(0, 0, 70))
+  loft(to=$Round, scale=(.58, .58, 1), at=(0, 0, 78))
+  loft(to=$Round, scale=(.8, .9, 1), at=(0, .5, 84))
+  loft(to=$Round, scale=(.82, .98, 1), at=(0, 0, 92))
+  loft(to=$Round, scale=(.55, .65, 1), at=(0, 0, 99))
+  loft(to=$Round, scale=(.05, .05, 1), at=(0, 0, 102))
+  place(by=(0, 0, 78))
+}
+
+Arm = mesh() {
+  circle(radius=10, segments=32)
+  $Round = plane
+  circle(radius=.5, segments=32)
+  loft(to=$Round, scale=(.31, .31, 1), at=(0, 0, .690))
+  loft(to=$Round, scale=(.4384, .4384, 1), at=(0, 0, 1.508))
+  loft(to=$Round, scale=(.5369, .5369, 1), at=(0, 0, 2.575))
+  loft(to=$Round, scale=(.5989, .5989, 1), at=(0, 0, 3.819))
+  loft(to=$Round, scale=(.62, .62, 1), at=(0, 0, 5.15))
+  loft(to=$Round, scale=(.55, .58, 1), at=(0, 0, 27.15))
+  loft(to=$Round, scale=(.42, .44, 1), at=(0, 0, 45.15))
+  loft(to=$Round, scale=(.42, .46, 1), at=(0, 0, 53.15))
+  loft(to=$Round, scale=(.24, .3, 1), at=(0, 0, 71.15))
+  loft(to=$Round, scale=(.16, .42, 1), at=(0, 0, 80.15))
+  loft(to=$Round, scale=(.05, .06, 1), at=(0, 0, 87.15))
+}
+
+Leg = mesh() {
+  circle(radius=10, segments=32)
+  $Round = plane
+  circle(radius=4.5, scale=(1, 1.3, 1), segments=32)
+  loft(to=$Round, scale=(.42, .45, 1), at=(0, 0, 8))
+  loft(to=$Round, scale=(.55, .58, 1), at=(0, 0, 30))
+  loft(to=$Round, scale=(.5, .52, 1), at=(0, 0, 48))
+  loft(to=$Round, scale=(.72, .75, 1), at=(0, 0, 70))
+  loft(to=$Round, scale=(.76, .78, 1), at=(0, 0, 85))
+  loft(to=$Round, scale=(.65, .68, 1), at=(0, 0, 94))
+}
+
+Body = mesh() {
+  add($Trunk)
+  add($Arm, at=(19.639, 0, 141.839), rotate=(0, -160, 0))
+  add($Arm, at=(-19.639, 0, 141.839), rotate=(0, 160, 0))
+  add($Leg, at=(9.5, 0, 0))
+  add($Leg, at=(-9.5, 0, 0))
+  material($Skin)
+}

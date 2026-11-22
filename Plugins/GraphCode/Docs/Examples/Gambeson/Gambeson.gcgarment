@@ -1,0 +1,146 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/Gambeson/Built
+# Gambeson: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_Gambeson = $Gambeson
+  T_GambesonStitches = bake(decal, resolution=2048)
+}
+
+Quilted = fabric(weight=1635, stretch=(1.4%, 3.25%), shear=58, stiffness=(14, 12), friction=0.49)
+
+Parts = shape('/Game/GraphCodeExamples/Garment/Gambeson/GambesonParts')
+
+Neck = ring((0.000, 6.200, 148.000), (4.481, 4.481, 148.000), (6.500, 0.000, 148.000), (4.481, -4.481, 148.000), (0.000, -6.200, 148.000), (-4.481, -4.481, 148.000), (-6.500, 0.000, 148.000), (-4.481, 4.481, 148.000)) {
+  expand(0.81)
+}
+Chest = ring((0.000, 13.400, 128.000), (16.840, 1.400, 128.000), (0.000, -10.600, 128.000), (-16.840, 1.400, 128.000)) {
+  expand(0.99)
+}
+Waist = ring((0.000, 9.800, 105.000), (13.500, 0.000, 105.000), (0.000, -9.800, 105.000), (-13.500, 0.000, 105.000)) {
+  expand(0.81)
+}
+Hips = ring((0.000, 10.200, 91.000), (17.200, -1.000, 91.000), (0.000, -12.200, 91.000), (-17.200, -1.000, 91.000)) {
+  expand(0.81)
+}
+Hem = ring($Hips) {
+  move((0, 0, -29))
+  expand(4.92)
+}
+Armhole_L = ring((24.158, 4.407, 141.063)) {
+  rotate((0, -20, 0))
+  expand(0.81)
+}
+Armhole_R = ring((-24.158, 4.407, 141.063)) {
+  rotate((0, 20, 0))
+  expand(0.81)
+}
+Wrist_L = ring((73.000, 2.074, 138.728)) {
+  expand(0.81)
+}
+Wrist_R = ring((-73.000, 2.074, 138.728)) {
+  expand(0.81)
+}
+
+Wall = profile(0=1.9, 0.209=2.5, 0.5=1.3, 1=2.5)
+Yoke = profile(0=0%, 1=100%)
+
+SL0 = line($Armhole_L@0.0714, $Wrist_L@0.0714)
+SL1 = line($Armhole_L@0.2143, $Wrist_L@0.2143)
+SL2 = line($Armhole_L@0.3571, $Wrist_L@0.3571)
+SL3 = line($Armhole_L@0.5000, $Wrist_L@0.5000)
+SL4 = line($Armhole_L@0.6429, $Wrist_L@0.6429)
+SL5 = line($Armhole_L@0.7857, $Wrist_L@0.7857)
+SL6 = line($Armhole_L@0.9286, $Wrist_L@0.9286)
+SR0 = line($Armhole_R@0.0714, $Wrist_R@0.0714)
+SR1 = line($Armhole_R@0.2143, $Wrist_R@0.2143)
+SR2 = line($Armhole_R@0.3571, $Wrist_R@0.3571)
+SR3 = line($Armhole_R@0.5000, $Wrist_R@0.5000)
+SR4 = line($Armhole_R@0.6429, $Wrist_R@0.6429)
+SR5 = line($Armhole_R@0.7857, $Wrist_R@0.7857)
+SR6 = line($Armhole_R@0.9286, $Wrist_R@0.9286)
+
+Sleeve_L = garment($Armhole_L, $Wrist_L, loose=0%, thickness=1.9, fabric=$Quilted) {
+  construct()
+  stitch($SL0)
+  stitch($SL1)
+  stitch($SL2)
+  stitch($SL3)
+  stitch($SL4)
+  stitch($SL5)
+  stitch($SL6)
+}
+Sleeve_R = garment($Armhole_R, $Wrist_R, loose=0%, thickness=1.9, fabric=$Quilted) {
+  construct()
+  stitch($SR0)
+  stitch($SR1)
+  stitch($SR2)
+  stitch($SR3)
+  stitch($SR4)
+  stitch($SR5)
+  stitch($SR6)
+}
+Gambeson = garment($Neck, $Chest, $Waist, $Hips, $Hem, loose@1=$Yoke, loose@2=100%, loose@3=100%, loose@4=100%, thickness=$Wall, fabric=$Quilted) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  add($Sleeve_L)
+  add($Sleeve_R)
+  construct()
+  relax(1)
+
+  Front = line($Neck@0, $Hem@0)
+  LeftFront = cut($Front)
+  sew($Front, $LeftFront)
+  stitch($Front)
+
+  BackNeck = line($Neck@0.004, $Neck@0.5, $Neck@0.996)
+  Collar = extend($BackNeck, 5.0)
+  stitch($Neck)
+  stitch($Armhole_L)
+  stitch($Armhole_R)
+  stitch($Hem, offset=1.27cm)
+
+  U1 = line($Neck@0.09375, $Hem@0.09375)
+  U3 = line($Neck@0.21875, $Hem@0.21875)
+  U4 = line($Neck@0.28125, $Hem@0.28125)
+  U5 = line($Neck@0.34375, $Hem@0.34375)
+  U7 = line($Neck@0.46875, $Hem@0.46875)
+  U8 = line($Neck@0.53125, $Hem@0.53125)
+  U10 = line($Neck@0.65625, $Hem@0.65625)
+  U11 = line($Neck@0.71875, $Hem@0.71875)
+  U12 = line($Neck@0.78125, $Hem@0.78125)
+  U14 = line($Neck@0.90625, $Hem@0.90625)
+  Q0 = line($Neck@0.03125, $Hem@0.03125)
+  Q1 = line($U1@0.06, $Hem@0.09375)
+  Q2 = line($Neck@0.15625, $Hem@0.15625)
+  Q3 = line($U3@0.3, $Hem@0.21875)
+  Q4 = line($U4@0.3, $Hem@0.28125)
+  Q5 = line($U5@0.06, $Hem@0.34375)
+  Q6 = line($Neck@0.40625, $Hem@0.40625)
+  Q7 = line($U7@0.06, $Hem@0.46875)
+  Q8 = line($U8@0.06, $Hem@0.53125)
+  Q9 = line($Neck@0.59375, $Hem@0.59375)
+  Q10 = line($U10@0.06, $Hem@0.65625)
+  Q11 = line($U11@0.3, $Hem@0.71875)
+  Q12 = line($U12@0.3, $Hem@0.78125)
+  Q13 = line($Neck@0.84375, $Hem@0.84375)
+  Q14 = line($U14@0.06, $Hem@0.90625)
+  Q15 = line($Neck@0.96875, $Hem@0.96875)
+  stitch($Q0)
+  stitch($Q1)
+  stitch($Q2)
+  stitch($Q3)
+  stitch($Q4)
+  stitch($Q5)
+  stitch($Q6)
+  stitch($Q7)
+  stitch($Q8)
+  stitch($Q9)
+  stitch($Q10)
+  stitch($Q11)
+  stitch($Q12)
+  stitch($Q13)
+  stitch($Q14)
+  stitch($Q15)
+
+  add($Parts.Button, at=$LeftFront@0.0104 offset=1.85cm, repeat=27, step=(0, 0, -3.167))
+}

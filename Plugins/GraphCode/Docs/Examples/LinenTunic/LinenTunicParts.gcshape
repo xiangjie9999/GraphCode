@@ -1,0 +1,19 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/LinenTunic  smooth:0.02
+# Hard parts for the LinenTunic example.
+
+build { }
+
+Flat = mesh() {
+  rect(w=200.0, h=200.0)
+  fill()
+}
+
+TieWidth = 0.63
+TieLength = 19.8
+TieThick = 0.102
+
+TieEnd = mesh(Host = $Flat) {
+  rect(w=$TieWidth, h=$TieLength, at=(0, -$TieLength * 0.5))
+  extrude(height=$TieThick)
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=0.5]
+}

@@ -1,0 +1,19 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/ButtonShirt  smooth:0.02
+# Hard parts for the ButtonShirt example.
+
+build { }
+
+ButtonRadius = 0.508
+ButtonDepth = 0.22
+
+Eye = mesh() {
+  circle(radius=0.06, segments=8)
+  extrude(height=$ButtonDepth * 3.0)
+}
+
+Button = mesh() {
+  circle(radius=$ButtonRadius, segments=32)
+  extrude(height=$ButtonDepth, to=85%)
+  round(0.066, segments=2) [sharp]
+  subtract($Eye, at=(-0.1155, -0.1155, -$ButtonDepth), repeat=(2, 2), step=((0.231, 0, 0), (0, 0.231, 0)))
+}

@@ -1,0 +1,67 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/Sweater/Built
+# Sweater: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_Sweater = $Sweater
+}
+
+Knit = fabric(weight=480, thickness=3.40mm, stretch=(20.75%, 20.75%), shear=25.17, stiffness=(2.47, 1.34), friction=2.22)
+Rib = fabric(weight=480, thickness=3.40mm, stretch=(122.47%, 119%), shear=11.74, stiffness=(1.18, 0.99), friction=2.22)
+
+Neck = ring((0.000, 6.200, 148.000), (3.132, 5.425, 148.000), (5.554, 3.207, 148.000), (6.500, 0.000, 148.000), (5.554, -3.207, 148.000), (3.132, -5.425, 148.000), (0.000, -6.200, 148.000), (-3.132, -5.425, 148.000), (-5.554, -3.207, 148.000), (-6.500, 0.000, 148.000), (-5.554, 3.207, 148.000), (-3.132, 5.425, 148.000)) {
+  expand(0.64)
+}
+ChestOnSkin = ring((0.000, 13.112, 126.080), (16.682, 1.350, 126.080), (0.000, -10.504, 126.080), (-16.682, 1.350, 126.080)) {
+  expand((0.658, 6.49))
+}
+Chest = ring($ChestOnSkin) {
+  move((0, 0.196, 0))
+}
+HipsOnSkin = ring((0.000, 10.000, 98.000), (15.327, -0.750, 98.000), (0.000, -11.000, 98.000), (-15.327, -0.750, 98.000)) {
+  expand((2.11, 3.049))
+}
+Hips = ring($HipsOnSkin) {
+  move((0, 1.844, 0))
+}
+Hem = ring((0.000, 10.100, 94.500), (16.275, -0.750, 94.500), (0.000, -11.600, 94.500), (-16.275, -0.750, 94.500)) {
+  expand(0.266)
+}
+Armhole_L = ring((17.100, 0.000, 142.880), (17.100, 6.020, 136.990), (17.062, 1.500, 130.820), (17.100, -6.020, 136.990)) {
+  expand(2.20)
+}
+Armhole_R = ring((-17.100, 0.000, 142.880), (-17.100, 6.020, 136.990), (-17.062, 1.500, 130.820), (-17.100, -6.020, 136.990)) {
+  expand(2.20)
+}
+HemArm_L = ring((70.850, 0.000, 139.620), (70.850, 3.190, 137.000), (70.850, 0.000, 134.380), (70.850, -3.190, 137.000)) {
+  circular()
+}
+HemArm_R = ring((-70.850, 0.000, 139.620), (-70.850, 3.190, 137.000), (-70.850, 0.000, 134.380), (-70.850, -3.190, 137.000)) {
+  circular()
+}
+Cuff_L = ring($HemArm_L) {
+  expand(0.055)
+  move((0, 0, -0.33))
+}
+Cuff_R = ring($HemArm_R) {
+  expand(0.055)
+  move((0, 0, -0.33))
+}
+
+Sleeve_L = garment($Armhole_L, $Cuff_L, loose=100%, fabric=$Knit) {
+  construct()
+  band($Cuff_L, width=4cm, fabric=$Rib, cut=85%)
+}
+Sleeve_R = garment($Armhole_R, $Cuff_R, loose=100%, fabric=$Knit) {
+  construct()
+  band($Cuff_R, width=4cm, fabric=$Rib, cut=85%)
+}
+Sweater = garment($Neck, $Chest, $Hips, $Hem, loose@1=0%, loose@2=100%, loose@3=100%, fabric=$Knit) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  add($Sleeve_L)
+  add($Sleeve_R)
+  construct()
+  relax(1)
+  band($Hem, width=4cm, fabric=$Rib, cut=85%)
+  band($Neck, width=2cm, fabric=$Rib, cut=75%)
+}

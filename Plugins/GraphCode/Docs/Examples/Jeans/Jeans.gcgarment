@@ -1,0 +1,263 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/Jeans/Built
+# Jeans: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_Jeans = $Jeans
+  T_JeansStitches = bake(decal, resolution=2048)
+}
+
+Denim = fabric(weight=426.7, thickness=1.10mm, stretch=(3.2%, 2.3%), shear=314, stiffness=(4.02, 2.37), friction=0.53)
+Own = shape('/Game/GraphCodeExamples/Garment/Jeans/JeansParts')
+
+Waist = ring((0, 10.17, 92.05), (0, -11.077, 97.55)) {
+  expand(0.14)
+}
+LoopRow = ring($Waist) {
+  move((0, 0, 1.0))
+  expand(1)
+}
+BandMiddle = ring($Waist) {
+  move((0, 0, 2))
+  expand(1)
+}
+RivetRow = ring($Waist) {
+  move((0, 0, -0.45))
+  expand(1)
+}
+CoinRow = ring($Waist) {
+  move((0, 0, -1))
+  expand(1)
+}
+PocketFoot = ring($Waist) {
+  move((0, 0, -6.7))
+  expand(1.5)
+}
+Crotch = ring((-16.795, 0.8, 76.44), (16.795, 0.8, 76.44)) {
+  expand(1.62)
+}
+Top_R = ring((-16.795, 0.8, 76.44), (-2.205, 0.8, 76.44)) {
+  expand(1.62)
+}
+Top_L = ring((16.795, 0.8, 76.44), (2.205, 0.8, 76.44)) {
+  expand(1.62)
+}
+Thigh_R = ring((-16.7, 0, 70), (-2.3, 0, 70)) {
+  expand((0.75, 1.91))
+}
+Thigh_L = ring((16.7, 0, 70), (2.3, 0, 70)) {
+  expand((0.75, 1.91))
+}
+Leg63_R = ring((-16.01, 0, 63.1), (-2.99, 0, 63.1)) {
+  expand(1.89)
+}
+Leg63_L = ring((16.01, 0, 63.1), (2.99, 0, 63.1)) {
+  expand(1.89)
+}
+MidThigh_R = ring((-15.2, 0, 55), (-3.8, 0, 55)) {
+  expand(2.48)
+}
+MidThigh_L = ring((15.2, 0, 55), (3.8, 0, 55)) {
+  expand(2.48)
+}
+Leg48_R = ring((-14.51, 0, 48.1), (-4.49, 0, 48.1)) {
+  expand(2.98)
+}
+Leg48_L = ring((14.51, 0, 48.1), (4.49, 0, 48.1)) {
+  expand(2.98)
+}
+Knee_R = ring((-14.698, 0, 40.88), (-4.302, 0, 40.88)) {
+  expand(2.56)
+}
+Knee_L = ring((14.698, 0, 40.88), (4.302, 0, 40.88)) {
+  expand(2.56)
+}
+Calf_R = ring((-14.944, 0, 32), (-4.056, 0, 32)) {
+  expand(2.02)
+}
+Calf_L = ring((14.944, 0, 32), (4.056, 0, 32)) {
+  expand(2.02)
+}
+Leg26_R = ring((-14.74, 0, 25.6), (-4.26, 0, 25.6)) {
+  expand(2.03)
+}
+Leg26_L = ring((14.74, 0, 25.6), (4.26, 0, 25.6)) {
+  expand(2.03)
+}
+Shin_R = ring((-14.35, 0, 19), (-4.65, 0, 19)) {
+  expand(2.22)
+}
+Shin_L = ring((14.35, 0, 19), (4.65, 0, 19)) {
+  expand(2.22)
+}
+Leg13_R = ring((-13.972, 0, 12.6), (-5.028, 0, 12.6)) {
+  expand(2.41)
+}
+Leg13_L = ring((13.972, 0, 12.6), (5.028, 0, 12.6)) {
+  expand(2.41)
+}
+Ankle_R = ring((-13.775, 0, 6), (-5.225, 0, 6)) {
+  expand(2.28)
+}
+Ankle_L = ring((13.775, 0, 6), (5.225, 0, 6)) {
+  expand(2.28)
+}
+
+Seat = profile(0=0, 0.31=0.72, 1=0)
+
+Leg_R = garment($Top_R, $Thigh_R, $Leg63_R, $MidThigh_R, $Leg48_R, $Knee_R, $Calf_R, $Leg26_R, $Shin_R, $Leg13_R, $Ankle_R, loose=100%, fabric=$Denim)
+Leg_L = garment($Top_L, $Thigh_L, $Leg63_L, $MidThigh_L, $Leg48_L, $Knee_L, $Calf_L, $Leg26_L, $Shin_L, $Leg13_L, $Ankle_L, loose=100%, fabric=$Denim)
+Jeans = garment($Waist, $Crotch, loose=100%, clearance=$Seat, fabric=$Denim) {
+  join($Crotch@0.25, $Crotch@0.75, $Top_L@0.5, $Top_R@0.5)
+  add($Leg_L)
+  add($Leg_R)
+  construct(rim=(turned=1.27cm, layers=3))
+  band($Waist, width=4cm, fabric=$Denim, cut=100%)
+
+  Front = line($Waist@0, $Crotch@0.78)
+  Back = line($Waist@0.5, $Crotch@0.25)
+  SideR = line($Waist@0.245, $Crotch@0)
+  SideL = line($Waist@0.755, $Crotch@0.5)
+
+  press($Waist, -1cm)
+  stitch($Waist, offset=-0.2cm)
+  stitch($Waist, offset=-3.8cm)
+
+  J1 = line($Front@0cm offset=-2.515cm, $Front@5.855cm offset=-2.515cm)
+  J2 = line($Front@5.855cm offset=-2.515cm, $Front@6.52cm offset=-2.48cm)
+  J3 = line($Front@6.52cm offset=-2.48cm, $Front@7.18cm offset=-2.35cm)
+  J4 = line($Front@7.18cm offset=-2.35cm, $Front@7.77cm offset=-2.04cm)
+  J5 = line($Front@7.77cm offset=-2.04cm, $Front@8.14cm offset=-1.50cm)
+  stitch($J1)
+  stitch($J2)
+  stitch($J3)
+  stitch($J4)
+  stitch($J5)
+  J1b = line($Front@0cm offset=-3.115cm, $Front@5.855cm offset=-3.115cm)
+  J2b = line($Front@5.855cm offset=-3.115cm, $Front@6.76cm offset=-3.06cm)
+  J3b = line($Front@6.76cm offset=-3.06cm, $Front@7.63cm offset=-2.83cm)
+  J4b = line($Front@7.63cm offset=-2.83cm, $Front@8.36cm offset=-2.30cm)
+  J5b = line($Front@8.36cm offset=-2.30cm, $Front@8.78cm offset=-1.51cm)
+  stitch($J1b)
+  stitch($J2b)
+  stitch($J3b)
+  stitch($J4b)
+  stitch($J5b)
+
+  ScoopR1 = line($SideR@6.9cm, $SideR@6.60cm offset=-3.03cm)
+  ScoopR2 = line($SideR@6.60cm offset=-3.03cm, $SideR@5.53cm offset=-6.53cm)
+  ScoopR3 = line($SideR@5.53cm offset=-6.53cm, $SideR@3.42cm offset=-9.46cm)
+  ScoopR4 = line($SideR@3.42cm offset=-9.46cm, $SideR@0cm offset=-10.7cm)
+  ScoopL1 = line($SideL@6.9cm, $SideL@6.60cm offset=3.03cm)
+  ScoopL2 = line($SideL@6.60cm offset=3.03cm, $SideL@5.53cm offset=6.53cm)
+  ScoopL3 = line($SideL@5.53cm offset=6.53cm, $SideL@3.42cm offset=9.46cm)
+  ScoopL4 = line($SideL@3.42cm offset=9.46cm, $SideL@0cm offset=10.7cm)
+  stitch($ScoopR1)
+  stitch($ScoopR2)
+  stitch($ScoopR3)
+  stitch($ScoopR4)
+  stitch($ScoopL1)
+  stitch($ScoopL2)
+  stitch($ScoopL3)
+  stitch($ScoopL4)
+  ScoopR1b = line($SideR@7.5cm, $SideR@7.19cm offset=-3.14cm)
+  ScoopR2b = line($SideR@7.19cm offset=-3.14cm, $SideR@6.08cm offset=-6.78cm)
+  ScoopR3b = line($SideR@6.08cm offset=-6.78cm, $SideR@3.81cm offset=-9.92cm)
+  ScoopR4b = line($SideR@3.81cm offset=-9.92cm, $SideR@0cm offset=-11.3cm)
+  ScoopL1b = line($SideL@7.5cm, $SideL@7.19cm offset=3.14cm)
+  ScoopL2b = line($SideL@7.19cm offset=3.14cm, $SideL@6.08cm offset=6.78cm)
+  ScoopL3b = line($SideL@6.08cm offset=6.78cm, $SideL@3.81cm offset=9.92cm)
+  ScoopL4b = line($SideL@3.81cm offset=9.92cm, $SideL@0cm offset=11.3cm)
+  stitch($ScoopR1b)
+  stitch($ScoopR2b)
+  stitch($ScoopR3b)
+  stitch($ScoopR4b)
+  stitch($ScoopL1b)
+  stitch($ScoopL2b)
+  stitch($ScoopL3b)
+  stitch($ScoopL4b)
+  CoinTop = line($SideR@1cm offset=-1.45cm, $SideR@1cm offset=-9.05cm)
+  CoinOut = line($SideR@1cm offset=-1.45cm, $SideR@6.62cm offset=-1.45cm)
+  CoinIn = line($SideR@1cm offset=-9.05cm, $SideR@3.58cm offset=-9.05cm)
+  stitch($CoinTop)
+  stitch($CoinOut)
+  stitch($CoinIn)
+  add($Own.Rivet, at=$RivetRow@0.124)
+  add($Own.Rivet, at=$PocketFoot@0.245)
+  add($Own.Rivet, at=$RivetRow@0.876)
+  add($Own.Rivet, at=$PocketFoot@0.755)
+  add($Own.Rivet, at=$CoinRow@0.228)
+  add($Own.Rivet, at=$CoinRow@0.141)
+
+  YokeR = line($Back@7.207cm, $SideR@1.607cm)
+  YokeL = line($Back@7.207cm, $SideL@1.607cm)
+  YokeRb = line($Back@7.826cm, $SideR@2.226cm)
+  YokeLb = line($Back@7.826cm, $SideL@2.226cm)
+  stitch($YokeR)
+  stitch($YokeL)
+  stitch($YokeRb)
+  stitch($YokeLb)
+  SeatL1 = line($Back@6.948cm offset=0.2cm, $Back@14.8cm offset=0.2cm)
+  SeatL2 = line($Back@6.794cm offset=0.8cm, $Back@14.8cm offset=0.8cm)
+  stitch($SeatL1)
+  stitch($SeatL2)
+
+  BackR1 = line($Back@6.98cm offset=-4.26cm, $Back@6.98cm offset=-19.61cm)
+  BackR2 = line($Back@6.98cm offset=-19.61cm, $Back@19.21cm offset=-18.85cm)
+  BackR3 = line($Back@19.21cm offset=-18.85cm, $Back@20.44cm offset=-11.94cm)
+  BackR4 = line($Back@20.44cm offset=-11.94cm, $Back@19.21cm offset=-5.02cm)
+  BackR5 = line($Back@19.21cm offset=-5.02cm, $Back@6.98cm offset=-4.26cm)
+  BackL1 = line($Back@6.98cm offset=4.26cm, $Back@6.98cm offset=19.61cm)
+  BackL2 = line($Back@6.98cm offset=19.61cm, $Back@19.21cm offset=18.85cm)
+  BackL3 = line($Back@19.21cm offset=18.85cm, $Back@20.44cm offset=11.94cm)
+  BackL4 = line($Back@20.44cm offset=11.94cm, $Back@19.21cm offset=5.02cm)
+  BackL5 = line($Back@19.21cm offset=5.02cm, $Back@6.98cm offset=4.26cm)
+  stitch($BackR1)
+  stitch($BackR2)
+  stitch($BackR3)
+  stitch($BackR4)
+  stitch($BackR5)
+  stitch($BackL1)
+  stitch($BackL2)
+  stitch($BackL3)
+  stitch($BackL4)
+  stitch($BackL5)
+  BackR1b = line($Back@7.58cm offset=-4.90cm, $Back@7.58cm offset=-18.97cm)
+  BackR2b = line($Back@7.58cm offset=-18.97cm, $Back@18.70cm offset=-18.28cm)
+  BackR3b = line($Back@18.70cm offset=-18.28cm, $Back@19.83cm offset=-11.94cm)
+  BackR4b = line($Back@19.83cm offset=-11.94cm, $Back@18.70cm offset=-5.59cm)
+  BackR5b = line($Back@18.70cm offset=-5.59cm, $Back@7.58cm offset=-4.90cm)
+  BackL1b = line($Back@7.58cm offset=4.90cm, $Back@7.58cm offset=18.97cm)
+  BackL2b = line($Back@7.58cm offset=18.97cm, $Back@18.70cm offset=18.28cm)
+  BackL3b = line($Back@18.70cm offset=18.28cm, $Back@19.83cm offset=11.94cm)
+  BackL4b = line($Back@19.83cm offset=11.94cm, $Back@18.70cm offset=5.59cm)
+  BackL5b = line($Back@18.70cm offset=5.59cm, $Back@7.58cm offset=4.90cm)
+  stitch($BackR1b)
+  stitch($BackR2b)
+  stitch($BackR3b)
+  stitch($BackR4b)
+  stitch($BackR5b)
+  stitch($BackL1b)
+  stitch($BackL2b)
+  stitch($BackL3b)
+  stitch($BackL4b)
+  stitch($BackL5b)
+
+  InR = line($Top_R@0.5, $Ankle_R@0.5)
+  InL = line($Top_L@0.5, $Ankle_L@0.5)
+  stitch($InR, offset=0.2cm)
+  stitch($InR, offset=0.8cm)
+  stitch($InL, offset=0.2cm)
+  stitch($InL, offset=0.8cm)
+  stitch($Ankle_R, offset=1.07cm)
+  stitch($Ankle_L, offset=1.07cm)
+
+  add($Own.Button, at=$BandMiddle@0)
+  add($Own.BeltLoop, at=$LoopRow@0.1225)
+  add($Own.BeltLoop, at=$LoopRow@0.8725)
+  add($Own.BeltLoop, at=$LoopRow@0.2565)
+  add($Own.BeltLoop, at=$LoopRow@0.7335)
+  add($Own.BeltLoop, at=$LoopRow@0.3783)
+  add($Own.BeltLoop, at=$LoopRow@0.5)
+  add($Own.BeltLoop, at=$LoopRow@0.6167)
+  add($Own.Patch, at=$BandMiddle@0.4391)
+}

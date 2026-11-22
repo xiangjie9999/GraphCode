@@ -1,0 +1,73 @@
+gc 1  kind:blueprint  asset:/Game/StairsInAGame/BP_StairCourse
+parent: /Script/Engine.Actor
+
+settings {
+}
+
+defaults {
+  blueprint_defaults
+  instance_editable = false
+  expose_on_spawn = false
+}
+
+properties {
+}
+
+interfaces {
+}
+
+dispatchers {
+}
+
+timelines {
+}
+
+class_defaults {
+}
+
+components {
+  Course = SceneComponent(Mobility=Static)
+  {
+    Ground = StaticMeshComponent(BodyInstance.CollisionProfileName=BlockAll, BodyInstance.ObjectType=ECC_WorldStatic, Mobility=Static, StaticMesh=obj'/Engine/BasicShapes/Cube.Cube')
+      @attach[RelativeLocation=(X=150.0,Y=0.0,Z=-10.0), RelativeScale=(X=10.0,Y=2.0,Z=0.2)]
+    Tread1 = StaticMeshComponent(BodyInstance.CollisionProfileName=Custom, BodyInstance.CollisionResponses.ResponseArray=((Channel=Pawn,Response=ECR_Ignore)), BodyInstance.ObjectType=ECC_WorldStatic, Mobility=Static, StaticMesh=obj'/Engine/BasicShapes/Cube.Cube')
+      @attach[RelativeLocation=(X=165.0,Y=0.0,Z=8.0), RelativeScale=(X=0.3,Y=1.2,Z=0.16)]
+    Tread2 = StaticMeshComponent(BodyInstance.CollisionProfileName=Custom, BodyInstance.CollisionResponses.ResponseArray=((Channel=Pawn,Response=ECR_Ignore)), BodyInstance.ObjectType=ECC_WorldStatic, Mobility=Static, StaticMesh=obj'/Engine/BasicShapes/Cube.Cube')
+      @attach[RelativeLocation=(X=195.0,Y=0.0,Z=16.0), RelativeScale=(X=0.3,Y=1.2,Z=0.32)]
+    Tread3 = StaticMeshComponent(BodyInstance.CollisionProfileName=Custom, BodyInstance.CollisionResponses.ResponseArray=((Channel=Pawn,Response=ECR_Ignore)), BodyInstance.ObjectType=ECC_WorldStatic, Mobility=Static, StaticMesh=obj'/Engine/BasicShapes/Cube.Cube')
+      @attach[RelativeLocation=(X=225.0,Y=0.0,Z=24.0), RelativeScale=(X=0.3,Y=1.2,Z=0.48)]
+    Tread4 = StaticMeshComponent(BodyInstance.CollisionProfileName=Custom, BodyInstance.CollisionResponses.ResponseArray=((Channel=Pawn,Response=ECR_Ignore)), BodyInstance.ObjectType=ECC_WorldStatic, Mobility=Static, StaticMesh=obj'/Engine/BasicShapes/Cube.Cube')
+      @attach[RelativeLocation=(X=255.0,Y=0.0,Z=32.0), RelativeScale=(X=0.3,Y=1.2,Z=0.64)]
+    Tread5 = StaticMeshComponent(BodyInstance.CollisionProfileName=Custom, BodyInstance.CollisionResponses.ResponseArray=((Channel=Pawn,Response=ECR_Ignore)), BodyInstance.ObjectType=ECC_WorldStatic, Mobility=Static, StaticMesh=obj'/Engine/BasicShapes/Cube.Cube')
+      @attach[RelativeLocation=(X=285.0,Y=0.0,Z=40.0), RelativeScale=(X=0.3,Y=1.2,Z=0.8)]
+    Landing = StaticMeshComponent(BodyInstance.CollisionProfileName=BlockAll, BodyInstance.ObjectType=ECC_WorldStatic, Mobility=Static, StaticMesh=obj'/Engine/BasicShapes/Cube.Cube')
+      @attach[RelativeLocation=(X=475.0,Y=0.0,Z=48.0), RelativeScale=(X=3.5,Y=1.2,Z=0.96)]
+    Ramp = StaticMeshComponent(BodyInstance.CollisionProfileName=Custom, BodyInstance.CollisionResponses.ResponseArray=((Channel=Visibility,Response=ECR_Ignore),(Channel=Camera,Response=ECR_Ignore)), BodyInstance.ObjectType=ECC_WorldStatic, bVisible=false, CastShadow=false, Mobility=Static, StaticMesh=obj'/Engine/BasicShapes/Cube.Cube')
+      @attach[RelativeLocation=(X=210.941,Y=0.0,Z=46.235), RelativeRotation=(Pitch=28.0725,Yaw=0.0,Roll=0.0), RelativeScale=(X=2.04,Y=1.18,Z=0.04)]
+    Walker = ChildActorComponent(ChildActorClass=obj'/Game/StairsInAGame/BP_StairWalker.BP_StairWalker_C')
+      @attach[RelativeLocation=(X=-100.0,Y=0.0,Z=98.0)]
+  }
+}
+
+graph {
+  eventgraph EventGraph {
+    // This node is disabled and will not be called.
+    // Drag off pins to build functionality.
+    n1 = Event ReceiveActorBeginOverlap() [enabled=false, bOverrideFunction=True] : ->_
+    // This node is disabled and will not be called.
+    // Drag off pins to build functionality.
+    n2 = Event ReceiveBeginPlay() [enabled=false, bOverrideFunction=True] : ->_
+    // This node is disabled and will not be called.
+    // Drag off pins to build functionality.
+    n3 = Event ReceiveTick() [enabled=false, bOverrideFunction=True] : ->_
+  }
+}
+
+functions {
+  function UserConstructionScript {
+    n1 = FunctionEntry() : ->_
+  }
+}
+
+macros {
+}

@@ -1,0 +1,306 @@
+gcrig 1  mesh:/Game/Elephant/ELEPHANT_M
+         into:/Game/Elephant
+         faces:+Y  influences:12
+
+# SHIPPED AS AN EXAMPLE OF A CREATURE RIG FROM A BARE MESH (Docs/Guides/RIG.md, Route B). The mesh is a marketplace asset and
+# does not ship: point mesh:/into: at your own animal, and MEASURE every point on it again (gc_render mode:"ask"); these
+# numbers belong to that one 2.1x-life-size mesh.
+#
+# AN ELEPHANT, AND THE FIRST .gcrig SUBJECT THAT IS NOT A CYLINDER.
+#
+# Ledger section 13 item 1 asked for an eye on a leg-shaped mesh. This is the whole animal: a
+# marketplace FBX from 2018 (Cinema 4D, five mesh nodes combined into one static mesh), with NO
+# bones, NO weights and NO rest pose -- so it is grammar section 1.2, the pipeline where nobody
+# knows where the joints are, not 1.1 where an import already answered.
+#
+# `faces:+Y` because the geometry came in sideways: the trunk is at Y=+500 and the tail at Y=-410.
+# Every coordinate below was READ OFF THE MESH with `gc_render mode:"ask"` -- one pixel named, one
+# mesh-local answer -- and then written down by hand, which is ruling 48. Four views were needed
+# because a ray only measures the axis it travels: the side view gives (Y, Z) and the LATERAL
+# surface, `nose_on` gives the CRANIAL surface, `tail_on` the CAUDAL one, and `overhead` the DORSAL
+# and the belly. A point derived rather than measured is marked as such.
+#
+# The mesh is about 2.1x life size -- 9.4 m nose to tail, 6.8 m to the top of the head -- so every
+# number here is roughly double the centimetres a real elephant would give. Left it alone: the
+# format works in the mesh's own space and this is what a marketplace asset actually hands you.
+
+Tendon = profile(0.0 = 0, 0.65 = 0.92, 1.0 = 1)
+
+build {
+  SK_Elephant   = skeletal_mesh()
+  PHAT_Elephant = physics_asset()
+  IKR_Elephant  = ik_rig()
+  DIAG_Elephant = diagnostic()
+}
+
+points {
+  # ── the spine, midline. Z is the measured dorsal surface less ~70, which is where an
+  #    elephant's vertebrae sit under that much muscle. DERIVED from the overhead scan.
+  root       = (0, 0, 0)
+  pelvis     = (0, -230, 592)
+  spine_01   = (0, -110, 605)
+  spine_02   = (0, 10, 598)
+  spine_03   = (0, 120, 606)
+  chest      = (0, 190, 596)
+  neck_01    = (0, 250, 582)
+  neck_02    = (0, 300, 568)
+  skull      = (0, 345, 552)
+  jaw        = (0, 410, 460)
+
+  # ── the trunk, ten bones. Every Y is the midpoint of a MEASURED cranial/caudal pair taken
+  #    down the midline from `nose_on`; the last two come from the side view, where the trunk
+  #    has curled back far enough that the nose-on ray no longer reaches it.
+  trunk_01   = (0, 515, 400)
+  trunk_02   = (0, 533, 362)
+  trunk_03   = (0, 540, 325)
+  trunk_04   = (0, 545, 288)
+  trunk_05   = (0, 545, 250)
+  trunk_06   = (0, 542, 212)
+  trunk_07   = (0, 536, 175)
+  trunk_08   = (0, 525, 140)
+  trunk_09   = (0, 500, 108)
+  trunk_10   = (0, 462, 68)
+
+  # ── the tusks. MEASURED: a ray through the face at Z=386 hits solid between X=72 and X=97
+  #    and nothing else, which is the tusk itself, so its centre is X=85.
+  tusk_L     = (85, 501, 386)
+
+  # ── the ears. `ear_base_L` is inside the skull where the flap is anchored; `ear_tip_L` is ON
+  #    the flap, because the flap is 0.27 units thick and has no inside to be in.
+  ear_base_L = (85, 350, 575)
+  ear_tip_L  = (199, 195, 531)
+
+  # ── the tail
+  tail_01    = (0, -395, 470)
+  tail_02    = (0, -408, 410)
+  tail_03    = (0, -412, 345)
+  tail_04    = (0, -408, 285)
+  tail_05    = (0, -404, 240)
+
+  # ── front leg, left. Columnar: X and Y barely move from shoulder to foot, which is what a
+  #    graviportal limb is. Centres are the midpoints of measured spans.
+  shoulder_L = (95, 158, 395)
+  elbow_L    = (88, 133, 268)
+  wrist_L    = (86, 133, 130)
+  foot_F_L   = (85, 140, 35)
+
+  # ── rear leg, left
+  hip_L      = (72, -215, 460)
+  stifle_L   = (68, -280, 320)
+  hock_L     = (67, -285, 140)
+  foot_B_L   = (66, -278, 35)
+
+  # ══ points no joint is named after: every one is a region's centre, and every one is a
+  #    MEASURED surface hit rather than a guess, because the build re-checks that it is on skin.
+
+  # aims
+  forehead_pt   = (1, 438, 630)     # dorsal, between the eyes -- the skull's aim
+  chin_pt       = (1, 560, 407)     # cranial, the lower lip -- the jaw's aim
+  tusk_aim_L    = (94, 552, 364)    # lateral, further down the tusk
+
+  # the spine's own bands, dorsal
+  back_lumbar_pt = (7, -139, 683)
+  back_thorax_pt = (6, 31, 661)
+  withers_pt     = (7, 146, 678)
+  neck_pt        = (6, 262, 654)
+  jaw_pt         = (50, 399, 425)   # lateral, the jaw hinge
+
+  # the trunk's caudal side -- the side that closes when it curls
+  trunk_up_pt    = (1, 507, 325)
+  trunk_mid_pt   = (1, 517, 218)
+  trunk_low_pt   = (1, 506, 131)
+
+  # the four legs, each on the side that compresses
+  hip_pt_L       = (172, -181, 491)  # lateral
+  stifle_pt_L    = (59, -359, 331)   # caudal
+  hock_pt_L      = (71, -251, 120)   # cranial
+  shoulder_pt_L  = (130, 171, 368)   # lateral
+  elbow_pt_L     = (78, 78, 250)     # caudal
+  carpus_pt_L    = (85, 174, 133)    # cranial
+
+  # loose skin
+  belly_pt       = (0, -60, 285)     # ventral
+  flank_pt_L     = (160, -54, 411)   # lateral
+  rump_pt_L      = (134, -320, 409)  # lateral
+  ear_pt_L       = (199, 195, 531)   # the flap, measured on the LEFT ear directly
+  tail_pt        = (9, -408, 418)    # lateral, the tail base
+  tail_mid_pt    = (1, -408, 246)    # lateral, half way down
+}
+
+chains {
+  spine     = root -> pelvis -> spine_01 -> spine_02 -> spine_03 -> chest -> neck_01 -> neck_02 -> skull
+  jaw       = skull -> jaw
+  tusks_L   = skull -> tusk_L
+  ear_L     = skull -> ear_base_L -> ear_tip_L                                       [dynamic=0.5]
+  trunk     = skull -> trunk_01 -> trunk_02 -> trunk_03 -> trunk_04 -> trunk_05 -> trunk_06 -> trunk_07 -> trunk_08 -> trunk_09 -> trunk_10  [dynamic=0.3]
+  tail      = pelvis -> tail_01 -> tail_02 -> tail_03 -> tail_04 -> tail_05          [dynamic=0.5]
+  leg_F_L   = chest -> shoulder_L -> elbow_L -> wrist_L -> foot_F_L
+  leg_B_L   = pelvis -> hip_L -> stifle_L -> hock_L -> foot_B_L
+}
+
+joints {
+  # ── rigid: the pelvis, the ribcage, the columnar feet, the tusks. A name on a line of its
+  #    own is the whole spelling, and it is most of what an elephant actually is.
+  root
+  pelvis
+  chest
+  foot_F_L
+  foot_B_L
+  tusk_L    [points_to=$tusk_aim_L]
+  skull     [points_to=$forehead_pt]
+
+  # ── the spine bends a little and in three places
+  spine_01  [turns_in=$back_lumbar, range=(-12, 12), side=(-8, 8)]
+  spine_02  [turns_in=$back_thorax, range=(-10, 10), side=(-8, 8)]
+  # Straight-zero ranges retain the previous rest-relative travel (rest bends measured 2026-10-07).
+  spine_03  [turns_in=$withers,     range=(2, 23), side=(-8, 8)]
+
+  # ── the neck is short and thick, and both its bones turn in one band
+  neck_01   [turns_in=$neck_band, range=(-25, 20), side=(-25, 25), twists=(-15, 15)]
+  neck_02   [turns_in=$neck_band, range=(-20, 20), side=(-20, 20)]
+
+  # The skull-to-jaw connector descends more steeply than the jaw-to-chin aim: rest is -35.3 degrees.
+  jaw       [turns_in=$jaw_hinge, points_to=$chin_pt, range=(-36, 0), closes=down]
+
+  # ── the ears. Both bones share one fan, which is what `turns_in=` sharing is for.
+  ear_base_L [turns_in=$ear_fan_L, range=(11, 112), side=(-30, 30)]
+  ear_tip_L  [turns_in=$ear_fan_L, range=(-35, 35)]
+
+  # ── THE TRUNK. Ten joints over three bands, each curling back the way the real thing does.
+  #    Twist on two of the ten only: `twists=` derives helper bones and a trunk that wrings
+  #    at every joint would spawn thirty of them for a motion nobody authored.
+  trunk_01  [turns_in=$trunk_upper, range=(-20, 30), side=(-20, 20), closes=back]
+  trunk_02  [turns_in=$trunk_upper, range=(-20, 32), side=(-20, 20), closes=back]
+  trunk_03  [turns_in=$trunk_upper, range=(-20, 35), side=(-22, 22), twists=(-20, 20), closes=back]
+  trunk_04  [turns_in=$trunk_mid,   range=(-22, 35), side=(-22, 22), closes=back]
+  trunk_05  [turns_in=$trunk_mid,   range=(-22, 38), side=(-25, 25), closes=back]
+  trunk_06  [turns_in=$trunk_mid,   range=(-25, 40), side=(-25, 25), closes=back]
+  trunk_07  [turns_in=$trunk_mid,   range=(-25, 40), side=(-28, 28), twists=(-25, 25), closes=back]
+  trunk_08  [turns_in=$trunk_lower, range=(-28, 45), side=(-30, 30), closes=back]
+  trunk_09  [turns_in=$trunk_lower, range=(-30, 50), side=(-32, 32), closes=back]
+  trunk_10  [turns_in=$trunk_lower, range=(-30, 55), side=(-35, 35), closes=back]
+
+  # ── the tail, two bands
+  tail_01   [turns_in=$tail_base, range=(-72, -11), side=(-30, 30)]
+  tail_02   [turns_in=$tail_base, range=(-30, 30), side=(-30, 30)]
+  tail_03   [turns_in=$tail_mid,  range=(-35, 35), side=(-35, 35)]
+  tail_04   [turns_in=$tail_mid,  range=(-35, 35), side=(-35, 35)]
+  tail_05   [turns_in=$tail_mid,  range=(-40, 40), side=(-40, 40)]
+
+  # ── the legs. Every range is far smaller than a wolf's, because these are pillars: an
+  #    elephant cannot crouch and its elbow does not fold to 140 degrees.
+  #
+  #    THE TOP JOINT OF A LIMB MUST SAY WHICH WAY IT CLOSES, AND THESE TWO DID NOT — which is the
+  #    whole of why this animal walked backwards. A fold axis is derived from the plane the joint's
+  #    two bones lie in, and for a knee or a hock those two bones ARE the limb. For a hip the bone
+  #    above is `pelvis -> hip_L`, the connector running sideways out of the midline, so the plane
+  #    is the coronal one and the axis derived from it comes out 132 degrees from the lateral axis a
+  #    stride turns about — past 90, so the fore-and-aft half of it is reversed as well as mostly
+  #    sideways. The shoulder measures 93 degrees off for the same reason. Every other leg joint
+  #    here already stated `closes=`; these were the two that needed it most.
+  shoulder_L [turns_in=$shoulder_out_L, range=(-40, 55), side=(-22, 22), twists=(-12, 12), closes=forward]
+  elbow_L    [turns_in=$elbow_back_L,   range=(-17, 84), closes=back]
+  wrist_L    [turns_in=$carpus_front_L, range=(-30, 40), closes=forward]
+
+  hip_L      [turns_in=$hip_out_L,      range=(-35, 60), side=(-20, 20), twists=(-12, 12), closes=forward]
+  stifle_L   [turns_in=$stifle_back_L,  range=(-29, 72), closes=back]
+  hock_L     [turns_in=$hock_front_L,   range=(-80, 11), closes=forward]
+}
+
+regions {
+  # ── bands that go round a limb take a PERCENTAGE of the way round it
+  hip_out_L      = region($hip_pt_L,      long=150, wide=35%)
+  stifle_back_L  = region($stifle_pt_L,   long=110, wide=45%) [along=($hip_L, $hock_L), tilt=10]
+  hock_front_L   = region($hock_pt_L,     long=90,  wide=40%) [along=($stifle_L, $foot_B_L), tilt=10]
+  shoulder_out_L = region($shoulder_pt_L, long=140, wide=35%)
+  elbow_back_L   = region($elbow_pt_L,    long=100, wide=40%) [along=($shoulder_L, $wrist_L), tilt=10]
+  carpus_front_L = region($carpus_pt_L,   long=80,  wide=40%) [along=($elbow_L, $foot_F_L), tilt=10]
+
+  back_lumbar    = region($back_lumbar_pt, long=170, wide=40%)
+  back_thorax    = region($back_thorax_pt, long=170, wide=40%)
+  withers        = region($withers_pt,     long=150, wide=40%)
+  neck_band      = region($neck_pt,        long=140, wide=60%)
+
+  # the three trunk bands, each wide enough along the trunk to cover the joints that share it
+  trunk_upper    = region($trunk_up_pt,  long=180, wide=55%)
+  trunk_mid      = region($trunk_mid_pt, long=180, wide=55%)
+  trunk_lower    = region($trunk_low_pt, long=160, wide=55%)
+
+  # ── a blob with no ring round it takes CENTIMETRES, and an elephant is mostly blob
+  belly          = region($belly_pt,   long=260, wide=170)
+  flank_L        = region($flank_pt_L, long=240, wide=150)
+  rump_L         = region($rump_pt_L,  long=150, wide=110)
+  # THE FLAP NEARLY WRAPS THIS REGION'S OWN LINE, so `wide=` has to clear 259 cm of arc — MEASURED
+  # 2026-09-22, after the ear tore into blades at 40 degrees of flap. Read off the built mesh with
+  # `gc_render mode:"ask"`, in this region's own frame: the flap runs 115 to 270 ALONG the axis,
+  # which `long=220` clears at both ends, and at its widest it reaches 111.4 degrees round at a
+  # radius of 133, which is 259 cm of arc. `wide=140` cut that at 70, so the sector's edge ran down
+  # the middle of a swinging sheet and the claim let go along that line — which is what the blades
+  # were. Widening it MOVED the tear rather than closing it: 400 left the tip torn at 107.9 degrees
+  # of a 110.7-degree half-angle, 520 left it at 111.4 of 111.6. 800 puts the sheet at 0.65 of the
+  # way out, inside the claim's own band. NOT a full band: that has no side, and `ear_tip_L`'s fold
+  # axis is read off the side, so the build refuses it by name.
+  ear_fan_L      = region($ear_pt_L,   long=220, wide=800)
+  jaw_hinge      = region($jaw_pt,     long=70,  wide=60)
+  tail_base      = region($tail_pt,     long=140, wide=30)
+  tail_mid       = region($tail_mid_pt, long=200, wide=22)
+}
+
+skin {
+  # ── the legs: one hard fold each, flesh rolling out as it closes, section kept half way
+  stifle_back_L  [crease=0.9,  folds=1, bulge=0.35, keep_volume=0.5, falloff=$Tendon]
+  hock_front_L   [crease=0.85, folds=1, bulge=0.2,  keep_volume=0.4]
+  elbow_back_L   [crease=0.9,  folds=1, bulge=0.3,  slide=0.4, keep_volume=0.5, falloff=$Tendon]
+  carpus_front_L [crease=0.8,  folds=1, bulge=0.15]
+  hip_out_L      [crease=0.4,  bulge=0.3]
+  shoulder_out_L [crease=0.4,  bulge=0.3]
+
+  # ── the spine and the neck: broad and soft, several folds, nothing sharp
+  #
+  #    THE SPINE BANDS STATE NO `folds=` AND THAT IS THE SAVING, measured 2026-09-18. `folds=` is a
+  #    FLOOR rather than a cap -- rings = max(2*folds+1, ceil(span / max_step)) -- so `folds=2` was
+  #    asking for 5 rings on bends of 20-24 degrees, where the 22-degree step rule wants 1 or 2.
+  #    Dropping it took the whole mesh from 304,092 edges to 276,165, about 9%, on the three
+  #    broadest bands on the animal. Measured at each step: folds=2 304,092 / folds=1 287,763 /
+  #    none 276,165. Put `folds=2` back if the back ever reads faceted through a bend.
+  back_lumbar    [crease=0.35]
+  back_thorax    [crease=0.3]
+  withers        [crease=0.3]
+  neck_band      [crease=0.5,  folds=3, crowd=0.3]
+  jaw_hinge      [crease=0.4,  folds=1]
+
+  # ── THE TRUNK, and this is why an elephant is the test. Creasing rises and the folds
+  #    multiply toward the tip, because that is where the real thing wrinkles.
+  trunk_upper    [crease=0.7,  folds=3, crowd=0.3,  keep_volume=0.6, falloff=$Tendon]
+  trunk_mid      [crease=0.8,  folds=4, crowd=0.35, keep_volume=0.6, falloff=$Tendon]
+  trunk_lower    [crease=0.85, folds=5, crowd=0.4,  keep_volume=0.5]
+
+  # ── loose skin. The grammar's own example for `jiggle=` is "an elephant's flank", so this
+  #    is the key being used on the animal it was written for.
+  #
+  #    THE FIRST THREE HAVE NO JOINT, and that decides which keys are worth writing on them.
+  #    `crease=` and `crowd=` are both about a hand-over between two bones — how a vertex splits
+  #    across the pair, and where the fold they make sits — and a belly's skin belongs to one bone
+  #    end to end. They were written here and reached nothing; the build said so about `crease=`
+  #    on every run. `folds=` is the one that still means something: it is the custom-retopo ask,
+  #    triangles for flesh that has to hold its shape, and the jiggle needs them.
+  belly          [folds=3, jiggle=0.6]
+  flank_L        [folds=2, jiggle=0.5]
+  rump_L         [folds=2, jiggle=0.4]
+
+  # the ear fan and both tail bands DO turn — `ear_base_L`/`ear_tip_L` and five tail joints all
+  # name them — so crease= is doing its job on these three.
+  ear_fan_L      [crease=0.3,  folds=2, jiggle=0.7]
+  tail_base      [crease=0.4,  folds=1]
+  tail_mid       [crease=0.4,  folds=1]
+}
+
+sockets {
+  saddle      = spine_02  [on=surface]
+  howdah      = spine_01  [at=(0, 0, 110)]
+  collar      = neck_01   [on=surface]
+  mahout_seat = chest     [at=(0, 0, 95)]
+  trunk_grip  = trunk_09  [on=surface]
+  tusk_mount_L = tusk_L   [on=surface]
+  ear_bell_L  = ear_tip_L [on=surface]
+}

@@ -1,0 +1,27 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/TShirt/Built/TeeSleeveHem
+# The tee's left sleeve alone, its cuff hem turned inside ONCE as real cloth: rim(..., turned=(2.54cm, once), ply), with two coverstitch rows. crease=99 on the jersey is a proxy:
+# no set angle is found for a cotton single jersey; the nearest measured knit is a cotton interlock, wale direction, about 99 degrees recovery (Ichetaonye et al. 2013).
+# Looking up into the opening you should see a second ply ending 2.54 cm above the fold.
+
+build {
+  SM_TeeSleeveHem = $Sleeve_L
+}
+
+Jersey = fabric(weight=144.9, thickness=0.68mm, stretch=(20.75%, 20.75%), shear=20.30, stiffness=(1.16, 1.04), friction=1.92, knit=jersey, gauge=(15, 19.4), crease=99)
+
+Armhole_L = ring((17.100, 0.000, 142.880), (17.100, 6.020, 136.990), (16.994, 1.500, 129.930), (17.100, -6.020, 136.990)) {
+  expand(1.76)
+}
+HemArm_L = ring((34.800, 0.000, 142.080), (34.800, 5.350, 137.000), (34.800, 0.000, 131.920), (34.800, -5.350, 137.000)) {
+  circular()
+}
+Cuff_L = ring($HemArm_L) {
+  expand(0.90)
+  move((0, 0, -0.86))
+}
+
+Sleeve_L = garment($Armhole_L, $Cuff_L, loose=100%, fabric=$Jersey) {
+  rim($Cuff_L, turned=(2.54cm, once), ply)
+  stitch($Cuff_L, offset=2.54cm, every=1.9mm)
+  stitch($Cuff_L, offset=2.06cm, every=1.9mm)
+}

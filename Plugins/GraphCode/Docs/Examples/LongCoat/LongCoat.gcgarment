@@ -1,0 +1,112 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/LongCoat/Built
+# LongCoat: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_Coat = $Coat
+}
+
+Neck = ring((0.000, 6.200, 148.000), (4.481, 4.481, 148.000), (6.500, 0.000, 148.000), (4.481, -4.481, 148.000), (0.000, -6.200, 148.000), (-4.481, -4.481, 148.000), (-6.500, 0.000, 148.000), (-4.481, 4.481, 148.000)) {
+  expand(0.92)
+}
+Chest = ring((0.000, 13.400, 128.000), (16.840, 1.400, 128.000), (0.000, -10.600, 128.000), (-16.840, 1.400, 128.000)) {
+  expand(1.64)
+}
+Waist = ring((0.000, 9.800, 105.000), (13.500, 0.000, 105.000), (0.000, -9.800, 105.000), (-13.500, 0.000, 105.000)) {
+  expand(1.64)
+}
+Seat = ring((0.000, 10.200, 91.000), (17.200, -1.000, 91.000), (0.000, -12.200, 91.000), (-17.200, -1.000, 91.000)) {
+  expand(2.01)
+}
+Hem = ring($Seat) {
+  move((0, 0, -58.45))
+  expand(0.944)
+}
+Armhole_L = ring((24.158, 4.407, 141.063)) {
+  rotate((0, -20, 0))
+  expand(1.15)
+}
+Armhole_R = ring((-24.158, 4.407, 141.063)) {
+  rotate((0, 20, 0))
+  expand(1.15)
+}
+Wrist_L = ring((77.180, 2.035, 138.648)) {
+  expand(1.48)
+}
+Wrist_R = ring((-77.180, 2.035, 138.648)) {
+  expand(1.48)
+}
+ButtonLine = ring((0.000, 10.173, 107.330), (13.905, 0.000, 107.330), (0.000, -9.862, 107.330), (-13.905, 0.000, 107.330)) {
+  expand(1.61)
+}
+
+Parts = shape('/Game/GraphCodeExamples/Garment/LongCoat/LongCoatParts')
+WoolCoat = fabric(weight=398, thickness=2.28mm, stretch=(6.0%, 6.2%), shear=36.0, stiffness=(2.42, 2.02), friction=0.82, crease=81)
+
+Yoke = profile(0=0%, 1=100%)
+CollarDepth = profile(0=12.49, 0.031=12.13, 0.069=11.68, 0.119=11.12, 0.149=10.84, 0.237=10.13, 0.325=9.56, 0.412=9.14, 0.5=8.86, 0.588=9.14, 0.675=9.56, 0.763=10.13, 0.851=10.84, 0.881=11.12, 0.931=11.68, 0.969=12.13, 1=12.49)
+CollarStand = profile(0=2.10, 0.031=2.22, 0.069=2.31, 0.119=2.36, 0.149=2.36, 0.237=2.33, 0.325=2.28, 0.412=2.23, 0.5=2.22, 0.588=2.23, 0.675=2.28, 0.763=2.33, 0.851=2.36, 0.881=2.36, 0.931=2.31, 0.969=2.22, 1=2.10)
+LapelWidth = profile(0=0, 0.0541=0.41, 0.1053=0.86, 0.1545=1.36, 0.2029=1.94, 0.2488=2.61, 0.2919=3.38, 0.3278=4.24, 0.3541=5.27, 0.4488=10.76, 0.5262=10.29, 0.5980=9.82, 0.7179=8.99, 0.8372=8.14, 0.9568=7.26, 0.9905=7.00, 1=6.93)
+
+LapWidth = profile(0=6.84, 0.161=12.98, 1=12.98)
+
+FlapDepth = profile(0=3.77, 0.030=5.39, 0.087=6.28, 0.175=6.67, 0.825=6.67, 0.913=6.28, 0.970=5.39, 1=3.77)
+
+Sleeve_L = garment($Armhole_L, $Wrist_L, loose=100%, fabric=$WoolCoat)
+Sleeve_R = garment($Armhole_R, $Wrist_R, loose=100%, fabric=$WoolCoat)
+
+Coat = garment($Neck, $Chest, $Waist, $Seat, $Hem, loose@1=$Yoke, loose@2=100%, loose@3=100%, loose@4=100%, fabric=$WoolCoat) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  add($Sleeve_L)
+  add($Sleeve_R)
+  construct(rim=(turned=4cm))
+  rim($Neck, turned=0cm)
+  relax(1)
+
+  CentreFront = line($Neck@0, $Hem@0)
+  Right = line($Neck@0.1717, $CentreFront@25.37cm)
+  Left = line($Neck@0.8283, $CentreFront@25.37cm)
+  cut($Right, $Left)
+
+  RightLap = line($Right@0, $Right@0.95)
+  LeftLap = line($Left@0, $Left@0.95)
+  LapelR = extend($RightLap, $LapelWidth)
+  fold($LapelR)
+  LapelL = extend($LeftLap, $LapelWidth)
+  fold($LapelL)
+  press($LapelR)
+  press($LapelL)
+
+  Gorge = line($Neck@0.1717, $Neck@0.5, $Neck@0.8283)
+  Collar = extend($Gorge, $CollarDepth)
+  fold($Collar, stand=$CollarStand)
+
+  LapRoot = line($CentreFront@28.37cm offset=-6.84cm, $CentreFront@0.995 offset=-6.84cm)
+  Lap = extend($LapRoot, $LapWidth)
+
+  CuffL = extend($Wrist_L, 8.75)
+  fold($CuffL)
+  press($CuffL)
+  CuffR = extend($Wrist_R, 8.75)
+  fold($CuffR)
+  press($CuffR)
+
+  CentreBack = line($Neck@0.5, $Hem@0.5)
+  BeltFootL = line($CentreBack@48.0cm offset=1.0cm, $CentreBack@48.0cm offset=22.07cm)
+  BeltL = extend($BeltFootL, 6.45)
+  BeltFootR = line($CentreBack@48.0cm offset=-1.0cm, $CentreBack@48.0cm offset=-22.07cm)
+  BeltR = extend($BeltFootR, 6.45)
+  add($Parts.Button, at=$BeltL@3.23cm offset=3.23cm)
+  add($Parts.Button, at=$BeltR@3.23cm offset=3.23cm)
+
+  FlapSeamL = line($CentreFront@49.9cm offset=-7.18cm, $CentreFront@49.9cm offset=-23.77cm)
+  FlapL = extend($FlapSeamL, $FlapDepth)
+  fold($FlapL)
+  press($FlapL)
+  FlapSeamR = line($CentreFront@49.9cm offset=7.18cm, $CentreFront@49.9cm offset=23.77cm)
+  FlapR = extend($FlapSeamR, $FlapDepth)
+  fold($FlapR)
+  press($FlapR)
+
+  add($Parts.Button, at=$ButtonLine@0.0643, repeat=(2, 3), step=((10.08, 0, 0), (0, 0, -4.67)))
+}
