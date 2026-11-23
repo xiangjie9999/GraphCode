@@ -3,7 +3,7 @@
 <p align="center"><b>Tell your AI what to build in Unreal Engine. It builds it, in your editor.</b></p>
 
 <p align="center">
-<a href="https://github.com/xiangjie9999/GraphCode/releases/latest"><b>Download 0.1.13</b></a> ·
+<a href="https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.13/graphcode-0.1.13-win64.tar.xz"><b>Download 0.1.13</b></a> ·
 <a href="https://graphcode.dev/start"><b>Start the 14-day trial</b></a> ·
 <a href="#what-your-ai-can-build">Capabilities</a> ·
 <a href="docs/SETUP.md"><b>Setup guide</b></a> ·
@@ -95,8 +95,8 @@ a working Blueprint is not saved, and anything it deletes goes to a trash folder
 **You need:** Windows 64-bit, Unreal Engine **exactly 5.7.4**, and an AI client that supports MCP
 (Claude Code, Cursor, Claude Desktop, Codex or any other). No compiler, Visual Studio or Node.js.
 
-1. **Download** `graphcode-0.1.13-win64.tar.xz` from the
-   [latest release](https://github.com/xiangjie9999/GraphCode/releases/latest) and unpack it.
+1. **Download** [`graphcode-0.1.13-win64.tar.xz`](https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.13/graphcode-0.1.13-win64.tar.xz) (one click; every release is on the
+   [Releases](https://github.com/xiangjie9999/GraphCode/releases) page) and unpack it.
 2. **Copy** the folders in its `Plugins` folder into your project's `Plugins` folder, open the project,
    tick the GraphCode plugins in **Edit > Plugins** and restart.
 3. **Start the trial** at [graphcode.dev/start](https://graphcode.dev/start): save the file it gives you

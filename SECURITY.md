@@ -22,7 +22,7 @@ Security fixes go into the newest release. Older releases stay downloadable for 
 
 - Each release manifest (`release.json`) is signed with ES256 (ECDSA P-256 over SHA-256) by one of
   the release keys in [release/release-keys.json](release/release-keys.json). The keys a build
-  trusts are compiled into it (0.1.13 trusts `release-tpm-1` and `release-backup-1`).
+  trusts are compiled into it (0.1.14 trusts `release-tpm-1`, `release-backup-1` and `release-tpm-2`).
 - The manifest records the archive's size and SHA-256 and the SHA-256 of each download part.
   `BUNDLE-SHA256.txt` records every installed file.
 - The in-editor updater checks the signature, every part, the archive, and the unpacked binaries

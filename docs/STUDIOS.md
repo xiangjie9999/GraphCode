@@ -56,15 +56,15 @@ your AI client --stdio--> graphcode-bridge.exe --HTTP, loopback only--> Unreal E
 ## Release signing and keys
 
 - Each `release.json` is signed with ES256 over its exact bytes. The archive's SHA-256 and size are
-  inside it, and `BUNDLE-SHA256.txt` lists the SHA-256 of every file in the package (1,155 files;
-  the manifest's count of 1,156 includes the list itself).
-- Public keys: [release/release-keys.json](../release/release-keys.json). `release-tpm-1` and
-  `release-backup-1` are compiled into 0.1.13, so its updater accepts only releases they signed;
-  `release-tpm-2` will be compiled into a later release.
-- **Why 0.1.13 is signed by `release-backup-1`:** our primary key lived in this PC's TPM. A Windows
+  inside it, and `BUNDLE-SHA256.txt` lists the SHA-256 of every file in the package (1,235 files in 0.1.14;
+  the manifest's count of 1,236 includes the list itself).
+- Public keys: [release/release-keys.json](../release/release-keys.json). `release-tpm-1`,
+  `release-backup-1` and `release-tpm-2` are compiled into 0.1.14, so its updater accepts only releases they signed.
+- **Why releases since 0.1.13 are signed by `release-backup-1`:** our primary key lived in this PC's TPM. A Windows
   Secure Boot update cleared the TPM on 18 November 2026, so that key can never sign again. Releases
   are signed with the backup key (a software key, not in the TPM) until the new hardware key, `release-tpm-2` (listed as
-  `primary-pending`), reaches users inside a release signed by a key they already trust.
+  `primary-pending`), reaches users inside a release signed by a key they already trust. 0.1.14 is that release; the switch
+  to `release-tpm-2` comes once it is widely installed.
 - `tools/Verify-GraphCodeRelease.ps1` prints the fingerprint of the signing key. Compare it with the
   one published on [graphcode.dev/trust](https://graphcode.dev/trust): that way a key swapped in
   this repository would not go unnoticed.

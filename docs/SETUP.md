@@ -21,8 +21,8 @@ and built a first thing in it.
 
 ## 1. Download
 
-From the [latest release](https://github.com/xiangjie9999/GraphCode/releases/latest), download
-`graphcode-0.1.13-win64.tar.xz` (130 MB). Optionally, [check it is ours](STUDIOS.md#release-signing-and-keys)
+Download [`graphcode-0.1.13-win64.tar.xz`](https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.13/graphcode-0.1.13-win64.tar.xz) (130 MB), from the
+[latest release](https://github.com/xiangjie9999/GraphCode/releases/latest). Optionally, [check it is ours](STUDIOS.md#release-signing-and-keys)
 with `release.json` and `release.sig.json` from the same page.
 
 Unpack it (Windows has `tar` built in):
