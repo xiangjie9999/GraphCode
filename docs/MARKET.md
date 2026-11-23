@@ -24,10 +24,11 @@ meshes: installing writes the recipe into your project, and you build it when yo
   with `agent.json`, `/llms.txt`, a `pack.json` per pack, and a read-only MCP endpoint
   `https://graphcode.dev/mcp` with `search` and `fetch`.
 
-## All 36 packs (catalogue serial 56)
+## All 39 packs (catalogue serial 61)
 
 | Pack | Form | What it makes | Version | Needs |
 |---|---|---|---|---|
+| [Clean a Generated Mesh](https://graphcode.dev/marketplace/GraphCode/CleanGeneratedMesh/) | Guide | Turn an AI-generated 3D model (Tripo, Meshy and the like) into a clean, life-size asset with named material slots, keeping its painted texture: find what each piece is, keep the eyes, drop the whisker cards and hidden shells, close the holes, map the patches, assign and reassign materials. Worked example: a generated cat. | 1.1.0 | - |
 | [Damage Guide](https://graphcode.dev/marketplace/GraphCode/DamageGuide/) | Guide | Which damage, wear and weathering packs do what, the order to use them in, a weathered-walkway example, and how to make a build look real. | 1.1.0 | - |
 | [Bark Materials](https://graphcode.dev/marketplace/GraphCode/BarkMaterials/) | Materials | Tileable bark materials (furrowed oak, mossy oak, smooth beech), as flat colours or with optional photo textures. | 1.0.0 | - |
 | [Foliage Materials](https://graphcode.dev/marketplace/GraphCode/FoliageMaterials/) | Materials | Leaf, ivy and grass materials (beech, oak, birch, ivy, young ivy, meadow grass): two-sided foliage that greens, dries and browns with age, as flat colours or with optional photo textures. | 1.0.0 | - |
@@ -43,6 +44,7 @@ meshes: installing writes the recipe into your project, and you build it when yo
 | [Mechanical](https://graphcode.dev/marketplace/GraphCode/Mechanical/) | Mesh | Rivets, flanges, brackets, pipes, springs, chain links, handles and grilles. | 1.0.0 | GraphCodeShape; Solids |
 | [Profiles](https://graphcode.dev/marketplace/GraphCode/Profiles/) | Mesh | Named curves such as ease, bell, taper and wave that shape how a form changes. | 1.0.0 | GraphCodeShape |
 | [Rebar](https://graphcode.dev/marketplace/GraphCode/Rebar/) | Mesh | Steel reinforcing bars, whole, bent or snapped stubs, in three detail levels. | 1.0.0 | GraphCodeShape |
+| [Rocks & Cliffs Kit](https://graphcode.dev/marketplace/GraphCode/RocksCliffsKit/) | Mesh | Cliffs cut by beds and joint sets (oblique joints, sway, dip, taper, splits), jointed outcrops, boulders and six scree sizes, with PCG graphs that scatter scree and lay cliff modules along a line. Built on the Stone preset; stone textures are pending release. | 1.0.0 | GraphCodeShape; Stone |
 | [Roof Kit](https://graphcode.dev/marketplace/GraphCode/RoofKit/) | Mesh | Old pitched roofs: clay tile, slate, ruined, and a weathered East Asian pan-and-roll (kawara) roof, plus a gate roof. | 1.1.0 | GraphCodeShape |
 | [Rope](https://graphcode.dev/marketplace/GraphCode/Rope/) | Mesh | Laid rope and cord, new to frayed: spans that sag, hanging ends, coils, lashings, hitches and knots. | 1.0.2 | GraphCodeShape |
 | [Rubble](https://graphcode.dev/marketplace/GraphCode/Rubble/) | Mesh | A heap of concrete rubble with plates, chunks, fines and loose bent steel bars. | 1.0.0 | GraphCodeShape; ConcreteParts, DebrisAssemblies, Rebar |
@@ -50,7 +52,8 @@ meshes: installing writes the recipe into your project, and you build it when yo
 | [Stone](https://graphcode.dev/marketplace/GraphCode/Stone/) | Mesh | STONE - one parametric stone. Every kind (field stone / boulder, split stone, river cobble, slab) is a NAMED VALUE SET of the same continuous settings; nothing switches method. | 1.0.0 | GraphCodeShape |
 | [Stone Kit](https://graphcode.dev/marketplace/GraphCode/StoneKit/) | Mesh | Aged stone stairs and blocks, intact or broken, in several detail levels. | 1.0.0 | GraphCodeShape; ConcreteParts |
 | [Stone Wall](https://graphcode.dev/marketplace/GraphCode/StoneWall/) | Mesh | Dry-stone, mortared, ruined, coursed and boulder stone walls and a 90 degree corner; a detailed boulder wall with soil and moss in the joints, in game and high detail. | 1.2.1 | GraphCodeShape; Stone, Weather |
-| [Vegetation Kit](https://graphcode.dev/marketplace/GraphCode/VegetationKit/) | Mesh | Leaves of five species at any age, twigs and sprays for Unreal's Procedural Vegetation Editor, leaf litter, grass from lawn to hay meadow, rush, sedge and climbing ivy, wearing the Foliage and Bark material packs. | 1.0.0 | GraphCodeShape; BarkMaterials, FoliageMaterials |
+| [Understory Kit](https://graphcode.dev/marketplace/GraphCode/UnderstoryKit/) | Mesh | Plants under the trees, every feature a knob: four ferns, hazel, boxwood and bramble, daisy, poppy, bluebell and foxglove, conifer sprays and cones, clover, moss and four fungi, plus PCG graphs for a forest floor and a flowering meadow. Wears the Foliage and Bark material packs; species textures are pending release. | 1.0.0 | GraphCodeShape; BarkMaterials, FoliageMaterials, VegetationKit |
+| [Vegetation Kit](https://graphcode.dev/marketplace/GraphCode/VegetationKit/) | Mesh | Leaves of five species at any age, twigs and sprays for Unreal's Procedural Vegetation Editor, grass from lawn to hay meadow, rush and sedge, and ivy on walls and leaf litter grown by PCG graphs from small parts, wearing the Foliage and Bark material packs. | 1.1.0 | GraphCodeShape; BarkMaterials, FoliageMaterials |
 | [Wood Ruin](https://graphcode.dev/marketplace/GraphCode/WoodRuin/) | Mesh | Wooden decks and board walls: a weathered plank walkway on lashed beams, and intact, broken and wrecked decks with the debris left. | 1.8.2 | GraphCodeShape; ConcreteParts, Damage, Debris, TimberKit |
 | [Damage](https://graphcode.dev/marketplace/GraphCode/Damage/) | Mesh + Operation | Ways to damage a solid: chips, cracks, gouges, punctures, snapped and split wood. | 1.0.0 | GraphCodeShape |
 | [Surface](https://graphcode.dev/marketplace/GraphCode/Surface/) | Mesh + Operation | Surface finishes: erode, pit, stipple, dent, groove and ridge. | 1.0.0 | GraphCodeShape |

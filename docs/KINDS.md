@@ -79,7 +79,7 @@ assets from their own recipe files (`.gcshape`, `.gcmove`, `.gcrig`, `.gcgroom`,
 
 ## GraphCode Play
 
-*Program-first: no `.gc` kinds of its own. See the product section of the [README](../README.md#what-you-can-make).*
+*Program-first: no `.gc` kinds of its own. See [PRODUCTS.md](PRODUCTS.md).*
 
 ## GraphCode World
 
@@ -101,11 +101,11 @@ assets from their own recipe files (`.gcshape`, `.gcmove`, `.gcrig`, `.gcgroom`,
 
 ## GraphCode Shape
 
-*Program-first: no `.gc` kinds of its own. See the product section of the [README](../README.md#what-you-can-make).*
+*Program-first: no `.gc` kinds of its own. See [PRODUCTS.md](PRODUCTS.md).*
 
 ## GraphCode Integrate
 
-*Program-first: no `.gc` kinds of its own. See the product section of the [README](../README.md#what-you-can-make).*
+*Program-first: no `.gc` kinds of its own. See [PRODUCTS.md](PRODUCTS.md).*
 
 ## GraphCode Rig
 
@@ -115,7 +115,7 @@ assets from their own recipe files (`.gcshape`, `.gcmove`, `.gcrig`, `.gcgroom`,
 
 ## GraphCode Garment
 
-*Program-first: no `.gc` kinds of its own. See the product section of the [README](../README.md#what-you-can-make).*
+*Program-first: no `.gc` kinds of its own. See [PRODUCTS.md](PRODUCTS.md).*
 
 ## GraphCode Groom
 

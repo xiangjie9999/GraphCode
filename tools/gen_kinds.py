@@ -95,7 +95,7 @@ def main():
         w(f'## {name}')
         w('')
         if not ks:
-            w('*Program-first: no `.gc` kinds of its own. See the product section of the [README](../README.md#what-you-can-make).*')
+            w('*Program-first: no `.gc` kinds of its own. See [PRODUCTS.md](PRODUCTS.md).*')
             w('')
             continue
         w('| Kind | Create from text | Blocks | `omits:` |')
