@@ -1,0 +1,448 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.1  shade:40
+
+# DEBRIS — L3 Parts, the loose pieces broken wood leaves behind. Ready-made meshes, not modifiers.
+# `Docs/GC-SHAPE-PRESET-LIBRARY.md` §12.2; method in `Docs/GC-SHAPE-WOOD-DAMAGE.md` (v2).
+#
+#   Debris = shape('/GraphCodeShape/Presets/Debris', Face = $Timber, Broken = $RawWood)
+#   Yard   = mesh() { add($Debris.Splinters, count=12, sticks=0.25, noise=7) }
+#
+# THE FRAME, EVERY ENTRY: the grain runs along +Y, the width along X, the thickness up Z, each
+# piece centred on the origin. A pile or a smashed board lies on z = 0 around the origin.
+#
+# WOOD IS DIRECTION-BASED, AND EVERYTHING HERE FOLLOWS THE GRAIN (owner ruling 2026-11-18):
+#   · a piece is a lead STRAND (a lofted bundle of fibre) plus riders, a horn, a peeled ribbon and
+#     the FRAY at each broken end, each laid along the grain.
+#   · a lead strand's long faces are split TWO WAYS (round 4): three coarse BUNDLES a face that stand
+#     proud or sink (`bundle`, `recess`) and stop at their own station, and inside them SIX RIBBONS a
+#     wide face and three LAYERS an edge, each stepped up or down by up to `rib` of the width, tilted
+#     (`tilt`), sliding sideways (`slide`), and proud either up to or from its own station, so every
+#     long face is a stepped ridge profile along the grain, not a slab. Each bundle, ribbon and layer
+#     reaches its own distance at a broken end (`jag`), the thickness breaks in three shelves (`step`).
+#   · the FRAY: 10-30 thin ribbons (8-15 : 1 : 0.2) sunk into each broken end and standing out of it
+#     at their own depth, place, roll and length, some bent up, down or sideways (`fray`, `zone`).
+#   · hair-fine fibre is the TEXTURE layer (`SM_Debris_ShardBaked`), not geometry.
+#   · the UVs are projected AFTER the strand is shaped, in the strand's own frame and before any
+#     piece turns it: one `uv(box)` at a physical `tile` (cm per tile), so the long faces and every
+#     torn wall carry the grain along Y at their true size, the end faces get end grain. `aspect`
+#     stretches the along-grain tile (4 = a direction-revealing checker); `uoff`/`voff` shift a
+#     piece's tiles so a pile does not repeat one patch of grain. A pile or a smashed board adds
+#     pieces with `join=none` and writes `uv(keep)`, so every turned copy keeps its own grain.
+#
+# NUMBERS (`Docs/Research/wood-damage-references.md` rule 8, `wood-break-real-photos.md` 2-4, 9, 10):
+# a shard is 3:1 to 8:1, thickness about half its width, one end tapered, the other ragged and
+# blunt (`tip=` near 1 makes a chunk ragged at both ends); a splinter is the rarer thin ribbon,
+# 8-15 : 1 : 0.35, flat-curved; chips are thin curved flakes 2:1-4:1, about a tenth of their length
+# thick, curled 10-30 degrees; broken pieces keep a 5-30 degree kink or bow.
+#
+# TODAY'S SPELLINGS (2026-11-18): the installed editor refuses `noise()` in a warp, `output.outward`
+# in a fracture body and a `random()` inside a `( … )` list, so the fields here are sine hashes,
+# every draw is a `$Name` first, and `Smashed` places its pieces from `output.index` itself. Shape
+# defects worked around, with the coders: an `if` inside a `loop` is not decided per pass (G17, so
+# `Smashed` runs two loops); `random()` draws are keyed on the absolute file line (G16, so an edit
+# above re-rolls the pile); a `[maps=]` bake replaces UV0 (G15, so the baked shard is its own line);
+# box UV merges single-triangle islands (G18, so a torn end still stretches its bridging triangles).
+# The sections NAME their points: a `points()` outline mixing short and long edges is resampled by
+# the loft, and named keys keep it exact.
+#
+# GENERATED (round 4, temporary): the `Strand` warp is written by
+# `Content/__MCPTests/WoodDamage/DebrisGen/` from named parts (listed as comments above it) because
+# one formula cannot yet name its own sub-expressions; edit the generator, not the warp line.
+#
+# APPENDED, NOT WELDED. The strands of one piece overlap and are appended (`join=none`); a union
+# of strands that overlap along their whole length leaves folds.
+#
+# NAMES AVOID THE GROUP-5 RESERVED SET: the seed is `noise=`, the tile size `tile=` (cm per tile).
+
+build {
+  SM_Debris_Shard      = $Ex_Shard
+  SM_Debris_ShardBaked = $Ex_Shard      [maps=(normal, ao), from=$Ex_ShardDetail, resolution=1024]
+  SM_Debris_ShardB     = $Ex_ShardB
+  SM_Debris_ShardC     = $Ex_ShardC
+  SM_Debris_Splinter   = $Ex_Splinter
+  SM_Debris_SplinterB  = $Ex_SplinterB
+  SM_Debris_Chips      = $Ex_Chips
+  SM_Debris_ChipsB     = $Ex_ChipsB
+  SM_Debris_Pile       = $Ex_Pile
+  SM_Debris_PileB      = $Ex_PileB
+  SM_Debris_Smashed    = $Ex_Smashed
+  SM_Debris_SmashedB   = $Ex_SmashedB
+}
+
+Face   = material()
+Broken = material()
+
+# ---- the strand: one bundle of fibre --------------------------------------------------------------
+StrandSection = plane() { points((-50, -38), (-12, -50), (50, -42), (50, 35), (8, 50), (-50, 45), (-50, 0), loop=true) }
+StrandMid     = plane() { points((-46, -50), (-15, -50), (15, -50), (46, -50), (50, 0), (46, 50), (15, 50), (-15, 50), (-46, 50), (-50, 0), loop=true) }
+# six ribbons a wide face, three layers an edge: each wall between two is a pair of points 1.4 apart,
+# so a step is crisp (steeper than `shade:`); two more points inside each ribbon carry the ridges
+# (round 5), 56 points in all
+# a fray ribbon: a flat, uneven five-sided section
+StrandRibbon  = plane() { points((-50, -50), (45, -50), (50, 15), (25, 50), (-50, 35), loop=true) }
+StrandRib     = plane() { points(T0: (-50, -50), Ta: (-44.6, -50), Tb: (-39.0, -50), T1: (-34.0, -50), T2: (-32.6, -50), Tc: (-27.5, -50), Td: (-22.2, -50), T3: (-17.4, -50), T4: (-16.0, -50), Te: (-11.1, -50), Tf: (-5.6, -50), T5: (-0.7, -50), T6: (0.7, -50), Tg: (5.9, -50), Th: (10.8, -50), T7: (16.0, -50), T8: (17.4, -50), Ti: (22.6, -50), Tj: (27.9, -50), T9: (32.6, -50), T10: (34.0, -50), Tk: (39.4, -50), Tl: (44.9, -50), T11: (50, -50), R1: (50, -17.4), R2: (50, -16.0), R3: (50, 16.0), R4: (50, 17.4), B11: (50, 50), Bl: (44.3, 50), Bk: (38.8, 50), B10: (34.0, 50), B9: (32.6, 50), Bj: (27.2, 50), Bi: (21.9, 50), B8: (17.4, 50), B7: (16.0, 50), Bh: (11.4, 50), Bg: (5.2, 50), B6: (0.7, 50), B5: (-0.7, 50), Bf: (-6.1, 50), Be: (-10.6, 50), B4: (-16.0, 50), B3: (-17.4, 50), Bd: (-22.9, 50), Bc: (-28.1, 50), B2: (-32.6, 50), B1: (-34.0, 50), Bb: (-38.6, 50), Ba: (-45.1, 50), B0: (-50, 50), L4: (-50, 17.4), L3: (-50, 16.0), L2: (-50, -16.0), L1: (-50, -17.4), loop=true) }
+# a flake: the six ribbons on both faces and no edge points (a chip's edge is its rim)
+StrandFlake   = plane() { points(T0: (-50, -50), T1: (-34.0, -50), T2: (-32.6, -50), T3: (-17.4, -50), T4: (-16.0, -50), T5: (-0.7, -50), T6: (0.7, -50), T7: (16.0, -50), T8: (17.4, -50), T9: (32.6, -50), T10: (34.0, -50), T11: (50, -50), B11: (50, 50), B10: (34.0, 50), B9: (32.6, 50), B8: (17.4, 50), B7: (16.0, 50), B6: (0.7, 50), B5: (-0.7, 50), B4: (-16.0, 50), B3: (-17.4, 50), B2: (-32.6, 50), B1: (-34.0, 50), B0: (-50, 50), loop=true) }
+
+# From `y0` for `length` along +Y, centred on x = z = 0. SIZE AND TAPER: `w0`/`t0` are the width
+# and thickness left at the y0 end (reached over `a0` of the length), `w1`/`t1` at the far end
+# (over `a1`); `chisel` moves a narrowed end off-centre (-1..1). ENDS: `lean`/`skew` slant each end
+# face across the thickness and the width, `jag` tears it bundle by bundle and ribbon by ribbon (cm),
+# `step` breaks the thickness in three shelves (a fraction of `thick` between the outer two); every
+# end term pushes outward, never into the strand. BUNDLES (fractions of `thick`): `bundle` the most
+# a bundle stands proud, `recess` how far below the face the lowest sinks (a fraction of `bundle`),
+# `bundles` 1-3 across a face (1 = none). RIBBONS (fractions of `width`): `rib` the most a ribbon or
+# edge layer steps up or down, `tilt` how much its top leans across it, `slide` how far the walls
+# between ribbons slide (0-1). `st1`<`st2`<`st3` are the stations (of 100 along the strand) where a
+# bundle or ribbon may stop or start, each 2 long. `edge` wobbles the edges ring by ring, `jit`
+# roughens every point along its own face's normal, `wander` bows the whole strand; `flat` (0..1)
+# keeps the top face planed (a board's own face). BEND: the y0 end rises `lift` and swings `sway`
+# (fractions of `length`) over the first `reach` of the strand (of 100). `fine` picks the section:
+# 1 the ribboned 56-point one on nine rings, 2 the 24-point flake on six, 0 the 10-point and -1
+# the 7-point on three, -2 the 5-point fray ribbon on four. RIDGES: `ridge` (fraction of `width`) the
+# height of the ridge points; `swell` thickens and thins the strand along its length (fraction). SURFACE: `tile` cm per UV tile, `aspect` the along-grain tile over the
+# across one, `uoff`/`voff` a shift in tiles.
+Strand = mesh(length=12.0, width=1.0, thick=0.8, y0=-6.0, w0=0.9, t0=0.9, a0=0.2, w1=0.3, t1=0.6, a1=0.5, lean0=0.0, skew0=0.0, jag0=0.1, step0=0.0, lean1=0.0, skew1=0.0, jag1=0.1, step1=0.0, chisel=0.0, bundle=0.1, bundles=3, recess=0.4, rib=0.0, tilt=0.5, slide=1.0, edge=0.0, st1=18.0, st2=46.0, st3=76.0, jit=0.03, wander=0.04, flat=0, lift=0.0, sway=0.0, reach=30.0, ridge=0.0, swell=0.0, fine=0, tile=100.0, aspect=1.0, uoff=0.0, voff=0.0, noise=1) {
+  if ($fine > 1.5) {
+    add($StrandFlake)
+    loft(through=($StrandFlake, $StrandFlake, $StrandFlake, $StrandFlake, $StrandFlake, $StrandFlake), heights=($st1 * 0.5, $st1, $st1 + 2, $st2, $st2 + 2, 100))
+  } else {
+    if ($fine > 0.5) {
+      add($StrandRib)
+      loft(through=($StrandRib, $StrandRib, $StrandRib, $StrandRib, $StrandRib, $StrandRib, $StrandRib, $StrandRib), heights=($st1 * 0.5, $st1, $st1 + 2, $st2, $st2 + 2, $st3, $st3 + 2, 100))
+    } else {
+      if ($fine < -1.5) {
+        add($StrandRibbon)
+        loft(through=($StrandRibbon, $StrandRibbon, $StrandRibbon), heights=(33, 66, 100))
+      } else {
+        if ($fine < -0.5) {
+          add($StrandSection)
+          loft(through=($StrandSection, $StrandSection), heights=(50, 100))
+        } else {
+          add($StrandMid)
+          loft(through=($StrandMid, $StrandMid), heights=(50, 100))
+        }
+      }
+    }
+  }
+  # the warp below is GENERATED from these named parts (DebrisGen/strand.py):
+  #   TW     = (1 - (1 - $w0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $w1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1))
+  #   TT     = (1 - (1 - $t0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $t1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1))
+  #   TOPM   = clamp((-point.y - 40) / 5, 0, 1)
+  #   BOTM   = clamp((point.y - 40) / 5, 0, 1)
+  #   SIDE   = (clamp((point.x - 46) / 3, 0, 1) - clamp((-point.x - 46) / 3, 0, 1))
+  #   FACE   = (TOPM + BOTM)
+  #   F      = clamp(floor(point.y / 50 + 1), 0, 1)
+  #   CU     = min(5, max(0, floor((point.x + 50) / 16.67)))
+  #   RID    = (CU + 6 * F)
+  #   BID    = (floor(CU * clamp($bundles, 1, 3) / 6) + 3 * F)
+  #   LY     = min(2, max(0, floor((point.y + 50) / 33.34)))
+  #   SS     = clamp(floor(point.x / 50 + 1), 0, 1)
+  #   SID    = (LY + 3 * SS + 12)
+  #   CID    = (FACE * BID + (1 - FACE) * SID)
+  #   EID    = (FACE * RID + (1 - FACE) * SID)
+  #   LYA    = (BOTM * 2 + (1 - FACE) * LY)
+  #   POSR   = (FACE * ((point.x + 50 - 16.67 * CU) / 8.33 - 1))
+  #   PB     = floor(2 + 1.99 * sin(CID * 3511.7 + $noise * 47.9))
+  #   PR     = floor(2 + 1.99 * sin(EID * 1931.9 + $noise * 29.7))
+  #   ZEB    = ($st1 + 2 + clamp(PB, 0, 1) * ($st2 - $st1) + clamp(PB - 1, 0, 1) * ($st3 - $st2) + clamp(PB - 2, 0, 1) * (106 - $st3))
+  #   ZER    = ($st1 + 2 + clamp(PR, 0, 1) * ($st2 - $st1) + clamp(PR - 1, 0, 1) * ($st3 - $st2) + clamp(PR - 2, 0, 1) * (106 - $st3))
+  #   COARSE = ($bundle * ((1 + $recess) * (0.5 + 0.5 * sin(CID * 7823.1 + $noise * 91.3)) - $recess) * (0.6 + 0.25 * sin(point.z * 6.7 + CID * 977.3 + $noise * 23.9) + 0.15 * sin(point.z * 41.3 + CID * 311.9 + $noise * 7.1)) * clamp((ZEB - point.z) / 2, 0, 1))
+  #   QR     = clamp(floor(1 + sin(EID * 2741.3 + $noise * 83.9)), 0, 1)
+  #   CUTR   = (QR + (1 - 2 * QR) * clamp((ZER - point.z) / 2, 0, 1))
+  #   FINE   = ($rib * (sin(EID * 5381.7 + $noise * 33.1) + $tilt * sin(EID * 4409.3 + $noise * 57.1) * POSR) * (0.55 + 0.2 * sin(point.z * 8.3 + EID * 613.1 + $noise * 41.3) + 0.25 * sin(point.z * 53.7 + EID * 271.3 + $noise * 13.9)) * (0.35 + 0.65 * CUTR))
+  #   RIDGE  = ($ridge * (sin(point.x * 37.9 + F * 91.7 + $noise * 63.7) + 0.5 * sin(point.x * 11.3 - F * 27.1 + $noise * 19.3)) * (0.65 + 0.35 * sin(point.z * 29.3 + point.x * 17.1 + $noise * 5.3)))
+  #   JN     = ($jit * sin(point.x * 13.11 - point.y * 5.77 + $noise * 177.3) * (0.6 + 0.4 * sin(point.z * 5.4 + 180 * sin(point.x * 7.919 + point.y * 13.37 + $noise * 311.7))))
+  #   RELA   = (clamp(point.z, 0, 1) * clamp(100 - point.z, 0, 1) * ($thick * TT * COARSE + min($width * TW, 1.5 * $thick * TT) * (FINE + RIDGE)) + $thick * TT * JN)
+  #   KF     = (floor((point.x + 58.33) / 16.67) + 7 * F)
+  #   KS     = (floor((point.y + 66.67) / 33.34) + 4 * SS)
+  #   WALLM  = clamp(2 - abs(point.x - 16.67 * floor(point.x / 16.67 + 0.5)), 0, 1)
+  #   SHX    = (clamp((45 - abs(point.x)) / 5, 0, 1) * WALLM * $slide * (2.5 * sin(KF * 1291.3 + $noise * 73.1) + 1.0 * sin(point.z * 4.1 + KF * 977.7 + $noise * 29.3)))
+  #   SHY    = (clamp((45 - abs(point.y)) / 5, 0, 1) * abs(SIDE) * $slide * (6 * sin(KS * 2203.9 + $noise * 61.7) + 2 * sin(point.z * 3.7 + KS * 811.3 + $noise * 19.9)))
+  #   WOB    = ($edge * sin(point.z * 9.1 + F * 77.7 + SIDE * 131.3 + $noise * 43.1))
+  #   FLAT   = (1 - $flat * TOPM)
+  #   BEND   = (clamp(1 - point.z / $reach, 0, 1) * clamp(1 - point.z / $reach, 0, 1))
+  #   E0     = clamp(1 - point.z, 0, 1)
+  #   E1     = clamp(point.z - 99, 0, 1)
+  #   JAG0   = ($jag0 * (0.55 * sin(CID * 1733.3 + $noise * 37.7) + 0.35 * sin(EID * 2311.9 + $noise * 71.3) + 0.1 * sin(point.x * 13.11 - point.y * 5.77 + $noise * 177.3) - 1))
+  #   JAG1   = ($jag1 * (0.55 * sin(CID * 2917.9 + $noise * 53.3) + 0.35 * sin(EID * 1409.7 + $noise * 23.3) + 0.1 * sin(point.x * 7.919 + point.y * 13.37 + $noise * 311.7) + 1))
+  #   STEP0  = ($step0 * $thick * (0.5 - LYA / 2 - 0.5 * clamp($step0 * 1000, -1, 1)))
+  #   STEP1  = ($step1 * $thick * (LYA / 2 - 0.5 + 0.5 * clamp($step1 * 1000, -1, 1)))
+  #   LEAN0  = ($lean0 * $thick * (-point.y / 100 - 0.5 * clamp($lean0 * 1000, -1, 1)) + $skew0 * $width * (point.x / 100 - 0.5 * clamp($skew0 * 1000, -1, 1)))
+  #   LEAN1  = ($lean1 * $thick * (-point.y / 100 + 0.5 * clamp($lean1 * 1000, -1, 1)) + $skew1 * $width * (point.x / 100 + 0.5 * clamp($skew1 * 1000, -1, 1)))
+  #   X      = $width * (TW * (point.x + SHX) / 100 + $chisel * 0.5 * (1 - TW) + $wander * sin(point.z * 2.7 + $noise * 97.1)) + SIDE * (RELA + $thick * TT * WOB) + $sway * $length * BEND
+  #   Y      = $y0 + $length * point.z / 100 + E0 * (LEAN0 + JAG0 + STEP0) + E1 * (LEAN1 + JAG1 + STEP1)
+  #   Z      = $thick * TT * (1 + $swell * sin(point.z * 3.1 + $noise * 17.7)) * (-point.y - SHY) / 100 + (TOPM - BOTM) * FLAT * RELA + $lift * $length * BEND
+  warp(to=($width * ((1 - (1 - $w0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $w1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1)) * (point.x + (clamp((45 - abs(point.x)) / 5, 0, 1) * clamp(2 - abs(point.x - 16.67 * floor(point.x / 16.67 + 0.5)), 0, 1) * $slide * (2.5 * sin((floor((point.x + 58.33) / 16.67) + 7 * clamp(floor(point.y / 50 + 1), 0, 1)) * 1291.3 + $noise * 73.1) + 1.0 * sin(point.z * 4.1 + (floor((point.x + 58.33) / 16.67) + 7 * clamp(floor(point.y / 50 + 1), 0, 1)) * 977.7 + $noise * 29.3)))) / 100 + $chisel * 0.5 * (1 - (1 - (1 - $w0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $w1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1))) + $wander * sin(point.z * 2.7 + $noise * 97.1)) + (clamp((point.x - 46) / 3, 0, 1) - clamp((-point.x - 46) / 3, 0, 1)) * ((clamp(point.z, 0, 1) * clamp(100 - point.z, 0, 1) * ($thick * (1 - (1 - $t0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $t1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1)) * ($bundle * ((1 + $recess) * (0.5 + 0.5 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 7823.1 + $noise * 91.3)) - $recess) * (0.6 + 0.25 * sin(point.z * 6.7 + ((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 977.3 + $noise * 23.9) + 0.15 * sin(point.z * 41.3 + ((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 311.9 + $noise * 7.1)) * clamp((($st1 + 2 + clamp(floor(2 + 1.99 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 3511.7 + $noise * 47.9)), 0, 1) * ($st2 - $st1) + clamp(floor(2 + 1.99 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 3511.7 + $noise * 47.9)) - 1, 0, 1) * ($st3 - $st2) + clamp(floor(2 + 1.99 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 3511.7 + $noise * 47.9)) - 2, 0, 1) * (106 - $st3)) - point.z) / 2, 0, 1)) + min($width * (1 - (1 - $w0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $w1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1)), 1.5 * $thick * (1 - (1 - $t0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $t1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1))) * (($rib * (sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 5381.7 + $noise * 33.1) + $tilt * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 4409.3 + $noise * 57.1) * ((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * ((point.x + 50 - 16.67 * min(5, max(0, floor((point.x + 50) / 16.67)))) / 8.33 - 1))) * (0.55 + 0.2 * sin(point.z * 8.3 + ((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 613.1 + $noise * 41.3) + 0.25 * sin(point.z * 53.7 + ((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 271.3 + $noise * 13.9)) * (0.35 + 0.65 * (clamp(floor(1 + sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 2741.3 + $noise * 83.9)), 0, 1) + (1 - 2 * clamp(floor(1 + sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 2741.3 + $noise * 83.9)), 0, 1)) * clamp((($st1 + 2 + clamp(floor(2 + 1.99 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 1931.9 + $noise * 29.7)), 0, 1) * ($st2 - $st1) + clamp(floor(2 + 1.99 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 1931.9 + $noise * 29.7)) - 1, 0, 1) * ($st3 - $st2) + clamp(floor(2 + 1.99 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 1931.9 + $noise * 29.7)) - 2, 0, 1) * (106 - $st3)) - point.z) / 2, 0, 1)))) + ($ridge * (sin(point.x * 37.9 + clamp(floor(point.y / 50 + 1), 0, 1) * 91.7 + $noise * 63.7) + 0.5 * sin(point.x * 11.3 - clamp(floor(point.y / 50 + 1), 0, 1) * 27.1 + $noise * 19.3)) * (0.65 + 0.35 * sin(point.z * 29.3 + point.x * 17.1 + $noise * 5.3))))) + $thick * (1 - (1 - $t0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $t1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1)) * ($jit * sin(point.x * 13.11 - point.y * 5.77 + $noise * 177.3) * (0.6 + 0.4 * sin(point.z * 5.4 + 180 * sin(point.x * 7.919 + point.y * 13.37 + $noise * 311.7))))) + $thick * (1 - (1 - $t0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $t1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1)) * ($edge * sin(point.z * 9.1 + clamp(floor(point.y / 50 + 1), 0, 1) * 77.7 + (clamp((point.x - 46) / 3, 0, 1) - clamp((-point.x - 46) / 3, 0, 1)) * 131.3 + $noise * 43.1))) + $sway * $length * (clamp(1 - point.z / $reach, 0, 1) * clamp(1 - point.z / $reach, 0, 1)), $y0 + $length * point.z / 100 + clamp(1 - point.z, 0, 1) * (($lean0 * $thick * (-point.y / 100 - 0.5 * clamp($lean0 * 1000, -1, 1)) + $skew0 * $width * (point.x / 100 - 0.5 * clamp($skew0 * 1000, -1, 1))) + ($jag0 * (0.55 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 1733.3 + $noise * 37.7) + 0.35 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 2311.9 + $noise * 71.3) + 0.1 * sin(point.x * 13.11 - point.y * 5.77 + $noise * 177.3) - 1)) + ($step0 * $thick * (0.5 - (clamp((point.y - 40) / 5, 0, 1) * 2 + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * min(2, max(0, floor((point.y + 50) / 33.34)))) / 2 - 0.5 * clamp($step0 * 1000, -1, 1)))) + clamp(point.z - 99, 0, 1) * (($lean1 * $thick * (-point.y / 100 + 0.5 * clamp($lean1 * 1000, -1, 1)) + $skew1 * $width * (point.x / 100 + 0.5 * clamp($skew1 * 1000, -1, 1))) + ($jag1 * (0.55 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 2917.9 + $noise * 53.3) + 0.35 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 1409.7 + $noise * 23.3) + 0.1 * sin(point.x * 7.919 + point.y * 13.37 + $noise * 311.7) + 1)) + ($step1 * $thick * ((clamp((point.y - 40) / 5, 0, 1) * 2 + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * min(2, max(0, floor((point.y + 50) / 33.34)))) / 2 - 0.5 + 0.5 * clamp($step1 * 1000, -1, 1)))), $thick * (1 - (1 - $t0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $t1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1)) * (1 + $swell * sin(point.z * 3.1 + $noise * 17.7)) * (-point.y - (clamp((45 - abs(point.y)) / 5, 0, 1) * abs((clamp((point.x - 46) / 3, 0, 1) - clamp((-point.x - 46) / 3, 0, 1))) * $slide * (6 * sin((floor((point.y + 66.67) / 33.34) + 4 * clamp(floor(point.x / 50 + 1), 0, 1)) * 2203.9 + $noise * 61.7) + 2 * sin(point.z * 3.7 + (floor((point.y + 66.67) / 33.34) + 4 * clamp(floor(point.x / 50 + 1), 0, 1)) * 811.3 + $noise * 19.9)))) / 100 + (clamp((-point.y - 40) / 5, 0, 1) - clamp((point.y - 40) / 5, 0, 1)) * (1 - $flat * clamp((-point.y - 40) / 5, 0, 1)) * (clamp(point.z, 0, 1) * clamp(100 - point.z, 0, 1) * ($thick * (1 - (1 - $t0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $t1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1)) * ($bundle * ((1 + $recess) * (0.5 + 0.5 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 7823.1 + $noise * 91.3)) - $recess) * (0.6 + 0.25 * sin(point.z * 6.7 + ((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 977.3 + $noise * 23.9) + 0.15 * sin(point.z * 41.3 + ((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 311.9 + $noise * 7.1)) * clamp((($st1 + 2 + clamp(floor(2 + 1.99 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 3511.7 + $noise * 47.9)), 0, 1) * ($st2 - $st1) + clamp(floor(2 + 1.99 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 3511.7 + $noise * 47.9)) - 1, 0, 1) * ($st3 - $st2) + clamp(floor(2 + 1.99 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (floor(min(5, max(0, floor((point.x + 50) / 16.67))) * clamp($bundles, 1, 3) / 6) + 3 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 3511.7 + $noise * 47.9)) - 2, 0, 1) * (106 - $st3)) - point.z) / 2, 0, 1)) + min($width * (1 - (1 - $w0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $w1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1)), 1.5 * $thick * (1 - (1 - $t0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $t1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1))) * (($rib * (sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 5381.7 + $noise * 33.1) + $tilt * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 4409.3 + $noise * 57.1) * ((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * ((point.x + 50 - 16.67 * min(5, max(0, floor((point.x + 50) / 16.67)))) / 8.33 - 1))) * (0.55 + 0.2 * sin(point.z * 8.3 + ((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 613.1 + $noise * 41.3) + 0.25 * sin(point.z * 53.7 + ((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 271.3 + $noise * 13.9)) * (0.35 + 0.65 * (clamp(floor(1 + sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 2741.3 + $noise * 83.9)), 0, 1) + (1 - 2 * clamp(floor(1 + sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 2741.3 + $noise * 83.9)), 0, 1)) * clamp((($st1 + 2 + clamp(floor(2 + 1.99 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 1931.9 + $noise * 29.7)), 0, 1) * ($st2 - $st1) + clamp(floor(2 + 1.99 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 1931.9 + $noise * 29.7)) - 1, 0, 1) * ($st3 - $st2) + clamp(floor(2 + 1.99 * sin(((clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1)) * (min(5, max(0, floor((point.x + 50) / 16.67))) + 6 * clamp(floor(point.y / 50 + 1), 0, 1)) + (1 - (clamp((-point.y - 40) / 5, 0, 1) + clamp((point.y - 40) / 5, 0, 1))) * (min(2, max(0, floor((point.y + 50) / 33.34))) + 3 * clamp(floor(point.x / 50 + 1), 0, 1) + 12)) * 1931.9 + $noise * 29.7)) - 2, 0, 1) * (106 - $st3)) - point.z) / 2, 0, 1)))) + ($ridge * (sin(point.x * 37.9 + clamp(floor(point.y / 50 + 1), 0, 1) * 91.7 + $noise * 63.7) + 0.5 * sin(point.x * 11.3 - clamp(floor(point.y / 50 + 1), 0, 1) * 27.1 + $noise * 19.3)) * (0.65 + 0.35 * sin(point.z * 29.3 + point.x * 17.1 + $noise * 5.3))))) + $thick * (1 - (1 - $t0) * clamp(1 - point.z / 100 / $a0, 0, 1) - (1 - $t1) * clamp((point.z / 100 - 1 + $a1) / $a1, 0, 1)) * ($jit * sin(point.x * 13.11 - point.y * 5.77 + $noise * 177.3) * (0.6 + 0.4 * sin(point.z * 5.4 + 180 * sin(point.x * 7.919 + point.y * 13.37 + $noise * 311.7))))) + $lift * $length * (clamp(1 - point.z / $reach, 0, 1) * clamp(1 - point.z / $reach, 0, 1))))
+  # one box projection after the shape (round 4). MEASURED round 5: one `uv(cylinder)` around the
+  # strand's length gave mean stretch 2.6-8 and thousands of uvfolds on this flat ribboned section,
+  # and `[facing=-Y]` on a uv() here selects no face, so a per-face plane mapping waits for a coder
+  uv(box, scale=($tile, $tile * $aspect, $tile), offset=($uoff, $voff))
+}
+
+# ---- Fray: the thin torn ribbons standing out of a broken end ------------------------------------
+# `count` ribbons 0.3 as thick as they are wide, each `rw` (0.55-1.5 times) of `width` wide, sunk
+# `sink` cm into the end at y = 0 and standing out toward -Y 6 to `reach` times its own width, each
+# at its own place across `width` and depth through `thick` (6 to `reach` times its own width,
+# so every one clears the torn end), rolled up to 35 degrees about its own length, fanned up to 10, and bent at the
+# break: up to 1.4 times `bend` (the tangent of the tip's angle) up, some hanging down, some sideways;
+# each rooted at its own depth in the end (up to 0.6 of `sink`), so they leave it in staggered tiers. All raw wood.
+Fray = mesh(count=16, width=3.0, thick=1.6, rw=0.1, reach=13.0, sink=1.2, bend=0.7, tile=100.0, aspect=1.0, uoff=0.0, voff=0.0, noise=1) {
+  # a scrap to append the ribbons to (a first part takes no join=), deleted at the end
+  base = add($Ground, width=1.0, depth=1.0, at=(0.0, 0.0, -40.0))
+  loop (repeat=max(1, floor($count)), seed=floor($noise) + 41) {
+    $Fx = random(min=-0.3, max=0.3, seed=floor($noise) * 1000 + output.index + 11)
+    $Fz = random(min=-0.27, max=0.27, seed=floor($noise) * 1000 + output.index + 12)
+    $Dw = random(min=0.55, max=1.5, seed=floor($noise) * 1000 + output.index + 13)
+    $Do = random(min=0.0, max=1.0, seed=floor($noise) * 1000 + output.index + 14)
+    $Da = random(min=-0.9, max=1.4, seed=floor($noise) * 1000 + output.index + 15)
+    $Ds = random(min=-0.4, max=0.4, seed=floor($noise) * 1000 + output.index + 16)
+    $Fw = $Dw * $rw * $width
+    $Fo = (6 + ($reach - 6) * $Do) * $Fw
+    $Fa = $Da * $bend
+    $Fs = $Ds * $bend
+    $Fr = random(min=-35.0, max=35.0, seed=floor($noise) * 1000 + output.index + 17)
+    $Fy = random(min=-10.0, max=10.0, seed=floor($noise) * 1000 + output.index + 18)
+    $Fb = random(min=0.0, max=0.6, seed=floor($noise) * 1000 + output.index + 19)
+    add($Strand, length=$Fo + $sink, width=$Fw, thick=$Fw * 0.3, y0=-$Fo, w0=random(min=0.2, max=0.7), t0=0.6, a0=min(0.9, 1.3 * $Fw / ($Fo + $sink)), w1=0.9, t1=0.9, a1=0.1, lean0=random(min=-0.6, max=0.6), skew0=random(min=-1.5, max=1.5), jag0=0.0, jag1=0.0, chisel=random(min=-0.8, max=0.8), bundle=0.0, jit=0.04, edge=0.06, wander=random(min=-0.05, max=0.05), lift=0.5 * $Fa * $Fo / ($Fo + $sink), sway=0.5 * $Fs * $Fo / ($Fo + $sink), reach=100 * $Fo / ($Fo + $sink), fine=-2, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=random(min=1.0, max=999.0), at=($Fx * $width, $Fb * $sink, $Fz * $thick), rotate=(0.0, $Fr, $Fy), join=none, seed=floor($noise) * 1000 + output.index)
+  }
+  trim() [$base]
+  material($Broken)
+  uv(keep)
+}
+
+# ---- Shard: the chunky broken piece (rule 8) -------------------------------------------------------
+# A ribboned lead strand runs most of the length: torn bundle by bundle and ribbon by ribbon and
+# shelved through its thickness at the break (-Y), narrowing to `tip` of its width at +Y over `taper`
+# of the length and torn there too. `strands` thick riders (half to two thirds of `thick`, sunk a
+# quarter of it into a face) run out past the break as wedge spikes and sink back into the body at
+# their own place; one thin strip (`horn`, a fraction of the length) reaches furthest; one ribbon is
+# peeled `peel` degrees off a face out past the break; `fray` thin ribbons stand out of the break and
+# a few (`tip` of them) out of the far end, reaching `zone` times their usual length, `frayw` of the
+# width wide and bent by up to `bend`; `ridge` ridges every long face, `swell` varies the thickness. Then one warp:
+# a `kink` (degrees, about Z, near the middle), a `bow` (a fraction of the length, sagging in Z) and a
+# `twist` (degrees end to end). LOOK: `bundle`, `bundles`, `recess`, `rib`, `tilt`, `edge` as
+# `Strand`; `jag` the break's strips (a fraction of `thick`), `shelf` the through-thickness shelves,
+# `lean` how far the break faces slant. About 1,600 triangles.
+Shard = mesh(length=14.0, width=3.2, thick=1.9, strands=2, tip=0.5, taper=0.4, horn=0.12, peel=22.0, kink=9.0, bow=0.02, twist=10.0, flat=0.0, bundle=0.24, bundles=3, recess=0.4, rib=0.035, tilt=0.6, edge=0.1, jag=0.25, shelf=0.45, lean=0.6, fray=16, frayw=0.13, bend=0.9, zone=1.0, ridge=0.04, swell=0.0, tile=100.0, aspect=1.0, uoff=0.0, voff=0.0, noise=1) {
+  add($Strand, length=$length * (0.9 + 0.05 * sin($noise * 63.1)), width=$width * 0.88, thick=$thick * 0.82, y0=-$length * 0.45, w0=0.92, t0=0.9, a0=0.08, w1=$tip, t1=0.5 + 0.4 * $tip, a1=$taper, lean0=$lean * sin($noise * 13.3), skew0=0.5 * $lean * sin($noise * 71.1), jag0=$thick * $jag, step0=$shelf * sin($noise * 31.7), lean1=$lean * sin($noise * 29.9), skew1=(1.3 - $tip) * $lean * sin($noise * 51.7), jag1=$thick * $jag * 0.5, step1=0.75 * $shelf * sin($noise * 43.9), chisel=0.6 * sin($noise * 87.9), bundle=$bundle, bundles=$bundles, recess=$recess, rib=$rib, tilt=$tilt, edge=$edge, st1=10 + 6 * (1 + sin($noise * 17.3)), st2=26 + 6 * (1 + sin($noise * 17.3)) + 6 * (1 + sin($noise * 29.1)), st3=42 + 6 * (1 + sin($noise * 17.3)) + 6 * (1 + sin($noise * 29.1)) + 6 * (1 + sin($noise * 41.9)), jit=0.03, wander=0.04, flat=$flat, ridge=$ridge, swell=$swell, fine=1, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 7.0)
+  # riders sunk into the top and bottom faces, turn and turn about, each rolled 4-9 degrees about the
+  # grain (so no face of it lies flat on a bundle): each stands a little proud of the lead, sinks back
+  # into it where it thins at its far end, and runs out past the break at its own place as a wedge
+  # spike (the break's first tier)
+  loop (repeat=$strands, seed=floor($noise) + 31) {
+    $Jx = random(min=-$width * 0.06, max=$width * 0.06, seed=floor($noise) * 1000 + output.index + 200)
+    $Jz = random(min=0.0, max=$thick * 0.04, seed=floor($noise) * 1000 + output.index + 300)
+    $Out = random(min=0.0, max=0.2, seed=floor($noise) * 1000 + output.index)
+    $Run = random(min=0.3, max=0.5 + 0.4 * $tip, seed=floor($noise) * 1000 + output.index + 500)
+    $Rt = random(min=$thick * 0.55, max=$thick * 0.65, seed=floor($noise) * 1000 + output.index + 600)
+    $Rr = random(min=4.0, max=9.0, seed=floor($noise) * 1000 + output.index + 700)
+    $Rs = cos(output.index * 180 + 180 * floor(sin($noise * 19.3) + 1))
+    add($Strand, length=$length * ($Out + $Run), width=random(min=$width * 0.25, max=$width * 0.4), thick=$Rt, y0=-$length * (0.5 + $Out), w0=random(min=0.35, max=0.8), t0=random(min=0.4, max=0.9), a0=random(min=0.15, max=0.4), w1=random(min=0.2, max=0.6), t1=random(min=0.1, max=0.4), a1=random(min=0.3, max=0.6), lean0=random(min=-0.8, max=0.8), skew0=random(min=-1.0, max=1.0), jag0=$Rt * $jag, lean1=random(min=-0.6, max=0.6), skew1=random(min=-0.8, max=0.8), jag1=$Rt * $jag * 0.3, chisel=random(min=-0.6, max=0.6), bundle=0.0, jit=0.05, edge=0.08, wander=random(min=0.02, max=0.06), fine=-1, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=random(min=1.0, max=999.0), at=(-$width * 0.25 + $width * 0.5 * (output.index - 1) / max(1, $strands - 1) + $Jx, 0.0, ($thick * 0.25 - $Jz) * cos(output.index * 180) * clamp(sin($noise * 33.3) * 1000, -1, 1)), rotate=(0.0, $Rr * $Rs, 0.0), join=none, seed=floor($noise) * 1000 + output.index)
+  }
+  # a thin strip reaching furthest past the break (the second tier), a little off the axis
+  add($Strand, length=$length * (0.4 + $horn), width=$width * 0.14, thick=$thick * 0.25, y0=-$length * (0.5 + $horn), w0=0.3, t0=0.5, a0=0.4, w1=0.6, t1=0.5, a1=0.3, lean0=0.3, skew0=0.8 * sin($noise * 55.5), jag0=0.02, lean1=0.0, skew1=0.0, jag1=0.02, chisel=0.7, bundle=0.0, jit=0.05, wander=0.06, fine=-1, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 13.0, at=($width * 0.3 * sin($noise * 41.3), 0.0, $thick * 0.15 * sin($noise * 77.7)), rotate=(0.0, 3.0 * sin($noise * 23.1), 5.0 * sin($noise * 19.9)), join=none)
+  # a ribbon peeled off the top face: hinged at its +Y end on the face, its free end lifted `peel`
+  # degrees out past the break
+  add($Strand, length=$length * 0.32, width=$width * 0.34, thick=$thick * 0.15, y0=-$length * 0.32, w0=0.45, t0=0.6, a0=0.3, w1=0.7, t1=0.3, a1=0.2, lean0=0.4, skew0=1.0 * sin($noise * 61.3), jag0=0.03, lean1=0.0, skew1=0.0, jag1=0.01, chisel=0.5 * sin($noise * 14.7), bundle=0.0, jit=0.05, wander=0.08, fine=-1, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 17.0, at=($width * 0.22 * sin($noise * 27.9), -$length * 0.18, $thick * 0.36 * clamp(sin($noise * 33.3) * 1000, -1, 1)), rotate=(-$peel * clamp(sin($noise * 33.3) * 1000, -1, 1), 0.0, 6.0 * sin($noise * 37.3)), join=none)
+  material($Broken)
+  material($Face) [above=88%]
+  # the fray: thin ribbons out of the break, and a few out of the far end
+  add($Fray, count=$fray, width=$width * 0.8, thick=$thick * 0.74, rw=$frayw, reach=14 * $zone, sink=$thick * 0.7, bend=$bend, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 3.0 + 7.0, at=(0.0, -$length * 0.45, 0.0), join=none)
+  add($Fray, count=max(1, floor($fray * $tip * 0.35)), width=$width * 0.8 * $tip, thick=$thick * 0.74 * (0.5 + 0.4 * $tip), rw=$frayw, reach=9 * $zone, sink=$thick * 0.5, bend=$bend * 0.7, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 5.0 + 3.0, at=($width * 0.88 * 0.3 * sin($noise * 87.9) * (1 - $tip), $length * (0.45 + 0.05 * sin($noise * 63.1)), 0.0), rotate=(0.0, 0.0, 180.0), join=none)
+  warp(to=(point.x * cos($twist * point.t.y) - point.z * sin($twist * point.t.y) + tan($kink) * max(0, point.y - $length * 0.08 * sin($noise * 9.7)), point.y, point.x * sin($twist * point.t.y) + point.z * cos($twist * point.t.y) - $bow * $length * 4 * point.t.y * (1 - point.t.y)))
+  uv(keep)
+}
+
+# ---- Splinter: the thin ribbon, the rarer piece (photos rule 3: 8-15 : 1 : 0.2-0.4, flat-curved) ----
+# One ribboned strand `length / ar` wide and `tr` of that thick, torn ribbon by ribbon at the break
+# (-Y, `jag` a fraction of its width) and drawn to a slanted point over about one width at +Y, its
+# edges wobbling (`edge`); a second layer `layer` of the length peeled `peel` degrees off it at the
+# break, a thin sliver lifting off the far side, `fray` thin ribbons out of the break and fewer, finer
+# ones out of the point (asymmetric ends); `ridge` ribs both flat faces, `swell` varies its thickness; `cup` curls
+# the ribbon across its width (a fraction of the width), then the kink (degrees, at least 8 reads as
+# bent), bow and twist the shard takes. About 1,100 triangles.
+Splinter = mesh(length=12.0, ar=12.0, tr=0.38, cup=0.12, peel=12.0, layer=0.3, kink=10.0, bow=0.03, twist=20.0, bundle=0.2, bundles=3, rib=0.05, ridge=0.045, swell=0.25, jag=0.35, edge=0.1, fray=10, tile=100.0, aspect=1.0, uoff=0.0, voff=0.0, noise=1) {
+  add($Strand, length=$length, width=$length / $ar, thick=$length / $ar * $tr, y0=-$length * 0.5, w0=0.8, t0=0.9, a0=0.06, w1=0.15, t1=0.5, a1=1.4 / $ar, lean0=0.8 * sin($noise * 13.3), skew0=0.9 * sin($noise * 71.1), jag0=$length / $ar * $jag, step0=0.5 * sin($noise * 31.7), lean1=0.5, skew1=1.5 * sin($noise * 51.7), jag1=$length / $ar * $jag * 0.4, step1=0.4, chisel=0.8 * sin($noise * 87.9), bundle=$bundle, bundles=$bundles, rib=$rib, tilt=0.6, edge=$edge, st1=10 + 6 * (1 + sin($noise * 17.3)), st2=26 + 6 * (1 + sin($noise * 17.3)) + 6 * (1 + sin($noise * 29.1)), st3=42 + 6 * (1 + sin($noise * 17.3)) + 6 * (1 + sin($noise * 29.1)) + 6 * (1 + sin($noise * 41.9)), jit=0.04, wander=0.06, ridge=$ridge, swell=$swell, fine=1, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 7.0)
+  add($Strand, length=$length * $layer * (1 + 0.3 * sin($noise * 33.9)), width=$length / $ar * 0.6, thick=$length / $ar * $tr * 0.45, y0=-$length * $layer * (1 + 0.3 * sin($noise * 33.9)), w0=0.5, t0=0.7, a0=0.2, w1=0.5, t1=0.3, a1=0.3, lean0=0.5, skew0=1.2 * sin($noise * 55.5), jag0=$length / $ar * $jag * 0.2, lean1=0.3, skew1=1.0, jag1=0.01, chisel=0.7 * sin($noise * 45.1), bundle=$bundle * 0.6, bundles=$bundles, jit=0.04, wander=0.06, fine=0, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 13.0, at=($length / $ar * 0.18 * sin($noise * 41.3), -$length * 0.08, $length / $ar * $tr * 0.42), rotate=(-$peel, 0.0, 4.0 * sin($noise * 29.1)), join=none)
+  add($Strand, length=$length * $layer * (0.8 + 0.25 * sin($noise * 61.7)), width=$length / $ar * 0.3, thick=$length / $ar * $tr * 0.4, y0=-$length * $layer * (0.8 + 0.25 * sin($noise * 61.7)), w0=0.3, t0=0.6, a0=0.3, w1=0.5, t1=0.3, a1=0.3, lean0=0.3, skew0=1.0, jag0=0.01, lean1=0.2, skew1=0.6, jag1=0.01, chisel=0.8, bundle=0.0, jit=0.05, wander=0.08, fine=-1, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 19.0, at=(-$length / $ar * 0.3 * sin($noise * 41.3), -$length * 0.15, -$length / $ar * $tr * 0.3), rotate=($peel * 0.6, 0.0, -9.0 * sin($noise * 41.3)), join=none)
+  material($Broken)
+  material($Face) [above=85%]
+  add($Fray, count=$fray, width=$length / $ar * 0.75, thick=$length / $ar * $tr * 0.7, rw=0.2, reach=10.0, sink=$length / $ar * 0.8, bend=0.6, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 3.0 + 5.0, at=(0.0, -$length * 0.5, 0.0), join=none)
+  add($Fray, count=max(2, floor($fray * 0.4)), width=$length / $ar * 0.3, thick=$length / $ar * $tr * 0.5, rw=0.25, reach=6.0, sink=$length / $ar * 0.6, bend=0.5, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 9.0 + 2.0, at=($length / $ar * 0.15 * sin($noise * 87.9), $length * 0.5 - $length / $ar * 0.7, 0.0), rotate=(0.0, 0.0, 180.0), join=none)
+  warp(to=(point.x * cos($twist * point.t.y) - point.z * sin($twist * point.t.y) + tan($kink) * max(0, point.y - $length * 0.1 * sin($noise * 9.7)), point.y, point.x * sin($twist * point.t.y) + point.z * cos($twist * point.t.y) + $cup * $length / $ar * 4 * (point.t.x - 0.5) * (point.t.x - 0.5) - $bow * $length * 4 * point.t.y * (1 - point.t.y)))
+  uv(keep)
+}
+
+# ---- Chip: a thin curved flake off the break (photos rule 10: 2:1-4:1, about a tenth of its length
+# thick, crescent or curled) ------------------------------------------------------------------------
+# One flake `length / ar` wide and about `tr` of its length thick (each its own, 0.7-1 of it), six
+# ribbons a face stepped up or down by `rib` of its width and three bundles standing proud by up to
+# `bundle` of its thickness, so it is thick in places and thin in others; both rims torn ribbon by
+# ribbon (`jag`, a fraction of the length) and shelved, neither end drawn to a point; the long edges
+# wobble (`edge`). A narrow strip on one rim (overlapping it a little) stays hinged at one end and lifts off at the other
+# by up to `hinge` (the tangent of its angle). Then curled across its width so each edge rises `curl`
+# degrees (negative domes it), bowed along its length (`bow`, a fraction of the length) and twisted
+# `twist` degrees end to end. All of it is freshly broken wood, so all of it wears `Broken`.
+Chip = mesh(length=2.5, ar=3.0, tr=0.1, curl=22.0, bow=0.06, twist=15.0, bundle=0.45, rib=0.05, jag=0.16, edge=0.12, hinge=0.5, tile=100.0, aspect=1.0, uoff=0.0, voff=0.0, noise=1) {
+  add($Strand, length=$length, width=$length / $ar, thick=$length * $tr * (0.85 + 0.15 * sin($noise * 41.9)), y0=-$length * 0.5, w0=0.8 + 0.15 * sin($noise * 21.7), t0=0.6 + 0.25 * sin($noise * 11.3), a0=0.12 + 0.06 * sin($noise * 5.9), w1=0.65 + 0.3 * sin($noise * 63.1), t1=0.6 + 0.2 * sin($noise * 37.7), a1=0.2 + 0.1 * sin($noise * 8.3), lean0=0.8 * sin($noise * 37.1), skew0=0.9 * sin($noise * 13.3), jag0=$length * $jag, step0=0.6 * sin($noise * 17.9), lean1=0.6 * sin($noise * 71.9), skew1=1.1 * sin($noise * 29.9), jag1=$length * $jag * (0.7 + 0.3 * sin($noise * 49.1)), step1=0.5 * sin($noise * 27.1), chisel=0.6 * sin($noise * 87.9), bundle=$bundle, bundles=3, recess=0.3, rib=$rib, tilt=0.6, slide=1.0, edge=$edge, st1=15 + 10 * (1 + sin($noise * 17.3)), st2=52 + 10 * (1 + sin($noise * 29.1)), st3=150.0, jit=0.05, wander=0.08 * sin($noise * 19.7), fine=2, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 7.0)
+  add($Strand, length=$length * (0.55 + 0.25 * sin($noise * 23.3)), width=$length / $ar * 0.2, thick=$length * $tr * 0.45, y0=-$length * 0.5, w0=0.5, t0=0.6, a0=0.3, w1=0.8, t1=0.8, a1=0.1, lean0=0.4, skew0=0.8 * sin($noise * 31.3), jag0=0.0, jag1=0.0, bundle=0.0, jit=0.05, edge=0.05, wander=0.05, lift=$hinge * (0.12 + 0.1 * sin($noise * 59.3)), reach=70.0, fine=-1, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 11.0, at=($length / $ar * 0.56 * clamp(sin($noise * 15.1) * 1000, -1, 1), 0.0, 0.0), rotate=(0.0, (8.0 + 2.0 * sin($noise * 7.3)) * clamp(sin($noise * 15.1) * 1000, -1, 1), 0.0), join=none)
+  warp(to=(point.x * cos($twist * point.t.y) - point.z * sin($twist * point.t.y), point.y, point.x * sin($twist * point.t.y) + point.z * cos($twist * point.t.y) + tan($curl) * point.x * point.x * $ar / $length + $bow * $length * 4 * (point.t.y - 0.5) * (point.t.y - 0.5)))
+  material($Broken)
+  uv(keep)
+}
+
+# ---- the ground a pile is dropped on, and taken away again ---------------------------------------
+# A pile is scattered onto this slab's top (`collide=` needs something to land on), and the slab is
+# then deleted by its handle, so no piece is cut and no new face needs UVs.
+Ground = mesh(width=40.0, depth=40.0) {
+  rect(w=$width, h=$depth)
+  extrude(height=1.0)
+}
+
+# a shard drawn by its ratios, so a pile can draw them independently: `ar` length to width, `tr`
+# thickness to width; `tip` near 1 is a chunk ragged at both ends, a low `ar` with a high `tr` a
+# block; `taper`, `bundle`, `jag`, `fray` as `Shard`
+Piece = mesh(length=12.0, ar=5.0, tr=0.55, tip=0.45, taper=0.4, kink=8.0, twist=10.0, bundle=0.24, jag=0.35, fray=10, frayw=0.13, bend=0.9, tile=100.0, aspect=1.0, uoff=0.0, voff=0.0, noise=1) {
+  add($Shard, length=$length, width=$length / $ar, thick=$length / $ar * $tr, strands=2, tip=$tip, taper=$taper, horn=0.06 + 0.06 * sin($noise * 7.7), kink=$kink, twist=$twist, bundle=$bundle, jag=$jag, fray=$fray, frayw=$frayw, bend=$bend, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise)
+}
+
+# ---- Offcut: a flat piece of board, one end squared by the saw, the other broken -----------------
+# `length` x `width` x `thick`, its four long faces planed but grain-grooved (faint bundles, ribbons
+# and ridges), its edges wobbling (worn, chewed arrises), the +Y end
+# sawn square give or take `saw` degrees, the -Y end torn ribbon by ribbon (`jag`, a fraction of
+# `thick`), shelved, and frayed (`fray` ribbons). Planed faces and the sawn end wear `Face`, the
+# broken end `Broken`.
+Offcut = mesh(length=10.0, width=7.0, thick=1.8, saw=3.0, jag=0.9, fray=10, tile=100.0, aspect=1.0, uoff=0.0, voff=0.0, noise=1) {
+  add($Strand, length=$length, width=$width, thick=$thick, y0=-$length * 0.5, w0=0.97, t0=0.95, a0=0.04, w1=1.0, t1=1.0, a1=0.02, lean0=0.5 * sin($noise * 13.3), skew0=0.35 * sin($noise * 71.1), jag0=$thick * $jag, step0=0.8 * sin($noise * 31.7), lean1=0.0, skew1=tan($saw), jag1=0.0, step1=0.0, chisel=0.0, bundle=0.06, bundles=3, recess=0.3, rib=0.012, ridge=0.015, tilt=0.4, slide=0.6, edge=0.05, jit=0.02, wander=0.006, st1=10 + 6 * (1 + sin($noise * 17.3)), st2=40 + 8 * (1 + sin($noise * 29.1)), st3=70 + 8 * (1 + sin($noise * 41.9)), fine=1, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 7.0)
+  material($Face)
+  material($Broken) [facing=-Y]
+  add($Fray, count=$fray, width=$width * 0.9, thick=$thick * 0.8, rw=0.05, reach=10.0, sink=$thick * 0.7, bend=0.5, tile=$tile, aspect=$aspect, uoff=$uoff, voff=$voff, noise=$noise * 3.0 + 1.0, at=(0.0, -$length * 0.5, 0.0), join=none)
+  uv(keep)
+}
+
+# ---- Chips: flakes scattered round a break -------------------------------------------------------
+# `count` flakes `size` times 1.2-3.6 cm long over `area`, half curled up and half domed, each
+# `curl` 0.5-1.5 times, twisted up to 25 degrees, some with a strip lifting off them, each its own
+# place in the UV tiles.
+Chips = mesh(count=24, area=30.0, size=1.0, curl=22.0, tile=100.0, aspect=1.0, noise=1) {
+  ground = add($Ground, width=$area, depth=$area)
+  add($Chip, length=random(min=1.2 * $size, max=3.6 * $size), ar=random(min=2.0, max=4.0), curl=random(min=$curl * 0.5, max=$curl * 1.5), bow=random(min=-0.1, max=0.1), twist=random(min=-25.0, max=25.0), hinge=random(min=0.0, max=1.4), tile=$tile, aspect=$aspect, uoff=random(min=0.0, max=1.0), voff=random(min=0.0, max=1.0), noise=random(min=1.0, max=999.0), scatter=floor($count / 2), apart=0.4, collide=avoid, jitter=(turn=(4.0, 4.0, 180.0)), align=(Z: self=25%), join=none, seed=$noise) [$ground, top]
+  add($Chip, length=random(min=1.2 * $size, max=3.6 * $size), ar=random(min=2.0, max=4.0), curl=random(min=-$curl * 1.5, max=-$curl * 0.5), bow=random(min=-0.1, max=0.1), twist=random(min=-25.0, max=25.0), hinge=random(min=0.0, max=1.4), tile=$tile, aspect=$aspect, uoff=random(min=0.0, max=1.0), voff=random(min=0.0, max=1.0), noise=random(min=1.0, max=999.0), scatter=$count - floor($count / 2), apart=0.4, collide=avoid, jitter=(turn=(4.0, 4.0, 180.0)), align=(Z: self=25%), join=none, seed=$noise + 7) [$ground, top]
+  trim() [$ground]
+  uv(keep)
+}
+
+# ---- Splinters: a heap of shards, blocks, board offcuts, ribbons and chips ------------------------
+# `count` long pieces, `sticks` of them ribbons; the rest drawn 7 to 20 cm long, 3:1 to 7:1, each its
+# own tip, taper, kink (up to `kink` degrees either way; ribbons bend 8-14), twist, fray and place in
+# the UV tiles. Plus `blocks` chunky blocks under 3:1, broken at both ends, and `offcuts` flat board
+# pieces with one squared saw end. The offcuts, then the blocks, then the bottom layer lie kept apart
+# (largest first, so each finds room) in the middle 75% of `area`, `chips` flakes in their gaps; `heap` of the long pieces, and the ribbons, are
+# dropped onto the same ground tilted up to 16 degrees and lifted until they rest on what they meet
+# (`collide=stack`), so they lean across the bottom layer. The ground is deleted by its handle. Each
+# piece keeps the UVs it was given in its own frame.
+Splinters = mesh(count=9, sticks=0.25, heap=0.5, blocks=2, offcuts=2, chips=10, area=44.0, kink=14.0, tile=100.0, aspect=1.0, noise=3) {
+  ground = add($Ground, width=$area * 0.75, depth=$area * 0.75)
+  # the largest first, so they find room: flat board offcuts, a squared saw end and a broken one
+  add($Offcut, length=random(min=6.0, max=14.0), width=random(min=5.0, max=10.0), thick=random(min=1.2, max=2.2), saw=random(min=-4.0, max=4.0), fray=random(min=5.0, max=10.0), tile=$tile, aspect=$aspect, uoff=random(min=0.0, max=1.0), voff=random(min=0.0, max=1.0), noise=random(min=1.0, max=999.0), scatter=$offcuts, apart=0.3, collide=avoid, jitter=(turn=(2.0, 2.0, 180.0)), align=(Z: self=4%), join=none, seed=$noise + 230) [$ground, top]
+  # chunky blocks, broken at both ends
+  add($Piece, length=random(min=4.0, max=9.0), ar=random(min=1.3, max=2.8), tr=random(min=0.55, max=0.9), tip=random(min=0.8, max=1.0), taper=random(min=0.1, max=0.3), kink=random(min=-4.0, max=4.0), twist=random(min=-6.0, max=6.0), fray=random(min=6.0, max=12.0), frayw=random(min=0.08, max=0.2), bend=random(min=0.4, max=1.4), tile=$tile, aspect=$aspect, uoff=random(min=0.0, max=1.0), voff=random(min=0.0, max=1.0), noise=random(min=1.0, max=999.0), scatter=$blocks, apart=0.3, collide=avoid, jitter=(turn=(4.0, 4.0, 180.0)), align=(Z: self=6%), join=none, seed=$noise + 210) [$ground, top]
+  # the bottom layer, lying on the ground kept apart
+  add($Piece, length=random(min=7.0, max=20.0), ar=random(min=3.0, max=7.0), tr=random(min=0.3, max=0.65), tip=random(min=0.2, max=0.95), taper=random(min=0.2, max=0.65), kink=random(min=-$kink, max=$kink), twist=random(min=-16.0, max=16.0), fray=random(min=3.0, max=7.0), frayw=random(min=0.08, max=0.2), bend=random(min=0.4, max=1.4), tile=$tile, aspect=$aspect, uoff=random(min=0.0, max=1.0), voff=random(min=0.0, max=1.0), noise=random(min=1.0, max=999.0), scatter=$count - floor($count * $sticks + 0.5) - floor(($count - floor($count * $sticks + 0.5)) * $heap + 0.5), apart=0.2, collide=avoid, jitter=(turn=(4.0, 4.0, 180.0)), align=(Z: self=6%), join=none, seed=$noise) [$ground, top]
+  # chips in the gaps between them
+  add($Chip, length=random(min=1.2, max=3.2), ar=random(min=2.0, max=4.0), curl=random(min=12.0, max=32.0), bow=random(min=-0.1, max=0.1), twist=random(min=-25.0, max=25.0), hinge=random(min=0.0, max=1.4), tile=$tile, aspect=$aspect, uoff=random(min=0.0, max=1.0), voff=random(min=0.0, max=1.0), noise=random(min=1.0, max=999.0), scatter=$chips, apart=0.3, collide=avoid, jitter=(turn=(4.0, 4.0, 180.0)), align=(Z: self=25%), join=none, seed=$noise + 130) [$ground, top]
+  # the upper layer and the ribbons, dropped tilted onto the same ground and lifted until they rest
+  # on what they meet, so they lean across the bottom layer
+  add($Piece, length=random(min=5.0, max=18.0), ar=random(min=3.0, max=7.0), tr=random(min=0.3, max=0.65), tip=random(min=0.2, max=0.95), taper=random(min=0.2, max=0.65), kink=random(min=-$kink, max=$kink), twist=random(min=-16.0, max=16.0), fray=random(min=3.0, max=7.0), frayw=random(min=0.08, max=0.2), bend=random(min=0.4, max=1.4), tile=$tile, aspect=$aspect, uoff=random(min=0.0, max=1.0), voff=random(min=0.0, max=1.0), noise=random(min=1.0, max=999.0), scatter=floor(($count - floor($count * $sticks + 0.5)) * $heap + 0.5), collide=stack, jitter=(turn=(16.0, 16.0, 180.0)), align=(Z: self=10%), join=none, seed=$noise + 90) [$ground, top]
+  add($Splinter, length=random(min=6.0, max=15.0), ar=random(min=8.0, max=15.0), cup=random(min=-0.2, max=0.2), kink=random(min=8.0, max=14.0), twist=random(min=-30.0, max=30.0), fray=random(min=3.0, max=6.0), tile=$tile, aspect=$aspect, uoff=random(min=0.0, max=1.0), voff=random(min=0.0, max=1.0), noise=random(min=1.0, max=999.0), scatter=floor($count * $sticks + 0.5), collide=stack, jitter=(turn=(12.0, 12.0, 180.0)), align=(Z: self=10%), join=none, seed=$noise + 50) [$ground, top]
+  trim() [$ground]
+  uv(keep)
+}
+
+# ---- Smashed: one board broken into long pieces, pushed apart ------------------------------------
+# The board (`width` x `length` x `thick`, grain along Y) is `pieces` strips side by side across its
+# width at its own width (0.6 to 1.5 of an even share, so neighbours overlap or leave gaps), each
+# running its own share of the length (35-97 %) from its own place; most are snapped in two at their
+# own point with their own gap (`splits` of them), the rest lie whole; a strip's place across the
+# board is shuffled from its number, so split and whole strips mix. Every piece is a chunk ragged at
+# both ends (`Shard`, its top half planed: the board's face) with a long break zone (`zone` times the
+# usual fray, torn strips a third to two thirds of the thickness long, three shelves).
+# Each is pushed `push` cm away from the board's middle along its own direction from it (the
+# outermost the most, and the two halves of a strip apart), rolled up to `roll` degrees, turned up
+# to `yaw` (so no two lie parallel), a strip peeled 20-60 degrees off each, its edges chewed, bent 5 to `kink` degrees one way or the other and bowed, and lifted where it rolls, some
+# lifted further, so neighbours lean on and overlap each other; each sits its own hair higher, so no
+# two bottoms share a plane. Both halves of a strip face their shredded ends to the break between
+# them. Every piece runs along the board, so each keeps the board's grain in its own UVs.
+Smashed = mesh(width=14.0, length=60.0, thick=2.0, pieces=5, splits=3, push=2.0, roll=24.0, kink=24.0, zone=1.1, fray=7, yaw=34.0, tile=100.0, aspect=1.0, noise=4) {
+  # a scrap to append the pieces to (a first part takes no join=), deleted at the end
+  base = add($Ground, width=1.0, depth=1.0, at=(0.0, 0.0, -10.0))
+  # the strips snapped in two
+  loop (repeat=$splits, seed=floor($noise) + 17) {
+    $Run = random(min=0.35, max=0.97, seed=floor($noise) * 100 + output.index)
+    $Mid = random(min=-1.0, max=1.0, seed=floor($noise) * 100 + output.index + 20)
+    $Cut = random(min=0.25, max=0.75, seed=floor($noise) * 100 + output.index + 30)
+    $Wd = random(min=0.6, max=1.5, seed=floor($noise) * 100 + output.index + 40)
+    $Th = random(min=0.8, max=1.0, seed=floor($noise) * 100 + output.index + 60)
+    $Gap = random(min=0.4, max=2.0, seed=floor($noise) * 100 + output.index + 70)
+    $Px = -$width * 0.5 + $width / $pieces * (output.index * 3 - $pieces * floor(output.index * 3 / $pieces) + 0.5)
+    $Ys = $Mid * (1 - $Run) * $length * 0.5 - $Run * $length * 0.5
+    $La = $Run * $length * $Cut
+    $Lb = $Run * $length * (1 - $Cut) - $Gap * $push
+    $RollA = random(min=-$roll, max=$roll, seed=floor($noise) * 100 + output.index + 100)
+    $RollB = random(min=-$roll, max=$roll, seed=floor($noise) * 100 + output.index + 110)
+    $YawA = random(min=-$yaw, max=$yaw, seed=floor($noise) * 100 + output.index + 120)
+    $YawB = random(min=-$yaw, max=$yaw, seed=floor($noise) * 100 + output.index + 130)
+    $LiftA = random(min=0.0, max=1.0, seed=floor($noise) * 100 + output.index + 140)
+    $LiftB = random(min=0.0, max=1.0, seed=floor($noise) * 100 + output.index + 150)
+    $PitchA = random(min=-5.0, max=5.0, seed=floor($noise) * 100 + output.index + 180)
+    $PitchB = random(min=-5.0, max=5.0, seed=floor($noise) * 100 + output.index + 190)
+    $WdB = random(min=0.7, max=1.1, seed=floor($noise) * 100 + output.index + 200)
+    $Sx = random(min=-0.4, max=0.4, seed=floor($noise) * 100 + output.index + 210)
+    $KsA = random(min=0.0, max=2.0, seed=floor($noise) * 100 + output.index + 220)
+    $KsB = random(min=0.0, max=2.0, seed=floor($noise) * 100 + output.index + 230)
+    $KmA = random(min=5.0, max=$kink, seed=floor($noise) * 100 + output.index + 240)
+    $KmB = random(min=5.0, max=$kink, seed=floor($noise) * 100 + output.index + 250)
+    add($Shard, length=$La, width=$width / $pieces * $Wd, thick=$thick * $Th, strands=2, tip=random(min=0.55, max=0.95), taper=random(min=0.2, max=0.6), horn=random(min=0.04, max=0.12), peel=random(min=20.0, max=60.0), edge=random(min=0.15, max=0.3), kink=(floor($KsA) * 2 - 1) * $KmA, bow=random(min=-0.05, max=0.05), twist=random(min=-8.0, max=8.0), flat=0.5, jag=random(min=0.5, max=0.9), shelf=random(min=0.4, max=0.8), fray=$fray, zone=$zone, tile=$tile, aspect=$aspect, uoff=random(min=0.0, max=1.0), voff=random(min=0.0, max=1.0), noise=random(min=1.0, max=999.0), at=($Px + $push * $Px / ($width * 0.5), $Ys + $La * 0.5 + $push * ($Ys + $La * 0.5) / ($length * 0.5), $thick * $Th * 0.5 + sin(abs($RollA)) * $width / $pieces * $Wd * 0.5 + $LiftA * $LiftA * $thick * 1.4 + 0.021 * (output.index + 1)), rotate=($PitchA, $RollA, $YawA + 180.0), join=none, seed=floor($noise) * 100 + output.index + 160)
+    add($Shard, length=$Lb, width=$width / $pieces * $Wd * $WdB, thick=$thick * $Th, strands=2, tip=random(min=0.55, max=0.95), taper=random(min=0.2, max=0.6), horn=random(min=0.04, max=0.12), peel=random(min=20.0, max=60.0), edge=random(min=0.15, max=0.3), kink=(floor($KsB) * 2 - 1) * $KmB, bow=random(min=-0.05, max=0.05), twist=random(min=-8.0, max=8.0), flat=0.5, jag=random(min=0.5, max=0.9), shelf=random(min=0.4, max=0.8), fray=$fray, zone=$zone, tile=$tile, aspect=$aspect, uoff=random(min=0.0, max=1.0), voff=random(min=0.0, max=1.0), noise=random(min=1.0, max=999.0), at=($Px + $Sx * $width / $pieces + $push * $Px / ($width * 0.5), $Ys + $La + $Gap * $push + $Lb * 0.5 + $push * ($Ys + $La + $Lb * 0.5) / ($length * 0.5), $thick * $Th * 0.5 + sin(abs($RollB)) * $width / $pieces * $Wd * 0.5 + $LiftB * $LiftB * $thick * 1.4 + 0.017 * (output.index + 1) + 0.07), rotate=($PitchB, $RollB, $YawB), join=none, seed=floor($noise) * 100 + output.index + 170)
+  }
+  # the strips lying whole
+  loop (repeat=$pieces - $splits, seed=floor($noise) + 19) {
+    $Run = random(min=0.35, max=0.97, seed=floor($noise) * 100 + (output.index + 50))
+    $Mid = random(min=-1.0, max=1.0, seed=floor($noise) * 100 + (output.index + 50) + 20)
+    $Wd = random(min=0.6, max=1.5, seed=floor($noise) * 100 + (output.index + 50) + 40)
+    $Th = random(min=0.8, max=1.0, seed=floor($noise) * 100 + (output.index + 50) + 60)
+    $Px = -$width * 0.5 + $width / $pieces * (($splits + output.index) * 3 - $pieces * floor(($splits + output.index) * 3 / $pieces) + 0.5)
+    $Ys = $Mid * (1 - $Run) * $length * 0.5 - $Run * $length * 0.5
+    $RollA = random(min=-$roll, max=$roll, seed=floor($noise) * 100 + (output.index + 50) + 100)
+    $YawA = random(min=-$yaw, max=$yaw, seed=floor($noise) * 100 + (output.index + 50) + 120)
+    $LiftA = random(min=0.0, max=1.0, seed=floor($noise) * 100 + (output.index + 50) + 140)
+    $PitchA = random(min=-5.0, max=5.0, seed=floor($noise) * 100 + (output.index + 50) + 180)
+    $KsA = random(min=0.0, max=2.0, seed=floor($noise) * 100 + (output.index + 50) + 220)
+    $KmA = random(min=5.0, max=$kink, seed=floor($noise) * 100 + (output.index + 50) + 240)
+    add($Shard, length=$Run * $length, width=$width / $pieces * $Wd, thick=$thick * $Th, strands=2, tip=random(min=0.55, max=0.95), taper=random(min=0.2, max=0.6), horn=random(min=0.04, max=0.12), peel=random(min=20.0, max=60.0), edge=random(min=0.15, max=0.3), kink=(floor($KsA) * 2 - 1) * $KmA, bow=random(min=-0.05, max=0.05), twist=random(min=-8.0, max=8.0), flat=0.5, jag=random(min=0.5, max=0.9), shelf=random(min=0.4, max=0.8), fray=$fray, zone=$zone, tile=$tile, aspect=$aspect, uoff=random(min=0.0, max=1.0), voff=random(min=0.0, max=1.0), noise=random(min=1.0, max=999.0), at=($Px + $push * $Px / ($width * 0.5), $Ys + $Run * $length * 0.5, $thick * $Th * 0.5 + sin(abs($RollA)) * $width / $pieces * $Wd * 0.5 + $LiftA * $LiftA * $thick * 1.4 + 0.019 * (output.index + 1) + 0.13), rotate=($PitchA, $RollA, $YawA + 180.0 * floor(sin($noise * 7.0 + output.index * 53.0) + 1.0)), join=none, seed=floor($noise) * 100 + output.index + 165)
+  }
+  trim() [$base]
+  uv(keep)
+}
+
+# ---- the shop window -----------------------------------------------------------------------------
+Ex_Shard     = mesh() { add($Shard) }
+# the TEXTURE layer (owner ruling 2026-11-18, "some uses texture instead of mesh"): the same piece
+# with fine fibre grooves stretched along the grain, baked into the light mesh's normal and AO maps.
+# The bake needs a unique UV0, so it lays out its own atlas over the grain-aligned tiling UVs (and
+# Shape writes no second channel): `SM_Debris_ShardBaked` is that variant, `SM_Debris_Shard` keeps the
+# grain UVs.
+Ex_ShardDetail = mesh() {
+  add($Shard)
+  roughen(by=0.035, scale=(0.25, 3.0, 0.25), seed=5)
+}
+Ex_ShardB    = mesh() { add($Shard, length=16.0, width=2.8, thick=1.5, kink=-9.0, twist=-14.0, taper=0.55, noise=2) }
+Ex_ShardC    = mesh() { add($Shard, length=11.0, width=3.8, thick=2.2, strands=4, tip=0.85, taper=0.25, horn=0.08, kink=5.0, twist=8.0, fray=16, noise=3) }
+Ex_Splinter  = mesh() { add($Splinter) }
+Ex_SplinterB = mesh() { add($Splinter, length=15.0, ar=14.0, cup=-0.15, kink=-12.0, twist=-25.0, fray=9, noise=4) }
+Ex_Chips     = mesh() { add($Chips) }
+Ex_ChipsB    = mesh() { add($Chips, count=18, area=24.0, noise=5) }
+Ex_Pile      = mesh() { add($Splinters) }
+Ex_PileB     = mesh() { add($Splinters, count=10, sticks=0.3, heap=0.6, blocks=1, offcuts=1, area=54.0, noise=8) }
+Ex_Smashed   = mesh() { add($Smashed) }
+Ex_SmashedB  = mesh() { add($Smashed, width=18.0, length=70.0, pieces=4, splits=2, push=3.0, noise=11) }

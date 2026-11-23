@@ -1,0 +1,24 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/HoodedCloak  smooth:0.02
+# Hard parts for the HoodedCloak example.
+
+build {
+  SM_CloakClasp = $Clasp
+}
+
+ClaspWidth  = 9.5
+ClaspHeight = 4.8
+ClaspDepth  = 0.13
+ClaspRound  = 0.5
+
+Flat = mesh() {
+  rect(w=200.0, h=200.0)
+  fill()
+}
+
+Clasp = mesh(Host = $Flat) {
+  rect(w=$ClaspWidth, h=$ClaspHeight)
+  round($ClaspRound, segments=3)
+  extrude(height=$ClaspDepth)
+  round(0.03, segments=2) [sharp]
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=1.0]
+}

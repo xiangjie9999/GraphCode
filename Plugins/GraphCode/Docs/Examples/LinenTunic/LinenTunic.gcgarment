@@ -1,0 +1,92 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/LinenTunic/Built
+# LinenTunic: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_LinenTunic = $Tunic
+  T_TunicStitches = bake(decal, resolution=2048)
+}
+
+Linen = fabric(weight=199.7, thickness=0.51mm, stretch=(2.8%, 6.5%), shear=29, stiffness=(2.68, 2.10), friction=0.49)
+
+Neck = ring((0.000, 9.333, 142.900), (3.884, 8.721, 143.288), (7.177, 6.933, 144.273), (9.377, 4.528, 144.967), (10.150, 0.000, 145.778), (9.377, -2.217, 145.942), (7.177, -4.844, 146.076), (3.884, -7.082, 145.644), (0.000, -7.767, 145.450), (-3.884, -7.082, 145.644), (-7.177, -4.844, 146.076), (-9.377, -2.217, 145.942), (-10.150, 0.000, 145.778), (-9.377, 4.528, 144.967), (-7.177, 6.933, 144.273), (-3.884, 8.721, 143.288)) {
+  expand(0.15)
+}
+Chest = ring((0.000, 13.400, 128.000), (16.840, 1.400, 128.000), (0.000, -10.600, 128.000), (-16.840, 1.400, 128.000)) {
+  expand(2.60)
+}
+Hem = ring($Chest) {
+  move((0, 0, -65))
+  expand(2.445)
+}
+Armhole_L = ring((25.480, 5.860, 137.000), (25.480, 0.000, 142.610), (25.480, -5.860, 137.000), (25.480, 0.000, 131.390)) {
+  expand(1.55)
+}
+Armhole_R = ring((-25.480, 5.860, 137.000), (-25.480, 0.000, 142.610), (-25.480, -5.860, 137.000), (-25.480, 0.000, 131.390)) {
+  expand(1.55)
+}
+
+Yoke = profile(0=0%, 1=100%)
+
+Kit = shape('/Game/GraphCodeExamples/Garment/LinenTunic/LinenTunicParts')
+
+Tunic = garment($Neck, $Chest, $Hem, loose@1=$Yoke, loose@2=100%, fabric=$Linen) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  construct(rim=(turned=0.635cm, layers=3))
+  Front = line($Neck@0, $Hem@0)
+  NeckSlit = line($Neck@0, $Front@11.4cm)
+  NeckSlitOther = cut($NeckSlit)
+  rim($NeckSlit, turned=0.4cm)
+  rim($NeckSlitOther, turned=0.4cm)
+  rim($Neck, turned=1cm, layers=3)
+  SideL = line($Front@0.66 offset=0.25, $Hem@0.25)
+  SideR = line($Front@0.66 offset=0.75, $Hem@0.75)
+  SideLOther = cut($SideL)
+  SideROther = cut($SideR)
+  rim($SideL, turned=0.635cm)
+  rim($SideLOther, turned=0.635cm)
+  rim($SideR, turned=0.635cm)
+  rim($SideROther, turned=0.635cm)
+  SleeveL = extend($Armhole_L, 47.52, 55.6%)
+  SleeveR = extend($Armhole_R, 47.52, 55.6%)
+  rim($SleeveL, turned=0.635cm)
+  rim($SleeveR, turned=0.635cm)
+  settle(time=5)
+  stitch($SleeveL, offset=0.635cm)
+  stitch($SleeveR, offset=0.635cm)
+  stitch($Neck, offset=1cm)
+  stitch($Hem, offset=0.635cm)
+  stitch($NeckSlit, offset=0.4cm)
+  stitch($NeckSlitOther, offset=0.4cm)
+  stitch($SideL, offset=0.635cm)
+  stitch($SideLOther, offset=0.635cm)
+  stitch($SideR, offset=0.635cm)
+  stitch($SideROther, offset=0.635cm)
+  stitch($Armhole_L, offset=0.635cm)
+  stitch($Armhole_R, offset=0.635cm)
+  YokeTop = line($Front@16.5cm offset=-5.5cm, $Front@16.5cm offset=5.5cm)
+  YokeBibA = line($Front@16.5cm offset=-5.5cm, $Front@26.0cm offset=-5.5cm)
+  YokeBibB = line($Front@16.5cm offset=5.5cm, $Front@26.0cm offset=5.5cm)
+  YokeDiagA = line($Front@5.7cm offset=-17.0cm, $Front@16.5cm offset=-5.5cm)
+  YokeDiagB = line($Front@5.7cm offset=17.0cm, $Front@16.5cm offset=5.5cm)
+  Back = line($Neck@0.5, $Hem@0.5)
+  BackTop = line($Back@14.5cm offset=-4.6cm, $Back@14.5cm offset=4.6cm)
+  BackBottom = line($Back@23.2cm offset=-4.6cm, $Back@23.2cm offset=4.6cm)
+  BackSideA = line($Back@14.5cm offset=-4.6cm, $Back@23.2cm offset=-4.6cm)
+  BackSideB = line($Back@14.5cm offset=4.6cm, $Back@23.2cm offset=4.6cm)
+  BackDiagA = line($Back@23.2cm offset=-4.6cm, $Back@28.9cm offset=-12.2cm)
+  BackDiagB = line($Back@23.2cm offset=4.6cm, $Back@28.9cm offset=12.2cm)
+  stitch($YokeTop)
+  stitch($YokeBibA)
+  stitch($YokeBibB)
+  stitch($YokeDiagA)
+  stitch($YokeDiagB)
+  stitch($BackTop)
+  stitch($BackBottom)
+  stitch($BackSideA)
+  stitch($BackSideB)
+  stitch($BackDiagA)
+  stitch($BackDiagB)
+  add($Kit.TieEnd, at=$Neck@0.1887, hold=0)
+  add($Kit.TieEnd, at=$Neck@0.8113, hold=0)
+}

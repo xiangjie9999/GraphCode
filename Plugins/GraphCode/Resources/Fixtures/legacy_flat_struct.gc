@@ -1,0 +1,8 @@
+gc 1  kind:user_struct  asset:/Game/Data/S_FixtureRow  sig:5b1d0042  bin:77aa10be
+omits: none
+source: OraStudio 5.7.4  ir: blueprintir-schema/1
+
+struct /Game/Data/S_FixtureRow ir:1
+  member 0 Label: text = text("Row { one }")
+  member 1 Weight: float = 1.0
+  member 2 Tags: array<name>

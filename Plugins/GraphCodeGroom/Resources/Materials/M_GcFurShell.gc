@@ -1,0 +1,33 @@
+gc 1  kind:material  asset:/Game/GraphCode/Groom/M_GcFurShell
+parent: /Script/Engine.Material
+
+settings {
+  BlendMode = BLEND_Masked
+  OpacityMaskClipValue = 0.5
+  bUsedWithSkeletalMesh = true
+}
+
+graph {
+  n0 = TextureCoordinate()
+  n1 = TextureCoordinate() [CoordinateIndex=1]
+  n2 = TextureObjectParameter() [ParameterName=ShellFur, SamplerType=SAMPLERTYPE_LinearColor, Texture=obj'/Game/GraphCode/Groom/T_GcShellEmpty.T_GcShellEmpty']
+  n3 = TextureObjectParameter() [ParameterName=ShellLean, SamplerType=SAMPLERTYPE_LinearColor, Texture=obj'/Game/GraphCode/Groom/T_GcShellEmpty.T_GcShellEmpty']
+  n4 = ScalarParameter() [DefaultValue=0.0, ParameterName=ShellLeanScale]
+  n5 = ScalarParameter() [DefaultValue=100.0, ParameterName=ShellFibresPerUV]
+  n6 = ScalarParameter() [DefaultValue=0.05, ParameterName=ShellFibreRadius]
+  n7 = ScalarParameter() [DefaultValue=0.5, ParameterName=ShellTipRatio]
+  n8 = VectorParameter() [DefaultValue=(R=0.22,G=0.2,B=0.19,A=1.0), ParameterName=RootColour]
+  n9 = VectorParameter() [DefaultValue=(R=0.45,G=0.42,B=0.4,A=1.0), ParameterName=TipColour]
+  n10 = ScalarParameter() [DefaultValue=0.35, ParameterName=RootShade]
+  n11 = ScalarParameter() [DefaultValue=0.7, ParameterName=FurRoughness]
+  n13 = ScalarParameter() [DefaultValue=1.0, ParameterName=ShellHeightScale]
+  n14 = ScalarParameter() [DefaultValue=0.0, ParameterName=ShellFin]
+  n15 = CameraVectorWS()
+  n16 = VertexNormalWS()
+  n18 = WorldPosition() [WorldPositionShaderOffset=WPT_CameraRelative]
+  n12 = Custom(in0=n0.out0, in1=n1.out0, in2=n2.out0, in3=n3.out0, in4=n4.out0, in5=n5.out0, in6=n6.out0, in7=n7.out0, in8=n8.out0.rgb, in9=n9.out0.rgb, in10=n10.out0, in11=n13.out0, in12=n14.out0, in13=n15.out0, in14=n16.out0, in15=n18.out0) [Code="// A shell of fur (GC-GROOM-SHELLS.md section 5). Shell = (this shell\'s share of the stack, stack height cm).\r\nfloat f = Shell.x;\r\nfloat H = Shell.y;\r\nfloat z = f * H;\r\n// the lean where this point is: the fibre crossing it at this height left its root this far back,\r\n// on a curve through the mid and tip leans\r\nfloat4 FurHere = Texture2DSample(Fur, FurSampler, UV);\r\nfloat4 LeanHere = Texture2DSample(Lean, LeanSampler, UV);\r\nfloat2 m = (LeanHere.rg * 2.0 - 1.0) * LeanScale;\r\nfloat2 t = (FurHere.ba * 2.0 - 1.0) * LeanScale;\r\nfloat sHere = z / max(LeanHere.b * HeightScale, 0.0001);\r\nfloat2 offset = z * ((4.0 * m - t) + sHere * (2.0 * t - 4.0 * m));\r\nfloat2 q = (UV - offset) * FibresPerUV;\r\nfloat4 p4 = frac(floor(q).xyxy * float4(0.1031, 0.1030, 0.0973, 0.1099));\r\np4 += dot(p4, p4.wzxy + 33.33);\r\nfloat4 h = frac((p4.xxyz + p4.yzzw) * p4.zywx);\r\nfloat2 centre = 0.5 + (h.zw - 0.5) * 0.6;\r\n// whether that fibre grows, its share of the length and the tallest fibre beside it are read at its ROOT,\r\n// not where its lean has carried it: read here, a combed fibre took the length of the ground it lies over\r\nfloat2 Root = (floor(q) + centre) / FibresPerUV;\r\nfloat4 FurRoot = Texture2DSampleLevel(Fur, FurSampler, Root, 0);\r\n// the tallest fibre at the root, which may be shorter than the stack the mesh raised over it\r\nfloat Hloc = max(Texture2DSampleLevel(Lean, LeanSampler, Root, 0).b * HeightScale, 0.0001);\r\nfloat s = z / Hloc;\r\nfloat grown = lerp(FurRoot.g, 1.0, h.y);\r\nfloat along = saturate(s / max(grown, 0.001));\r\n// never under a pixel. On a shell that is measured where the fibre is rooted: UV0 is linear across a triangle,\r\n// but the lean maps are read at each pixel and step at a UV seam, and a step made every fibre along it a solid\r\n// dot. On a fin the lookup\'s own rate is the fibre sweeping up it, so a fin keeps it.\r\nfloat2 fw = lerp(fwidth(UV * FibresPerUV), fwidth(q), step(0.5, Fin));\r\n// UV0\'s stretch here (section 4 step 3a): a cell is k fibre spacings across, so a fibre is 1/k cells wide\r\nfloat k = max(LeanHere.a, 1.0 / 255.0);\r\nfloat radius = max(FibreRadius / k * lerp(1.0, TipRatio, along), 0.5 * max(fw.x, fw.y));\r\n// UV0\'s shape here, from this pixel\'s own steps in UV and in the world: where U and V stretch differently\r\n// (2:1 round the engine sphere\'s equator) a fibre is still round in cm. k sets its size; this only its shape.\r\n// Not on a fin, whose UV runs one way only, nor where the surface is seen edge-on.\r\nfloat2 dUx = ddx(UV);\r\nfloat2 dUy = ddy(UV);\r\nfloat3 dPx = ddx(Position);\r\nfloat3 dPy = ddy(Position);\r\nfloat det = dUx.x * dUy.y - dUy.x * dUx.y;\r\nfloat shaped = step(0.02 * length(dUx) * length(dUy), abs(det)) * (1.0 - step(0.5, Fin));\r\nfloat detS = shaped > 0.5 ? det : 1.0;\r\nfloat3 Tu = (dPx * dUy.y - dPy * dUx.y) / detS;\r\nfloat3 Tv = (dPy * dUx.x - dPx * dUy.x) / detS;\r\nfloat guu = dot(Tu, Tu);\r\nfloat guv = dot(Tu, Tv);\r\nfloat gvv = dot(Tv, Tv);\r\nfloat area = sqrt(max(guu * gvv - guv * guv, 1e-30));\r\nshaped *= step(0.01 * guu * gvv, area * area);\r\nfloat2 d = frac(q) - centre;\r\nfloat oval = sqrt(max(guu * d.x * d.x + 2.0 * guv * d.x * d.y + gvv * d.y * d.y, 0.0) / area);\r\nfloat dist = lerp(length(d), oval, shaped);\r\n// a fin (section 5a) shows toward the outline and thins out as the skin turns to face the camera\r\nfloat facing = abs(dot(normalize(SkinNormal), normalize(View)));\r\nfloat keep = lerp(1.0, saturate((0.35 - facing) / 0.25), step(0.5, Fin));\r\nfloat inside = step(dist, radius) * step(h.x, FurRoot.r * keep) * step(s, grown);\r\nfloat3 colour = lerp(RootColour, TipColour, along) * lerp(RootShade, 1.0, saturate(s));\r\nreturn float4(colour, inside);", Description="Fur shell: which fibre crosses this shell here, and its colour", Inputs=((InputName=UV),(InputName=Shell),(InputName=Fur),(InputName=Lean),(InputName=LeanScale),(InputName=FibresPerUV),(InputName=FibreRadius),(InputName=TipRatio),(InputName=RootColour),(InputName=TipColour),(InputName=RootShade),(InputName=HeightScale),(InputName=Fin),(InputName=View),(InputName=SkinNormal),(InputName=Position)), OutputType=CMOT_Float4, link0.name="UV", link1.name="Shell", link2.name="Fur", link3.name="Lean", link4.name="LeanScale", link5.name="FibresPerUV", link6.name="FibreRadius", link7.name="TipRatio", link8.name="RootColour", link9.name="TipColour", link10.name="RootShade", link11.name="HeightScale", link12.name="Fin", link13.name="View", link14.name="SkinNormal", link15.name="Position"]
+  result = MaterialResult(BaseColor=n12.out0.rgb, OpacityMask=n12.out0.a, Roughness=n11.out0)
+}
+
+comments {
+}

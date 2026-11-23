@@ -1,0 +1,52 @@
+gcgarment 1  mesh:/Game/YourProject/YourMetaHumanBody  into:/Game/GraphCodeExamples/Garment/HoodedCloak/Built
+# HoodedCloak: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+Parts = shape('/Game/GraphCodeExamples/Garment/HoodedCloak/CloakParts')
+
+build {
+  SM_HoodedCloak = $Cloak
+}
+
+Neck = ring((0.000, 3.569, 144.489), (2.231, 3.606, 144.904), (4.323, 2.542, 145.933), (5.635, 0.553, 147.046), (5.743, -1.781, 147.700), (5.082, -3.886, 147.642), (3.930, -5.711, 147.035), (2.103, -6.858, 146.344), (0.000, -7.131, 146.047), (-2.103, -6.858, 146.344), (-3.930, -5.711, 147.035), (-5.082, -3.886, 147.642), (-5.743, -1.781, 147.700), (-5.635, 0.553, 147.046), (-4.323, 2.542, 145.933), (-2.231, 3.606, 144.904)) {
+  expand(1)
+}
+Shoulders = ring((0.1, 7.2, 134.6), (21, 2, 136), (0.1, -8.3, 135.9), (-21, 2, 136)) {
+  expand(1)
+}
+HipsRound = ring((0.034, 13.268, 92.301), (0.043, -8.795, 90.763)) {
+  circular()
+}
+OverHands = ring($HipsRound) {
+  move((0, 0, 8.5))
+  expand(42.26)
+}
+Hem = ring($HipsRound) {
+  move((0, 0, -24.5))
+  expand(42.26)
+}
+
+Throat = ring($Neck) {
+  move((0, 0, -2.4))
+  expand(2.5)
+}
+
+Face = ring((0.000, 3.569, 144.489), (6.690, 6.764, 160.000), (0.000, 8.353, 170.220), (-6.690, 6.591, 160.000))
+
+HoodRise = profile(0=42.5, 0.0156=41.3, 0.0312=41.3, 0.0469=41.2, 0.0625=41.1, 0.0781=41, 0.0938=40.8, 0.1094=40.6, 0.125=40.4, 0.1406=40.2, 0.1562=39.9, 0.1719=39.6, 0.1875=39.3, 0.2031=38.9, 0.2188=38.5, 0.2344=38.1, 0.25=37.6, 0.2656=37.1, 0.2812=36.6, 0.2969=36, 0.3125=35.4, 0.3281=34.8, 0.3438=34.1, 0.3594=33.4, 0.375=32.6, 0.3906=31.8, 0.4062=31, 0.4219=30.1, 0.4375=29.1, 0.4531=28.1, 0.4688=27, 0.4844=25.9, 0.5=24.7, 0.5156=25.9, 0.5312=27, 0.5469=28.1, 0.5625=29.1, 0.5781=30.1, 0.5938=31, 0.6094=31.8, 0.625=32.6, 0.6406=33.4, 0.6562=34.1, 0.6719=34.8, 0.6875=35.4, 0.7031=36, 0.7188=36.6, 0.7344=37.1, 0.75=37.6, 0.7656=38.1, 0.7812=38.5, 0.7969=38.9, 0.8125=39.3, 0.8281=39.6, 0.8438=39.9, 0.8594=40.2, 0.875=40.4, 0.8906=40.6, 0.9062=40.8, 0.9219=41, 0.9375=41.1, 0.9531=41.2, 0.9688=41.3, 0.9844=41.3, 1=42.5)
+
+WoolCoat = fabric(weight=398, thickness=2.28mm, stretch=(6.0%, 6.2%), shear=36.0, stiffness=(2.42, 2.02), friction=0.82)
+
+Cloak = garment($Neck, $Shoulders, $OverHands, $Hem, loose@1=0%, loose@2=100%, loose@3=100%, fabric=$WoolCoat) {
+  construct()
+  HalfR = line($Neck@0, $Neck@0.25, $Neck@0.5)
+  HalfL = line($Neck@1, $Neck@0.75, $Neck@0.5)
+  HoodL = extend($HalfL, $HoodRise, 149%)
+  HoodR = extend($HalfR, $HoodRise, 149%)
+  sew($HoodL, $HoodR, match=ease)
+  cut($Face)
+  FrontR = line($Neck@0.01, $Hem@0.01)
+  FrontL = line($Neck@0.99, $Hem@0.99)
+  cut($FrontR, $FrontL)
+  add($Parts.Clasp, at=$Throat@0)
+  settle(time=5)
+}

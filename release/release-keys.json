@@ -1,0 +1,39 @@
+{
+  "purpose": "GraphCode release manifests (ES256 over the exact manifest bytes). Public halves only.",
+  "keys": [
+    {
+      "kid": "release-tpm-1",
+      "role": "primary",
+      "storage": "tpm",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "x": "AarWcO1-AyYefLh7T0-H7ScHIl_4SG65ChRw1nSm5vI",
+      "y": "-h8eRHM7xPFFRyn-MS-OW8n43pckDS76-X0GtrGPSxo",
+      "created": "2026-10-20"
+    },
+    {
+      "kid": "release-backup-1",
+      "role": "backup",
+      "storage": "offline",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "x": "imbVivUF3AlGWihh6iIX7AMK33TCTf5uPCSnv-cfhE0",
+      "y": "Ul9JoqB0cg2NyU0baOa4mEuLwZGvf2vHIjwlHtQS1lU",
+      "created": "2026-10-20"
+    },
+    {
+      "kid": "release-tpm-2",
+      "role": "primary-pending",
+      "storage": "tpm",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "x": "3Bn4JapkJtblKr1IcYK3HllefeH3Denvrkm6LUTz7Uw",
+      "y": "BlEzbstOf37ttSg9aaqArUYi2UKHz0TCpDlxQW5J6K8",
+      "created": "2026-11-20",
+      "tpmName": "GraphCode Release Signing release-tpm-2"
+    }
+  ]
+}

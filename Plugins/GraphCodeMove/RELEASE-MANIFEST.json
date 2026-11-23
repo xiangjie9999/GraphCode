@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "phase": "binary-only-product",
+  "readyToSend": false,
+  "plugin": "GraphCodeMove",
+  "version": "0.1.13",
+  "engine": "5.7.4",
+  "engineBuildId": "47537391",
+  "platform": "Win64",
+  "sourceRevision": "86587a6368a3a3010c20757bc9bf01ade54ec08a",
+  "sourceWasDirty": true,
+  "packagedAtUtc": "2026-11-19T11:27:09.1620788Z",
+  "fileCount": 33,
+  "privateImplementationIncluded": false
+}

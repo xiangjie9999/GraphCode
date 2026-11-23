@@ -1,0 +1,9 @@
+gcrig 1
+
+# Reusable MetaHuman Face controls. See ../../Guides/FACE-EXPRESSIONS.md.
+# These native curve mappings are the existing three-expression adapter, made portable.
+controls {
+  blink = control(curve.CTRL_expressions_eyeBlinkL=(0, 1), curve.CTRL_expressions_eyeBlinkR=(0, 1))
+  smile = control(curve.CTRL_expressions_mouthCornerPullL=(0, 1), curve.CTRL_expressions_mouthCornerPullR=(0, 1), curve.CTRL_expressions_eyeCheekRaiseL=(0, 0.6), curve.CTRL_expressions_eyeCheekRaiseR=(0, 0.6))
+  jaw_open = control(curve.CTRL_expressions_jawOpen=(0, 1))
+}

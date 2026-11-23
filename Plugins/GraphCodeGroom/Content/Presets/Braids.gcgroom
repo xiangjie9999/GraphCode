@@ -1,0 +1,206 @@
+gcgroom 1
+
+# BRAIDS — the three-strand plait, and the first resident of the Groom Presets
+# folder. `GC-GROOM-GRAMMAR.md` §3 (reuse and adaptation) and
+# `GC-GROOM-SPLINE-GRAMMAR.md` (the plait route).
+#
+# THIS FILE IS MEANT TO BE IMPORTED, NOT BUILT:
+#
+#   Braids = groom('/GraphCodeGroom/Presets/Braids',
+#                  LeftColumn=$LeftCol, MidColumn=$MidCol, RightColumn=$RightCol,
+#                  TieY=9.8, TieZ=15, StartZ=14, EndZ=-34)
+#
+#   Coat = layer(...) {
+#     $Braids.Tie(in=$Braided)
+#     $Braids.Plait(in=$Braided)
+#   }
+#
+# UNLIKE A SHAPE PRESET THIS FILE CANNOT BUILD ITSELF. A groom import refuses a
+# library that names mesh:/asset:/binding: or carries build rows, so there is no
+# `build { }` here acting as its own self-check the way `Fixings.gcshape` has
+# one. The shop window is a separate fixture:
+# `Content/__MCPTests/GroomVisual/PresetBraid.gcgroom`.
+#
+# WHY THIS EXISTS. Every braid fixture in this project before 2026-09-21 routed
+# three PHASE-SHIFTED HELICES around a common axis, and so does almost anyone
+# reaching for "three strands twisted together". That is a twisted ROPE: every
+# strand orbits the axis, so the core is always empty and you see straight
+# through the middle. The user's verdict on the render it produces was that it
+# was not a braid at all. The figure that IS a braid is the 1:2 Lissajous, and
+# `plait(...)` now emits it in the engine so that no one has to derive it twice.
+#
+#   lateral  x = A*sin(t)        depth  y = B*sin(2t)        three strands
+#   120 degrees apart in t; `across` is 2A and `through` is 2B.
+#
+# Two strands cross on one side while the third waits on the other, and the one
+# that just crossed lands ON the axis. That handover is what makes a braid read
+# as solid, and it is what the gate
+# `GraphCode.Groom.Features.Splines.PlaitKeepsOneStrandOnTheAxis` asserts
+# directly: at every other station exactly one strand is on the axis, and which
+# one rotates 1, 2, 3.
+#
+# THE NUMBERS BELOW ARE MEASURED, NOT CHOSEN BY EYE. They are the proportions of
+# the accepted `PlaitBraid` render.
+
+# --- the plait's proportions -------------------------------------------------
+
+# Lateral width and front-to-back depth of the figure, in centimetres.
+#
+# WHERE THE STRANDS COME CLOSEST, measured over the whole route rather than
+# assumed: at `Across >= 2*Through` the tightest pair anywhere is the crossing,
+# where two strands stack front to back exactly sqrt(3)*Through/2 apart. BELOW
+# that ratio the tightest point leaves the crossing and the true gap is smaller
+# than the crossing formula predicts — at the proportions below it is 0.822 cm
+# at t=177 degrees, against the 0.900 cm that formula gives. These defaults are
+# deliberately inside that region, because the render is right and the ratio is
+# a convenience for reasoning about clearance, not a correctness boundary.
+#
+# A braid's strands MUST press into each other, exactly as real hair does: with
+# `Across` at the hole-closing limit the best reachable separation is 1.63 fibre
+# radii where circles want 2, so the two conditions cannot both hold. The
+# reported envelope overlap is a report, not a fault.
+Across = 1.6
+Through = 1.04
+
+# PITCH IS WHAT MAKES IT READ AS A BRAID RATHER THAN A CLUMPED MASS, and it is
+# the parameter most worth changing. A strand crosses every `Pitch/6`, and that
+# spacing has to be LONGER than the strand is thick, or each segment is a blob
+# instead of a ribbon passing over its neighbour. Measured: at pitch 4.2 the
+# strands crossed every 0.70 cm while being 1.0 cm thick — ratio 0.70 — and the
+# braid rendered as a crushed lumpy rope. 7.5 gives 1.25 cm between crossings on
+# a 2.8 cm braid, ratio 1.25.
+#
+# Longer pitch also straightens the route, so it eats less hair per centimetre
+# of drop: arc/drop fell 1.59 -> 1.31 going 4.2 -> 7.5.
+Pitch = 7.5
+
+# --- where it hangs ----------------------------------------------------------
+
+# The plait's own run, from where it leaves the tie to where it ends.
+#
+# THE RUN IS CAPPED, and the cap is not the hair's — it is the carrier
+# relaxation's. Measured on this exact figure, same routes, only the run
+# extended:
+#
+#   44 cm drop -> carrier moved 0.251 cm     48 cm -> 0.275 cm
+#   56 cm drop -> 1.286 cm                   74 cm -> 2.125 cm
+#
+# At 2.1 cm, against a lateral amplitude of 0.8, the widest strand was pushed
+# clean out of the arrangement and hung beside the braid as a separate rope. The
+# knee is between 48 and 56. Authoring zero envelope overlap did NOT help
+# (1.922 -> 2.125), and SHORTENING the hair made it worse (0.275 -> 1.358,
+# because fewer hairs reach the lower route and its envelopes sit near-empty).
+# Read `Carrier moved at most N cm from the authored routes` in the publish line
+# and compare it to `Across/2`; if N exceeds that, the shape is gone whatever
+# the contact counts say. The default below is 48.01 cm, inside the settled
+# regime. Two attempts to bound the solver are recorded in
+# `GraphCodeGroomSplineSolver.cpp` and both made things worse.
+StartX = 0
+StartY = 9.8
+StartZ = 14
+EndX = 0
+EndY = 8.8
+EndZ = -34
+
+# WHICH WAY THE BRAID FACES: the direction its `Across` width lies along. This
+# cannot be derived from the run and it is the one mistake here that no number
+# will show you. A plait down someone's back is wide from shoulder to shoulder,
+# and a plait down the front of the shoulder is wide across the chest -- same
+# run direction, different braid. The first build of `plait(...)` picked a frame
+# from the run alone, laid the width front-to-back, and rendered a thin twisted
+# thread with every crossing hidden behind the one in front. Every count and
+# every clearance was unchanged; only the picture said so.
+#
+# (1,0,0) is left-to-right on this head. Only the part square to the run is
+# used, so it may be aimed roughly.
+UpX = 1
+UpY = 0
+UpZ = 0
+
+# --- the tie -----------------------------------------------------------------
+
+# A BRAID IS GATHERED BEFORE IT IS PLAITED, and this is not decoration. Without
+# a tie the first pull has no incoming cross-section to measure, so the implied
+# width falls back to how far apart the hairs still are on the scalp. Measured
+# on the rejected fixture: 14,594 hairs "gather in 23.77 cm", close pack to
+# 1.015 cm, and the bundle was declared 7.842 cm — 98.9% air. The contraction is
+# clamped never to expand, so with envelopes that wide it finds first contact
+# already made and the pull does nothing at all.
+#
+# One physical elastic is one packed aperture: hair crosses it, that crossing
+# becomes the material boundary the routes continue from, and the strands are
+# then measured across the tie rather than across the head. Adding this one
+# constraint took the bundles from 1.1% hair to ~35% hair.
+#
+# THE WHOLE APERTURE MUST CLEAR THE SKULL, not just its centre: at y=8.2 the
+# lower slots landed at y=7.30 where the head reaches 7.36, and the strand
+# seated there could not reach its slot without passing through the scalp.
+TieX = 0
+TieY = 9.8
+TieZ = 15
+TieRadius = 1.5
+
+Tie = feature() {
+  Band = constraint(at=($TieX,$TieY,$TieZ), facing=(0,0,-1), up=(1,0,0), pull=100%) {
+    circle(radius=$TieRadius)
+  }
+}
+
+# --- who is in each strand ---------------------------------------------------
+
+# THREE LATERAL COLUMNS, NOT THREE STACKED BANDS, and the importer must supply
+# them: they are the one part of a braid that cannot be written without knowing
+# the head. A plait's strands come from the left, middle and right, and they
+# must hold roughly EQUAL hair. The rejected fixture defined its first column as
+# "the scalp minus the other five bands", so it swallowed every unclaimed root
+# and carried 17,155 hairs against 3,731 and 3,865 — which is precisely why it
+# read as a fat cord with two threads wound onto it. Three lateral columns over
+# the same head gave 7,501 / 5,387 / 6,215.
+#
+# These placeholders resolve against nothing useful. Override all three.
+LeftColumn = region() {
+  slot('Body')
+}
+MidColumn = region() {
+  slot('Body')
+}
+RightColumn = region() {
+  slot('Body')
+}
+
+# --- the plait itself --------------------------------------------------------
+
+# Widths stay implied. The routes are authored slightly loose on purpose: the
+# joint pull contracts each station about its centroid, and because the three
+# station centroids always sum to the axis, that contraction is a pure uniform
+# scale. It resizes the plait to the hair actually gathered without deforming
+# it. `clamp=88%` is a fraction between two MEASURED cross-sections — 0% is as
+# spread as the hair arrives, 100% is hexagonal close packing — so it is a real
+# ratio, not a tuning factor. It is written literally because a percentage
+# cannot be a named number in this grammar.
+Plait = feature() {
+  Left = constraint(in=$LeftColumn)
+  Mid = constraint(in=$MidColumn)
+  Right = constraint(in=$RightColumn)
+
+  RouteLeft = spline(clamp=88%) {
+    plait(from=($StartX,$StartY,$StartZ), to=($EndX,$EndY,$EndZ), up=($UpX,$UpY,$UpZ),
+      across=$Across, through=$Through, pitch=$Pitch, strand=1)
+  }
+  RouteMid = spline(clamp=88%) {
+    plait(from=($StartX,$StartY,$StartZ), to=($EndX,$EndY,$EndZ), up=($UpX,$UpY,$UpZ),
+      across=$Across, through=$Through, pitch=$Pitch, strand=2)
+  }
+  RouteRight = spline(clamp=88%) {
+    plait(from=($StartX,$StartY,$StartZ), to=($EndX,$EndY,$EndZ), up=($UpX,$UpY,$UpZ),
+      across=$Across, through=$Through, pitch=$Pitch, strand=3)
+  }
+
+  # Preparation binds each column to its route and moves no hair; the joint pull
+  # then consumes all three bindings as one packing group, which is what lets
+  # the arrangement contract as a unit instead of three separate locks.
+  prepare($Left, to=$RouteLeft)
+  prepare($Mid, to=$RouteMid)
+  prepare($Right, to=$RouteRight)
+  pull($Left, $Mid, $Right, strength=100%)
+}

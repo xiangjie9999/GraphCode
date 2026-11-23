@@ -1,0 +1,2665 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "scope": "Isolated mathematical controls; no full garment guarantee",
+  "generator": "Plugins/GraphCodeGarment/Tools/Knots/contact_controls.py",
+  "generator_sha256": "66a3761fcbbccc16b2c303e741d5983ac110df1aef34803cdfdc24820a65fc1d",
+  "contract": {
+    "units": "cm; inverse_mass uses one consistent arbitrary mass unit",
+    "position_order": "Same array order as vertices; IDs are explicit, not array indices",
+    "thickness": "Half-thickness per vertex; sum barycentrically interpolated sides at closest midsurface witnesses",
+    "normal": "From feature B towards feature A; independent of face winding",
+    "constraint": "C = distance - required_distance >= 0",
+    "projection": "Frozen closest weights; alpha=0, lambda0=0; dlambda=max(0,-C/sum(w*c*c)); dx=w*c*n*dlambda",
+    "parallel_tie": "Midpoint of the overlap of projected finite segment intervals; invariant under endpoint reversal",
+    "status": "Isolated pair only; Converged requires rechecked clearance; IterationLimit can follow one valid frozen-witness projection",
+    "invalid_start": "Zero distance with movable points and no prior separating normal: InvalidInitialContact; all-pinned violation: InfeasibleBoundary",
+    "degeneracy": "Degenerate triangle candidate: ContactFailure here; documented lower-dimensional fallback may be separately tested",
+    "limits": [
+      "No coupled-contact convergence, CCD, broad phase, friction or finite-radius variable-thickness surface guarantee",
+      "Same-strand eligibility is supplied deliberately; these controls do not choose a production exclusion policy"
+    ]
+  },
+  "cases": [
+    {
+      "id": "point_triangle_interior",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            0.0,
+            0.0,
+            0.5
+          ],
+          [
+            -1.0,
+            -1.0,
+            -0.1
+          ],
+          [
+            1.0,
+            -1.0,
+            -0.1
+          ],
+          [
+            0.0,
+            2.0,
+            -0.1
+          ]
+        ],
+        "weights_a": [
+          1.0
+        ],
+        "weights_b": [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "point_face",
+        "active_feature_ids_a": [
+          0
+        ],
+        "active_feature_ids_b": [
+          1,
+          2,
+          3
+        ],
+        "distance": 0.2,
+        "required_distance": 0.6,
+        "signed_gap": -0.39999999999999997,
+        "mass_denominator": 1.3333333333333335,
+        "multiplier_delta": 0.29999999999999993,
+        "rechecked_distance": 0.5999999999999999,
+        "rechecked_required_distance": 0.6,
+        "rechecked_signed_gap": -1.1102230246251565e-16
+      },
+      "tolerance": 1e-09,
+      "notes": "",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "point_triangle_reversed_winding",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          3,
+          2,
+          1
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            0.0,
+            0.0,
+            0.5
+          ],
+          [
+            -1.0,
+            -1.0,
+            -0.1
+          ],
+          [
+            1.0,
+            -1.0,
+            -0.1
+          ],
+          [
+            0.0,
+            2.0,
+            -0.1
+          ]
+        ],
+        "weights_a": [
+          1.0
+        ],
+        "weights_b": [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "point_face",
+        "active_feature_ids_a": [
+          0
+        ],
+        "active_feature_ids_b": [
+          3,
+          2,
+          1
+        ],
+        "distance": 0.2,
+        "required_distance": 0.6,
+        "signed_gap": -0.39999999999999997,
+        "mass_denominator": 1.3333333333333335,
+        "multiplier_delta": 0.29999999999999993,
+        "rechecked_distance": 0.5999999999999999,
+        "rechecked_required_distance": 0.6000000000000001,
+        "rechecked_signed_gap": -2.220446049250313e-16
+      },
+      "tolerance": 1e-09,
+      "notes": "",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "point_triangle_edge",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            -1.2,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            0.0,
+            -1.4666666666666666,
+            0.0
+          ],
+          [
+            -1.0,
+            -0.8666666666666667,
+            0.0
+          ],
+          [
+            1.0,
+            -0.8666666666666667,
+            0.0
+          ],
+          [
+            0.0,
+            2.0,
+            0.0
+          ]
+        ],
+        "weights_a": [
+          1.0
+        ],
+        "weights_b": [
+          0.5,
+          0.5,
+          0.0
+        ],
+        "normal_b_to_a": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "witness_kind": "point_edge",
+        "active_feature_ids_a": [
+          0
+        ],
+        "active_feature_ids_b": [
+          1,
+          2
+        ],
+        "distance": 0.19999999999999996,
+        "required_distance": 0.6,
+        "signed_gap": -0.4,
+        "mass_denominator": 1.5,
+        "multiplier_delta": 0.26666666666666666,
+        "rechecked_distance": 0.5999999999999999,
+        "rechecked_required_distance": 0.6,
+        "rechecked_signed_gap": -1.1102230246251565e-16
+      },
+      "tolerance": 1e-09,
+      "notes": "",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "point_triangle_corner",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -1.2,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            -1.4,
+            -1.0,
+            0.0
+          ],
+          [
+            -0.8,
+            -1.0,
+            0.0
+          ],
+          [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0,
+            0.0
+          ]
+        ],
+        "weights_a": [
+          1.0
+        ],
+        "weights_b": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "normal_b_to_a": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "witness_kind": "point_point",
+        "active_feature_ids_a": [
+          0
+        ],
+        "active_feature_ids_b": [
+          1
+        ],
+        "distance": 0.19999999999999996,
+        "required_distance": 0.6,
+        "signed_gap": -0.4,
+        "mass_denominator": 2.0,
+        "multiplier_delta": 0.2,
+        "rechecked_distance": 0.5999999999999999,
+        "rechecked_required_distance": 0.6,
+        "rechecked_signed_gap": -1.1102230246251565e-16
+      },
+      "tolerance": 1e-09,
+      "notes": "",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "point_triangle_unequal_mass_thickness",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.1
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.2,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.1,
+          "strand": "B"
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.4,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 3.0,
+          "half_thickness": 0.7,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            0.0,
+            0.0,
+            0.509090909090909
+          ],
+          [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          [
+            1.0,
+            -1.0,
+            -0.06818181818181818
+          ],
+          [
+            0.0,
+            2.0,
+            -0.20454545454545456
+          ]
+        ],
+        "weights_a": [
+          1.0
+        ],
+        "weights_b": [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "point_face",
+        "active_feature_ids_a": [
+          0
+        ],
+        "active_feature_ids_b": [
+          1,
+          2,
+          3
+        ],
+        "distance": 0.1,
+        "required_distance": 0.6,
+        "signed_gap": -0.5,
+        "mass_denominator": 2.4444444444444446,
+        "multiplier_delta": 0.20454545454545453,
+        "rechecked_distance": 0.5986871726338108,
+        "rechecked_required_distance": 0.5918539470300848,
+        "rechecked_signed_gap": 0.006833225603726012
+      },
+      "tolerance": 1e-09,
+      "notes": "Frozen witness reaches 0.6; closest weights shift and interpolated threshold drops. Recheck both distance and thickness.",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "point_triangle_unequal_mass_constant_thickness",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.1
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 3.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "IterationLimit",
+        "positions": [
+          [
+            0.0,
+            0.0,
+            0.509090909090909
+          ],
+          [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          [
+            1.0,
+            -1.0,
+            -0.06818181818181818
+          ],
+          [
+            0.0,
+            2.0,
+            -0.20454545454545456
+          ]
+        ],
+        "weights_a": [
+          1.0
+        ],
+        "weights_b": [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "point_face",
+        "active_feature_ids_a": [
+          0
+        ],
+        "active_feature_ids_b": [
+          1,
+          2,
+          3
+        ],
+        "distance": 0.1,
+        "required_distance": 0.6,
+        "signed_gap": -0.5,
+        "mass_denominator": 2.4444444444444446,
+        "multiplier_delta": 0.20454545454545453,
+        "rechecked_distance": 0.5986871726338108,
+        "rechecked_required_distance": 0.6,
+        "rechecked_signed_gap": -0.0013128273661892065
+      },
+      "tolerance": 1e-09,
+      "notes": "Closest witness shifts on the tilted triangle: frozen 0.6 is not the new minimum distance.",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "point_pinned_triangle_free",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            0.0,
+            0.0,
+            0.2
+          ],
+          [
+            -1.0,
+            -1.0,
+            -0.4
+          ],
+          [
+            1.0,
+            -1.0,
+            -0.4
+          ],
+          [
+            0.0,
+            2.0,
+            -0.4
+          ]
+        ],
+        "weights_a": [
+          1.0
+        ],
+        "weights_b": [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "point_face",
+        "active_feature_ids_a": [
+          0
+        ],
+        "active_feature_ids_b": [
+          1,
+          2,
+          3
+        ],
+        "distance": 0.2,
+        "required_distance": 0.6,
+        "signed_gap": -0.39999999999999997,
+        "mass_denominator": 0.3333333333333333,
+        "multiplier_delta": 1.2,
+        "rechecked_distance": 0.6,
+        "rechecked_required_distance": 0.6,
+        "rechecked_signed_gap": 0.0
+      },
+      "tolerance": 1e-09,
+      "notes": "",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "point_triangle_all_pinned",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "InfeasibleBoundary",
+        "positions": [
+          [
+            0.0,
+            0.0,
+            0.2
+          ],
+          [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0,
+            0.0
+          ]
+        ],
+        "weights_a": [
+          1.0
+        ],
+        "weights_b": [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "point_face",
+        "active_feature_ids_a": [
+          0
+        ],
+        "active_feature_ids_b": [
+          1,
+          2,
+          3
+        ],
+        "distance": 0.2,
+        "required_distance": 0.6,
+        "signed_gap": -0.39999999999999997,
+        "mass_denominator": 0.0,
+        "multiplier_delta": 0.0,
+        "rechecked_distance": 0.2,
+        "rechecked_required_distance": 0.6,
+        "rechecked_signed_gap": -0.39999999999999997
+      },
+      "tolerance": 1e-09,
+      "notes": "",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "point_triangle_separated",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.8
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            0.0,
+            0.0,
+            0.8
+          ],
+          [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0,
+            0.0
+          ]
+        ],
+        "weights_a": [
+          1.0
+        ],
+        "weights_b": [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "point_face",
+        "active_feature_ids_a": [
+          0
+        ],
+        "active_feature_ids_b": [
+          1,
+          2,
+          3
+        ],
+        "distance": 0.8,
+        "required_distance": 0.6,
+        "signed_gap": 0.20000000000000007,
+        "mass_denominator": 1.3333333333333335,
+        "multiplier_delta": 0.0,
+        "rechecked_distance": 0.8,
+        "rechecked_required_distance": 0.6,
+        "rechecked_signed_gap": 0.20000000000000007
+      },
+      "tolerance": 1e-09,
+      "notes": "",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "point_triangle_touching",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.6
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            0.0,
+            0.0,
+            0.6
+          ],
+          [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0,
+            0.0
+          ]
+        ],
+        "weights_a": [
+          1.0
+        ],
+        "weights_b": [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "point_face",
+        "active_feature_ids_a": [
+          0
+        ],
+        "active_feature_ids_b": [
+          1,
+          2,
+          3
+        ],
+        "distance": 0.6,
+        "required_distance": 0.6,
+        "signed_gap": 0.0,
+        "mass_denominator": 1.3333333333333335,
+        "multiplier_delta": 0.0,
+        "rechecked_distance": 0.6,
+        "rechecked_required_distance": 0.6,
+        "rechecked_signed_gap": 0.0
+      },
+      "tolerance": 1e-09,
+      "notes": "",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "point_triangle_zero_distance",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "InvalidInitialContact",
+        "positions": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0,
+            0.0
+          ]
+        ],
+        "weights_a": [
+          1.0
+        ],
+        "weights_b": [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "normal_b_to_a": null,
+        "witness_kind": "point_face",
+        "active_feature_ids_a": [
+          0
+        ],
+        "active_feature_ids_b": [
+          1,
+          2,
+          3
+        ],
+        "distance": 1.1102230246251565e-16,
+        "required_distance": 0.6,
+        "signed_gap": -0.5999999999999999,
+        "mass_denominator": 1.3333333333333335,
+        "multiplier_delta": 0.0,
+        "rechecked_distance": 1.1102230246251565e-16,
+        "rechecked_required_distance": 0.6,
+        "rechecked_signed_gap": -0.5999999999999999
+      },
+      "tolerance": 1e-09,
+      "notes": "No previous separating direction supplied; no arbitrary winding normal.",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "point_triangle_degenerate",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 2,
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "ContactFailure",
+        "positions": [
+          [
+            0.0,
+            0.0,
+            0.2
+          ],
+          [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "tolerance": 1e-09,
+      "notes": "This candidate is an invalid triangle. A separate documented segment fallback may replace it before projection.",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "edge_edge_perpendicular_strips",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -2.0,
+            0.0,
+            0.04
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            2.0,
+            0.0,
+            0.04
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05,
+          "strand": "A"
+        },
+        {
+          "id": 2,
+          "position": [
+            0.0,
+            -2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "edge_edge",
+        "a": [
+          0,
+          1
+        ],
+        "b": [
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            -2.0,
+            0.0,
+            0.07
+          ],
+          [
+            2.0,
+            0.0,
+            0.07
+          ],
+          [
+            0.0,
+            -2.0,
+            -0.03
+          ],
+          [
+            0.0,
+            2.0,
+            -0.03
+          ]
+        ],
+        "weights_a": [
+          0.5,
+          0.5
+        ],
+        "weights_b": [
+          0.5,
+          0.5
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "edge_edge",
+        "active_feature_ids_a": [
+          0,
+          1
+        ],
+        "active_feature_ids_b": [
+          2,
+          3
+        ],
+        "distance": 0.04,
+        "required_distance": 0.1,
+        "signed_gap": -0.060000000000000005,
+        "mass_denominator": 1.0,
+        "multiplier_delta": 0.060000000000000005,
+        "rechecked_distance": 0.1,
+        "rechecked_required_distance": 0.1,
+        "rechecked_signed_gap": 0.0
+      },
+      "tolerance": 1e-09,
+      "notes": "Nonincident edges on long narrow strips; distant endpoint/face tests miss this witness.",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "edge_edge_parallel_overlap",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -1.0,
+            0.2,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            1.0,
+            0.2,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 2,
+          "position": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "edge_edge",
+        "a": [
+          0,
+          1
+        ],
+        "b": [
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            -1.0,
+            0.4,
+            0.0
+          ],
+          [
+            1.0,
+            0.4,
+            0.0
+          ],
+          [
+            -1.0,
+            -0.2,
+            0.0
+          ],
+          [
+            1.0,
+            -0.2,
+            0.0
+          ]
+        ],
+        "weights_a": [
+          0.5,
+          0.5
+        ],
+        "weights_b": [
+          0.5,
+          0.5
+        ],
+        "normal_b_to_a": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "witness_kind": "edge_edge",
+        "active_feature_ids_a": [
+          0,
+          1
+        ],
+        "active_feature_ids_b": [
+          2,
+          3
+        ],
+        "distance": 0.2,
+        "required_distance": 0.6,
+        "signed_gap": -0.39999999999999997,
+        "mass_denominator": 1.0,
+        "multiplier_delta": 0.39999999999999997,
+        "rechecked_distance": 0.6,
+        "rechecked_required_distance": 0.6,
+        "rechecked_signed_gap": 0.0
+      },
+      "tolerance": 1e-09,
+      "notes": "Closest set is nonunique. Explicit tie: midpoint of projected overlap.",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "edge_edge_parallel_reversed",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -1.0,
+            0.2,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            1.0,
+            0.2,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 2,
+          "position": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.3,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "edge_edge",
+        "a": [
+          0,
+          1
+        ],
+        "b": [
+          3,
+          2
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            -1.0,
+            0.4,
+            0.0
+          ],
+          [
+            1.0,
+            0.4,
+            0.0
+          ],
+          [
+            -1.0,
+            -0.2,
+            0.0
+          ],
+          [
+            1.0,
+            -0.2,
+            0.0
+          ]
+        ],
+        "weights_a": [
+          0.5,
+          0.5
+        ],
+        "weights_b": [
+          0.5,
+          0.5
+        ],
+        "normal_b_to_a": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "witness_kind": "edge_edge",
+        "active_feature_ids_a": [
+          0,
+          1
+        ],
+        "active_feature_ids_b": [
+          3,
+          2
+        ],
+        "distance": 0.2,
+        "required_distance": 0.6,
+        "signed_gap": -0.39999999999999997,
+        "mass_denominator": 1.0,
+        "multiplier_delta": 0.39999999999999997,
+        "rechecked_distance": 0.6,
+        "rechecked_required_distance": 0.6,
+        "rechecked_signed_gap": 0.0
+      },
+      "tolerance": 1e-09,
+      "notes": "",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "edge_edge_unequal_mass_thickness",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -1.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.1,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            3.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.3,
+          "strand": "A"
+        },
+        {
+          "id": 2,
+          "position": [
+            0.0,
+            -3.0,
+            0.0
+          ],
+          "inverse_mass": 3.0,
+          "half_thickness": 0.2,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 4.0,
+          "half_thickness": 0.4,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "edge_edge",
+        "a": [
+          0,
+          1
+        ],
+        "b": [
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            -1.0,
+            0.0,
+            0.272
+          ],
+          [
+            3.0,
+            0.0,
+            0.248
+          ],
+          [
+            0.0,
+            -3.0,
+            -0.072
+          ],
+          [
+            0.0,
+            1.0,
+            -0.288
+          ]
+        ],
+        "weights_a": [
+          0.75,
+          0.25
+        ],
+        "weights_b": [
+          0.25,
+          0.75
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "edge_edge",
+        "active_feature_ids_a": [
+          0,
+          1
+        ],
+        "active_feature_ids_b": [
+          2,
+          3
+        ],
+        "distance": 0.2,
+        "required_distance": 0.5,
+        "signed_gap": -0.3,
+        "mass_denominator": 3.125,
+        "multiplier_delta": 0.096,
+        "rechecked_distance": 0.49926362992288215,
+        "rechecked_required_distance": 0.49880353197361393,
+        "rechecked_signed_gap": 0.00046009794926821224
+      },
+      "tolerance": 1e-09,
+      "notes": "",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "edge_edge_unequal_mass_constant_thickness",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -1.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.15,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            3.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.15,
+          "strand": "A"
+        },
+        {
+          "id": 2,
+          "position": [
+            0.0,
+            -3.0,
+            0.0
+          ],
+          "inverse_mass": 3.0,
+          "half_thickness": 0.35,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 4.0,
+          "half_thickness": 0.35,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "edge_edge",
+        "a": [
+          0,
+          1
+        ],
+        "b": [
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "IterationLimit",
+        "positions": [
+          [
+            -1.0,
+            0.0,
+            0.272
+          ],
+          [
+            3.0,
+            0.0,
+            0.248
+          ],
+          [
+            0.0,
+            -3.0,
+            -0.072
+          ],
+          [
+            0.0,
+            1.0,
+            -0.288
+          ]
+        ],
+        "weights_a": [
+          0.75,
+          0.25
+        ],
+        "weights_b": [
+          0.25,
+          0.75
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "edge_edge",
+        "active_feature_ids_a": [
+          0,
+          1
+        ],
+        "active_feature_ids_b": [
+          2,
+          3
+        ],
+        "distance": 0.2,
+        "required_distance": 0.5,
+        "signed_gap": -0.3,
+        "mass_denominator": 3.125,
+        "multiplier_delta": 0.096,
+        "rechecked_distance": 0.49926362992288215,
+        "rechecked_required_distance": 0.5,
+        "rechecked_signed_gap": -0.0007363700771178538
+      },
+      "tolerance": 1e-09,
+      "notes": "",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "same_strand_nonincident_fold",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 10,
+          "position": [
+            -2.0,
+            0.0,
+            0.04
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05,
+          "strand": "A"
+        },
+        {
+          "id": 11,
+          "position": [
+            2.0,
+            0.0,
+            0.04
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05,
+          "strand": "A"
+        },
+        {
+          "id": 20,
+          "position": [
+            0.0,
+            -2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05,
+          "strand": "A"
+        },
+        {
+          "id": 21,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05,
+          "strand": "A"
+        }
+      ],
+      "candidate": {
+        "kind": "edge_edge",
+        "a": [
+          10,
+          11
+        ],
+        "b": [
+          20,
+          21
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            -2.0,
+            0.0,
+            0.07
+          ],
+          [
+            2.0,
+            0.0,
+            0.07
+          ],
+          [
+            0.0,
+            -2.0,
+            -0.03
+          ],
+          [
+            0.0,
+            2.0,
+            -0.03
+          ]
+        ],
+        "weights_a": [
+          0.5,
+          0.5
+        ],
+        "weights_b": [
+          0.5,
+          0.5
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "edge_edge",
+        "active_feature_ids_a": [
+          10,
+          11
+        ],
+        "active_feature_ids_b": [
+          20,
+          21
+        ],
+        "distance": 0.04,
+        "required_distance": 0.1,
+        "signed_gap": -0.060000000000000005,
+        "mass_denominator": 1.0,
+        "multiplier_delta": 0.060000000000000005,
+        "rechecked_distance": 0.1,
+        "rechecked_required_distance": 0.1,
+        "rechecked_signed_gap": 0.0
+      },
+      "tolerance": 1e-09,
+      "notes": "Pair intentionally eligible: same strand, disjoint vertex IDs, no incident topology.",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "cord_segment_segment",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -2.0,
+            0.0,
+            0.04
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            2.0,
+            0.0,
+            0.04
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05,
+          "strand": "A"
+        },
+        {
+          "id": 2,
+          "position": [
+            0.0,
+            -2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "segment_segment",
+        "a": [
+          0,
+          1
+        ],
+        "b": [
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "Converged",
+        "positions": [
+          [
+            -2.0,
+            0.0,
+            0.07
+          ],
+          [
+            2.0,
+            0.0,
+            0.07
+          ],
+          [
+            0.0,
+            -2.0,
+            -0.03
+          ],
+          [
+            0.0,
+            2.0,
+            -0.03
+          ]
+        ],
+        "weights_a": [
+          0.5,
+          0.5
+        ],
+        "weights_b": [
+          0.5,
+          0.5
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "edge_edge",
+        "active_feature_ids_a": [
+          0,
+          1
+        ],
+        "active_feature_ids_b": [
+          2,
+          3
+        ],
+        "distance": 0.04,
+        "required_distance": 0.1,
+        "signed_gap": -0.060000000000000005,
+        "mass_denominator": 1.0,
+        "multiplier_delta": 0.060000000000000005,
+        "rechecked_distance": 0.1,
+        "rechecked_required_distance": 0.1,
+        "rechecked_signed_gap": 0.0
+      },
+      "tolerance": 1e-09,
+      "notes": "No triangle/face array is required. Half-thickness is cord radius.",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    },
+    {
+      "id": "edge_edge_all_pinned",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -2.0,
+            0.0,
+            0.04
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.05,
+          "strand": "A"
+        },
+        {
+          "id": 1,
+          "position": [
+            2.0,
+            0.0,
+            0.04
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.05,
+          "strand": "A"
+        },
+        {
+          "id": 2,
+          "position": [
+            0.0,
+            -2.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.05,
+          "strand": "B"
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.05,
+          "strand": "B"
+        }
+      ],
+      "candidate": {
+        "kind": "edge_edge",
+        "a": [
+          0,
+          1
+        ],
+        "b": [
+          2,
+          3
+        ]
+      },
+      "projection": {
+        "compliance": 0.0,
+        "initial_multiplier": 0.0,
+        "friction": 0.0,
+        "iterations": 1
+      },
+      "expected": {
+        "status": "InfeasibleBoundary",
+        "positions": [
+          [
+            -2.0,
+            0.0,
+            0.04
+          ],
+          [
+            2.0,
+            0.0,
+            0.04
+          ],
+          [
+            0.0,
+            -2.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0,
+            0.0
+          ]
+        ],
+        "weights_a": [
+          0.5,
+          0.5
+        ],
+        "weights_b": [
+          0.5,
+          0.5
+        ],
+        "normal_b_to_a": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "witness_kind": "edge_edge",
+        "active_feature_ids_a": [
+          0,
+          1
+        ],
+        "active_feature_ids_b": [
+          2,
+          3
+        ],
+        "distance": 0.04,
+        "required_distance": 0.1,
+        "signed_gap": -0.060000000000000005,
+        "mass_denominator": 0.0,
+        "multiplier_delta": 0.0,
+        "rechecked_distance": 0.04,
+        "rechecked_required_distance": 0.1,
+        "rechecked_signed_gap": -0.060000000000000005
+      },
+      "tolerance": 1e-09,
+      "notes": "",
+      "verification": {
+        "analytic_fields_checked": [
+          "positions",
+          "weights_a",
+          "weights_b",
+          "normal_b_to_a",
+          "status"
+        ],
+        "derived_fields": "Scalar residuals are recomputed diagnostics; closest distance and interpolated thickness also checked with independent SLSQP before and after."
+      }
+    }
+  ]
+}

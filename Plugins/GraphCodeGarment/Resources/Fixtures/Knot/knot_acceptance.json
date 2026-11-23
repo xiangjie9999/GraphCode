@@ -1,0 +1,344 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "generator": "knot_acceptance_controls.py",
+  "source_sha256": "663795523d9b1c1ac4ba083fb9d2ce8ff2f1d86f5bc103aa24fea21d98e497c5",
+  "shared_helper_sha256": "5c3d41d630c698b3c8752e5a582dfa87e1a91fd36c937fdc7a08e9aaac28724c",
+  "contract": {
+    "two_cord_gate": "Fix exact four boundary ports, pull directions, rest lengths, friction and bending model; require all length/pin constraints, local/nonlocal thickness and accepted-step CCD. No universal two-cord half-knot shortening number supplied.",
+    "local_stationarity": "Optional local check: J_length v=0, J_active_gap v>=0, held v=0, handle velocity along prescribed direction. Maximize nonnegative progress with bounded velocities. Zero certified optimum is first-order blocking only; nonlinear/timestep/refinement checks still required.",
+    "contact": "For r=.15cm, every eligible nonlocal centerline pair requires distance >=.30cm. Use segment interiors, not just sampled vertices; test local curvature separately for ideal circular tube.",
+    "published_gate": "Use 3.030 +/- .015cm shortening only for matched SINGLE-cord ideal open trefoil, with independent discretization/boundary convergence. Not a two-cord or nonzero-bend gate."
+  },
+  "cases": [
+    {
+      "id": "published_single_cord_open_trefoil",
+      "input": {
+        "radius_cm": 0.15,
+        "definition": "Lambda=(contour_length-endpoint_distance)/diameter",
+        "reported_Lambda": 10.1,
+        "reported_uncertainty": 0.05
+      },
+      "expected": {
+        "shortening_cm": 3.03,
+        "reported_uncertainty_cm": 0.015,
+        "interval_cm": [
+          3.015,
+          3.045
+        ],
+        "two_cord_half_knot_reference": false
+      },
+      "source": "https://arxiv.org/pdf/physics/0103016 pp2-5",
+      "scope": "Reported numerical ideal-rope value, not rigorous bound or finite-bending/friction prediction. Discretization and boundary errors are additional to the published uncertainty."
+    },
+    {
+      "id": "nonlocal_segment_clearance",
+      "input": {
+        "segments": [
+          [
+            [
+              -1.0,
+              0.0,
+              0.0
+            ],
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            [
+              0.0,
+              -1.0,
+              0.300001
+            ],
+            [
+              0.0,
+              1.0,
+              0.300001
+            ]
+          ]
+        ],
+        "radius_cm": 0.15
+      },
+      "expected": {
+        "distance_cm": 0.300001,
+        "parameters": [
+          0.5,
+          0.5
+        ],
+        "valid": true,
+        "surface_gap_cm": 1.0000000000287557e-06,
+        "endpoint_only_check_is_insufficient": true
+      }
+    },
+    {
+      "id": "nonlocal_segment_penetration",
+      "input": {
+        "segments": [
+          [
+            [
+              -1.0,
+              0.0,
+              0.0
+            ],
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            [
+              0.0,
+              -1.0,
+              0.299999
+            ],
+            [
+              0.0,
+              1.0,
+              0.299999
+            ]
+          ]
+        ],
+        "radius_cm": 0.15
+      },
+      "expected": {
+        "distance_cm": 0.299999,
+        "parameters": [
+          0.5,
+          0.5
+        ],
+        "valid": false,
+        "surface_gap_cm": -9.999999999732445e-07,
+        "endpoint_only_check_is_insufficient": true
+      }
+    },
+    {
+      "id": "nearby_material_is_not_self_contact",
+      "input": {
+        "positions": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.1,
+            0.0,
+            0.0
+          ],
+          [
+            0.2,
+            0.0,
+            0.0
+          ],
+          [
+            0.30000000000000004,
+            0.0,
+            0.0
+          ],
+          [
+            0.4,
+            0.0,
+            0.0
+          ],
+          [
+            0.5,
+            0.0,
+            0.0
+          ]
+        ],
+        "radius_cm": 0.15
+      },
+      "expected": {
+        "straight_tube_valid": true,
+        "nonadjacent_index_segment_distance_cm": 0.1,
+        "blanket_nonadjacent_distance_rule_would_reject": true,
+        "local_curvature": 0.0
+      },
+      "scope": "Use local curvature plus nonlocal/doubly-critical distance with open-boundary treatment. Index adjacency alone is not resolution independent."
+    },
+    {
+      "id": "local_curvature_negative",
+      "input": {
+        "adjacent_lengths_cm": [
+          0.1,
+          0.1
+        ],
+        "turn_radians": 1.5707963267948966,
+        "radius_cm": 0.15
+      },
+      "expected": {
+        "polygon_minrad_cm": 0.05000000000000001,
+        "valid": false
+      },
+      "source": "https://web.math.ucsb.edu/~millett/Papers/2008Millett5PiatekRawdonJKTR.pdf Definition2.5-2.6"
+    },
+    {
+      "id": "first_order_pull_straight",
+      "input": {
+        "positions": [
+          [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "root_held": true,
+        "tip_pull_direction": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "velocity_columns": [
+          "interior_vx",
+          "interior_vy",
+          "interior_vz",
+          "tip_speed"
+        ],
+        "J_length": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            -1.0,
+            -0.0,
+            -0.0,
+            1.0
+          ]
+        ],
+        "velocity_bounds": [
+          [
+            -1.0,
+            1.0
+          ],
+          [
+            -1.0,
+            1.0
+          ],
+          [
+            -1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "expected": {
+        "maximum_normalized_tip_speed": -0.0,
+        "velocity": [
+          -0.0,
+          -1.0,
+          -1.0,
+          -0.0
+        ],
+        "length_velocity_residual": 0.0,
+        "first_order_blocked": true,
+        "equality_duals": [
+          -1.0,
+          -1.0
+        ]
+      },
+      "scope": "Necessary local linearized mobility check. Zero speed alone is not a global tightness proof, and a failed nonlinear relax is not this certificate."
+    },
+    {
+      "id": "first_order_pull_slack",
+      "input": {
+        "positions": [
+          [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.7320508075688772,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "root_held": true,
+        "tip_pull_direction": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "velocity_columns": [
+          "interior_vx",
+          "interior_vy",
+          "interior_vz",
+          "tip_speed"
+        ],
+        "J_length": [
+          [
+            0.5000000000000001,
+            0.8660254037844387,
+            0.0,
+            0.0
+          ],
+          [
+            -0.5000000000000001,
+            0.8660254037844387,
+            -0.0,
+            0.5000000000000001
+          ]
+        ],
+        "velocity_bounds": [
+          [
+            -1.0,
+            1.0
+          ],
+          [
+            -1.0,
+            1.0
+          ],
+          [
+            -1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "expected": {
+        "maximum_normalized_tip_speed": 1.0,
+        "velocity": [
+          0.5,
+          -0.2886751345948129,
+          -1.0,
+          1.0
+        ],
+        "length_velocity_residual": 0.0,
+        "first_order_blocked": false,
+        "equality_duals": [
+          -0.0,
+          -0.0
+        ]
+      },
+      "scope": "Necessary local linearized mobility check. Zero speed alone is not a global tightness proof, and a failed nonlinear relax is not this certificate."
+    }
+  ]
+}

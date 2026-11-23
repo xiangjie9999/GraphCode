@@ -1,0 +1,21 @@
+gcrig 1
+
+# MOVE-GAIT1 G1/G2 test adapter (Docs/GC-MOVE-GAIT-PLAN.md): RifleMan's (SK_Walker's) sole points, each riding the bone a
+# real foot carries it on, for plant(..., roll=). Reference component space, faces +Y, its left +X; the heel is RifleMan.gcrig's
+# sole_r/sole_l, the ball and toe are its ball and toe joints dropped to the floor. Production adds these to RifleMan.gcrig.
+points {
+  heel_sole_r = (-7.550, -8.640, 0.000)
+  ball_sole_r = (-7.694, 5.362, 0.000)
+  toe_sole_r = (-7.694, 13.200, 0.000)
+  heel_sole_l = (7.540, -8.640, 0.000)
+  ball_sole_l = (7.694, 5.362, 0.000)
+  toe_sole_l = (7.694, 13.200, 0.000)
+}
+contacts {
+  Heel_R = contact(chain=leg_R, at=$heel_sole_r, bone=foot_r)
+  Ball_R = contact(chain=leg_R, at=$ball_sole_r, bone=ball_r)
+  Toe_R = contact(chain=leg_R, at=$toe_sole_r, bone=toe_r)
+  Heel_L = contact(chain=leg_L, at=$heel_sole_l, bone=foot_l)
+  Ball_L = contact(chain=leg_L, at=$ball_sole_l, bone=ball_l)
+  Toe_L = contact(chain=leg_L, at=$toe_sole_l, bone=toe_l)
+}

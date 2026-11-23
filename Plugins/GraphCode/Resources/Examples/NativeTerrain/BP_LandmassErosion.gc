@@ -1,0 +1,40 @@
+gc 1 kind:blueprint asset:/Game/GraphCodeExamples/Terrain/BP_LandmassErosion
+parent: /Landmass/Landscape/BlueprintBrushes/Brushes/LandmassBrush_Erosion.LandmassBrush_Erosion_C
+
+class_defaults {
+  `Erosion Keyframes` = ((Key Name=text("Hydraulic drainage"),Erosion Mode=Particle Erosion,Particle Erosion=(Erosion Iterations=1024,Starting Water Amount=150,Delta T=0.033333,Solubility=0.75,Evaporation=0.02,Velocity Damping=0.4,Resolution Divisor=1)),(Key Name=text("Settle steep deposits"),Erosion Mode=Slope Smoothing,Slope Smoothing=(Iterations=64,Smooth Slopes Greater Than=0.7,Smooth Slopes Less Than=0,Opacity=1)))
+  `Iterations Per Tick` = 32
+}
+
+functions {
+  function UserConstructionScript {
+    n1 = FunctionEntry() : ->n2
+    n2 = CallParentFunction /Landmass/Landscape/BlueprintBrushes/Brushes/LandmassBrush_Erosion.LandmassBrush_Erosion_C:UserConstructionScript() : ->_
+  }
+  function `Initialize Size ` [description="Cover the native simulation render target with particle sections."] {
+    n1 = FunctionEntry() : ->n2
+    n2 = CallParentFunction `/Landmass/Landscape/BlueprintBrushes/Brushes/LandmassBrush_Erosion.LandmassBrush_Erosion_C:Initialize Size `() : ->n3
+    n3 = VariableSet `Sections X`(`Sections X`=n7.ReturnValue) : ->n4
+    n4 = VariableSet `Sections Y`(`Sections Y`=n8.ReturnValue) : ->_
+    n5 = VariableGet `RT Resolution`()
+    n6 = BreakStruct(IntPoint=n5.`RT Resolution`) [StructType=/Script/CoreUObject.ScriptStruct'/Script/CoreUObject.IntPoint']
+    n7 = CallFunction KismetMathLibrary:Divide_IntInt(A=n6.X, B=n9.ComponentRes)
+    n8 = CallFunction KismetMathLibrary:Divide_IntInt(A=n6.Y, B=n9.ComponentRes)
+    n9 = VariableGet ComponentRes()
+  }
+  function `Set MPC Values` [description="Keep the native UV clamp inside the final Landscape height sample."] {
+    n1 = FunctionEntry() : ->n2
+    n2 = CallParentFunction `/Landmass/Landscape/BlueprintBrushes/Brushes/LandmassBrush_Erosion.LandmassBrush_Erosion_C:Set MPC Values`() : ->n3
+    n3 = CallMaterialParameterCollectionFunction KismetMaterialLibrary:SetScalarParameterValue(Collection=obj'/Landmass/Landscape/BlueprintBrushes/MPC/MPC_Erosion.MPC_Erosion', ParameterName="TotalSizeX", ParameterValue=n9.ReturnValue) : ->n4
+    n4 = CallMaterialParameterCollectionFunction KismetMaterialLibrary:SetScalarParameterValue(Collection=obj'/Landmass/Landscape/BlueprintBrushes/MPC/MPC_Erosion.MPC_Erosion', ParameterName="TotalSizeY", ParameterValue=n10.ReturnValue) : ->_
+    n5 = VariableGet `Landscape Size`()
+    n6 = BreakStruct(IntPoint=n5.`Landscape Size`) [StructType=/Script/CoreUObject.ScriptStruct'/Script/CoreUObject.IntPoint']
+    n7 = CallFunction KismetMathLibrary:Subtract_IntInt(A=n6.X, B=1)
+    n8 = CallFunction KismetMathLibrary:Subtract_IntInt(A=n6.Y, B=1)
+    n9 = PromotableOperator KismetMathLibrary:Multiply_DoubleDouble(A=n7.ReturnValue, B=n13.X) !types[<A="int", <B="real:double", >ReturnValue="real:double"]
+    n10 = PromotableOperator KismetMathLibrary:Multiply_DoubleDouble(A=n8.ReturnValue, B=n13.Y) !types[<A="int", <B="real:double", >ReturnValue="real:double"]
+    n11 = VariableGet LandscapeTransform()
+    n12 = CallFunction KismetMathLibrary:BreakTransform(InTransform=n11.LandscapeTransform)
+    n13 = CallFunction KismetMathLibrary:BreakVector(InVec=n12.Scale)
+  }
+}

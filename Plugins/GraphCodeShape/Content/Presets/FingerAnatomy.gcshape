@@ -1,0 +1,169 @@
+gcshape 1 into:/GraphCodeShape/Presets smooth:0.003 shade:80
+
+# Finger study under development. Centimetres; +Z root to tip, -Y palmar.
+# One constructor for digits 2-5. Thumb anatomy is a separate future study.
+build {
+  SM_FingerAnatomy_Skin = $SkinForm [pivot=(0,0,0), bounds=(2.2,2.0,8.1)]
+  SM_FingerAnatomy_Nail = $NailPlate [pivot=(0,0,0), bounds=(1.4,1.7,.5)]
+}
+
+Skin = material()
+Nail = material()
+Profiles = shape('/GraphCodeShape/Presets/Profiles')
+Sculpt = shape('/GraphCodeShape/Presets/OrganicBrushes')
+
+Brush = plane() { circle(radius=1) }
+BrushSlope = profile(0=0%, .5=60%, 1=100%)
+DefaultStroke = plane() { curve((-.6,0,0),(0,0,-.04),(.6,0,0)) }
+DefaultNailFoot = plane() {
+  rect(w=1.18,h=1.47)
+  round((.4,.4,.22,.22))
+}
+
+# A fitted nail shares its supporting surface and has no overlapping inner
+# shell. footprint is the rounded nail plan; centre is in the host's frame.
+# A Y-directed brush maps local X to world Z; the quarter turn restores
+# footprint X across the finger and footprint Y along its length.
+FittedNail = instruction(footprint=$DefaultNailFoot, centre=(0,0,7.05), thickness=.025, resolution=.025) {
+  raise(by=$thickness) [facing=Y,in=$footprint,along=Y,rotate=(0,90,0),at=$centre,smooth=$resolution,$NailRegion=affected]
+  material($Nail) [$NailRegion]
+}
+
+# A reusable curved indentation. The caller supplies a captured route; side
+# selects the visible palmar (-1) or dorsal (+1) surface of the same mesh.
+Crease = instruction(route=$DefaultStroke, width=.08, depth=.02, side=-1) {
+  if ($side < 0) {
+    displace(by=profile(0=0,.18=-$depth,.78=-$depth,1=0), along=-Y, slope=$BrushSlope) [facing=-Y,in=$Brush,along=$route,project=Y,width=$width]
+  } else {
+    displace(by=profile(0=0,.18=-$depth,.78=-$depth,1=0), along=Y, slope=$BrushSlope) [facing=Y,in=$Brush,along=$route,project=-Y,width=$width]
+  }
+}
+
+# Broad dorsal arch, rounded lateral walls and a fuller palmar pad. Separate
+# dorsal and palmar dimensions let a joint change without inflating both sides.
+Section = plane(width=2, dorsal=.7, palmar=.9) {
+  curve((0,$dorsal),(-$width * .32,$dorsal * .92),(-$width * .48,$dorsal * .47),(-$width * .5,-$palmar * .12),(-$width * .36,-$palmar * .77),(0,-$palmar),($width * .36,-$palmar * .77),($width * .5,-$palmar * .12),($width * .48,$dorsal * .47),($width * .32,$dorsal * .92),loop=true)
+}
+
+# Ratios place the two interphalangeal joints along total exposed length.
+# knuckle controls joint breadth; pad controls distal palmar fullness.
+# Boundary insertion is verified; brush shaping stays opt-in pending visual refinement.
+SkinForm = mesh(length=8, width=2, depth=1.65, proximal=.46, middle=.27, knuckle=1, pad=1, detail=0, crease_depth=.006, nailwidth=.59, naillength=.68, nailthickness=.015, with_nail=0, resolution_ratio=.02, shaping=0, joint_fullness=.055, pad_fullness=.07) {
+  $PIP = $length * $proximal
+  $DIP = $length * ($proximal + $middle)
+  $Distal = $length - $DIP
+  circle(radius=.5,scale=($width * .83,$length * .19,1))
+  $PipBrush = plane
+  circle(radius=.5,scale=($width * .71,$Distal * .80,1))
+  $DipBrush = plane
+  circle(radius=.5,scale=($width * .74,$PIP * .63,1))
+  $ProximalPadBrush = plane
+  circle(radius=.5,scale=($width * .64,($DIP - $PIP) * .78,1))
+  $MiddlePadBrush = plane
+  circle(radius=.5,scale=($width * .65,$Distal * .78,1))
+  $TipPadBrush = plane
+  $NailSpan = $width * $nailwidth
+  $PlateLengthCm = $Distal * $naillength
+  $PlateCentreZ = $length - $Distal * ($naillength / 2 + .10)
+  rect(w=$NailSpan,h=$PlateLengthCm)
+  round(($NailSpan * .34,$NailSpan * .34,$NailSpan * .18,$NailSpan * .18))
+  $PlateFoot = plane
+  curve((-$width * .33,0,$PIP - $length * .015),(0,0,$PIP - $length * .023),($width * .33,0,$PIP - $length * .012))
+  $PalmarPip = plane
+  curve((-$width * .29,0,$DIP - $length * .009),(0,0,$DIP - $length * .015),($width * .29,0,$DIP - $length * .007))
+  $PalmarDip = plane
+  curve((-$width * .30,0,$PIP - $length * .027),(0,0,$PIP - $length * .04),($width * .30,0,$PIP - $length * .024))
+  $DorsalPipLow = plane
+  curve((-$width * .32,0,$PIP + $length * .008),(0,0,$PIP - $length * .003),($width * .31,0,$PIP + $length * .012))
+  $DorsalPipMid = plane
+  curve((-$width * .24,0,$PIP + $length * .039),(0,0,$PIP + $length * .028),($width * .23,0,$PIP + $length * .04))
+  $DorsalPipHigh = plane
+  curve((-$width * .26,0,$DIP - $length * .018),(0,0,$DIP - $length * .025),($width * .25,0,$DIP - $length * .013))
+  $DorsalDipLow = plane
+  curve((-$width * .21,0,$DIP + $length * .012),(0,0,$DIP + $length * .004),($width * .22,0,$DIP + $length * .016))
+  $DorsalDipHigh = plane
+  curve((0,.38),(-.32,.35),(-.48,.18),(-.5,-.059),(-.36,-.377),(0,-.49),(.36,-.377),(.5,-.059),(.48,.18),(.32,.35),loop=true,scale=($width * .88,$depth,1))
+  $Shaft = plane
+  curve((0,.415),(-.32,.382),(-.48,.195),(-.5,-.053),(-.36,-.339),(0,-.44),(.36,-.339),(.5,-.053),(.48,.195),(.32,.382),loop=true,scale=($width * .95 * $knuckle,$depth,1))
+  $PipSection = plane
+  curve((0,.35),(-.32,.322),(-.48,.164),(-.5,-.05),(-.36,-.323),(0,-.42),(.36,-.323),(.5,-.05),(.48,.164),(.32,.322),loop=true,scale=($width * .79,$depth,1))
+  $MiddleSection = plane
+  curve((0,.38),(-.32,.35),(-.48,.179),(-.5,-.046),(-.36,-.293),(0,-.38),(.36,-.293),(.5,-.046),(.48,.179),(.32,.35),loop=true,scale=($width * .86 * $knuckle,$depth,1))
+  $DipSection = plane
+  curve((0,.36),(-.32,.331),(-.48,.169),(-.5,-.052 * $pad),(-.36,-.331 * $pad),(0,-.43 * $pad),(.36,-.331 * $pad),(.5,-.052 * $pad),(.48,.169),(.32,.331),loop=true,scale=($width * .80,$depth,1))
+  $Pulp = plane
+  curve((0,.35),(-.32,.322),(-.48,.165),(-.5,-.042 * $pad),(-.36,-.27 * $pad),(0,-.35 * $pad),(.36,-.27 * $pad),(.5,-.042 * $pad),(.48,.165),(.32,.322),loop=true,scale=($width * .76,$depth,1))
+  $TipShoulder = plane
+  curve((0,.27),(-.32,.248),(-.48,.127),(-.5,-.026 * $pad),(-.36,-.169 * $pad),(0,-.22 * $pad),(.36,-.169 * $pad),(.5,-.026 * $pad),(.48,.127),(.32,.248),loop=true,scale=($width * .58,$depth,1))
+  $Tip = plane
+  curve((0,.13),(-.32,.12),(-.48,.061),(-.5,-.012),(-.36,-.077),(0,-.1),(.36,-.077),(.5,-.012),(.48,.061),(.32,.12),loop=true,scale=($width * .32,$depth,1))
+  $Cap = plane
+  circle(radius=$width * .0075, scale=(1,$depth / $width,1))
+  $EndSection = plane
+  curve((0,.40),(-.32,.368),(-.48,.188),(-.5,-.072),(-.36,-.462),(0,-.6),(.36,-.462),(.5,-.072),(.48,.188),(.32,.368),loop=true,scale=($width,$depth,1))
+  loft(to=$Shaft, at=(0,0,$PIP * .56), profile=$Profiles.SCurve)
+  loft(to=$PipSection, at=(0,0,$PIP), profile=$Profiles.SCurve)
+  loft(to=$MiddleSection, at=(0,0,$PIP + ($DIP - $PIP) * .51), profile=$Profiles.SCurve)
+  loft(to=$DipSection, at=(0,0,$DIP), profile=$Profiles.SCurve)
+  # The pulp stays full under the nail; its terminal arc turns continuously
+  # instead of easing to a little cylindrical shoulder at every tip station.
+  loft(to=$Pulp, at=(0,-$depth * .035,$DIP + $Distal * .46))
+  loft(to=$TipShoulder, at=(0,-$depth * .035,$length - $Distal * .20))
+  loft(to=$Tip, at=(0,-$depth * .055,$length - $Distal * .075))
+  loft(to=$Cap, at=(0,0,$length - $Distal * .02))
+  loft(to=$EndSection, at=(0,0,$length))
+  remesh($width * $resolution_ratio)
+  relax($width * .04) [above=$length * .025]
+  if ($shaping > 0) {
+    # Broad forms precede creases and the nail seat. The base collar is untouched.
+    # A knuckle lifts the dorsal surface, not an entire transverse loft ring.
+    # Cast again on every rebuild: a surface anchor, not a picked world coordinate.
+    save($PipSurface) [at=(0,$depth,$PIP),project=-Y]
+    save($DipSurface) [at=(0,$depth,$DIP),project=-Y]
+    save($ProximalPadSurface) [at=(0,-$depth,$PIP * .56),project=Y]
+    save($MiddlePadSurface) [at=(0,-$depth,$PIP + ($DIP - $PIP) * .5),project=Y]
+    save($TipPadSurface) [at=(0,-$depth,$DIP + $Distal * .47),project=Y]
+    $Sculpt.Dab(footprint=$PipBrush,centre=$PipSurface,strength=$depth * $joint_fullness * $knuckle)
+    $Sculpt.Dab(footprint=$DipBrush,centre=$DipSurface,strength=$depth * $joint_fullness * $knuckle * .65)
+    $Sculpt.Dab(footprint=$ProximalPadBrush,centre=$ProximalPadSurface,direction=(0,-1,0),strength=$depth * $pad_fullness * $pad * .5)
+    $Sculpt.Dab(footprint=$MiddlePadBrush,centre=$MiddlePadSurface,direction=(0,-1,0),strength=$depth * $pad_fullness * $pad * .6)
+    $Sculpt.Dab(footprint=$TipPadBrush,centre=$TipPadSurface,direction=(0,-1,0),strength=$depth * $pad_fullness * $pad)
+  }
+  if ($detail > 0) {
+    $Crease(route=$PalmarPip, width=$width * .04, depth=$depth * $crease_depth)
+    $Crease(route=$PalmarDip, width=$width * .03, depth=$depth * $crease_depth * .85)
+    $Crease(route=$DorsalPipMid, width=$width * .025, depth=$depth * $crease_depth * .4, side=1)
+    $Crease(route=$DorsalDipLow, width=$width * .02, depth=$depth * $crease_depth * .35, side=1)
+  }
+  material($Skin)
+  if ($with_nail > 0) {
+    $FittedNail(footprint=$PlateFoot,centre=(0,0,$PlateCentreZ),thickness=$depth * $nailthickness,resolution=$width * .0125)
+  }
+}
+
+# A curved plate with actual wall thickness, before fitting to the finger.
+NailPlate = mesh(width=1.18, length=1.55, arch=.17, thickness=.035) {
+  rect(w=$width,h=$length)
+  round(($width * .35,$width * .35,$width * .20,$width * .20))
+  extrude(height=$thickness)
+  bend(radius=$width * $width / (8 * $arch) + $arch / 2, around=-Y, along=X, at=(0,0,0))
+  material($Nail)
+}
+
+# Separate closed nail for a host already built in the finger's +Z / dorsal +Y frame.
+# bed_end leaves a distal free edge. settle is a centimetre cap on the final
+# smoothing pass; zero retains exact contact and the fitting's small creases.
+# The supplied host must match the caller's finger dimensions.
+SeatedNail = mesh(host=$SkinForm, width=1.18, length=1.4688, arch=.17, thickness=.035, centre_y=.7425, centre_z=7.0496, bed_end=7.5248, within=1.65, resolution=.08, settle=.007) {
+  nail = add($NailPlate, width=$width, length=$length, arch=$arch, thickness=$thickness, rotate=(90,0,0), at=(0,$centre_y,$centre_z))
+  conform(to=$host, within=$within) [bottom, below=$bed_end, carry=$nail, smooth=$resolution]
+  if ($settle > 0) {
+    relax($settle)
+  }
+}
+
+Finger = mesh(length=8, width=2, depth=1.65, proximal=.46, middle=.27, knuckle=1, pad=1, detail=1, crease_depth=.006, nailwidth=.59, naillength=.68, nailthickness=.015) {
+  add($SkinForm, length=$length, width=$width, depth=$depth, proximal=$proximal, middle=$middle, knuckle=$knuckle, pad=$pad, detail=$detail,crease_depth=$crease_depth, nailwidth=$nailwidth, naillength=$naillength,nailthickness=$nailthickness,with_nail=1)
+  uv(cylinder,scale=$width)
+  socket(Mount, at=(0,0,0), facing=-Z, up=+X)
+}

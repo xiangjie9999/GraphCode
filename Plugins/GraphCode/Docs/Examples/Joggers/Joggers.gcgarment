@@ -1,0 +1,115 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/Joggers/Built
+# Joggers: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_Joggers = $Joggers
+  T_JoggersStitches = bake(decal, resolution=2048)
+}
+
+Fleece = fabric(weight=288, thickness=1.69mm, stretch=(7.27%, 29.93%), shear=26.6, stiffness=(0.80, 0.79), friction=1.92)
+Elastic = fabric(weight=324, thickness=1.46mm, stretch=(122.47%, 119%), shear=11.74, stiffness=(1.18, 0.99), friction=1.75)
+Rib = fabric(weight=250, thickness=1.78mm, stretch=(122.47%, 119%), shear=11.74, stiffness=(1.18, 0.99), friction=1.75)
+Kit = shape('/Game/GraphCodeExamples/Garment/Joggers/JoggersParts')
+
+Waist = ring((0.000, 9.873, 102.460), (-14.168, -0.150, 102.460), (0.000, -10.235, 102.460), (14.168, -0.150, 102.460)) {
+  expand(0.24)
+}
+BandMiddle = ring($Waist) {
+  move((0, 0, 2.54))
+  expand(1)
+}
+Crotch = ring((-16.87, 0, 76.44), (16.87, 0, 76.44)) {
+  expand(2.18)
+}
+Top_R = ring((-16.87, 0, 76.44), (-2.13, 0, 76.44)) {
+  expand(2.18)
+}
+Top_L = ring((16.87, 0, 76.44), (2.13, 0, 76.44)) {
+  expand(2.18)
+}
+UpperThigh_R = ring((-16.73, 0, 71), (-2.27, 0, 71)) {
+  expand(1.98)
+}
+UpperThigh_L = ring((16.73, 0, 71), (2.27, 0, 71)) {
+  expand(1.98)
+}
+Thigh_R = ring((-16.3, 0, 66), (-2.7, 0, 66)) {
+  expand(2.12)
+}
+Thigh_L = ring((16.3, 0, 66), (2.7, 0, 66)) {
+  expand(2.12)
+}
+MidThigh_R = ring((-15.4, 0, 57), (-3.6, 0, 57)) {
+  expand(2.51)
+}
+MidThigh_L = ring((15.4, 0, 57), (3.6, 0, 57)) {
+  expand(2.51)
+}
+Knee_R = ring((-14.5, 0, 48), (-4.5, 0, 48)) {
+  expand(2.91)
+}
+Knee_L = ring((14.5, 0, 48), (4.5, 0, 48)) {
+  expand(2.91)
+}
+Shin_R = ring((-14.72, 0, 40), (-4.28, 0, 40)) {
+  expand(2.19)
+}
+Shin_L = ring((14.72, 0, 40), (4.28, 0, 40)) {
+  expand(2.19)
+}
+Calf_R = ring((-14.94, 0, 32), (-4.06, 0, 32)) {
+  expand(1.48)
+}
+Calf_L = ring((14.94, 0, 32), (4.06, 0, 32)) {
+  expand(1.48)
+}
+LowLeg_R = ring((-14.53, 0, 22), (-4.47, 0, 22)) {
+  expand(1.31)
+}
+LowLeg_L = ring((14.53, 0, 22), (4.47, 0, 22)) {
+  expand(1.31)
+}
+Ankle_R = ring((-13.84, 0, 10.32), (-5.16, 0, 10.32)) {
+  expand(1.31)
+}
+Ankle_L = ring((13.84, 0, 10.32), (5.16, 0, 10.32)) {
+  expand(1.31)
+}
+
+Seat = profile(0=0, 0.44=1.93, 0.556=1.57, 0.671=1.24, 0.786=0.84, 0.863=0.43, 1=0)
+Gathered = profile(0=0%, 0.474=100%, 1=100%)
+
+Leg_R = garment($Top_R, $UpperThigh_R, $Thigh_R, $MidThigh_R, $Knee_R, $Shin_R, $Calf_R, $LowLeg_R, $Ankle_R, loose=100%, fabric=$Fleece) {
+  construct()
+  band($Ankle_R, width=5cm, fabric=$Rib, cut=60.2%)
+}
+Leg_L = garment($Top_L, $UpperThigh_L, $Thigh_L, $MidThigh_L, $Knee_L, $Shin_L, $Calf_L, $LowLeg_L, $Ankle_L, loose=100%, fabric=$Fleece) {
+  construct()
+  band($Ankle_L, width=5cm, fabric=$Rib, cut=60.2%)
+}
+
+Joggers = garment($Waist, $Crotch, loose=100%, clearance=$Seat, fabric=$Fleece) {
+  join($Crotch@0.25, $Crotch@0.75, $Top_L@0.5, $Top_R@0.5)
+  add($Leg_L)
+  add($Leg_R)
+  construct()
+  relax(0.5)
+  match($Waist, 135.4%, gather, falloff=$Gathered)
+  band($Waist, width=5.08cm, fabric=$Elastic, thickness=0.242cm, cut=93.2%)
+
+  SideR = line($Waist@0.25, $Crotch@0)
+  SideL = line($Waist@0.75, $Crotch@0.5)
+  PocketR = line($SideR@14.8cm, $Waist@0.25)
+  PocketL = line($SideL@14.8cm, $Waist@0.75)
+  press($PocketR, -1cm)
+  press($PocketL, 1cm)
+  OpeningR = line($SideR@2.2cm, $SideR@14.8cm)
+  OpeningL = line($SideL@2.2cm, $SideL@14.8cm)
+  stitch($OpeningR, offset=-0.8cm)
+  stitch($OpeningL, offset=0.8cm)
+
+  add($Kit.Eyelet, at=$BandMiddle@2.54cm)
+  add($Kit.Eyelet, at=$BandMiddle@0-2.54cm)
+  add($Kit.DrawcordEnd, at=$BandMiddle@2.54cm)
+  add($Kit.DrawcordEnd, at=$BandMiddle@0-2.54cm)
+}

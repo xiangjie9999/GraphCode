@@ -1,0 +1,481 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "generator": "robetie_guide_controls.py",
+  "source_sha256": "e45fc9220e0bbc002b1619cbe4682fe68cb1cadef2e3873e9ea5efdb27919bd3",
+  "shared_helper_sha256": "5c3d41d630c698b3c8752e5a582dfa87e1a91fd36c937fdc7a08e9aaac28724c",
+  "contract": {
+    "date": "2026-10-06",
+    "reference": "Claude18:17UTC: unwritten across cut from held middle root spacing; original written material remains immutable.",
+    "authoring": "Proposed three-crossing example in actual+Y frame, explicit EndA/EndB/EndA over roles, downward tails.",
+    "limitation": "No accepted loose cloth surface yet. A refined center yarn is proposed at half material width; root boundary retained by interpolation on its original segments."
+  },
+  "cases": [
+    {
+      "id": "actual_frame_three_crossing_guide_proposal",
+      "input": {
+        "guides": [
+          {
+            "name": "EndA",
+            "points": [
+              [
+                -1.0,
+                -3.0,
+                4.0
+              ],
+              [
+                -2.0,
+                0.0,
+                5.0
+              ],
+              [
+                -3.5,
+                3.0,
+                4.0
+              ],
+              [
+                -5.0,
+                0.0,
+                3.0
+              ],
+              [
+                -6.5,
+                -3.0,
+                4.0
+              ],
+              [
+                -8.0,
+                0.0,
+                5.0
+              ],
+              [
+                -10.0,
+                3.0,
+                4.0
+              ],
+              [
+                -15.0,
+                3.0,
+                4.0
+              ]
+            ],
+            "over": [
+              1,
+              5
+            ]
+          },
+          {
+            "name": "EndB",
+            "points": [
+              [
+                -1.0,
+                3.0,
+                4.0
+              ],
+              [
+                -2.0,
+                -0.0,
+                3.0
+              ],
+              [
+                -3.5,
+                -3.0,
+                4.0
+              ],
+              [
+                -5.0,
+                -0.0,
+                5.0
+              ],
+              [
+                -6.5,
+                3.0,
+                4.0
+              ],
+              [
+                -8.0,
+                -0.0,
+                3.0
+              ],
+              [
+                -10.0,
+                -3.0,
+                4.0
+              ],
+              [
+                -15.0,
+                -3.0,
+                4.0
+              ]
+            ],
+            "over": [
+              3
+            ]
+          }
+        ],
+        "frame": {
+          "at": [
+            0.0,
+            12.0,
+            103.0
+          ],
+          "x": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "y": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "z": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        }
+      },
+      "expected": {
+        "crossings": [
+          {
+            "id": 0,
+            "projected_point": [
+              -2.0,
+              0.0
+            ],
+            "branches": [
+              {
+                "strand": "EndA",
+                "strand_index": 0,
+                "segment": 1,
+                "t": 0.0,
+                "station": 1.0,
+                "at_vertex": true,
+                "marked_over": true
+              },
+              {
+                "strand": "EndB",
+                "strand_index": 1,
+                "segment": 1,
+                "t": 0.0,
+                "station": 1.0,
+                "at_vertex": true,
+                "marked_over": false
+              }
+            ],
+            "over_branch": 0,
+            "over_strand": "EndA",
+            "sign": 1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 1,
+            "projected_point": [
+              -5.0,
+              0.0
+            ],
+            "branches": [
+              {
+                "strand": "EndA",
+                "strand_index": 0,
+                "segment": 3,
+                "t": 0.0,
+                "station": 3.0,
+                "at_vertex": true,
+                "marked_over": false
+              },
+              {
+                "strand": "EndB",
+                "strand_index": 1,
+                "segment": 3,
+                "t": 0.0,
+                "station": 3.0,
+                "at_vertex": true,
+                "marked_over": true
+              }
+            ],
+            "over_branch": 1,
+            "over_strand": "EndB",
+            "sign": 1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 2,
+            "projected_point": [
+              -8.0,
+              0.0
+            ],
+            "branches": [
+              {
+                "strand": "EndA",
+                "strand_index": 0,
+                "segment": 5,
+                "t": 0.0,
+                "station": 5.0,
+                "at_vertex": true,
+                "marked_over": true
+              },
+              {
+                "strand": "EndB",
+                "strand_index": 1,
+                "segment": 5,
+                "t": 0.0,
+                "station": 5.0,
+                "at_vertex": true,
+                "marked_over": false
+              }
+            ],
+            "over_branch": 0,
+            "over_strand": "EndA",
+            "sign": 1,
+            "marks_agree": true,
+            "source": "point_mark"
+          }
+        ],
+        "guide_centerline_minimum_interstrand_distance_cm": 1.5596257347301046,
+        "closest": {
+          "segments": [
+            0,
+            1
+          ],
+          "a": [
+            -1.2162162162162162,
+            16.594594594594593,
+            101.4054054054054
+          ],
+          "b": [
+            -1.135135135135135,
+            15.378378378378379,
+            100.43243243243244
+          ]
+        },
+        "scope": "Authored diagram is valid and tails go down. Centerline separation does not certify4cmcloth; signs/roles are explicitly recorded."
+      }
+    },
+    {
+      "id": "EndA_approach_and_budget",
+      "expected": {
+        "name": "EndA",
+        "root_at_material_half_width": [
+          -4.8490667687377,
+          9.683823156785353,
+          103.00628359411172
+        ],
+        "original_root_centroid": [
+          -4.849239668333333,
+          9.684386761333332,
+          103.00646336283334
+        ],
+        "neutral_across_stations": [
+          0.0,
+          0.8022144402637569,
+          1.6044308928949815,
+          2.406645686797715,
+          3.2084103228903973,
+          4.010391637600652
+        ],
+        "inserted_center_across": 2.005195818800326,
+        "world_guide": [
+          [
+            -3.0,
+            16.0,
+            102.0
+          ],
+          [
+            0.0,
+            17.0,
+            101.0
+          ],
+          [
+            3.0,
+            16.0,
+            99.5
+          ],
+          [
+            0.0,
+            15.0,
+            98.0
+          ],
+          [
+            -3.0,
+            16.0,
+            96.5
+          ],
+          [
+            0.0,
+            17.0,
+            95.0
+          ],
+          [
+            3.0,
+            16.0,
+            93.0
+          ],
+          [
+            3.0,
+            16.0,
+            88.0
+          ]
+        ],
+        "approach_control_points": [
+          [
+            -4.8490667687377,
+            9.683823156785353,
+            103.00628359411172
+          ],
+          [
+            -2.721698203838026,
+            10.299963431313746,
+            102.86572444783576
+          ],
+          [
+            -5.007389632464587,
+            15.330870122511804,
+            102.6691298774882
+          ],
+          [
+            -3.0,
+            16.0,
+            102.0
+          ]
+        ],
+        "approach_length_cm": 7.15978825922635,
+        "quadrature_error_estimate": 7.984357289723482e-14,
+        "approach_polyline_length_cm": 7.15974485922398,
+        "flattening_corridor_bound_cm": 9.912496812052557e-05,
+        "guide_length_cm": 26.05828217712934,
+        "spare_tail_cm": 11.781929563644308,
+        "final_tail_world": [
+          3.0,
+          16.0,
+          76.21807043635569
+        ],
+        "tail_world_direction": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "initial_derivative_ahead_dot": 1.0,
+        "terminal_derivative_first_chord_dot": 1.0,
+        "minimum_sampled_centerline_body_distance_cm": 0.45390833051043994,
+        "distance_function_lower_bound_cm": 0.32880920554231824,
+        "maximum_waypoint_abs_body_winding": 3.975693351829396e-16,
+        "scope": "Centerline/approach budget and floating body-distance bound only; finite ribbon widths, yarn mesh, clamp30%, self-contact and body-sweep remain unaccepted."
+      }
+    },
+    {
+      "id": "EndB_approach_and_budget",
+      "expected": {
+        "name": "EndB",
+        "root_at_material_half_width": [
+          4.8497507870000565,
+          9.683660527948762,
+          103.00628680849721
+        ],
+        "original_root_centroid": [
+          4.849921393833333,
+          9.684224734999999,
+          103.00646627350001
+        ],
+        "neutral_across_stations": [
+          0.0,
+          0.8022325440630841,
+          1.604466882703397,
+          2.406699521674259,
+          3.2084823254873216,
+          4.010482100841048
+        ],
+        "inserted_center_across": 2.005241050420524,
+        "world_guide": [
+          [
+            3.0,
+            16.0,
+            102.0
+          ],
+          [
+            0.0,
+            15.0,
+            101.0
+          ],
+          [
+            -3.0,
+            16.0,
+            99.5
+          ],
+          [
+            0.0,
+            17.0,
+            98.0
+          ],
+          [
+            3.0,
+            16.0,
+            96.5
+          ],
+          [
+            0.0,
+            15.0,
+            95.0
+          ],
+          [
+            -3.0,
+            16.0,
+            93.0
+          ],
+          [
+            -3.0,
+            16.0,
+            88.0
+          ]
+        ],
+        "approach_control_points": [
+          [
+            4.8497507870000565,
+            9.683660527948762,
+            103.00628680849721
+          ],
+          [
+            2.722362825363534,
+            10.299973899067005,
+            102.86496760930649
+          ],
+          [
+            5.007493585207804,
+            16.6691645284026,
+            102.6691645284026
+          ],
+          [
+            3.0,
+            16.0,
+            102.0
+          ]
+        ],
+        "approach_length_cm": 7.414808723582714,
+        "quadrature_error_estimate": 1.4234456303942656e-13,
+        "approach_polyline_length_cm": 7.414758192749725,
+        "flattening_corridor_bound_cm": 9.99172755530401e-05,
+        "guide_length_cm": 26.05828217712934,
+        "spare_tail_cm": 11.526909099287945,
+        "final_tail_world": [
+          -3.0,
+          16.0,
+          76.47309090071205
+        ],
+        "tail_world_direction": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "initial_derivative_ahead_dot": 1.0,
+        "terminal_derivative_first_chord_dot": 1.0,
+        "minimum_sampled_centerline_body_distance_cm": 0.4539132994285427,
+        "distance_function_lower_bound_cm": 0.3288133821529885,
+        "maximum_waypoint_abs_body_winding": 3.224729052039399e-16,
+        "scope": "Centerline/approach budget and floating body-distance bound only; finite ribbon widths, yarn mesh, clamp30%, self-contact and body-sweep remain unaccepted."
+      }
+    }
+  ]
+}

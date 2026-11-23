@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "phase": "binary-only-product",
+  "readyToSend": false,
+  "plugin": "GraphCodeGroom",
+  "version": "0.1.13",
+  "engine": "5.7.4",
+  "engineBuildId": "47537391",
+  "platform": "Win64",
+  "sourceRevision": "e0af22daa6d5f774fd095cf5d36101970a8206c4",
+  "sourceWasDirty": true,
+  "packagedAtUtc": "2026-11-12T12:32:45.1046518Z",
+  "fileCount": 27,
+  "privateImplementationIncluded": false
+}

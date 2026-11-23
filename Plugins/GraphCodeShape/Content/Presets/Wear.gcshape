@@ -1,0 +1,299 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.1  shade:40
+
+# WEAR — the qualities, not the objects.
+#
+#   W = shape('/GraphCodeShape/Presets/Wear')
+#   Brick = mesh() { rect(w=21.5,h=10.25) extrude(height=6.5) $W.SurfaceRelief(wear=.6) }
+#
+# NOTHING HERE IS A SHAPE. Every entry is an `instruction()`, because what is
+# hard is not what an object IS — a spring is a swept helix and anyone writes
+# one — but whether it looks like something that has EXISTED. Unevenness and
+# erosion are load-bearing and almost nobody ships them, because they are not
+# nouns and an asset store cannot sell them.
+#
+#   EVEN READS AS A MATERIAL. UNEVEN READS AS A HISTORY.
+#
+# ---- EVERY ENTRY IS MARKED, AND THE MARKS MEAN EXACTLY THIS ---------------
+#
+#   PROVEN    the idiom is in `Content/Steampunk/Recipes/`, in a recipe that was
+#             built and looked at. The citation is the file and line.
+#   MEASURED  no corpus precedent, but built here with the numbers recorded —
+#             `/Game/__MCPTests/Chip/ChipStudy`, nine variants, 2026-09-19.
+#             It builds and the fold counts are known. NOBODY HAS LOOKED AT IT.
+#   UNPROVEN  neither. Written from the grammar. Treat as a draft.
+#
+# AND ONE CAVEAT THAT APPLIES TO THE WHOLE FILE: the calibration below was
+# corrected AFTER the last successful build, so the numbers in `ReliefMin` ..
+# `EdgeGrain` and the `Settle` call inside `Aged` are the precedent's and have
+# not themselves been run here. The structure was built and is sound; the
+# constants are cited, not measured. Say so to anyone who asks.
+#
+# **THE CORPUS WAS COUNTED BEFORE THIS FILE WAS WRITTEN AND IT CONTRADICTED
+# HALF OF IT.** Across 151 recipes: `roughen` appears in 19 files but `form=` in
+# exactly ONE; `relax` in ONE; `[convex]`/`[concave]` in NONE. Height-banded
+# wear — `[above=]`, `[below=]` — is in 13, and `fade=` is ordinary practice.
+# So the material-vocabulary of four noise forms is theory, and the worn arris
+# is NOT a bevel: `TownBrickStudy` lofts the top face inward instead.
+#
+# **CALIBRATION — AND THE FIRST VERSION OF THIS PARAGRAPH WAS WRONG, WHICH IS
+# WORTH KEEPING BECAUSE THE CORRECTION IS THE USEFUL PART.** It said *stay under
+# `scale/35`*, read off the light end of the corpus. Then `TownBrickStudy`'s own
+# constants were read: `SurfaceRelief .16-.48 @ scale 6.5` is 1:40 falling to
+# **1:13.5**, and `EdgeWeathering .06-.2 @ scale 1.8` is 1:30 falling to **1:9**.
+# The corpus deliberately goes far heavier than the rule I had written.
+#
+# WHAT MAKES THAT LEGAL IS THE LINE AFTER IT. The same recipe runs
+# `remesh(.2)` then `relax(.035)`, gated on `wear>.2`. **THE REPAIR PASS IS NOT
+# A TIDY-UP, IT IS WHAT BUYS THE AMPLITUDE.** Measured here both ways on the
+# same brick: the heavy edge breakup with no repair came back with 56 REAL FOLDS
+# and 3 crossings; the same amplitudes with `remesh`+`relax` after them are
+# sound. So the rule is not a ratio ceiling — it is:
+#
+#   A ROUGHEN ABOVE ABOUT 1:20 MUST BE FOLLOWED BY `remesh` THEN `relax`.
+#   Below that it stands on its own; above it and unrepaired, it folds.
+#
+# **COST, AND THE RULING THAT BOUNDS THIS WHOLE FILE.** `TownBrickStudy` states
+# it plainly: *fine pores and grain belong to the PBR normal; hairlines below
+# the width threshold are not tessellated into every town brick.* Geometry is
+# for damage you could catch a fingernail on. Everything finer is a material's
+# job, and an entry that tessellates it is a defect however good it looks in
+# one close-up. `roughen` refines to about a third of its feature size, so
+# TRIANGLES GROW AS 1/grain².
+#
+# **ONE DIAL, NOT TWELVE.** `wear=` runs 0 to 1 and every amplitude is
+# `min + (max-min)*wear`. That is the corpus's own interface and it is why
+# `Fresh`, `Worn` and `Old` are one recipe at three numbers.
+#
+# NAMES AVOID THE GROUP-5 RESERVED SET, so the seed is `noise=` and the feature
+# size is `grain=`: `seed` and `scale` are claimed by every group-5 verb and a
+# colliding parameter is one no caller could ever pass.
+
+build {
+  SM_Wear_Fresh   = $Ex_Fresh   [bounds=(22.5, 11.5, 7.5), triangles=60000]
+  SM_Wear_Worn    = $Ex_Worn    [bounds=(22.5, 11.5, 7.5), triangles=60000]
+  SM_Wear_Old     = $Ex_Old     [bounds=(22.5, 11.5, 7.5), triangles=90000]
+  SM_Wear_Even    = $Ex_Even    [bounds=(22.5, 11.5, 7.5), triangles=90000]
+  SM_Wear_Chipped = $Ex_Chipped [bounds=(22.0, 11.0, 7.0), triangles=30000]
+}
+
+# TWO SLOTS, AND THE SECOND ONE IS THE POINT. A broken face is not the outside
+# face with different roughness — it is DIFFERENT MATERIAL, freshly exposed.
+# `material($Face) [!cut]` paints everything the break did not touch and leaves
+# the cut faces wearing `$Broken`.
+# PROVEN — TownBrickStudy.gcshape:244, `material($WhiteBrick) [!cut]` over an
+# `$ExposedWhiteBrick` interior.
+Face   = material()
+Broken = material()
+
+# ---- the wear ramp, one dial ---------------------------------------------
+# PROVEN — TownBrickStudy.gcshape:190-201 drives every amplitude from `wear`.
+ReliefMin  = 0.11
+ReliefMax  = 0.34
+GrainSize  = 4.6
+ArrisInset = 0.035
+EdgeMin    = 0.04
+EdgeMax    = 0.14
+EdgeGrain  = 1.3
+
+# ---- the primitives of wear ----------------------------------------------
+
+# THE WORN ARRIS, AND IT IS NOT A BEVEL. `loft` the top face inward so the
+# edge falls away as an inset taper — which is what a handled edge does and
+# what a chamfer does not. A bevel reads as machined; this reads as worn.
+# It also sidesteps a rule that catches every other approach: `[concave]` and
+# `[convex]` partition `[sharp]` and share its `shade:` threshold, so once an
+# arris is rounded it is NO LONGER SELECTABLE — `round(...) [convex]` after any
+# earlier bevel is refused as selecting no edges. Edge selection is single-use.
+# PROVEN — TownBrickStudy.gcshape:196, `loft(to=$Rim, scale=(1-inset,1-inset,1))`.
+#
+# CALLER'S CONTRACT: this runs BETWEEN the extrude and everything else, and it
+# needs the outline still in hand as `$Rim`. It is spelled as a recipe here for
+# the reading; in a body, write the two lines.
+
+# THE BASE SURFACE. The one roughen that stands for the material itself.
+# `by` is held under `grain/35` by construction, which is the ratio the corpus
+# ships and the one a heavier variant folded at.
+# PROVEN — 19 recipes; `roughen(by=0.055,scale=4.2,seed=41) [side]` is typical.
+SurfaceRelief = instruction(wear=.5, grain=4.6, noise=41) {
+  roughen(by=$ReliefMin+($ReliefMax-$ReliefMin)*$wear, scale=$grain, seed=$noise)
+}
+
+# THE REPAIR PASS AFTER CUTS. `remesh` unifies the long thin triangles a
+# boolean leaves, then `relax` settles what the noise left. Run it AFTER every
+# cut is finished, never between them.
+# PROVEN — TownBrickStudy.gcshape:238-239, `remesh($resolution)` then
+# `if ($settle>0) { relax($settle) }`.
+# VERIFICATION STATE, STATED RATHER THAN IMPLIED. `size=0.35` is what was
+# actually built here — `remesh(0.35)` reported a 0.1-million-cell grid, 10,840
+# triangles in and 13,640 out, and the result was sound. `size=0.2` is the
+# PRECEDENT's number (`DamageResolution`) on a brick half again as large, so it
+# is proven in its own file and NOT verified in this one; it is roughly five
+# times the cells. The payload carrying it did not return an answer, and the
+# host was being cycled by another agent at the time, so that is not evidence
+# either way — it is simply unverified. Raise it to 0.35 if a build is slow.
+Settle = instruction(size=0.2, d=0.035) {
+  remesh($size)
+  relax($d)
+}
+
+# ---- unevenness: a zone decides where, not a noise field ------------------
+
+# THE ZONE IS A SHELL — a box with a smaller box taken out of it — so a
+# treatment reaches the outer band of a shape and nothing inside it. THIS is
+# the mechanism behind "uneven": the selection says where, and the noise only
+# says what. A field applied everywhere is what reads as a rough material.
+# PROVEN — TownBrickStudy.gcshape:181, `EdgeWeatheringZone` built exactly so
+# and consumed as `[in=$EdgeWeatheringZone, above=65%, fade=.8]`.
+EdgeZone = mesh(w=23, d=12, h=8, wall=3) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  subtract($EdgeCore, w=$w-$wall*2, d=$d-$wall*2, h=$h)
+}
+
+# Sized to THIS brick, not to the one the precedent used. The core is taller
+# than the zone and sunk a centimetre, so what is left is a vertical picture
+# frame — an outer ring with no lid — and `above=` then takes its upper part.
+EdgeCore = mesh(w=17, d=6, h=10) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  place(by=(0.0, 0.0, -1.0))
+}
+
+# BROKEN PLATES AROUND THE UPPER EDGE, NOT OVER EVERY FACE. Two acts: push the
+# band in, then break it up. The `above=` fraction and the `fade=` are what keep
+# it from becoming a texture — it has a top, and it stops.
+# `form=faceted` is the one form the corpus uses, and this is the recipe it
+# uses it in: flat plates meeting at sharp edges is what fired clay does.
+# PROVEN — TownBrickStudy.gcshape:199-201, both lines, same zone and fade.
+EdgeBreakup = instruction(wear=.5, edge=0.8, noise=853) {
+  displace(by=-$wear*.24) [in=$EdgeZone, above=72%, fade=$edge]
+  roughen(by=$EdgeMin+($EdgeMax-$EdgeMin)*$wear, scale=$EdgeGrain, seed=$noise, form=faceted) [in=$EdgeZone, above=65%, fade=$edge]
+}
+
+# WEATHER COMES FROM ABOVE and reaches the top face only. A shape weathered
+# evenly on six sides has been floating.
+# PROVEN — `roughen(by=.18,scale=48,seed=613) [top,fade=18]` and
+# `roughen(by=1.1,scale=7,seed=$wearseed) [top,fade=3]`.
+Weather = instruction(by=.18, grain=48, noise=613, edge=18) {
+  roughen(by=$by, scale=$grain, seed=$noise) [top, fade=$edge]
+}
+
+# RISING DAMP AND GROUND SPLASH reach a bottom band and stop. `below=` is the
+# Z ruler and it is what makes this positional rather than random.
+# PROVEN — `roughen(by=.45,scale=14,seed=91,along=Z) [below=3]`.
+GroundWear = instruction(by=.45, grain=14, noise=91, h=3) {
+  roughen(by=$by, scale=$grain, seed=$noise, along=Z) [below=$h]
+}
+
+# BEDDING — sedimentary rock, laid-up slate, a stratified cliff. THE WHOLE
+# ENTRY IS THE ANISOTROPIC `scale=`: long in X and Y, short in Z, so the noise
+# varies with height and holds across the face. Banded so it does not run to
+# the ends.
+# PROVEN — `roughen(by=0.65,scale=(200,200,6),seed=$D.Seed) [above=20,below=80,fade=10]`.
+Stratify = instruction(by=.65, spread=200, bed=6, noise=77, low=20, high=80, edge=10) {
+  roughen(by=$by, scale=($spread, $spread, $bed), seed=$noise) [above=$low, below=$high, fade=$edge]
+}
+
+# ---- brittle damage -------------------------------------------------------
+
+# THE CUTTER IS A BALL, AND THE REASON IS STRUCTURAL AS WELL AS VISUAL. A
+# brittle material breaks CONCHOIDALLY — a shallow concave dish with a sharp
+# rim — which a flat-faced wedge cannot make at all. Measured here: the ball
+# leaves 0 folds against the wedge's 21, and after roughening the break face,
+# 0 real folds against the wedge's 1. A cutter with a thin tapering point
+# leaves near-coincident surfaces and the next `roughen` pushes them through
+# each other; the build says so — *100 of 752 sampled vertices have another
+# face within 0.12 cm*.
+# MEASURED — /Game/__MCPTests/Chip/ChipStudy variants A-D. NO CORPUS
+# PRECEDENT: the shipped recipes cut chips with drawn outline fields, not balls.
+Bite = mesh(r=2.0) {
+  arc(radius=$r, from=-90.0, to=90.0)
+  revolve(degrees=360.0)
+}
+
+# ONE CHIP. Put it on an ARRIS, never a face: damage you can only see by its
+# shading is a texture, and a chip has to break the silhouette to read as one.
+# The second line is what makes it a break rather than a dent — the new faces
+# wear the `cut` tag, so roughening exactly those leaves the weathered outside
+# alone.
+# MEASURED — variant D, 1,950 triangles, 6 creases, 0 real folds.
+# **THE `[cut]` ROUGHEN HAS NO CORPUS PRECEDENT AT ALL** — zero of 151 recipes
+# roughen a cut face. The corpus distinguishes a break by MATERIAL instead
+# (`material($Face) [!cut]`), which is cheaper and proven. Prefer that; reach
+# for this only where the break must read in silhouette.
+Chip = instruction(r=2.0, origin=(0,0,0), by=0.06, grain=0.6, noise=3) {
+  subtract($Bite, r=$r, at=$origin)
+  roughen(by=$by, scale=$grain, seed=$noise, form=faceted) [cut]
+}
+
+# A SPALL — the same break gone wide and shallow. Concrete and fired brick shed
+# material in broad thin sheets, not in cubes, and the difference between a chip
+# and a spall is PROPORTION, not mechanism.
+# UNPROVEN. It follows from `Chip` by squashing the cutter and nothing has been
+# built with it. The `scale=` on a subtract is ordinary group-5 grammar, but the
+# result has not been seen.
+Spall = instruction(r=4.5, depth=0.35, origin=(0,0,0), by=0.05, grain=0.9, noise=7) {
+  subtract($Bite, r=$r, at=$origin, scale=(1.0, 1.0, $depth))
+  roughen(by=$by, scale=$grain, seed=$noise, form=faceted) [cut]
+}
+
+# ---- what is deliberately NOT here ---------------------------------------
+#
+# `Stipple`, and any micro-roughen under about 0.3 cm. It was written and cut:
+# the corpus rules that fine pores and grain belong to the PBR normal, and a
+# measured micro pass over an already-roughened face bought 2 REAL FOLDS and
+# five times the triangles for detail no silhouette can carry.
+#
+# `ArrisWear` as `round(r) [convex]`. Written, built clean, and cut anyway:
+# zero of 151 recipes use `[convex]`, the proven arris is a loft inset, and a
+# bevel reads machined where a loft reads worn.
+#
+# `billow` and `ridged` recipes. Both are real noise forms and neither has ever
+# been used in a shipped recipe here, so there is no calibration to copy and
+# nothing to cite. They belong in a study before they belong in a library.
+
+# ---- the shop window: one brick, four ages -------------------------------
+# The same recipe at four numbers, which is the corpus's own demonstration.
+
+Raw = mesh(w=21.5, d=10.25, h=6.5) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+}
+
+# THE AGES HAVE TO DIFFER IN KIND, NOT ONLY IN AMPLITUDE. The first version of
+# this entry ran only `SurfaceRelief` and `Weather`, and the build reported
+# Fresh, Worn and Old at 6444 / 6450 / 6450 triangles and 1433 / 1430 / 1432
+# cm3 — a wear dial that changed nothing a viewer could see. Edge breakup is
+# what makes an old brick old, and it is gated the way the precedent gates it.
+# PROVEN gate — TownBrickStudy.gcshape:197, `if ($wear>.2) { ... }`.
+Aged = mesh(wear=.5, noise=41) {
+  add($Raw)
+  $SurfaceRelief(wear=$wear, grain=$GrainSize, noise=$noise)
+  $Weather(by=.06, grain=6, noise=$noise+13, edge=2)
+  if ($wear>.35) { $EdgeBreakup(wear=$wear, edge=0.8, noise=$noise+211) }
+  if ($wear>.35) { $Settle(size=0.2, d=0.035) }
+  material($Face) [!cut]
+}
+
+Ex_Fresh = mesh() { add($Aged, wear=.15, noise=41) }
+Ex_Worn  = mesh() { add($Aged, wear=.6,  noise=93) }
+Ex_Old   = mesh() { add($Aged, wear=.95, noise=137) }
+
+# THE MISTAKE, BUILT ON PURPOSE, so the library carries its own counter-example.
+# One amplitude over every face at 1:13 — far outside the 1:35 the corpus ships.
+# It reads as a rough material rather than a used object, and measured it
+# carries TEN REAL FOLDS. Evenness is not merely duller; it is unsound.
+Ex_Even = mesh() {
+  add($Raw)
+  round(0.12, segments=2) [sharp]
+  roughen(by=0.09, scale=1.2, seed=5)
+}
+
+Ex_Chipped = mesh() {
+  add($Raw)
+  round(0.12, segments=2) [sharp]
+  $SurfaceRelief(wear=.5, grain=$GrainSize, noise=41)
+  $Chip(origin=(4.0, 5.125, 6.5))
+  $Settle(size=0.2, d=0.035)
+  material($Face) [!cut]
+}

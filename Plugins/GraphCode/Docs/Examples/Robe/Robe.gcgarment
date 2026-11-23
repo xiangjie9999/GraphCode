@@ -1,0 +1,71 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/Robe/Built
+# Robe: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_WizardRobe = $Robe
+  T_RobeStitches = bake(decal, resolution=2048)
+}
+
+Kit = shape('/Game/GraphCodeExamples/Garment/Robe/RobeParts')
+Twill = fabric(weight=281.88, thickness=0.70mm, stretch=(3.2%, 2.3%), shear=148, stiffness=(2.24, 1.84), friction=0.53)
+
+Neck = ring((0.000, 9.541, 142.562), (3.611, 9.198, 142.658), (6.673, 8.130, 143.128), (8.718, 6.151, 144.243), (9.437, 3.081, 145.667), (8.718, -0.465, 146.627), (6.673, -3.436, 147.213), (3.611, -5.454, 147.702), (0.000, -6.248, 147.922), (-3.611, -5.454, 147.702), (-6.673, -3.436, 147.213), (-8.718, -0.465, 146.627), (-9.437, 3.081, 145.667), (-8.718, 6.151, 144.243), (-6.673, 8.130, 143.128), (-3.611, 9.198, 142.658)) {
+  expand(0.37)
+}
+Face = ring((0.000, 6.135, 149.360), (6.591, 5.656, 164.287), (0.000, 8.726, 172.279), (-6.520, 5.855, 164.286))
+Chest = ring((0.000, 13.400, 128.000), (16.840, 1.400, 128.000), (0.000, -10.600, 128.000), (-16.840, 1.400, 128.000)) {
+  expand(2.601)
+}
+Waist = ring((0.000, 9.802, 105.000), (13.502, 0.000, 105.000), (0.000, -9.800, 105.000), (-13.502, 0.000, 105.000)) {
+  expand(0.15)
+}
+Hem = ring($Waist) {
+  move((0, 0, -76.91))
+  expand(33.81)
+}
+Armhole_L = ring((24.158, 4.407, 141.063)) {
+  rotate((0, -20, 0))
+  expand(2)
+}
+Armhole_R = ring((-24.158, 4.407, 141.063)) {
+  rotate((0, 20, 0))
+  expand(2)
+}
+Wrist_L = ring((67.920, 2.323, 139.144)) {
+  expand(6.52)
+}
+Wrist_R = ring((-67.920, 2.323, 139.144)) {
+  expand(6.52)
+}
+
+Yoke = profile(0=0%, 1=100%)
+
+HoodRise = profile(0=35.2, 0.0173=36.4, 0.0345=37.7, 0.0517=39.1, 0.069=39.8, 0.0862=42.0, 0.1034=43.0, 0.1207=44.2, 0.138=45.1, 0.1552=45.7, 0.1724=46.4, 0.1897=46.4, 0.2069=45.4, 0.2242=45.0, 0.2414=45.7, 0.2586=48.8, 0.2758=48.1, 0.2931=47.8, 0.3104=45.6, 0.3276=43.7, 0.3448=41.7, 0.362=39.4, 0.3793=33.3, 0.3966=30.8, 0.4138=27.3, 0.431=23.8, 0.4483=20.5, 0.4655=17.8, 0.4828=15.0, 0.5=14.3, 0.5172=15.0, 0.5345=17.8, 0.5517=20.5, 0.569=23.8, 0.5862=27.3, 0.6034=30.8, 0.6207=33.3, 0.638=39.4, 0.6552=41.7, 0.6724=43.7, 0.6896=45.6, 0.7069=47.8, 0.7242=48.1, 0.7414=48.8, 0.7586=45.7, 0.7758=45.0, 0.7931=45.4, 0.8104=46.4, 0.8276=46.4, 0.8448=45.7, 0.862=45.1, 0.8793=44.2, 0.8966=43.0, 0.9138=42.0, 0.931=39.8, 0.9483=39.1, 0.9655=37.7, 0.9828=36.4, 1=35.2)
+
+Sleeve_L = garment($Armhole_L, $Wrist_L, loose=100%, fabric=$Twill) {
+  construct()
+  band($Wrist_L, width=5.08cm, fabric=$Twill)
+}
+Sleeve_R = garment($Armhole_R, $Wrist_R, loose=100%, fabric=$Twill) {
+  construct()
+  band($Wrist_R, width=5.08cm, fabric=$Twill)
+}
+
+Robe = garment($Neck, $Chest, $Waist, $Hem, loose@1=$Yoke, loose@2=100%, loose@3=100%, fabric=$Twill) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  add($Sleeve_L)
+  add($Sleeve_R)
+  construct(rim=(turned=2.5cm))
+  HalfL = line($Neck@0, $Neck@0.25, $Neck@0.5)
+  HalfR = line($Neck@1, $Neck@0.75, $Neck@0.5)
+  HoodL = extend($HalfL, $HoodRise, 132.0%)
+  HoodR = extend($HalfR, $HoodRise, 132.0%)
+  sew($HoodL, $HoodR, match=ease)
+  cut($Face)
+  band($Hem, width=10.16cm, fabric=$Twill)
+  stitch($Neck, offset=1cm)
+  add($Kit.CordLength, along=$Waist, repeat=48)
+  add($Kit.Knot, at=$Waist@0.25, hold=0)
+  settle(time=5)
+}

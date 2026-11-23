@@ -1,0 +1,48 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.13",
+  "FriendlyName": "GraphCode Groom",
+  "Description": "Declarative .gcgroom hair authoring, native Groom publication and Groom asset projection.",
+  "Category": "Editor",
+  "CreatedBy": "OraStudio",
+  "CanContainContent": true,
+  "IsBetaVersion": true,
+  "Modules": [
+    {
+      "Name": "GraphCodeGroom",
+      "Type": "Editor",
+      "LoadingPhase": "Default",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "GraphCode",
+      "Enabled": true
+    },
+    {
+      "Name": "HairStrands",
+      "Enabled": true
+    },
+    {
+      "Name": "GeometryScripting",
+      "Enabled": true
+    },
+    {
+      "Name": "GeometryProcessing",
+      "Enabled": false,
+      "Optional": true
+    }
+  ],
+  "Installed": true,
+  "EnabledByDefault": false,
+  "EngineVersion": "5.7.0",
+  "SupportedTargetPlatforms": [
+    "Win64"
+  ]
+}

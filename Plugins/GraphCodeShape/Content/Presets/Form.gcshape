@@ -1,0 +1,81 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.5  shade:40
+
+# FORM — a shape's surface reshaped by a formula of each point, composed from `warp()` and
+# nothing else (2026-10-30). `warp()` is GraphCode's per-point block: Blender's Set Position
+# with a field, three.js's loop over a geometry's positions. These recipes are verbs made of
+# it, and an AI writes more the same way, in a file of its own, with no build.
+#
+#   Form = shape('/GraphCodeShape/Presets/Form')
+#   Body = mesh() {
+#     rect(w=420.0, h=180.0)  extrude(height=110.0)
+#     $Form.CurveIn(depth=5.0) [side, smooth=4.0]
+#   }
+#
+# THE CALLER OWNS THE REGION, as every instruction here does: the bracket on the call is
+# the surface reshaped, and `point.t.x` runs 0 to 1 across THAT region, not the whole shape.
+# A WARP IS ONLY AS SMOOTH AS THE POINTS IT MOVES: a box has eight, so give the call
+# `[smooth=<cm>]`, or `subdivide`/`remesh` first.
+
+build {
+  SM_Form_Car = $Car_Ex
+}
+
+# A surface pulled in along its own normal, deepest halfway along x and not at all at the
+# ends: a bodyside's tuck, a waist, a hull's tumble inward.
+CurveIn = instruction(depth=4.0) {
+  warp(by=-$depth * sin(180 * point.t.x))
+}
+
+# The opposite: a surface swelled out along its normal, fullest halfway along x — a fender's
+# crown, a fuller middle.
+Bulge = instruction(height=4.0) {
+  warp(by=$height * sin(180 * point.t.x))
+}
+
+# A surface sagged straight down, deepest halfway along x — a roof's dip, a seat's hollow.
+Sag = instruction(depth=2.0) {
+  warp(by=(0, 0, -$depth * sin(180 * point.t.x)))
+}
+
+# Narrower toward the top, from `start` (a fraction of the height) up: a car's tumblehome, a
+# cabin leaning in above the beltline. `amount` is the fraction of the width lost at the top.
+Tumblehome = instruction(amount=0.15, start=0.5) {
+  warp(to=(point.x, point.y * (1 - $amount * clamp((point.t.z - $start) / (1 - $start), 0, 1)), point.z))
+}
+
+# Wheel arches flared out: the flank pushed out around two axles (`front` and `rear`, x in cm),
+# fullest over each and nothing `reach` cm either side, below the beltline only — full under
+# `below` minus a tenth of the height, easing to nothing at `below`. `flare` is the fraction of the
+# width added. Every edge of it eases in (a squared cosine), so no crease is made.
+Arches = instruction(front=-135.0, rear=140.0, reach=55.0, flare=0.06, below=0.55) {
+  warp(to=(point.x, point.y * (1 + $flare * max(pow(cos(90 * clamp((point.x - $front) / $reach, -1, 1)), 2), pow(cos(90 * clamp((point.x - $rear) / $reach, -1, 1)), 2)) * pow(cos(90 * clamp((point.t.z - $below + 0.1) / 0.1, 0, 1)), 2)), point.z))
+}
+
+# A turn about the vertical that grows with height, `degrees` at the top: a twisted column,
+# a drill flute's body, a vase.
+Twist = instruction(degrees=30.0) {
+  warp(to=(point.x * cos($degrees * point.t.z) - point.y * sin($degrees * point.t.z), point.x * sin($degrees * point.t.z) + point.y * cos($degrees * point.t.z), point.z))
+}
+
+# ---- the example ---------------------------------------------------------------
+
+# A car body from two curves a designer would state: a plan (the width along the length, as a
+# fraction) and a roofline (the height along the length, in cm). A rounded slab is given points
+# by `remesh` (and `relax` takes the rebuild's small ripples out: measured, the lowest waterline
+# went from 2 reversals to none), then one warp maps it: x stays, y follows the plan, z runs from 14 cm off the
+# ground to the roof. Then the cabin leans in above the beltline and the wheel arches flare out.
+Plan = profile(0=.62, .15=.95, .5=1, .85=.96, 1=.8)
+Roof = profile(0=48, .3=62, .45=112, .62=116, .85=90, 1=78)
+Car_Ex = mesh() {
+  rect(w=450.0, h=190.0)
+  round(40.0)
+  extrude(height=100.0)
+  round(25.0) [top]
+  remesh(4.0)
+  relax(1.0)
+  warp(to=(point.x, point.y * $Plan(point.t.x), lerp(14, $Roof(point.t.x), point.t.z)))
+  $Tumblehome(amount=0.25, start=0.5)
+  $Arches(front=-135.0, rear=140.0, reach=55.0, flare=0.06)
+  # Paint, not a texture: the rebuild's automatic UV islands would each draw a faint line in Unreal.
+  uv(none)
+}

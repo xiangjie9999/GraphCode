@@ -1,0 +1,8 @@
+gcw 1
+
+terrains {
+  Ground = terrain(base=flat(z=500)) {
+    Hill = stamp(source=file'AsymmetricHeightStamp_Gray16.png', at=(21000,25000), width=24000, length=28000, rotation=25, range=(Min=-2000,Max=2000), falloff=2500, blend=add)
+    Shoulder = stamp(source=file'AsymmetricHeightStamp_Gray16.png', at=(34000,28000), width=16000, length=20000, rotation=130, range=(Min=-1000,Max=1000), falloff=2200, strength=0.65, blend=add)
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "suite": "GraphCode",
+  "version": "0.1.13",
+  "platform": "Win64",
+  "format": "tar.xz",
+  "engine": "5.7.4",
+  "engineBuildId": "47537391",
+  "products": [
+    "GraphCode",
+    "GraphCodePlay",
+    "GraphCodeMove",
+    "GraphCodeWorld",
+    "GraphCodeShape",
+    "GraphCodeRig",
+    "GraphCodeGroom",
+    "GraphCodeCoreExtension",
+    "GraphCodeGarment",
+    "GraphCodeIntegrate"
+  ],
+  "size": 130544448,
+  "sha256": "213830bee5c08de3214113aca55642385c848e95f7adf9a2168c2596045f0076",
+  "files": 1156,
+  "parts": [
+    {
+      "index": 1,
+      "name": "part-001.bin",
+      "size": 50331648,
+      "sha256": "d4bf1e2b65bce9912eb00633bb6b5ff9f265ea929d655f32887e5977feb9776b"
+    },
+    {
+      "index": 2,
+      "name": "part-002.bin",
+      "size": 50331648,
+      "sha256": "eedbfe807859e857fe50732d1cab06e3586d58aaf88943f8286e1888208d3c7c"
+    },
+    {
+      "index": 3,
+      "name": "part-003.bin",
+      "size": 29881152,
+      "sha256": "833e5ffe302f131253163dc3e8fd33353d97c12a57b857fa228b895c1ff2e518"
+    }
+  ],
+  "notes": "Garment: band wind, cut lips, hang() solver words and spacing=, extend(..., over), band(ends=), settle guide hem lift, curtains; plus Move, Shape and core updates. Shape presets come from the Market; built preset meshes are no longer bundled (smaller download).",
+  "publishedAt": "2026-11-20T05:55:51Z",
+  "source": {
+    "commit": "91108615db57b223ac749046fdb26dcabbb63f09",
+    "dirty": true,
+    "builtAtUtc": "11/20/2026 05:35:02"
+  }
+}

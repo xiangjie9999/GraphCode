@@ -1,0 +1,25 @@
+gcshape 1 into:/Game/OrganicImported smooth:0.5 shade:80 uv:keep
+# Imported receiver example. Import the normalized 100 cm torso as
+# /Game/OrganicImported/Source/SM_Torso.SM_Torso first (gc_import plan, then execute).
+# These measurements belong to the downloaded Bigfoot torso, not arbitrary anatomy.
+build { SM_TorsoNeck = $Joined [pivot=(0,0,0)] }
+# keep(largest) BEFORE remesh: the downloaded torso also holds a separate inner pelvis piece, and a voxel remesh
+# welds every shell it is given into one surface (here one deep dent across both hips, which no thigh can seat
+# into). Drop the loose piece first, close the body's tears, then drop any specks the rebuild left.
+Torso = mesh() {
+  add(mesh('/Game/OrganicImported/Source/SM_Torso',topology=adaptive))
+  keep(largest) [topology=adaptive]
+  remesh(1) [topology=adaptive]
+  keep(largest) [topology=adaptive]
+  save($NeckBand) [above=85]
+  socket(Neck,at=(0,0,94),facing=+Z,up=+X,type='example/neck',transition=$NeckBand)
+}
+Collar = mesh() {
+  circle(radius=9)
+  extrude(height=30)
+  socket(Root,at=(0,0,0),facing=-Z,up=+X,type='example/neck')
+}
+Joined = mesh() {
+  body = add($Torso)
+  neck = add($Collar,join=organic,into=$body.Neck,using=Root,fit=frame,tolerance=.5)
+}

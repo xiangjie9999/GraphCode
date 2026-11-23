@@ -1,0 +1,53 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.2  shade:40
+
+# BROKEN TIMBER MAPS — the TEXTURE LAYER of `BrokenTimber.gcshape`, in a file of
+# its own so the meshes build in about two and a half minutes and the seven
+# bakes (about five more) are optional: build this file only when you want the
+# fibre maps. Each line imports the `BrokenTimber` mesh with its default
+# arguments; for a mesh with other arguments, write the same two lines with yours.
+#
+# Owner, 2026-11-18: *"some uses texture instead of mesh."* Each `BrokenTimber` mesh is
+# the GEOMETRY layer — silhouette and coarse/mid chaos: shelves, spires,
+# ribbons, the peeled strip, chewed edges. The FIBRE layer — grooves and fine
+# ridges along the grain, hairs — is a map, not triangles: each `…Detail` below
+# is the same break with one fine `ridged` roughen on its torn (`[cut]`) faces,
+# STRETCHED ALONG THE GRAIN about six times its width, and a
+# build line bakes it onto the light mesh with `[maps=(normal, ao),
+# from=$…Detail]`. Its smallest bump (0.5-1.5 cm) keeps
+# the detail source to 45k-180k triangles (a roughen refines to a third of its
+# smallest `scale=`). One roughen per face, so it cannot fold.
+# NOTE: a bake needs UV0 to be a unique layout, and the family's UV0 TILES
+# along the grain, so the bake lays out its own UV0 on the baked line (Shape
+# writes one UV channel): the `…Maps` lines are the texture-layer previews, the
+# plain lines keep the grain-aligned tiling UV0.
+
+build {
+  SM_BrokenTimber_PlankMaps   = $Plank        [bounds=(23.5, 121.0, 11.0), triangles=12000, maps=(normal, ao), from=$PlankDetail, resolution=1024, supersample=1]
+  SM_BrokenTimber_HalvesMaps  = $Halves       [bounds=(36.0, 160.0, 11.0), triangles=24000, maps=(normal, ao), from=$HalvesDetail, resolution=1024, supersample=1]
+  SM_BrokenTimber_RottenMaps  = $Rotten       [bounds=(23.5, 101.0, 4.5), triangles=12000, maps=(normal, ao), from=$RottenDetail, resolution=1024, supersample=1]
+  SM_BrokenTimber_SplitMaps   = $Split        [bounds=(29.0, 121.0, 4.5), triangles=12000, maps=(normal, ao), from=$SplitDetail, resolution=1024, supersample=1]
+  SM_BrokenTimber_BeamMaps    = $Beam         [bounds=(21.0, 161.0, 21.0), triangles=16000, maps=(normal, ao), from=$BeamDetail, resolution=1024, supersample=1]
+  SM_BrokenTimber_PostMaps    = $Post         [bounds=(13.0, 13.0, 111.0), triangles=12000, maps=(normal, ao), from=$PostDetail, resolution=1024, supersample=1]
+  SM_BrokenTimber_SlatMaps    = $Slat         [bounds=(10.0, 61.0, 5.0), triangles=12000, maps=(normal, ao), from=$SlatDetail, resolution=1024, supersample=1]
+}
+
+Timber = shape('/GraphCodeShape/Presets/BrokenTimber')
+
+# the light meshes, exactly as `BrokenTimber` builds them
+Plank  = mesh() { add($Timber.BrokenPlank) }
+Halves = mesh() { add($Timber.PlankHalves) }
+Rotten = mesh() { add($Timber.RottenPlank) }
+Split  = mesh() { add($Timber.SplitBoard) }
+Beam   = mesh() { add($Timber.BrokenBeam) }
+Post   = mesh() { add($Timber.BrokenPost) }
+Slat   = mesh() { add($Timber.BrokenSlat) }
+
+# the detail sources the maps are baked from: one ridged roughen on the torn faces,
+# about six times longer along the grain than across (faceted for rot)
+PlankDetail  = mesh() { add($Timber.BrokenPlank) roughen(by=0.07, scale=(0.9, 5.4, 0.9), seed=8, form=ridged) [cut] }
+HalvesDetail = mesh() { add($Timber.PlankHalves) roughen(by=0.07, scale=(0.9, 5.4, 0.9), seed=8, form=ridged) [cut] }
+RottenDetail = mesh() { add($Timber.RottenPlank) roughen(by=0.08, scale=(0.9, 2.7, 0.9), seed=10, form=faceted) [cut] }
+SplitDetail  = mesh() { add($Timber.SplitBoard) roughen(by=0.06, scale=(0.9, 5.4, 0.9), seed=12, form=ridged) [cut] }
+BeamDetail   = mesh() { add($Timber.BrokenBeam) roughen(by=0.12, scale=(1.5, 9.0, 1.5), seed=14, form=ridged) [cut] }
+PostDetail   = mesh() { add($Timber.BrokenPost) roughen(by=0.08, scale=(1.0, 1.0, 6.0), seed=18, form=ridged) [cut] }
+SlatDetail   = mesh() { add($Timber.BrokenSlat) roughen(by=0.05, scale=(0.5, 3.0, 0.5), seed=16, form=ridged) [cut] }

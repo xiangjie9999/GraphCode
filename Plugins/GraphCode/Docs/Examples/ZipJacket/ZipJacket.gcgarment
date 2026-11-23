@@ -1,0 +1,116 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/ZipJacket/Built
+# ZipJacket: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_ZipJacket = $Jacket
+  T_ZipJacketStitches = bake(decal, resolution=2048)
+}
+
+Zip = shape('/Game/GraphCodeExamples/Garment/ZipJacket/ZipJacketParts')
+
+Fleece = fabric(weight=288, thickness=1.69mm, stretch=(7.27%, 29.93%), shear=26.6, stiffness=(0.80, 0.79), friction=1.92)
+Rib = fabric(weight=250, thickness=1.78mm, stretch=(122.47%, 119%), shear=11.74, stiffness=(1.18, 0.99), friction=1.75)
+
+Neck = ring((0.000, 6.985, 146.722), (3.523, 6.102, 147.003), (6.261, 3.615, 147.366), (7.183, 0.000, 147.584), (6.034, -3.484, 147.570), (3.317, -5.745, 147.528), (0.000, -6.462, 147.574), (-3.317, -5.745, 147.528), (-6.034, -3.484, 147.570), (-7.183, 0.000, 147.584), (-6.261, 3.615, 147.366), (-3.523, 6.102, 147.003)) {
+  expand(0.32)
+}
+Chest = ring((0.000, 12.969, 125.130), (16.597, 1.400, 125.130), (0.000, -10.457, 125.130), (-16.597, 1.400, 125.130)) {
+  expand(4.84)
+}
+HemTop = ring((0.000, 10.200, 91.000), (17.175, -0.750, 91.000), (0.000, -12.200, 91.000), (-17.175, -0.750, 91.000)) {
+  expand(4.74)
+}
+Hem = ring((0.000, 9.846, 86.960), (16.788, -0.750, 86.960), (0.000, -11.341, 86.960), (-16.788, -0.750, 86.960)) {
+  expand(1.12)
+}
+Armhole_L = ring((17.100, 0.000, 142.880), (17.100, 6.020, 136.990), (16.883, 1.500, 128.620), (17.100, -6.020, 136.990)) {
+  expand(1.00)
+}
+Armhole_R = ring((-17.100, 0.000, 142.880), (-17.100, 6.020, 136.990), (-16.883, 1.500, 128.620), (-17.100, -6.020, 136.990)) {
+  expand(1.00)
+}
+Wrist_L = ring((68.100, 0.000, 139.890), (68.100, 3.436, 137.000), (68.100, 0.000, 134.110), (68.100, -3.436, 137.000)) {
+  expand(0.08)
+}
+Wrist_R = ring((-68.100, 0.000, 139.890), (-68.100, 3.436, 137.000), (-68.100, 0.000, 134.110), (-68.100, -3.436, 137.000)) {
+  expand(0.08)
+}
+
+Forearm_L = ring((65.460, 0.000, 140.154), (65.460, 3.670, 137.000), (65.460, 0.000, 133.846), (65.460, -3.670, 137.000)) {
+  expand(2.48)
+}
+Forearm_R = ring((-65.460, 0.000, 140.154), (-65.460, 3.670, 137.000), (-65.460, 0.000, 133.846), (-65.460, -3.670, 137.000)) {
+  expand(2.48)
+}
+
+Yoke = profile(0=0%, 1=100%)
+
+SleevePocketAt_L = ring($Armhole_L) {
+  move((22.4, 0, 0))
+}
+
+Sleeve_L = garment($Armhole_L, $Forearm_L, $Wrist_L, loose=100%, fabric=$Fleece) {
+  construct()
+  band($Wrist_L, width=5cm, fabric=$Rib, cut=85%)
+  add($Zip.SleevePocket, at=$SleevePocketAt_L@0)
+}
+Sleeve_R = garment($Armhole_R, $Forearm_R, $Wrist_R, loose=100%, fabric=$Fleece) {
+  construct()
+  band($Wrist_R, width=5cm, fabric=$Rib, cut=85%)
+}
+Jacket = garment($Neck, $Chest, $HemTop, $Hem, loose@1=$Yoke, loose@2=100%, loose@3=100%, fabric=$Fleece) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  add($Sleeve_L)
+  add($Sleeve_R)
+  construct(rim=(turned=1cm))
+  relax(1)
+  Front = line($Neck@0, $Hem@0)
+  PocketFootR = line($Front@1-6.42cm offset=1.25cm, $Front@1-6.42cm offset=15.63cm)
+  PocketR = extend($PocketFootR, 13.26)
+  PocketFootL = line($Front@1-6.42cm offset=-15.63cm, $Front@1-6.42cm offset=-1.25cm)
+  PocketL = extend($PocketFootL, 13.26)
+  add($Zip.FlapPanel, at=$PocketR@0.1667)
+  add($Zip.FlapPanelSnap, at=$PocketR@0.5)
+  add($Zip.FlapPanel, at=$PocketR@0.8333)
+  add($Zip.FlapPanel, at=$PocketL@0.1667)
+  add($Zip.FlapPanelSnap, at=$PocketL@0.5)
+  add($Zip.FlapPanel, at=$PocketL@0.8333)
+  ZipStitchLowR = line($Front@16.32cm offset=1.25cm, $Hem@0+1.25cm)
+  ZipStitchLowL = line($Front@16.32cm offset=-1.25cm, $Hem@0-1.25cm)
+  stitch($ZipStitchLowR)
+  stitch($ZipStitchLowL)
+  ZipEdgeR = line($Neck@0.1, $Front@16.32cm)
+  ZipEdgeL = line($Neck@0.9, $Front@16.32cm)
+  cut($ZipEdgeR, $ZipEdgeL)
+  stitch($ZipEdgeR, offset=1cm)
+  stitch($ZipEdgeL, offset=-1cm)
+  band($Hem, width=5cm, fabric=$Rib, cut=85%)
+  NeckEdge = line($Neck@0.1, $Neck@0.5, $Neck@0.9)
+  band($NeckEdge, width=7cm, fabric=$Rib, cut=75%)
+  stitch($PocketL, offset=0.5cm)
+  stitch($PocketR, offset=0.5cm)
+  add($Zip.Chain, at=$Hem@0, repeat=47, step=(0, 0, 1))
+  add($Zip.Slider, at=$ZipEdgeR@1)
+  add($Zip.OpenChain, at=$ZipEdgeR@0.983, rotate=(0, 0, -26.9))
+  add($Zip.OpenChain, at=$ZipEdgeR@0.885, rotate=(0, 0, -24.8))
+  add($Zip.OpenChain, at=$ZipEdgeR@0.788, rotate=(0, 0, -24.2))
+  add($Zip.OpenChain, at=$ZipEdgeR@0.690, rotate=(0, 0, -25.7))
+  add($Zip.OpenChain, at=$ZipEdgeR@0.593, rotate=(0, 0, -25.3))
+  add($Zip.OpenChain, at=$ZipEdgeR@0.495, rotate=(0, 0, -24.1))
+  add($Zip.OpenChain, at=$ZipEdgeR@0.398, rotate=(0, 0, -21.6))
+  add($Zip.OpenChain, at=$ZipEdgeR@0.300, rotate=(0, 0, -16.6))
+  add($Zip.OpenChain, at=$ZipEdgeR@0.203, rotate=(0, 0, -13.8))
+  add($Zip.OpenChain, at=$ZipEdgeR@0.105, rotate=(0, 0, -10.9))
+  add($Zip.OpenChain, at=$ZipEdgeL@0.983, rotate=(0, 0, 28.1))
+  add($Zip.OpenChain, at=$ZipEdgeL@0.885, rotate=(0, 0, 25.8))
+  add($Zip.OpenChain, at=$ZipEdgeL@0.788, rotate=(0, 0, 24.2))
+  add($Zip.OpenChain, at=$ZipEdgeL@0.690, rotate=(0, 0, 26.0))
+  add($Zip.OpenChain, at=$ZipEdgeL@0.593, rotate=(0, 0, 25.6))
+  add($Zip.OpenChain, at=$ZipEdgeL@0.495, rotate=(0, 0, 23.3))
+  add($Zip.OpenChain, at=$ZipEdgeL@0.398, rotate=(0, 0, 19.5))
+  add($Zip.OpenChain, at=$ZipEdgeL@0.300, rotate=(0, 0, 15.3))
+  add($Zip.OpenChain, at=$ZipEdgeL@0.203, rotate=(0, 0, 11.4))
+  add($Zip.OpenChain, at=$ZipEdgeL@0.105, rotate=(0, 0, 14.2))
+
+}

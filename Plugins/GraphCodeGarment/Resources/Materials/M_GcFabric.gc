@@ -1,0 +1,23 @@
+gc 1  kind:material  asset:/Game/GraphCode/Garment/M_GcFabric
+parent: /Script/Engine.Material
+
+settings {
+  bUsedWithSkeletalMesh = true
+}
+
+graph {
+  n0 = VectorParameter() [DefaultValue=(R=0.45,G=0.45,B=0.45,A=1.0), ParameterName=FabricColour]
+  n1 = TextureCoordinate()
+  n2 = ScalarParameter() [DefaultValue=5.0, ParameterName=WeaveCm]
+  n3 = Divide(in1=n2.out0) [ConstA=100.0, link1.name="B"]
+  n4 = Multiply(in0=n1.out0, in1=n3.out0) [link0.name="A", link1.name="B"]
+  n5 = TextureSampleParameter2D(in0=n4.out0) [ParameterName=FabricTexture, Texture=obj'/Engine/EngineResources/WhiteSquareTexture.WhiteSquareTexture', link0.name="Coordinates"]
+  n6 = Multiply(in0=n0.out0.rgb, in1=n5.out0) [link0.name="A", link1.name="B"]
+  n7 = TextureSampleParameter2D(in0=n4.out0) [ParameterName=WeaveNormal, SamplerType=SAMPLERTYPE_Normal, Texture=obj'/Engine/EngineMaterials/FlatNormal.FlatNormal', link0.name="Coordinates"]
+  n8 = ScalarParameter() [DefaultValue=0.8, ParameterName=FabricRoughness]
+  n9 = MaterialFunctionCall /Game/GraphCode/Garment/MF_GcStitches.MF_GcStitches(BaseColor=n6.out0, Normal=n7.out0, Roughness=n8.out0)
+  result = MaterialResult(BaseColor=n9.out0, Roughness=n9.out2, Normal=n9.out1, AmbientOcclusion=n9.out3)
+}
+
+comments {
+}

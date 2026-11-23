@@ -1,0 +1,12 @@
+gc 1  kind:blueprint  asset:/Game/__MCPTests/Gait_20261007/BP_GaitViewerRoll
+parent: /Script/Engine.Actor
+
+# A floor to judge feet against: the character playing the four-stride take over a cube whose top is at z=0 (WALK-AND-RUN.md step 5).
+components {
+  Root = SceneComponent()
+  {
+    Body = SkeletalMeshComponent(AnimationData.AnimToPlay=obj'/Game/__MCPTests/Gait_20261007/A_RollWalk4.A_RollWalk4', AnimationMode=AnimationSingleNode, OverrideMaterials=(obj'/Engine/Tutorial/SubEditors/TutorialAssets/Character/TutorialTPP_Mat.TutorialTPP_Mat'), PhysicsAssetOverride=obj'/Game/GraphCodeExamples/RifleWalk_20261003/PHAT_RifleMan.PHAT_RifleMan', SkinnedAsset=obj'/Game/GraphCodeExamples/RifleWalk_20261003/SK_Walker.SK_Walker')
+    Floor = StaticMeshComponent(StaticMesh=obj'/Engine/BasicShapes/Cube.Cube')
+      @attach[RelativeLocation=(X=0.0,Y=220.0,Z=-2.5), RelativeScale=(X=3.0,Y=6.0,Z=0.05)]
+  }
+}

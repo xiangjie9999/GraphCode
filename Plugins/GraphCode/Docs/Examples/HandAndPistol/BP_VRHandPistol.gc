@@ -1,0 +1,62 @@
+gc 1  kind:blueprint  asset:/Game/GraphCodeExamples/VRHandRig_20261001/BP_VRHandPistol  sig:42977bd90ad1fb048c82afad6247cfb9  bin:696a3ad7016b6c6272a5d8f51977bd48
+parent: /Script/Engine.Actor
+omits: blueprint_extensions blueprint_metadata variable_metadata collision_geometry
+source: OraStudio 5.7.4-51494982+++UE5+Release-5.7  projector:32  ir: blueprintir/2 actorir/1
+
+settings {
+}
+
+defaults {
+  blueprint_defaults
+  instance_editable = false
+  expose_on_spawn = false
+}
+
+properties {
+}
+
+interfaces {
+}
+
+dispatchers {
+}
+
+timelines {
+}
+
+class_defaults {
+}
+
+components {
+  Root = SceneComponent()
+  {
+    Hand = SkeletalMeshComponent(AnimationData.AnimToPlay=obj'/Game/GraphCodeExamples/VRHandRig_20261001/A_VRPistolTrigger.A_VRPistolTrigger', AnimationData.bSavedLooping=false, AnimationData.bSavedPlaying=false, AnimationData.SavedPosition=1.0, AnimationMode=AnimationSingleNode, PhysicsAssetOverride=obj'/Game/GraphCodeExamples/VRHandRig_20261001/PHAT_VRHand.PHAT_VRHand', SkinnedAsset=obj'/Game/GraphCodeExamples/VRHandRig_20261001/SKM_MannyXR_right.SKM_MannyXR_right')
+    {
+      Pistol = StaticMeshComponent(StaticMesh=obj'/Game/GraphCodeExamples/VRHandRig_20261001/SM_VRPistol.SM_VRPistol')
+        @attach[SocketName="web_grip_r"]
+    }
+  }
+}
+
+graph {
+  eventgraph EventGraph {
+    // This node is disabled and will not be called.
+    // Drag off pins to build functionality.
+    n1 = Event ReceiveActorBeginOverlap() [enabled=false, bOverrideFunction=True] : ->_
+    // This node is disabled and will not be called.
+    // Drag off pins to build functionality.
+    n2 = Event ReceiveBeginPlay() [enabled=false, bOverrideFunction=True] : ->_
+    // This node is disabled and will not be called.
+    // Drag off pins to build functionality.
+    n3 = Event ReceiveTick() [enabled=false, bOverrideFunction=True] : ->_
+  }
+}
+
+functions {
+  function UserConstructionScript {
+    n1 = FunctionEntry() : ->_
+  }
+}
+
+macros {
+}

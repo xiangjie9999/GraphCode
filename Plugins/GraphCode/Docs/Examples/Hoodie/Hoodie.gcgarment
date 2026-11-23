@@ -1,0 +1,79 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/Hoodie/Built
+# Hoodie: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_Hoodie = $Hoodie
+  T_HoodieStitches = bake(decal, resolution=2048)
+}
+
+Kit = shape('/Game/GraphCodeExamples/Garment/Hoodie/HoodieParts')
+
+Fleece = fabric(weight=288, thickness=1.69mm, stretch=(7.27%, 29.93%), shear=26.6, stiffness=(0.80, 0.79), friction=1.92)
+Rib = fabric(weight=250, thickness=1.78mm, stretch=(122.47%, 119%), shear=11.74, stiffness=(1.18, 0.99), friction=1.75)
+
+Neck = ring((0.000, 6.200, 148.000), (3.132, 5.425, 148.000), (5.555, 3.207, 148.000), (6.500, 0.000, 148.000), (5.555, -3.207, 148.000), (3.132, -5.425, 148.000), (0.000, -6.200, 148.000), (-3.132, -5.425, 148.000), (-5.555, -3.207, 148.000), (-6.500, 0.000, 148.000), (-5.555, 3.207, 148.000), (-3.132, 5.425, 148.000)) {
+  expand(0.32)
+}
+Face = ring((0.000, 6.200, 148.000), (7.580, 3.574, 166.890), (0.000, 5.391, 177.555), (-7.580, 3.574, 166.890))
+Chest = ring((0.000, 13.400, 128.000), (16.840, 1.400, 128.000), (0.000, -10.600, 128.000), (-16.840, 1.400, 128.000)) {
+  expand(2.99)
+}
+Hem = ring((0.000, 9.780, 86.200), (16.886, -0.700, 86.200), (0.000, -11.180, 86.200), (-16.886, -0.700, 86.200)) {
+  expand(3.53)
+}
+Armhole_L = ring((24.158, 4.407, 141.063)) {
+  rotate((0, -20, 0))
+  expand(2.63)
+}
+Armhole_R = ring((-24.158, 4.407, 141.063)) {
+  rotate((0, 20, 0))
+  expand(2.63)
+}
+Wrist_L = ring((69.27, 2.229, 139.055)) {
+  expand(0.61)
+}
+Wrist_R = ring((-69.27, 2.229, 139.055)) {
+  expand(0.61)
+}
+CordAt = ring($Neck) {
+  expand(1)
+}
+
+Yoke = profile(0=0%, 1=100%)
+HoodRise = profile(0=38.5, 0.0156=37.2, 0.0312=37.1, 0.0469=37.1, 0.0625=37.0, 0.0781=36.9, 0.0938=36.7, 0.1094=36.6, 0.125=36.4, 0.1406=36.1, 0.1562=35.9, 0.1719=35.6, 0.1875=35.3, 0.2031=34.9, 0.2188=34.6, 0.2344=34.1, 0.25=33.7, 0.2656=33.2, 0.2812=32.6, 0.2969=32.0, 0.3125=31.4, 0.3281=30.7, 0.3438=30.0, 0.3594=29.2, 0.375=28.4, 0.3906=27.6, 0.4062=26.7, 0.4219=25.8, 0.4375=24.9, 0.4531=23.9, 0.4688=22.9, 0.4844=21.9, 0.5=20.9, 0.5156=21.9, 0.5312=22.9, 0.5469=23.9, 0.5625=24.9, 0.5781=25.8, 0.5938=26.7, 0.6094=27.6, 0.625=28.4, 0.6406=29.2, 0.6562=30.0, 0.6719=30.7, 0.6875=31.4, 0.7031=32.0, 0.7188=32.6, 0.7344=33.2, 0.75=33.7, 0.7656=34.1, 0.7812=34.6, 0.7969=34.9, 0.8125=35.3, 0.8281=35.6, 0.8438=35.9, 0.8594=36.1, 0.875=36.4, 0.8906=36.6, 0.9062=36.7, 0.9219=36.9, 0.9375=37.0, 0.9531=37.1, 0.9688=37.1, 0.9844=37.2, 1=38.5)
+
+Sleeve_L = garment($Armhole_L, $Wrist_L, loose=100%, fabric=$Fleece) {
+  construct()
+  band($Wrist_L, width=5cm, fabric=$Rib, cut=78.2%)
+  stitch($Wrist_L)
+}
+Sleeve_R = garment($Armhole_R, $Wrist_R, loose=100%, fabric=$Fleece) {
+  construct()
+  band($Wrist_R, width=5cm, fabric=$Rib, cut=78.2%)
+  stitch($Wrist_R)
+}
+Hoodie = garment($Neck, $Chest, $Hem, loose@1=$Yoke, loose@2=100%, fabric=$Fleece) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  add($Sleeve_L)
+  add($Sleeve_R)
+  construct(rim=(turned=1cm, layers=4))
+  relax(1)
+  HalfL = line($Neck@0, $Neck@0.25, $Neck@0.5)
+  HalfR = line($Neck@1, $Neck@0.75, $Neck@0.5)
+  HoodL = extend($HalfL, $HoodRise, 132%)
+  HoodR = extend($HalfR, $HoodRise, 132%)
+  sew($HoodL, $HoodR, match=ease)
+  cut($Face)
+  band($Hem, width=5cm, fabric=$Rib, cut=73.6%)
+  stitch($Hem)
+  Front = line($Neck@0, $Hem@0)
+  PocketFoot = line($Front@1-1cm offset=-13.75cm, $Front@1-1cm offset=13.75cm)
+  Pocket = extend($PocketFoot, 13.19)
+  stitch($Neck, offset=1cm)
+  stitch($Pocket, offset=0.5cm)
+  add($Kit.Eyelet, at=$CordAt@2.75cm, hold=0)
+  add($Kit.Eyelet, at=$CordAt@0-2.75cm, hold=0)
+  add($Kit.DrawcordEnd, at=$CordAt@2.75cm, hold=0)
+  add($Kit.DrawcordEnd, at=$CordAt@0-2.75cm, hold=0)
+}

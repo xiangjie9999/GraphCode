@@ -1,0 +1,123 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.13",
+  "FriendlyName": "GraphCode",
+  "Description": "Writes deterministic, Git-friendly .gc text projections beside supported Unreal assets.",
+  "Category": "Editor",
+  "CreatedBy": "OraStudio",
+  "CanContainContent": true,
+  "IsBetaVersion": true,
+  "Modules": [
+    {
+      "Name": "GraphCodePcgAuthoring",
+      "Type": "Editor",
+      "LoadingPhase": "None"
+    },
+    {
+      "Name": "GraphCodeLoader",
+      "Type": "Editor",
+      "LoadingPhase": "PostConfigInit"
+    },
+    {
+      "Name": "GraphCodeRuntime",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "GraphCode",
+      "Type": "Editor",
+      "LoadingPhase": "Default",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "GraphCodeMCP",
+      "Type": "Editor",
+      "LoadingPhase": "PostEngineInit",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "AuthoringCore",
+      "Type": "Runtime",
+      "LoadingPhase": "PostEngineInit",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "BlueprintIR",
+      "Type": "Editor",
+      "LoadingPhase": "PostEngineInit",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "WidgetIR",
+      "Type": "Editor",
+      "LoadingPhase": "PostEngineInit",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "MaterialIR",
+      "Type": "Editor",
+      "LoadingPhase": "PostEngineInit",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "PCG",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "GraphCodePlay",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "GeometryProcessing",
+      "Enabled": true
+    },
+    {
+      "Name": "EditorScriptingUtilities",
+      "Enabled": true
+    },
+    {
+      "Name": "EnhancedInput",
+      "Enabled": true
+    }
+  ],
+  "Installed": true,
+  "EnabledByDefault": false,
+  "EngineVersion": "5.7.0",
+  "SupportedTargetPlatforms": [
+    "Win64"
+  ]
+}

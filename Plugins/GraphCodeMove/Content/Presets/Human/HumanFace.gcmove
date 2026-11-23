@@ -1,0 +1,80 @@
+gcmove 1 fps:30
+build {
+}
+# GRAPHCODE MOVE: THE MetaHuman FACE'S PRESETS, by region (ruling 106 slice 3), shipped with the Move plugin. Do not build this file: name it
+# from a part:Face file's header with
+#   presets:/GraphCodeMove/Presets/Human/HumanFace  controls:/GraphCodeMove/Presets/Human/HumanFace
+# and call $Mouth(...), $Eyes(...), $Brows(...), $Cheeks(...) in its keys. The controls are HumanFace.gcrig beside this file (curves of the
+# native MetaHuman face). The body presets' form: a value not written is none and writes nothing; every value is an amount 0..1 of its
+# control, with its range beside it (x_min, x_max), and a call may widen an end. The face file owns the curves, the body file the bones
+# (the head and neck turns are $Head in the body's file: Plugins/GraphCode/Docs/Guides/CHARACTERS.md 9.1).
+# On the body's clock: header body:<the body's built clip>, and a key lands on a body pose, $Snarl [lands_at=$Slash].
+
+# =====================================================================================================================
+# MOUTH: the corners, the upper lip, the lips and the jaw.
+#  smile    the mouth corners pulled up and out.
+#  frown    the mouth corners pulled down.
+#  snarl    the upper lip raised and the nose wrinkled.
+#  pucker   the lips pursed.
+#  open     the jaw opened.
+Mouth = pose(smile=none, smile_min=0, smile_max=1, frown=none, frown_min=0, frown_max=1, snarl=none, snarl_min=0, snarl_max=1,
+             pucker=none, pucker_min=0, pucker_max=1, open=none, open_min=0, open_max=1) {
+  if ($smile != none) {
+    drive(smile, by=$smile)
+  }
+  if ($frown != none) {
+    drive(frown, by=$frown)
+  }
+  if ($snarl != none) {
+    drive(snarl, by=$snarl)
+  }
+  if ($pucker != none) {
+    drive(pucker, by=$pucker)
+  }
+  if ($open != none) {
+    drive(jaw_open, by=$open)
+  }
+}
+
+# =====================================================================================================================
+# EYES: the lids.
+#  blink    both lids closed.
+#  wide     both eyes opened wide.
+#  squint   the inner lids narrowed.
+Eyes = pose(blink=none, blink_min=0, blink_max=1, wide=none, wide_min=0, wide_max=1, squint=none, squint_min=0, squint_max=1) {
+  if ($blink != none) {
+    drive(blink, by=$blink)
+  }
+  if ($wide != none) {
+    drive(eyes_wide, by=$wide)
+  }
+  if ($squint != none) {
+    drive(squint, by=$squint)
+  }
+}
+
+# =====================================================================================================================
+# BROWS:
+#  raise    inner and outer brows raised.
+#  down     the brows drawn down.
+Brows = pose(raise=none, raise_min=0, raise_max=1, down=none, down_min=0, down_max=1) {
+  if ($raise != none) {
+    drive(brows_raise, by=$raise)
+  }
+  if ($down != none) {
+    drive(brows_down, by=$down)
+  }
+}
+
+# =====================================================================================================================
+# CHEEKS:
+#  raise    the cheeks lifted under the eyes (what a full smile adds).
+#  puff     the cheeks blown out.
+Cheeks = pose(raise=none, raise_min=0, raise_max=1, puff=none, puff_min=0, puff_max=1) {
+  if ($raise != none) {
+    drive(cheeks_raise, by=$raise)
+  }
+  if ($puff != none) {
+    drive(cheeks_puff, by=$puff)
+  }
+}

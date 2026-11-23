@@ -1,0 +1,71 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.13",
+  "FriendlyName": "GraphCode Move",
+  "Description": "Animation, state machines and the AI graphs that decide and drive motion.",
+  "Category": "Editor",
+  "CreatedBy": "OraStudio",
+  "CanContainContent": true,
+  "IsBetaVersion": true,
+  "Modules": [
+    {
+      "Name": "GraphCodeMove",
+      "Type": "Editor",
+      "LoadingPhase": "Default",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "GraphCode",
+      "Enabled": true
+    },
+    {
+      "Name": "IKRig",
+      "Enabled": true
+    },
+    {
+      "Name": "ACLPlugin",
+      "Enabled": true
+    },
+    {
+      "Name": "FullBodyIK",
+      "Enabled": true
+    },
+    {
+      "Name": "ControlRig",
+      "Enabled": true
+    },
+    {
+      "Name": "ControlRigPhysics",
+      "Enabled": true
+    },
+    {
+      "Name": "PhysicsControl",
+      "Enabled": true
+    },
+    {
+      "Name": "Niagara",
+      "Enabled": true
+    },
+    {
+      "Name": "StateTree",
+      "Enabled": true
+    },
+    {
+      "Name": "GeometryProcessing",
+      "Enabled": true
+    }
+  ],
+  "Installed": true,
+  "EnabledByDefault": false,
+  "EngineVersion": "5.7.0",
+  "SupportedTargetPlatforms": [
+    "Win64"
+  ]
+}

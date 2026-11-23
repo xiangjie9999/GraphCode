@@ -1,0 +1,3 @@
+# Store every file byte for byte: the copies under Plugins/ and release/ must match the
+# signed release and BUNDLE-SHA256.txt exactly, so no line-ending conversion anywhere.
+* -text

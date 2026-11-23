@@ -1,0 +1,152 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/TShirt/Built
+
+# A crew-neck T-shirt: cotton jersey, short sleeves ending on the upper arm, a rib neckband, hemmed at the seat.
+# Every ring below is measured on the example body (GarmentBodies/TPoseBody.gcshape) and is that body's, not yours:
+# on another body, re-measure every point with gc_render's hit query (see README.md, "Another body").
+# The cut follows FreeSewing's Teagan T-shirt (open-source pattern code); its ease and length defaults are quoted where used.
+
+build {
+  SM_TShirt = $TShirt
+  T_TShirtStitches = bake(decal, resolution=2048)
+}
+
+# ---- Fabrics -------------------------------------------------------------------------------------------------------------
+# Each setting is labelled: w weight, t thickness, e stretch, g shear, c stiffness (bending length), f friction;
+# C cited from a measurement, D derived from one, P a proxy (a measurement of a similar fabric).
+# Jersey: w:C 144.9 g/m2 and t:C 0.68 mm at 200 Pa (Wang, cotton jersey "K6"); e:P 20.75 % (KES EMT of a 125.5 g/m2 cotton single
+# jersey under 500 gf/cm, Ramaiah: an upper bound on E100, because no cotton knit's E100 is measured and FAST cannot read a knit);
+# g:C 20.30 N/m (K6, FAST); c:D 1.16 / 1.04 cm wale / course (K6's FAST bending); f:D 1.92, the mean of Ajayi's cotton knit on itself
+# at 250 N/m2 (course 1.72, wale 2.12); gauge:C 15 x 19.4 loops per cm (K6).
+Jersey = fabric(weight=144.9, thickness=0.68mm, stretch=(20.75%, 20.75%), shear=20.30, stiffness=(1.16, 1.04), friction=1.92, knit=jersey, gauge=(15, 19.4))
+# Rib for the neckband: a tee's neckband is a fine circular 1x1 rib. w:C 183 g/m2 and t:C 0.72 mm (Truncyte T11, 100 % cotton 1x1 rib,
+# 11 wales x 17 courses per cm); e:P 122.47 / 119.00 % E100 of a 148 g/m2 PA/elastane rib (Jariyapunya), no cotton rib's is measured;
+# g:P 11.74 N/m, a viscose 1x1 rib (Wang K7, FAST); c:P 1.18 / 0.99 cm, the same viscose rib; f:D 1.75, the mean of Ajayi's cotton 1x1
+# rib wale 1.68 and course 1.82 on itself at 63 N/m2.
+Rib = fabric(weight=183, thickness=0.72mm, stretch=(122.47%, 119%), shear=11.74, stiffness=(1.18, 0.99), friction=1.75, knit=rib1x1, gauge=(11, 17))
+
+# ---- The neckline --------------------------------------------------------------------------------------------------------
+# A crew neck is cut lower at the front than at the shoulders, so the ring is a curve, not a level hoop. FreeSewing's Brian crew is a
+# quarter ellipse each side: straight down from the shoulder-neck point (HPS) to 6.1 cm below the HPS level at the front and 1.9 cm at
+# the back. The ten points are on the body's skin on that curve (HPS at x 7.273, z 147.50; front z 141.40; back z 145.60). This body's
+# neck is an upright column, so the ring sits where the column meets the shoulders. The ring stands off the skin by 0.306 cm,
+# the distance the build's hang keeps thin cloth from the skin (read from the build's own note on this ring set).
+Neck = ring((0.000, 10.254, 141.400), (3.636, 9.478, 142.218), (6.299, 7.173, 144.450), (7.273, -0.636, 147.500), (5.143, -6.109, 146.157), (0.000, -7.674, 145.600), (-5.143, -6.109, 146.157), (-7.273, -0.636, 147.500), (-6.299, 7.173, 144.450), (-3.636, 9.478, 142.218)) {
+  expand(0.306)
+}
+
+# ---- The body tube: chest and hem rings ------------------------------------------------------------------------------------
+# Widths follow Teagan's code on this body's measured girths: chest 92.3 cm x (1 + 12 % chest ease) = 103.38 at the armhole line;
+# hem = the larger of waist 73.6 and hips 81.9, x (1 + 18 % hip ease) = 96.64, every width from the waist line down.
+# Length: (HPS to waist at the back 43.0 + waist to hips 7.0) x (1 + 15 % length bonus) = 57.50 below the HPS level: z 90.50, at the seat.
+# Cross-checks: Gildan 5000's spec sheet (S, 28 in = 71.1 cm HPS to hem at the back) and Nastix's classic tee (65-72 cm), both longer
+# because this body is only 14 cm from waist to seat.
+#
+# The chest ring sits 1 in below the armhole, as a maker states a tee's chest ("chest flat 1 in below the armhole", Gildan 5000's spec
+# sheet): the lowest armhole point is z 128.10, so z 125.56. Teagan's side-seam curve gives a girth of 101.69 there. In front the cloth
+# falls plumb from the bust's apex, behind from the shoulder blades, each resting 0.306 cm off the skin; the ring is therefore
+# drawn on the skin, let out by (0.750 up/down, 2.40 sideways), then moved 0.222 forward.
+ChestOnSkin = ring((0.000, 13.034, 125.560), (16.638, 1.350, 125.560), (0.000, -10.478, 125.560), (-16.638, 1.350, 125.560)) {
+  expand((0.750, 2.40))
+}
+Chest = ring($ChestOnSkin) {
+  move((0, 0.222, 0))
+}
+# The hem, z 90.50, 96.64 round, on the seat. Only 7.0 cm lies over the seat, so the front cannot hang as far as the apex's plumb while
+# the back rests on the seat: the ring is let out (1.19 front/back, 1.10 sides) and moved 0.88 forward, which keeps the back resting
+# on the seat and no point of the hem nearer the skin than 0.306 cm. Four points (front, side, back, side): a front-and-back-only
+# ring takes the shortest path over the hips and comes out slanted.
+HemOnSkin = ring((0.000, 10.156, 90.500), (17.092, -0.950, 90.500), (0.000, -12.094, 90.500), (-17.092, -0.950, 90.500)) {
+  expand((1.19, 1.10))
+}
+Hem = ring($HemOnSkin) {
+  move((0, 0.88, 0))
+}
+
+# ---- Armholes and sleeves ----------------------------------------------------------------------------------------------------
+# A set-in armhole round the arm's root, where the arm leaves the torso wall (x 17.10), down to Teagan's underarm on the torso's side
+# (16.994, 1.500, 129.93): the pattern's armhole depth is 43.0 - 26.1 x 0.955 = 18.07 below the HPS level. Points: top, front,
+# underarm, back. The ring stands off the skin by the chest's ease at the armhole line, (103.38 - 92.3) / 2 pi = 1.76 cm.
+Armhole_L = ring((17.100, 0.000, 142.880), (17.100, 6.020, 136.990), (16.994, 1.500, 129.930), (17.100, -6.020, 136.990)) {
+  expand(1.76)
+}
+Armhole_R = ring((-17.100, 0.000, 142.880), (-17.100, 6.020, 136.990), (-16.994, 1.500, 129.930), (-17.100, -6.020, 136.990)) {
+  expand(1.76)
+}
+# The sleeve hem: Gildan 5000 S's sleeve is 15 5/8 in = 39.69 cm from centre back neck over the shoulder point to the hem. Less this
+# body's centre-back neck to shoulder point (a quarter of the neck base, 9.94, plus HPS to shoulder point 9.71) that leaves 20.04 cm from
+# the shoulder point: x 34.8. (Nastix's classic short sleeve is 20-26 cm from the shoulder point.) The section there is rounded to
+# the width at Teagan's biceps line: the biceps (37.37) x (1 + 5 % biceps ease) = 39.24 round, so the ring is a circle let out
+# 39.24 / 2 pi - 5.35 = 0.90, then dropped 0.86 so the sleeve hangs from the top of the arm, resting on the skin.
+HemArm_L = ring((34.800, 0.000, 142.080), (34.800, 5.350, 137.000), (34.800, 0.000, 131.920), (34.800, -5.350, 137.000)) {
+  circular()
+}
+HemArm_R = ring((-34.800, 0.000, 142.080), (-34.800, 5.350, 137.000), (-34.800, 0.000, 131.920), (-34.800, -5.350, 137.000)) {
+  circular()
+}
+Cuff_L = ring($HemArm_L) {
+  expand(0.90)
+  move((0, 0, -0.86))
+}
+Cuff_R = ring($HemArm_R) {
+  expand(0.90)
+  move((0, 0, -0.86))
+}
+
+# A straight tube below the cap, as Teagan's sleeve is: spanning its two rings at 100 %.
+Sleeve_L = garment($Armhole_L, $Cuff_L, loose=100%, fabric=$Jersey)
+Sleeve_R = garment($Armhole_R, $Cuff_R, loose=100%, fabric=$Jersey)
+
+# The body is laid on the shoulders and chest as the body is (0 %), then spans from the chest ring to the hem at 100 %, the way it falls.
+# The ramp from 0 % to 100 % up to the chest ring avoids a ledge at the ring (GARMENT.md, "Shape a top from a real pattern").
+Yoke = profile(0=0%, 1=100%)
+
+# ---- The shoulder seams ------------------------------------------------------------------------------------------------------
+# A real tee has a diagonal shoulder seam from the shoulder-neck point (HPS) out to the top of the armhole. Each is a line drawn on the
+# cloth from the neck ring to the armhole ring's first point (its top). The HPS is 16.77 cm of the neck ring's 57.16 round from its front,
+# @0.2935, and its mirror @0.7065; the built ring counts round toward -x, so @0.7065 is the left HPS and @0.2935 the right.
+# The line is a stitched row on one piece of cloth, not a cut and sewn seam: no allowance, no thickness step, no break in the hang.
+ShoulderL = line($Neck@0.7065, $Armhole_L@0)
+ShoulderR = line($Neck@0.2935, $Armhole_R@0)
+
+TShirt = garment($Neck, $Chest, $Hem, loose@1=$Yoke, loose@2=100%, fabric=$Jersey) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  add($Sleeve_L)
+  add($Sleeve_R)
+  # Hems of body and sleeves: one 1 in turn, 2 plies (Customink Shaka Wear 7.5 oz heavyweight: "1 in double-needle stitched sleeve and
+  # bottom hems").
+  construct(rim=(turned=2.54cm))
+  # The lay's smoothing, no point moved over 1 cm.
+  relax(1)
+  # The crew's rib band: Teagan's knit-band finish, a 6 cm strip folded in half (3 cm doubled), sewn on at the standard seam allowance
+  # (FreeSewing: "1cm is common"), so 2 cm stands up the neck from the seam. cut= is the band's length against the neckline it is
+  # sewn to: a rib neckband is cut 70-80 % of the neckline in three sewing guides (75 % for a 75-100 % stretch rib). It is sewn on
+  # stretched. Hung, at 75 % the seam does not pucker, the band lies along the skin's own slope within 1 degree front and back and
+  # 6 at the sides, and its free edge stretches 16 % over its rest (it hugs the neck). At 95 %, a knit binding's figure, the band stood up
+  # 21 degrees steeper than the cloth beside it.
+  band($Neck, width=2cm, fabric=$Rib, cut=75%)
+  # Stitch pitch: Coats' T-shirt thread page gives stitches per 3 cm: 504 overlock 14-16 (1.9-2.1 mm), 406 coverstitch 14-18 (1.7-2.1 mm),
+  # 301 lockstitch 12-14. A row on a join stands for the seam's own stitch, a 504 overlock: every=2mm. A topstitch row (hems, the neck's
+  # second row) is a coverstitch, a 406: every=1.9mm. A closed row's pitch is adjusted so a whole number goes round.
+  stitch($Neck, every=2mm)
+  stitch($Neck, offset=1cm, every=1.9mm)
+  # The armhole seam's two-ply allowance is pressed toward the SLEEVE (the negative sign: onto the cloth added there; the body is the
+  # cloth laid first at an armhole): "press sleeve seams toward the sleeve" (NMSU C210; Seamwork). Its width, 0.635 cm, is what a knit
+  # tee keeps at its armholes: "trimmed to 1/4 in at neckline, sleeves, armholes" (NMSU C210). The ridge's height is never written: it
+  # is the cloth's own thickness. A plain press shows as a ridge on the outside.
+  press($Armhole_L, -0.635cm)
+  press($Armhole_R, -0.635cm)
+  stitch($Armhole_L, every=2mm)
+  stitch($Armhole_R, every=2mm)
+  # The shoulder seams' stitch rows, on the lines above: the row only, no width.
+  stitch($ShoulderL, every=2mm)
+  stitch($ShoulderR, every=2mm)
+  # The hems' coverstitch: two needle rows 6 mm apart, a wide coverstitch's gauge (Janome CoverPro 1000CPX: "6mm (standard), 3mm
+  # (narrow)"). Where the pair sits on the turn is this example's choice: no source gives a stitch distance from the fold.
+  stitch($Hem, offset=1cm, every=1.9mm)
+  stitch($Hem, offset=1.6cm, every=1.9mm)
+  stitch($Cuff_L, offset=1cm, every=1.9mm)
+  stitch($Cuff_L, offset=1.6cm, every=1.9mm)
+  stitch($Cuff_R, offset=1cm, every=1.9mm)
+  stitch($Cuff_R, offset=1.6cm, every=1.9mm)
+}

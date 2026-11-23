@@ -1,0 +1,78 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/TacticalVest/Built
+# TacticalVest: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_TacticalVest = $Vest
+  T_VestStitches = bake(decal, resolution=2048)
+}
+
+Cordura = fabric(weight=241, stretch=(1.11%, 1.09%), shear=1558, stiffness=(5.10, 5.14), friction=0.27)
+Kit = shape('/Game/GraphCodeExamples/Garment/TacticalVest/Tactical')
+
+Neck = ring((0.000, 10.259, 141.397), (7.300, 9.277, 141.397)@sharp, (7.300, -0.600, 147.485), (7.300, -9.277, 141.397)@sharp, (0.000, -10.259, 141.397), (-7.300, -9.277, 141.397)@sharp, (-7.300, -0.600, 147.485), (-7.300, 9.277, 141.397)@sharp) {
+  expand((0.473, 0.469))
+}
+Band = ring((0.000, 12.838, 124.252), (16.428, 0.000, 124.252), (0.000, -10.413, 124.252), (-16.428, 0.000, 124.252)) {
+  expand(0.418)
+}
+Hem = ring((0.000, 10.442, 109.012), (14.197, 0.000, 109.012), (0.000, -9.907, 109.012), (-14.197, 0.000, 109.012)) {
+  expand(0.418)
+}
+Armhole_L = ring((12.383, 8.097, 138.671)@sharp, (12.383, -0.600, 144.378), (12.383, -7.461, 138.671)@sharp, (12.383, -6.466, 124.252)@sharp, (14.780, -3.960, 124.252), (16.428, 0.000, 124.252), (15.321, 5.576, 124.252), (12.383, 8.872, 124.252)@sharp)
+Armhole_R = ring((-12.383, 8.097, 138.671)@sharp, (-12.383, -0.600, 144.378), (-12.383, -7.461, 138.671)@sharp, (-12.383, -6.466, 124.252)@sharp, (-14.780, -3.960, 124.252), (-16.428, 0.000, 124.252), (-15.321, 5.576, 124.252), (-12.383, 8.872, 124.252)@sharp)
+
+PlateLine = ring((0.000, 12.981, 125.205), (16.500, 0.000, 125.205), (0.000, -10.460, 125.205), (-16.500, 0.000, 125.205))
+StrapLine_L = ring((9.840, -0.600, 145.931), (9.840, 8.578, 141.214), (0.000, 12.981, 125.205), (0.000, -10.460, 125.205), (9.840, -8.578, 141.214))
+StrapLine_R = ring((-9.840, -0.600, 145.931), (-9.840, 8.578, 141.214), (0.000, 12.981, 125.205), (0.000, -10.460, 125.205), (-9.840, -8.578, 141.214))
+Band1_L = ring((14.681, 0.384, 111.552), (0.000, -9.975, 111.552), (-14.681, 0.384, 111.552), (0.000, 10.848, 111.552)) {
+  expand(0.418)
+}
+Band2_L = ring((15.598, 0.681, 116.632), (0.000, -10.110, 116.632), (-15.598, 0.681, 116.632), (0.000, 11.661, 116.632)) {
+  expand(0.418)
+}
+Band3_L = ring((16.347, 0.928, 121.712), (0.000, -10.286, 121.712), (-16.347, 0.928, 121.712), (0.000, 12.457, 121.712)) {
+  expand(0.418)
+}
+Band1_R = ring((-14.681, 0.384, 111.552), (0.000, 10.848, 111.552), (14.681, 0.384, 111.552), (0.000, -9.975, 111.552)) {
+  expand(0.418)
+}
+Band2_R = ring((-15.598, 0.681, 116.632), (0.000, 11.661, 116.632), (15.598, 0.681, 116.632), (0.000, -10.110, 116.632)) {
+  expand(0.418)
+}
+Band3_R = ring((-16.347, 0.928, 121.712), (0.000, 12.457, 121.712), (16.347, 0.928, 121.712), (0.000, -10.286, 121.712)) {
+  expand(0.418)
+}
+MagLine = ring((0.000, 11.878, 117.985), (15.755, 0.000, 117.985), (0.000, -10.146, 117.985), (-15.755, 0.000, 117.985)) {
+  expand(3.95)
+}
+AdminLine = ring((0.000, 12.980, 132.475), (10.518, 10.518, 132.475), (8.923, -8.923, 132.475), (0.000, -10.655, 132.475), (-8.923, -8.923, 132.475), (-10.518, 10.518, 132.475))
+
+Vest = garment($Neck, $Band, $Hem, loose=100%, thickness=0.24, fabric=$Cordura) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  construct(rim=(turned=1.5cm))
+  add($Kit.FrontBag, at=$PlateLine@0)
+  add($Kit.BackBag, at=$PlateLine@0.5)
+  add($Kit.MagPouch, at=$MagLine@0-7.62cm, gap=3.292, hold=0)
+  add($Kit.MagPouch, at=$MagLine@0, gap=3.292, hold=0)
+  add($Kit.MagPouch, at=$MagLine@0+7.62cm, gap=3.292, hold=0)
+  add($Kit.AdminPouch, at=$AdminLine@0, gap=3.292, hold=0)
+  add($Kit.StrapBuckle, at=$StrapLine_L@0-5.278cm)
+  add($Kit.StrapBuckle, at=$StrapLine_R@0-5.278cm)
+  add($Kit.StrapPiece, at=$StrapLine_L@0+0.975cm)
+  add($Kit.StrapPiece, at=$StrapLine_L@0+4.308cm)
+  add($Kit.StrapPiece, at=$StrapLine_L@0+7.785cm)
+  add($Kit.StrapPiece, at=$StrapLine_R@0+0.975cm)
+  add($Kit.StrapPiece, at=$StrapLine_R@0+4.308cm)
+  add($Kit.StrapPiece, at=$StrapLine_R@0+7.785cm)
+  add($Kit.PalsLoop, along=$Band1_L, repeat=3, spread=13.53%)
+  add($Kit.PalsLoop, along=$Band2_L, repeat=3, spread=12.73%)
+  add($Kit.PalsLoop, along=$Band3_L, repeat=3, spread=12.12%)
+  add($Kit.PalsLoop, along=$Band1_R, repeat=3, spread=13.53%)
+  add($Kit.PalsLoop, along=$Band2_R, repeat=3, spread=12.73%)
+  add($Kit.PalsLoop, along=$Band3_R, repeat=3, spread=12.12%)
+  stitch($Hem, offset=1cm)
+  stitch($Neck, offset=1cm)
+  stitch($Armhole_L, offset=1cm)
+  stitch($Armhole_R, offset=1cm)
+}

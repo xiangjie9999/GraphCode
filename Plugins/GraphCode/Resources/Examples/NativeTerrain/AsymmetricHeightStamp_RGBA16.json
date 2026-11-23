@@ -1,0 +1,20 @@
+{
+  "width": 257,
+  "height": 257,
+  "channels": "RGBA",
+  "bitsPerChannel": 16,
+  "heightChannel": "R",
+  "alphaChannel": "A",
+  "encoding": "ZeroToOne",
+  "zeroInEncoding": 0.5,
+  "worldRangeCm": 4000,
+  "measuredHeightCm": {
+    "min": -375.56683885982324,
+    "max": 995.386877608605
+  },
+  "measuredAlpha": {
+    "min": 0,
+    "max": 1
+  },
+  "layout": "large offset mound, smaller opposite basin, and diagonal ridge; rounded-rectangle soft alpha"
+}

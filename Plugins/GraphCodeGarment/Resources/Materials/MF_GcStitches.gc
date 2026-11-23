@@ -1,0 +1,39 @@
+gc 1  kind:material_function  asset:/Game/GraphCode/Garment/MF_GcStitches
+parent: /Script/Engine.MaterialFunction
+
+settings {
+  bExposeToLibrary = true
+  Description = "A garment\'s stitches, laid over its cloth (GC-GARMENT-STITCH.md §5). Put before a material\'s outputs: the cloth\'s base colour, normal, roughness and occlusion in, the same with its stitches out. The stitch sheet arrives as StitchColour, StitchNormal and StitchMask, read on UV2; their defaults draw nothing."
+}
+
+graph {
+  n0 = FunctionInput() [bUsePreviewValueAsDefault=true, Id=7DCE7AD34C1B7CAB962759A999AC27F3, InputName=BaseColor, PreviewValue=(X=0.5,Y=0.5,Z=0.5,W=0.0)]
+  n1 = TextureCoordinate() [CoordinateIndex=2]
+  n2 = TextureSampleParameter2D(in0=n1.out0) [ParameterName=StitchMask, Texture=obj'/Engine/EngineResources/Black.Black', link0.name="Coordinates"]
+  n3 = Multiply(in0=n2.out0.g) [ConstB=0.5, link0.name="A"]
+  n4 = OneMinus(in0=n3.out0) [link0.name="Input"]
+  n5 = Multiply(in0=n0.out0, in1=n4.out0) [link0.name="A", link1.name="B"]
+  n6 = TextureSampleParameter2D(in0=n1.out0) [ParameterName=StitchColour, Texture=obj'/Engine/EngineResources/Black.Black', link0.name="Coordinates"]
+  n7 = LinearInterpolate(in0=n5.out0, in1=n6.out0, in2=n2.out0.r) [link0.name="A", link1.name="B", link2.name="Alpha"]
+  n8 = FunctionOutput(in0=n7.out0) [Id=E19CEB4A44B6274C72585BAACE122A82, OutputName=BaseColor, link0.name="None"]
+  n9 = FunctionInput() [bUsePreviewValueAsDefault=true, Id=D61457CA44874CAFD69A9D8AEA714B43, InputName=Normal, PreviewValue=(X=0.0,Y=0.0,Z=1.0,W=0.0), SortPriority=1]
+  n10 = ComponentMask(in0=n9.out0) [G=true, R=true, link0.name="Input"]
+  n11 = TextureSampleParameter2D(in0=n1.out0) [ParameterName=StitchNormal, SamplerType=SAMPLERTYPE_Normal, Texture=obj'/Engine/EngineMaterials/FlatNormal.FlatNormal', link0.name="Coordinates"]
+  n12 = ComponentMask(in0=n11.out0) [G=true, R=true, link0.name="Input"]
+  n13 = Add(in0=n10.out0, in1=n12.out0) [link0.name="A", link1.name="B"]
+  n14 = Multiply(in0=n9.out0.b, in1=n11.out0.b) [link0.name="A", link1.name="B"]
+  n15 = AppendVector(in0=n13.out0, in1=n14.out0) [link0.name="A", link1.name="B"]
+  n16 = Normalize(in0=n15.out0) [link0.name="VectorInput"]
+  n17 = LinearInterpolate(in0=n16.out0, in1=n11.out0, in2=n2.out0.r) [link0.name="A", link1.name="B", link2.name="Alpha"]
+  n18 = FunctionOutput(in0=n17.out0) [Id=4AB9DBA74C98F66E2116539CF7AB68DA, OutputName=Normal, SortPriority=1, link0.name="None"]
+  n19 = FunctionInput() [bUsePreviewValueAsDefault=true, Id=30744C964BB9970F12C1E290A930B26D, InputName=Roughness, InputType=FunctionInput_Scalar, PreviewValue=(X=0.8,Y=0.0,Z=0.0,W=0.0), SortPriority=2]
+  n20 = LinearInterpolate(in0=n19.out0, in1=n2.out0.b, in2=n2.out0.r) [link0.name="A", link1.name="B", link2.name="Alpha"]
+  n21 = FunctionOutput(in0=n20.out0) [Id=E63F76CE42AE5E3291684A9C5DD46613, OutputName=Roughness, SortPriority=2, link0.name="None"]
+  n22 = FunctionInput() [bUsePreviewValueAsDefault=true, Id=04A350234481334CA0959CBEEB2CD0E8, InputName=Occlusion, InputType=FunctionInput_Scalar, PreviewValue=(X=1.0,Y=0.0,Z=0.0,W=0.0), SortPriority=3]
+  n23 = OneMinus(in0=n2.out0.g) [link0.name="Input"]
+  n24 = Multiply(in0=n22.out0, in1=n23.out0) [link0.name="A", link1.name="B"]
+  n25 = FunctionOutput(in0=n24.out0) [Id=BF4C408D47034FE96B01B891CFB3825F, OutputName=Occlusion, SortPriority=3, link0.name="None"]
+}
+
+comments {
+}

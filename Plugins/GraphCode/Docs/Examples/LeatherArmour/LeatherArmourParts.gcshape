@@ -1,0 +1,154 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/LeatherArmour  smooth:0.02
+# Hard parts for the LeatherArmour example.
+
+build { }
+
+Leather = 0.4
+Strap = 2.54
+
+Flat = mesh() {
+  rect(w=200.0, h=200.0)
+  fill()
+}
+
+RivetRadius = 0.45
+RivetRise = 0.25
+
+Rivet = mesh() {
+  curve(($RivetRadius, 0), ($RivetRadius * 0.7, $RivetRise * 0.8), (0, $RivetRise))
+  revolve()
+}
+
+LaceRadius = 0.16
+Pitch = 3.0
+Gap = (92.3 - 35 * 2.54) / 2
+Inset = 1.0
+Across = $Gap * 0.5 + $Inset
+Band = $Leather
+EyeletHole = 0.3175
+EyeletBar = 0.08
+Ease = 0.6
+Press = 0.15
+HalfP = $Pitch * 0.5
+LaceLow = $Band + $LaceRadius
+LaceHigh = $Band + $LaceRadius * (3.0 - 2.0 * $Press)
+
+EyeletRing = mesh() {
+  circle(radius=$EyeletBar)
+  revolve(offset=$EyeletHole + $EyeletBar)
+}
+
+LowerRun = plane() { points((-$Across, -$HalfP, $Band + $LaceRadius * 0.5), (-$Across * $Ease, -$HalfP * $Ease, $LaceLow), ($Across * $Ease, $HalfP * $Ease, $LaceLow), ($Across, $HalfP, $Band + $LaceRadius * 0.5)) }
+UpperRun = plane() { points((-$Across, $HalfP, $Band + $LaceRadius * 0.5), (-$Across * $Ease, $HalfP * $Ease, $LaceHigh), ($Across * $Ease, -$HalfP * $Ease, $LaceHigh), ($Across, -$HalfP, $Band + $LaceRadius * 0.5)) }
+
+LowerLace = mesh() {
+  circle(radius=$LaceRadius)
+  sweep(along=$LowerRun)
+  round($LaceRadius * 0.9) [!side]
+}
+
+UpperLace = mesh() {
+  circle(radius=$LaceRadius)
+  sweep(along=$UpperRun)
+  round($LaceRadius * 0.9) [!side]
+}
+
+Lacing = mesh() {
+  add($LowerLace)
+  add($UpperLace)
+  add($EyeletRing, at=(-$Across, -$HalfP, $Band + $EyeletBar))
+  add($EyeletRing, at=($Across, -$HalfP, $Band + $EyeletBar))
+  add($EyeletRing, at=(-$Across, $HalfP, $Band + $EyeletBar))
+  add($EyeletRing, at=($Across, $HalfP, $Band + $EyeletBar))
+}
+
+Reach = 4.5
+Tail = 3.0
+Over = 5.5
+OverFront = 7.0
+BuckleBar = 0.4
+BuckleOpenLong = 1.5
+BuckleOpenHigh = 2.5
+BuckleLong = $BuckleOpenLong + 2.0 * $BuckleBar
+BuckleHigh = $BuckleOpenHigh + 2.0 * $BuckleBar
+BuckleDepth = 0.35
+BuckleOpening = plane() { rect(w=$BuckleLong - 2.0 * $BuckleBar, h=$BuckleHigh - 2.0 * $BuckleBar) }
+BuckleProng = mesh() {
+  rect(w=$BuckleLong - $BuckleBar, h=0.28)
+  round(0.12)
+  extrude(height=$BuckleDepth * 1.3)
+  round(0.08, segments=2) [top]
+}
+BuckleFrame = mesh() {
+  rect(w=$BuckleLong, h=$BuckleHigh)
+  round(0.5)
+  subtract($BuckleOpening)
+  extrude(height=$BuckleDepth)
+  round(0.1, segments=2) [sharp]
+  add($BuckleProng, at=($BuckleBar * 0.5, 0, 0))
+}
+
+ShoulderBuckle = mesh(Host = $Flat) {
+  points((-$Tail, 0), (-$Tail + 1.2, -$Strap * 0.5), ($Reach, -$Strap * 0.5), ($Reach, $Strap * 0.5), (-$Tail + 1.2, $Strap * 0.5), loop=true)
+  round((0.4, 0.3, 0.2, 0.2, 0.3))
+  extrude(height=$Leather)
+  round(0.12, segments=2) [sharp]
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=1.0]
+  add($BuckleFrame, at=(0, 0, $Leather))
+}
+
+ShoulderStrap = mesh(Host = $Flat) {
+  points((-$OverFront, -$Strap * 0.5), ($Over, -$Strap * 0.5), ($Over, $Strap * 0.5), (-$OverFront, $Strap * 0.5), loop=true)
+  round(0.2)
+  extrude(height=$Leather)
+  round(0.12, segments=2) [sharp]
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=1.0]
+}
+
+RootReach = 5.0
+StrapRoot = mesh(Host = $Flat) {
+  points((-1.0, -$Strap * 0.5), ($RootReach, -$Strap * 0.5), ($RootReach, $Strap * 0.5), (-1.0, $Strap * 0.5), loop=true)
+  round((0.5, 0.2, 0.2, 0.5))
+  extrude(height=$Leather)
+  round(0.12, segments=2) [sharp]
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=1.0]
+  add($Rivet, at=(0.2, -0.65, $Leather))
+  add($Rivet, at=(0.2, 0.65, $Leather))
+}
+
+SegW = 4.52
+RowPitch = 5.31
+RowGap = 0.3
+LameTall = $RowPitch - $RowGap
+
+LameSeg = mesh(Host = $Flat) {
+  rect(w=$SegW, h=$LameTall)
+  extrude(height=$Leather)
+  round(0.15, segments=2) [sharp]
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=1.5]
+}
+
+LiftTop = 2.665
+
+LameSegUp = mesh(Host = $Flat) {
+  points((-$SegW * 0.5, $LiftTop - $LameTall * 0.5), ($SegW * 0.5, $LiftTop - $LameTall * 0.5), ($SegW * 0.5, $LiftTop + $LameTall * 0.5), (-$SegW * 0.5, $LiftTop + $LameTall * 0.5), loop=true)
+  extrude(height=$Leather)
+  round(0.15, segments=2) [sharp]
+  conform(to=$Host, project=-Z) [bottom, carry=!bottom, smooth=1.5]
+}
+
+RivetUp = mesh() {
+  add($Rivet, at=(0, $LiftTop, 0))
+}
+
+SkirtLong = 18.4
+Lap = 1.2
+TabLong = $SkirtLong + $Lap
+TabW = 6.3
+
+Tab = mesh() {
+  points((-$TabW * 0.5, 0), ($TabW * 0.5, 0), ($TabW * 0.5, -$TabLong), (-$TabW * 0.5, -$TabLong), loop=true)
+  round((0.2, 0.2, 0.5, 0.5))
+  extrude(height=$Leather)
+  round(0.12, segments=2) [sharp]
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "phase": "binary-only-product",
+  "readyToSend": false,
+  "plugin": "GraphCodeShape",
+  "version": "0.1.13",
+  "engine": "5.7.4",
+  "engineBuildId": "47537391",
+  "platform": "Win64",
+  "sourceRevision": "872c7e0d0e0db85eea64165266aae23fb5153b75",
+  "sourceWasDirty": true,
+  "packagedAtUtc": "2026-11-20T03:51:07.7028027Z",
+  "fileCount": 314,
+  "privateImplementationIncluded": false
+}

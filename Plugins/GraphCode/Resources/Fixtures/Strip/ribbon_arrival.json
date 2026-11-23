@@ -1,0 +1,533 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "generator": "ribbon_arrival_controls.py",
+  "source_sha256": "54ea4a8949085f894a6949c2f0d4a0b3824d2e7f518fc1d4452fba3c45a638da",
+  "shared_helper_sha256": "5c3d41d630c698b3c8752e5a582dfa87e1a91fd36c937fdc7a08e9aaac28724c",
+  "contract": {
+    "distinction": "Reference numerical repeatability, finite-strain shape freedom, operational arrival tolerance, and globally proven Taut are different statements.",
+    "reference": "Same0.5cm discrete section at physicalgap.1+clearance.0001;0.001cm original comparison was diagnostic.",
+    "arrival": "A caller may explicitly accept within a declared geometric tolerance after ALL original feasibility/complementarity/CCD gates. No universal distance tolerance follows from strain alone in arbitrary geometry.",
+    "no_false_taut": "Armijo failure or a local KKT optimum does not prove global reach. The continuous lower bound leaves a nonzero interval beyond this discrete local reference."
+  },
+  "cases": [
+    {
+      "id": "valid_001114_shape_difference_at_exact_target",
+      "input": {
+        "reference_half": [
+          [
+            0.0,
+            0.10779931234236427
+          ],
+          [
+            0.5,
+            0.1077993081843295
+          ],
+          [
+            0.964288693894406,
+            -0.07777010934406224
+          ],
+          [
+            1.4218499892434573,
+            -0.2793579586765511
+          ],
+          [
+            1.8794112845925086,
+            -0.48094580800903997
+          ],
+          [
+            2.33697257994156,
+            -0.6825336573415289
+          ],
+          [
+            2.794533875290611,
+            -0.8841215066740179
+          ],
+          [
+            3.252095170639662,
+            -1.085709356006507
+          ],
+          [
+            3.7096564659887132,
+            -1.287297205338996
+          ],
+          [
+            4.167217761337764,
+            -1.4888850546714847
+          ],
+          [
+            4.624779056686815,
+            -1.6904729040039737
+          ],
+          [
+            5.0823403520358665,
+            -1.8920607533364624
+          ],
+          [
+            5.539901647384918,
+            -2.093648602668951
+          ],
+          [
+            5.997462942733969,
+            -2.29523645200144
+          ],
+          [
+            6.45502423808302,
+            -2.4968243013339286
+          ],
+          [
+            6.912585533432071,
+            -2.6984121506664174
+          ],
+          [
+            7.370146828781122,
+            -2.899999999998906
+          ]
+        ],
+        "modified_half": [
+          [
+            0.0,
+            0.10779931234236427
+          ],
+          [
+            0.5,
+            0.1077993081843295
+          ],
+          [
+            0.964288693894406,
+            -0.07777010934406224
+          ],
+          [
+            1.4219141517760734,
+            -0.2792123234528314
+          ],
+          [
+            1.8795396096577408,
+            -0.48065453756160065
+          ],
+          [
+            2.3371650675394084,
+            -0.6820967516703699
+          ],
+          [
+            2.7947905254210754,
+            -0.8835389657791393
+          ],
+          [
+            3.252415983302743,
+            -1.0849811798879085
+          ],
+          [
+            3.71004144118441,
+            -1.2864233939966778
+          ],
+          [
+            4.167666899066077,
+            -1.487865608105447
+          ],
+          [
+            4.6251640318825125,
+            -1.6895990926616555
+          ],
+          [
+            5.082661164698947,
+            -1.891332577217864
+          ],
+          [
+            5.540158297515382,
+            -2.0930660617740724
+          ],
+          [
+            5.997655430331817,
+            -2.294799546330281
+          ],
+          [
+            6.4551525631482525,
+            -2.4965330308864893
+          ],
+          [
+            6.912649695964687,
+            -2.6982665154426977
+          ],
+          [
+            7.370146828781122,
+            -2.899999999998906
+          ]
+        ],
+        "tent_start_station": 2,
+        "straight_rest_length_cm": 7.0,
+        "peak_displacement_cm": 0.001114,
+        "allowed_strain": 1e-06
+      },
+      "expected": {
+        "maximum_yarn_strain": 5.0652896987912754e-08,
+        "minimum_true_contact_gap_cm": -7.541883784156767e-13,
+        "maximum_triangle_material_residual": 5.0652896987912754e-08,
+        "endpoints_unchanged": true,
+        "worst_point_difference_cm": 0.001113999999999953,
+        "necessary_run_midpoint_shape_bound_cm": 0.004949748705742545,
+        "strain_budget_for_001_shape_bound": 4.081632565267057e-08,
+        "reference_independent_start_difference_cm": 6.288926866909704e-09,
+        "scope": "An explicit admitted-strain counterexample to a universal0.001cm pointwise gate. Does not validate Claude final state or force equilibrium."
+      }
+    },
+    {
+      "id": "captured_native_ribbon_static_audit",
+      "input": {
+        "path": "C:\\Users\\PC\\Documents\\Unreal Projects\\OraStudio\\Saved\\GarmentClothReview\\SolverResearch\\native\\ribbon_final_state.json",
+        "sha256": "06ece2f9022274006ed9cc605ac8ebca7f6e8bdec3c28c2288b78877a289c315"
+      },
+      "expected": {
+        "maximum_yarn_strain": 1.2365664048274994e-12,
+        "maximum_shear": 6.536632212344227e-08,
+        "minimum_true_clearance_gap_cm": 0.0,
+        "checked_near_feature_pairs": 340,
+        "maximum_reference_error_cm": 0.0011145570153635793,
+        "worst_point": 77,
+        "maximum_handle_target_shortfall_cm": 1.9960380531806576e-06,
+        "held_lower_movement_cm": 0.0,
+        "straight_runs": [
+          {
+            "width_row": 0,
+            "half": -1,
+            "length_cm": 7.00000000000075,
+            "span_cm": 6.999999627361883,
+            "actual_maximum_chord_deviation_cm": 0.0010251401969266966,
+            "necessary_midpoint_bound_from_actual_lengths_cm": 0.0011420315220796557,
+            "contact_end_difference_from_reference_cm": 0.00017585451025016192
+          },
+          {
+            "width_row": 0,
+            "half": 1,
+            "length_cm": 7.000000000000487,
+            "span_cm": 6.999999633890636,
+            "actual_maximum_chord_deviation_cm": 0.0010171247142841807,
+            "necessary_midpoint_bound_from_actual_lengths_cm": 0.0011319825280830347,
+            "contact_end_difference_from_reference_cm": 0.00017617427529953005
+          },
+          {
+            "width_row": 1,
+            "half": -1,
+            "length_cm": 7.000000000000604,
+            "span_cm": 6.999999631473072,
+            "actual_maximum_chord_deviation_cm": 0.0010203600188799687,
+            "necessary_midpoint_bound_from_actual_lengths_cm": 0.0011357140166095916,
+            "contact_end_difference_from_reference_cm": 0.00017581644793199914
+          },
+          {
+            "width_row": 1,
+            "half": 1,
+            "length_cm": 7.000000000000984,
+            "span_cm": 6.99999962989481,
+            "actual_maximum_chord_deviation_cm": 0.0010210059490988418,
+            "necessary_midpoint_bound_from_actual_lengths_cm": 0.0011381439167953771,
+            "contact_end_difference_from_reference_cm": 0.00017644674341948528
+          },
+          {
+            "width_row": 2,
+            "half": -1,
+            "length_cm": 7.000000000000794,
+            "span_cm": 6.999999632752757,
+            "actual_maximum_chord_deviation_cm": 0.0010203574131002913,
+            "necessary_midpoint_bound_from_actual_lengths_cm": 0.0011337407543969581,
+            "contact_end_difference_from_reference_cm": 0.00017568164252264987
+          },
+          {
+            "width_row": 2,
+            "half": 1,
+            "length_cm": 7.0000000000011,
+            "span_cm": 6.999999628548891,
+            "actual_maximum_chord_deviation_cm": 0.0010253572325686355,
+            "necessary_midpoint_bound_from_actual_lengths_cm": 0.0011402116889950816,
+            "contact_end_difference_from_reference_cm": 0.0001764467904305436
+          }
+        ],
+        "scope": "Static positions only. Capture contains no multipliers or motion history; complementarity and CCD cannot be reconstructed."
+      }
+    },
+    {
+      "id": "local_reach_sensitivity_to_strain",
+      "expected": {
+        "local_optimizers": [
+          {
+            "relative_edge_length_change": -1e-06,
+            "path_fraction": 0.9999873045417259,
+            "handle_progress_from_reference_cm": -3.891673618695954e-05,
+            "endpoint": [
+              7.370154825055755,
+              -2.899961913625169
+            ],
+            "half_positions_xz": [
+              [
+                0.0,
+                0.10779930271531933
+              ],
+              [
+                0.4999995,
+                0.10779930383559143
+              ],
+              [
+                0.9642886090451347,
+                -0.0777677277792
+              ],
+              [
+                1.4218504816173219,
+                -0.27935302676819773
+              ],
+              [
+                1.8794123541895091,
+                -0.48093832575719553
+              ],
+              [
+                2.336974226761696,
+                -0.6825236247461932
+              ],
+              [
+                2.7945360993338833,
+                -0.8841089237351909
+              ],
+              [
+                3.2520979719060703,
+                -1.0856942227241888
+              ],
+              [
+                3.709659844478258,
+                -1.2872795217131867
+              ],
+              [
+                4.167221717050444,
+                -1.4888648207021846
+              ],
+              [
+                4.6247835896226315,
+                -1.6904501196911823
+              ],
+              [
+                5.0823454621948185,
+                -1.8920354186801802
+              ],
+              [
+                5.539907334767006,
+                -2.093620717669178
+              ],
+              [
+                5.997469207339193,
+                -2.2952060166581756
+              ],
+              [
+                6.455031079911381,
+                -2.4967913156471737
+              ],
+              [
+                6.912592952483568,
+                -2.6983766146361714
+              ],
+              [
+                7.370154825055755,
+                -2.899961913625169
+              ]
+            ],
+            "equality_residual": 2.1316282072803006e-14,
+            "minimum_contact_gap_cm": -6.5503158452884236e-15,
+            "optimizer_status": "Optimization terminated successfully",
+            "optimizer_success": true,
+            "iterations": 3,
+            "scope": "Numerical local maximum in the symmetric monotone extrusion, not a global3D reach certificate."
+          },
+          {
+            "relative_edge_length_change": 0.0,
+            "path_fraction": 0.9999999999999759,
+            "handle_progress_from_reference_cm": -7.385127398059086e-14,
+            "endpoint": [
+              7.370146828781137,
+              -2.8999999999988573
+            ],
+            "half_positions_xz": [
+              [
+                0.0,
+                0.1077993122735662
+              ],
+              [
+                0.5,
+                0.10779930818515977
+              ],
+              [
+                0.9642886938908997,
+                -0.07777010935200465
+              ],
+              [
+                1.4218499892402026,
+                -0.27935795868392255
+              ],
+              [
+                1.8794112845895055,
+                -0.4809458080158405
+              ],
+              [
+                2.3369725799388084,
+                -0.6825336573477585
+              ],
+              [
+                2.7945338752881113,
+                -0.8841215066796766
+              ],
+              [
+                3.252095170637414,
+                -1.085709356011595
+              ],
+              [
+                3.709656465986717,
+                -1.287297205343513
+              ],
+              [
+                4.16721776133602,
+                -1.4888850546754306
+              ],
+              [
+                4.624779056685322,
+                -1.6904729040073487
+              ],
+              [
+                5.082340352034625,
+                -1.8920607533392668
+              ],
+              [
+                5.539901647383927,
+                -2.093648602671185
+              ],
+              [
+                5.99746294273323,
+                -2.295236452003103
+              ],
+              [
+                6.455024238082532,
+                -2.496824301335021
+              ],
+              [
+                6.912585533431835,
+                -2.698412150666939
+              ],
+              [
+                7.370146828781137,
+                -2.8999999999988573
+              ]
+            ],
+            "equality_residual": 1.070254995738651e-12,
+            "minimum_contact_gap_cm": -7.39200367583237e-13,
+            "optimizer_status": "Positive directional derivative for linesearch",
+            "optimizer_success": false,
+            "iterations": 9,
+            "scope": "Numerical local maximum in the symmetric monotone extrusion, not a global3D reach certificate."
+          },
+          {
+            "relative_edge_length_change": 1e-06,
+            "path_fraction": 1.0000126951486221,
+            "handle_progress_from_reference_cm": 3.8915786977896386e-05,
+            "endpoint": [
+              7.370138832701481,
+              -2.900038085445857
+            ],
+            "half_positions_xz": [
+              [
+                0.0,
+                0.1077993145755098
+              ],
+              [
+                0.5000005,
+                0.10779931261046811
+              ],
+              [
+                0.9642887783951486,
+                -0.07777249167326154
+              ],
+              [
+                1.4218494965598865,
+                -0.27936289122844693
+              ],
+              [
+                1.8794102147246243,
+                -0.4809532907836323
+              ],
+              [
+                2.336970932889362,
+                -0.6825436903388176
+              ],
+              [
+                2.7945316510541005,
+                -0.8841340898940029
+              ],
+              [
+                3.2520923692188384,
+                -1.0857244894491882
+              ],
+              [
+                3.7096530873835767,
+                -1.2873148890043737
+              ],
+              [
+                4.1672138055483146,
+                -1.488905288559559
+              ],
+              [
+                4.624774523713053,
+                -1.6904956881147446
+              ],
+              [
+                5.082335241877791,
+                -1.89208608766993
+              ],
+              [
+                5.539895960042529,
+                -2.0936764872251157
+              ],
+              [
+                5.997456678207267,
+                -2.295266886780301
+              ],
+              [
+                6.455017396372005,
+                -2.4968572863354863
+              ],
+              [
+                6.9125781145367435,
+                -2.6984476858906716
+              ],
+              [
+                7.370138832701481,
+                -2.900038085445857
+              ]
+            ],
+            "equality_residual": 2.220446049250313e-14,
+            "minimum_contact_gap_cm": -6.342149028171207e-15,
+            "optimizer_status": "Optimization terminated successfully",
+            "optimizer_success": true,
+            "iterations": 3,
+            "scope": "Numerical local maximum in the symmetric monotone extrusion, not a global3D reach certificate."
+          }
+        ]
+      }
+    },
+    {
+      "id": "continuous_global_bound_leaves_discrete_reach_interval",
+      "expected": {
+        "continuous_shortest_length_at_discrete_reference_cm": 15.995586061626847,
+        "material_length_cm": 16.0,
+        "reach_bounds": [
+          {
+            "strain_tolerance": 0.0,
+            "path_fraction_upper": 1.0035095485538605,
+            "extra_handle_progress_from_reference_cm": 0.010758191808218184,
+            "continuous_length": 16.0
+          },
+          {
+            "strain_tolerance": 1e-06,
+            "path_fraction_upper": 1.0035222273968658,
+            "extra_handle_progress_from_reference_cm": 0.01079705761185748,
+            "continuous_length": 16.000016
+          }
+        ],
+        "scope": "Same over-route/no-side-escape assumptions as ribbon_over_ribbon. A positive clearance shell is included. Not proof of exact finite-mesh reach."
+      }
+    }
+  ]
+}

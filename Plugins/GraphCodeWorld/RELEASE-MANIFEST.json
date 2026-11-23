@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "phase": "binary-only-product",
+  "readyToSend": false,
+  "plugin": "GraphCodeWorld",
+  "version": "0.1.13",
+  "engine": "5.7.4",
+  "engineBuildId": "47537391",
+  "platform": "Win64",
+  "sourceRevision": "bdf3cd62ae1c8689ebafb65ddc230ec95dd0c77d",
+  "sourceWasDirty": false,
+  "packagedAtUtc": "2026-11-12T01:24:20.1895644Z",
+  "fileCount": 64,
+  "privateImplementationIncluded": false
+}

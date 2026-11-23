@@ -1,0 +1,22 @@
+gcrig 1
+
+# GRAPHCODE MOVE: THE MetaHuman FACE'S CONTROLS for the face presets in HumanFace.gcmove beside this file (ruling 106 slice 3). Name it from
+# a part:Face file's header with  controls:/GraphCodeMove/Presets/Human/HumanFace  beside  presets:/GraphCodeMove/Presets/Human/HumanFace.
+# Each control drives the native MetaHuman face's raw control curves (the names RigLogic reads, read from this project's measured face
+# clips A_FaceGreeting and A_AnaHello_Face, and checked against the selected Face's DNA when a file builds). Both sides together; every
+# curve has ONE control (a face curve has one owner), so the smile here is the mouth corners only and the cheeks are their own region.
+# Amount 0 is the face at rest and 1 the curve's full native value (RigLogic clamps a raw control to 0..1).
+controls {
+  smile = control(curve.CTRL_expressions_mouthCornerPullL=(0, 1), curve.CTRL_expressions_mouthCornerPullR=(0, 1))
+  frown = control(curve.CTRL_expressions_mouthCornerDepressL=(0, 1), curve.CTRL_expressions_mouthCornerDepressR=(0, 1))
+  snarl = control(curve.CTRL_expressions_mouthUpperLipRaiseL=(0, 1), curve.CTRL_expressions_mouthUpperLipRaiseR=(0, 1), curve.CTRL_expressions_noseWrinkleL=(0, 1), curve.CTRL_expressions_noseWrinkleR=(0, 1))
+  pucker = control(curve.CTRL_expressions_mouthLipsPurseUL=(0, 1), curve.CTRL_expressions_mouthLipsPurseUR=(0, 1), curve.CTRL_expressions_mouthLipsPurseDL=(0, 1), curve.CTRL_expressions_mouthLipsPurseDR=(0, 1))
+  jaw_open = control(curve.CTRL_expressions_jawOpen=(0, 1))
+  blink = control(curve.CTRL_expressions_eyeBlinkL=(0, 1), curve.CTRL_expressions_eyeBlinkR=(0, 1))
+  eyes_wide = control(curve.CTRL_expressions_eyeWidenL=(0, 1), curve.CTRL_expressions_eyeWidenR=(0, 1))
+  squint = control(curve.CTRL_expressions_eyeSquintInnerL=(0, 1), curve.CTRL_expressions_eyeSquintInnerR=(0, 1))
+  brows_raise = control(curve.CTRL_expressions_browRaiseInL=(0, 1), curve.CTRL_expressions_browRaiseInR=(0, 1), curve.CTRL_expressions_browRaiseOuterL=(0, 1), curve.CTRL_expressions_browRaiseOuterR=(0, 1))
+  brows_down = control(curve.CTRL_expressions_browDownL=(0, 1), curve.CTRL_expressions_browDownR=(0, 1))
+  cheeks_raise = control(curve.CTRL_expressions_eyeCheekRaiseL=(0, 1), curve.CTRL_expressions_eyeCheekRaiseR=(0, 1))
+  cheeks_puff = control(curve.CTRL_expressions_mouthCheekBlowL=(0, 1), curve.CTRL_expressions_mouthCheekBlowR=(0, 1))
+}

@@ -1,0 +1,16 @@
+gcmove 1 character:/Game/Characters/BP_Character part:Face
+         controls:/Game/FaceExpressions/FaceExpressions
+         into:/Game/FaceExpressions fps:30
+build {
+  A_Expressions = $Look
+}
+# Replace the character path with your assembled MetaHuman. Copy this and the adapter
+# to Content/FaceExpressions; see ../../Guides/FACE-EXPRESSIONS.md before applying.
+# Existing native-tested timing: 3 s, two frame-aligned blinks, an 80% held smile, 15% jaw.
+Smile = profile(0=0, 0.3=0, 0.6=0.8, 1=0.8)
+Blink = profile(0=0, 0.45=0, 0.5=1, 0.55=0, 0.8=0, 0.8666666666666667=1, 0.9333333333333333=0, 1=0)
+Look = clip(frames=90) {
+  drive(smile, by=$Smile)
+  drive(blink, by=$Blink)
+  drive(jaw_open, by=0.15)
+}

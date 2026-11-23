@@ -1,0 +1,32 @@
+gc 1  kind:material  asset:/Game/GraphCode/Groom/M_GcToonOutline
+parent: /Script/Engine.Material
+
+settings {
+  BlendMode = BLEND_Masked
+  bUsedWithSkeletalMesh = true
+  OpacityMaskClipValue = 0.5
+  ShadingModel = MSM_Unlit
+  TwoSided = true
+}
+
+graph {
+  n0 = VectorParameter() [DefaultValue=(R=0.06,G=0.035,B=0.03,A=1.0), ParameterName=OutlineColor]
+  n1 = TwoSidedSign()
+  n2 = Constant() [R=-1.0]
+  n3 = Multiply(in0=n1.out0, in1=n2.out0) [link0.name="A", link1.name="B"]
+  n4 = VertexNormalWS()
+  n5 = VertexColor()
+  n6 = WorldPosition()
+  n7 = CameraPositionWS()
+  n8 = ScalarParameter() [DefaultValue=0.5, ParameterName=OutlineWidth]
+  n9 = ScalarParameter() [DefaultValue=0.01, ParameterName=DistanceScale]
+  n10 = ScalarParameter() [DefaultValue=4.0, ParameterName=DepthPush]
+  n11 = Custom(in0=n4.out0, in1=n5.out2, in2=n6.out0, in3=n7.out0, in4=n8.out0, in5=n9.out0, in6=n10.out0, in7=n12.out0, in8=n13.out0, in9=n14.out0) [Code="// GraphCodeGroom toon outline: the inverted hull as the mesh\'s overlay. Each vertex moves out along its true normal by\n// OutlineWidth cm times colour G (TipFloor keeps a minimum toward the tips), and the width grows with the camera\'s\n// distance (DistanceScale per cm past 1/DistanceScale), so a far head keeps a visible line; then DepthPush cm away from\n// the camera along the view ray, so the hull between neighbouring locks falls behind them and only the rim and real depth steps draw.\n// FadeSpan (a share of the lock\'s length along UV0 V, 0 at the root, 1 at the end) fades the width to nothing over the\n// lock\'s last stretch, so a blunt cut end and the end of its sides draw no dark frame or slit (CF8 plank A/B, 12 Nov 2026).\nfloat3 ray = Position - Camera;\nfloat distance = length(ray);\nfloat g = lerp(TipFloor, 1.0, saturate(G));\nfloat fade = FadeSpan > 0.0001 ? smoothstep(0.0, 1.0, saturate((1.0 - UV.y) / FadeSpan)) : 1.0;\nfloat width = OutlineWidth * g * fade * max(1.0, distance * DistanceScale);\nreturn normalize(N) * width + ray / max(distance, 0.001) * DepthPush;\n", Description="Toon outline: hull offset along the normal and away from the camera", Inputs=((InputName=N),(InputName=G),(InputName=Position),(InputName=Camera),(InputName=OutlineWidth),(InputName=DistanceScale),(InputName=DepthPush),(InputName=TipFloor),(InputName=UV),(InputName=FadeSpan)), link0.name="N", link1.name="G", link2.name="Position", link3.name="Camera", link4.name="OutlineWidth", link5.name="DistanceScale", link6.name="DepthPush", link7.name="TipFloor", link8.name="UV", link9.name="FadeSpan"]
+  n12 = ScalarParameter() [DefaultValue=1.0, ParameterName=TipFloor]
+  n13 = TextureCoordinate()
+  n14 = ScalarParameter() [DefaultValue=0.15, ParameterName=FadeSpan]
+  result = MaterialResult(EmissiveColor=n0.out0.rgb, OpacityMask=n3.out0, WorldPositionOffset=n11.out0)
+}
+
+comments {
+}

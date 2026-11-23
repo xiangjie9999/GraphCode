@@ -1,0 +1,31 @@
+name: Bug report
+description: Something GraphCode did that it should not, or refused that it should not.
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: GraphCode version and engine
+      description: From BUNDLE-MANIFEST.json or `unreal_info`, e.g. "0.1.13, UE 5.7.4".
+    validations:
+      required: true
+  - type: textarea
+    id: call
+    attributes:
+      label: The tool call
+      description: The tool name and its arguments (remove anything private).
+      render: json
+  - type: textarea
+    id: reply
+    attributes:
+      label: The reply
+      description: The full reply text. A refusal message usually explains itself, so please include it all.
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+  - type: dropdown
+    id: product
+    attributes:
+      label: Product
+      options: [Core, Play, Move, World, Shape, Rig, Groom, Garment, Core Extension, Integrate, Market, Licence or install]

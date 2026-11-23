@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "phase": "binary-only-product",
+  "readyToSend": false,
+  "plugin": "GraphCodeCoreExtension",
+  "version": "0.1.13",
+  "engine": "5.7.4",
+  "engineBuildId": "47537391",
+  "platform": "Win64",
+  "sourceRevision": "e44faa157107a616824141c235ec6148885216af",
+  "sourceWasDirty": true,
+  "packagedAtUtc": "2026-11-13T18:36:21.7338427Z",
+  "fileCount": 98,
+  "privateImplementationIncluded": false
+}

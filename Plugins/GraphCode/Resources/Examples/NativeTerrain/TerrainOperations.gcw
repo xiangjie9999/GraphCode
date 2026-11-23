@@ -1,0 +1,14 @@
+gcw 1
+
+terrains {
+  Mountain = terrain(base=flat(z=4000)) {
+    Summit = stamp(source=file'AsymmetricHeightStamp_Gray16.png', at=(25000,25000), width=43000, length=41000, rotation=-12, range=(Min=-18000,Max=26000), falloff=5000, smoothness=180, blend=replace)
+    Shoulder = stamp(source=file'AsymmetricHeightStamp_Gray16.png', at=(33000,32500), width=26000, length=30000, rotation=115, range=(Min=-6000,Max=14000), falloff=8500, smoothness=120, blend=max)
+    Valley = stamp(source=file'AsymmetricHeightStamp_Gray16.png', at=(27000,27000), width=10000, length=34000, rotation=-25, range=(Min=0,Max=2500), falloff=4500, smoothness=180, strength=0.6, blend=subtract)
+    Lookout = stamp(source=file'AsymmetricHeightStamp_Gray16.png', at=(18000,20000), width=11000, length=13000, range=(Min=9500,Max=9501), falloff=4500, blend=min)
+    Foothills = stamp(source=file'AsymmetricHeightStamp_Gray16.png', at=(12000,32000), width=13000, length=19000, rotation=30, range=(Min=3000,Max=7000), falloff=6000, smoothness=180, blend=average)
+    Knoll = stamp(source=file'AsymmetricHeightStamp_Gray16.png', at=(36500,15500), width=13000, length=11000, rotation=80, range=(Min=-700,Max=700), falloff=4500, smoothness=120, blend=add)
+    Surface = perlin(seed=4202, frequency=0.0008, amplitude=110, octaves=4)
+    Weathering = erode(seed=4203, iterations=18000, strength=0.18, talus=35, deposition=0.3, evaporation=0.05)
+  }
+}

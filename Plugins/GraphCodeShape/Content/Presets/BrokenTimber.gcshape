@@ -1,0 +1,839 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.2  shade:40
+
+# BROKEN TIMBER — L3 Parts: broken wood ready to place.
+# `Docs/GC-SHAPE-PRESET-LIBRARY.md` §3 (L3) and `Docs/GC-SHAPE-WOOD-DAMAGE.md` v2.
+#
+#   Timber = shape('/GraphCodeShape/Presets/BrokenTimber', Face = $Oak, Broken = $OakTorn)
+#   Fence  = mesh() { add($Timber.BrokenSlat, length=80, at_break=0.6, noise=4) … }
+#
+# TWO KINDS OF DAMAGE PRESET, AND THIS IS THE SECOND. `Damage.gcshape`'s wood
+# entries (`Snap`, `SnapOff`, `Crumble`, `Split`, `BeamBreak`) MODIFY a mesh
+# you already have; the entries here are MESHES, a finished broken board or
+# beam on their own blanks, every one parametric and seeded so one line is a
+# family. Each is built with the Damage instructions and nothing else, so a
+# fix to a break lands here too, and EVERY LOOK KNOB OF THE INSTRUCTION IS A
+# PARAMETER HERE TOO, passed straight through with the same name, unit and
+# default (owner, 2026-11-18: "everything should be parametric"). What each
+# knob does is written once, on the Damage instruction it reaches.
+#
+# THE FRAME IS THE DAMAGE FILE'S: grain along +Y, width X, thickness up +Z,
+# lying on z = 0. `at_break` is where along the length the break falls, as a
+# fraction from the -Y end. `BrokenPost` stands: its grain is +Z, and it is the
+# entry that shows the turn a standing timber takes (written there).
+#
+# TWO SLOTS, `Face` and `Broken`, the names `Wear.gcshape` already uses: the
+# skin the board had, and the fresh wood the break exposed (every break face
+# wears `cut`). Pass your own on the import line. UV0 is written by the Damage
+# entries in the wood frame, `tile` cm a texture tile (default 100, the family's
+# one density): the skin box-projected with U ALONG THE GRAIN on every long face;
+# the torn faces split BY FACING (round 4) — those pointing sideways or up/down
+# on planes whose U runs along the grain, the end grain last — so the shelves'
+# treads and walls map at the board's density with no axis flips. `aspect` is
+# the along-grain tile over the across tile (1 square; 4 the direction checker
+# the critics read). Every entry ends `keep(largest)`, so a sliver a boolean
+# leaves never ships as a floating part.
+#
+# CUSTOMISING (round 13; owner, 2026-11-19: "ensure they are parametric and easily customisable"). Every
+# entry leads with the same TOP-LEVEL knobs, named as in every other damage kit file, then its placement,
+# then its ADVANCED knobs, then its UV frame:
+#   size     the board's `width` and `thick` (cm; a BrokenTimber mesh also `length`, the post `height`)
+#   damage   0 to 3, default 1: how broken. It scales the break's reach and its loose material (each entry's
+#            KNOBS table says which knobs); 1 is the entry as written, 0.4 a light break, 2 a heavy one
+#   age      0 to 2, default 1: how worn. 0 a fresh break (its fine tips long, little chew), 2 a weathered
+#            one (fine tips halved, chew and crumbs 1.5 x); on a BrokenTimber blank also its eased arrises
+#   noise    the seed: any number, every one valid
+#   budget   0 to 2, default 1: point spacing, 0 game (half the detail), 1 high, 2 ultra (1.5 x); the build
+#            line's [triangles=] still sets the final count
+# EVERY KNOB IS CLAMPED to the range in its entry's KNOBS table (a value past it builds the nearest end of
+# the range, never a broken mesh): each knob is read through a body-local `$k<name>`. At the defaults the
+# meshes are exactly the ones before these knobs existed (checked by full-mesh hash).
+
+# The texture layer (each mesh again, its fibre baked into normal and AO maps)
+# lives in `BrokenTimberMaps.gcshape`, so these meshes build on their own and
+# the bakes are optional.
+build {
+  SM_BrokenTimber_Plank       = $BrokenPlank  [bounds=(23.5, 121.0, 11.0), triangles=12000]
+  SM_BrokenTimber_Halves      = $PlankHalves  [bounds=(36.0, 160.0, 11.0), triangles=24000]
+  SM_BrokenTimber_Rotten      = $RottenPlank  [bounds=(23.5, 101.0, 4.5), triangles=12000]
+  SM_BrokenTimber_Split       = $SplitBoard   [bounds=(29.0, 121.0, 4.5), triangles=12000]
+  SM_BrokenTimber_Beam        = $BrokenBeam   [bounds=(21.0, 161.0, 21.0), triangles=20000]
+  SM_BrokenTimber_Post        = $BrokenPost   [bounds=(13.0, 13.0, 111.0), triangles=16000]
+  SM_BrokenTimber_Slat        = $BrokenSlat   [bounds=(10.0, 61.0, 5.0), triangles=12000]
+}
+
+Dmg = shape('/GraphCodeShape/Presets/Damage')
+
+Face   = material()
+Broken = material()
+
+# ---- blanks ----------------------------------------------------------------
+
+# A sawn timber's SECTION, its four arrises eased by `ease`, swept along the
+# grain: the arrises run the whole length and the ends are flat, which is what
+# lets the box projection map every long face along the grain and every end as
+# end grain with no corner triangle to fold (see `Damage.gcshape`, WOOD, UV).
+Section = mesh(width=22.5, thick=3.8, length=120.0, ease=0.25) {
+  points((-0.5 * $width + $ease, -0.5 * $thick), (0.5 * $width - $ease, -0.5 * $thick), (0.5 * $width, -0.5 * $thick + $ease), (0.5 * $width, 0.5 * $thick - $ease), (0.5 * $width - $ease, 0.5 * $thick), (-0.5 * $width + $ease, 0.5 * $thick), (-0.5 * $width, 0.5 * $thick - $ease), (-0.5 * $width, -0.5 * $thick + $ease), loop=true)
+  extrude(height=$length)
+}
+
+# A board lying in the wood frame (grain +Y, width X, thickness up from
+# z = 0), `Masonry.Plank`'s section by default; the arris is a FRACTION of the
+# thickness so a thin slat keeps a thin one.
+Board = mesh(width=22.5, thick=3.8, length=120.0, age=1.0) {
+  $kage = clamp($age, 0.0, 2.0)
+  add($Section, width=$width, thick=$thick, length=$length, ease=0.065 * $thick * (0.5 + 0.5 * $kage), at=(0.0, 0.5 * $length, 0.5 * $thick), rotate=(-90.0, 0.0, 0.0))
+}
+
+# The same board placed so the break point is the origin: it runs from
+# y = -at_break x length to y = (1 - at_break) x length.
+BoardAtBreak = mesh(width=22.5, thick=3.8, length=120.0, at_break=0.5, age=1.0) {
+  add($Board, width=$width, thick=$thick, length=$length, age=$age, at=(0.0, (0.5 - $at_break) * $length, 0.0))
+}
+
+# ---- boards ----------------------------------------------------------------
+
+# A SOUND PLANK SNAPPED ACROSS THE GRAIN, the piece that stayed; its far end is
+# the sawn end. The knobs after `at_break` are `Damage.Snap`'s (see there):
+# `deep`/`grain` the spires' reach and width, `lean`/`shelf`/`layers` the
+# stepped shelves through the thickness, `fray`/`strip`/`ply` the ribbons,
+# `loss`, `chew`, `peel`/`peelang`; `tile` is the family's UV density.
+# KNOBS (unit, range; clamped to it), the top-level ones first; every other knob is the Damage instruction's,
+# passed through by the same name and clamped there to the range written on it:
+#   length     cm           20 to 600        the board's length along the grain
+#   width      cm           1 to 200         the board's width (across the grain, X)
+#   thick      cm           0.3 to 100       the board's thickness (Z)
+#   damage     x            0 to 3           how broken: scales the break's reach and its loose material (see the entry's line); 1 as written
+#   age        0-2          0 to 2           how worn: 0 fresh, 1 as written, 2 weathered (see the entry's line)
+#   noise      seed         not clamped      the seed: any number, every one valid (not clamped)
+#   budget     0-2          0 to 2           point spacing: 0 game (half the detail), 1 high (as written), 2 ultra (1.5 x the detail); the build line's [triangles=] sets the final count
+#   at_break   x length     0.05 to 0.95     where the break falls, from the -Y end
+#   tile       cm           1 to 10000       one texture tile
+#   aspect     x            0.1 to 20        the along-grain tile over the across tile (1 square; 4 the direction checker)
+BrokenPlank = mesh(length=120.0, width=22.5, thick=3.8, damage=1.0, age=1.0, noise=3, budget=1, at_break=0.8, deep=1.0, grain=0.17, uneven=0.25, rough=0.8, needle=0.7, skew=0.8, tilt=0.35, lean=1.8, shelf=0.65, layers=3, jog=0.35, wander=0.1, slant=0.15, sub=0.06, subw=0.33, subrows=2, fray=1.0, strip=0.045, ply=0.18, sparse=1.3, tipfray=0.6, loss=0.15, lossblunt=0.5, chew=0.08, chewodd=0.5, bitlen=1.2, thin=0.22, thinlen=3.0, peel=0, peelang=25.0, curl=25.0, peelw=0.07, peelback=1.2, root=0.25, horn=0.0, hornrib=0.5, taper=1.0, tvar=0.5, stap=1.0, rowjog=1.0, long=0.8, vdep=0.7, uvfit=1, rings=1, pithx=0.0, pithz=-3.0, pithd=0.15, hold=1.0, heart=0, torn=0.85, torntilt=0.15, tornrib=1, tornsep=0.15, longside=0, lossfollow=0, detail=0.75, tile=100.0, aspect=1.0) {
+  $kdamage = clamp($damage, 0.0, 3.0)
+  $kage = clamp($age, 0.0, 2.0)
+  $kbudget = clamp($budget, 0.0, 2.0)
+  $klength = clamp($length, 20.0, 600.0)
+  $kwidth = clamp($width, 1.0, 200.0)
+  $kthick = clamp($thick, 0.3, 100.0)
+  $kat_break = clamp($at_break, 0.05, 0.95)
+  $kdeep = clamp($deep, 0.0, 6.0)
+  $kgrain = clamp($grain, 0.03, 1.0)
+  $kuneven = clamp($uneven, 0.0, 1.0)
+  $krough = clamp($rough, 0.0, 1.0)
+  $kneedle = clamp($needle, 0.1, 3.0)
+  $kskew = clamp($skew, 0.0, 2.0)
+  $ktilt = clamp($tilt, 0.0, 2.0)
+  $klean = clamp($lean, 0.0, 4.0)
+  $kshelf = clamp($shelf, 0.0, 1.0)
+  $klayers = clamp($layers, 1.0, 16.0)
+  $kjog = clamp($jog, 0.0, 1.0)
+  $kwander = clamp($wander, 0.0, 0.5)
+  $kslant = clamp($slant, 0.0, 0.5)
+  $ksub = clamp($sub, 0.0, 0.5)
+  $ksubw = clamp($subw, 0.05, 1.0)
+  $ksubrows = clamp($subrows, 1.0, 8.0)
+  $kfray = clamp($fray, 0.0, 3.0)
+  $kstrip = clamp($strip, 0.005, 0.5)
+  $kply = clamp($ply, 0.01, 1.0)
+  $ksparse = clamp($sparse, 0.5, 4.0)
+  $ktipfray = clamp($tipfray, 0.0, 3.0)
+  $kloss = clamp($loss, 0.0, 0.6)
+  $klossblunt = clamp($lossblunt, 0.0, 1.0)
+  $kchew = clamp($chew, 0.0, 0.4)
+  $kchewodd = clamp($chewodd, 0.0, 0.9)
+  $kbitlen = clamp($bitlen, 0.1, 5.0)
+  $kthin = clamp($thin, 0.0, 0.6)
+  $kthinlen = clamp($thinlen, 0.2, 10.0)
+  $kpeel = clamp($peel, 0.0, 1.0)
+  $kpeelang = clamp($peelang, 0.0, 80.0)
+  $kcurl = clamp($curl, -90.0, 90.0)
+  $kpeelw = clamp($peelw, 0.01, 0.3)
+  $kpeelback = clamp($peelback, 0.0, 5.0)
+  $kroot = clamp($root, 0.0, 1.0)
+  $khorn = clamp($horn, 0.0, 6.0)
+  $khornrib = clamp($hornrib, 0.0, 1.0)
+  $ktaper = clamp($taper, 0.0, 1.0)
+  $ktvar = clamp($tvar, 0.0, 1.0)
+  $kstap = clamp($stap, 0.0, 1.0)
+  $krowjog = clamp($rowjog, 0.0, 1.0)
+  $klong = clamp($long, 0.0, 3.0)
+  $kvdep = clamp($vdep, 0.0, 2.0)
+  $kuvfit = clamp($uvfit, 0.0, 2.0)
+  $krings = clamp($rings, 0.0, 1.0)
+  $kpithx = clamp($pithx, -3.0, 3.0)
+  $kpithz = clamp($pithz, -10.0, 10.0)
+  $kpithd = clamp($pithd, 0.0, 1.0)
+  $khold = clamp($hold, 0.0, 1.0)
+  $kheart = clamp($heart, 0.0, 1.0)
+  $ktorn = clamp($torn, 0.0, 0.98)
+  $ktorntilt = clamp($torntilt, 0.0, 1.0)
+  $ktornrib = clamp($tornrib, 0.0, 1.0)
+  $ktornsep = clamp($tornsep, 0.0, 1.0)
+  $klongside = clamp($longside, 0.0, 1.0)
+  $klossfollow = clamp($lossfollow, 0.0, 1.0)
+  $kdetail = clamp($detail, 0.05, 4.0)
+  $ktile = clamp($tile, 1.0, 10000.0)
+  $kaspect = clamp($aspect, 0.1, 20.0)
+  add($BoardAtBreak, width=$kwidth, thick=$kthick, length=$klength, at_break=$kat_break, age=$kage)
+  $Dmg.Snap(width=$kwidth, thick=$kthick, deep=$kdeep, grain=$kgrain, uneven=$kuneven, rough=$krough, needle=$kneedle, skew=$kskew, tilt=$ktilt, lean=$klean, shelf=$kshelf, layers=$klayers, jog=$kjog, wander=$kwander, slant=$kslant, sub=$ksub, subw=$ksubw, subrows=$ksubrows, fray=$kfray, strip=$kstrip, ply=$kply, sparse=$ksparse, tipfray=$ktipfray, loss=$kloss, lossblunt=$klossblunt, chew=$kchew, chewodd=$kchewodd, bitlen=$kbitlen, thin=$kthin, thinlen=$kthinlen, peel=$kpeel, peelang=$kpeelang, curl=$kcurl, peelw=$kpeelw, peelback=$kpeelback, root=$kroot, horn=$khorn, hornrib=$khornrib, taper=$ktaper, tvar=$ktvar, stap=$kstap, rowjog=$krowjog, long=$klong, vdep=$kvdep, uvfit=$kuvfit, rings=$krings, pithx=$kpithx, pithz=$kpithz, pithd=$kpithd, hold=$khold, heart=$kheart, torn=$ktorn, torntilt=$ktorntilt, tornrib=$ktornrib, tornsep=$ktornsep, longside=$klongside, lossfollow=$klossfollow, detail=$kdetail, damage=$kdamage, age=$kage, budget=$kbudget, noise=$noise, tile=$ktile, aspect=$kaspect)
+  uv(plane, facing=(0.707, 0, 0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.486, -0.558, 0.672), facing=(0.672, 0.558, 0.486), facing=(0.974, -0.132, 0.184), facing=(0.184, 0.132, 0.974)]
+  uv(plane, facing=(0.707, 0, -0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.627, -0.57, -0.532), facing=(0.532, 0.57, -0.627), facing=(0.176, -0.067, -0.982), facing=(0.982, 0.067, -0.176)]
+  uv(plane, facing=(-0.707, 0, 0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.627, 0.57, 0.532), facing=(-0.532, -0.57, 0.627), facing=(-0.982, -0.067, 0.176), facing=(-0.176, 0.067, 0.982)]
+  uv(plane, facing=(-0.707, 0, -0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.486, 0.558, -0.672), facing=(-0.672, -0.558, -0.486), facing=(-0.184, -0.132, -0.974), facing=(-0.974, 0.132, -0.184)]
+  keep(largest)
+  material($Face)
+  material($Broken) [cut]
+}
+
+# The +Y half on its own, for `PlankHalves`.
+# KNOBS (unit, range; clamped to it), the top-level ones first; every other knob is the Damage instruction's,
+# passed through by the same name and clamped there to the range written on it:
+#   length     cm           20 to 600        the board's length along the grain
+#   width      cm           1 to 200         the board's width (across the grain, X)
+#   thick      cm           0.3 to 100       the board's thickness (Z)
+#   damage     x            0 to 3           how broken: scales the break's reach and its loose material (see the entry's line); 1 as written
+#   age        0-2          0 to 2           how worn: 0 fresh, 1 as written, 2 weathered (see the entry's line)
+#   noise      seed         not clamped      the seed: any number, every one valid (not clamped)
+#   budget     0-2          0 to 2           point spacing: 0 game (half the detail), 1 high (as written), 2 ultra (1.5 x the detail); the build line's [triangles=] sets the final count
+#   at_break   x length     0.05 to 0.95     where the break falls, from the -Y end
+#   tile       cm           1 to 10000       one texture tile
+#   aspect     x            0.1 to 20        the along-grain tile over the across tile (1 square; 4 the direction checker)
+PlankOff = mesh(length=120.0, width=22.5, thick=3.8, damage=1.0, age=1.0, noise=3, budget=1, at_break=0.5, deep=1.0, grain=0.17, uneven=0.25, rough=0.8, needle=0.7, skew=0.8, tilt=0.35, lean=1.8, shelf=0.65, layers=3, jog=0.35, wander=0.1, slant=0.15, sub=0.06, subw=0.33, subrows=2, fray=1.0, strip=0.045, ply=0.18, sparse=1.3, tipfray=0.6, loss=0.15, lossblunt=0.5, chew=0.08, chewodd=0.5, bitlen=1.2, thin=0.22, thinlen=3.0, peel=0, peelang=25.0, curl=25.0, peelw=0.07, peelback=1.2, root=0.25, horn=0.0, hornrib=0.5, taper=1.0, tvar=0.5, stap=1.0, rowjog=1.0, long=0.8, vdep=0.7, uvfit=1, rings=1, pithx=0.0, pithz=-3.0, pithd=0.15, hold=1.0, heart=0, torn=0.85, torntilt=0.15, tornrib=1, tornsep=0.15, longside=0, lossfollow=0, detail=0.75, tile=100.0, aspect=1.0) {
+  $kdamage = clamp($damage, 0.0, 3.0)
+  $kage = clamp($age, 0.0, 2.0)
+  $kbudget = clamp($budget, 0.0, 2.0)
+  $klength = clamp($length, 20.0, 600.0)
+  $kwidth = clamp($width, 1.0, 200.0)
+  $kthick = clamp($thick, 0.3, 100.0)
+  $kat_break = clamp($at_break, 0.05, 0.95)
+  $kdeep = clamp($deep, 0.0, 6.0)
+  $kgrain = clamp($grain, 0.03, 1.0)
+  $kuneven = clamp($uneven, 0.0, 1.0)
+  $krough = clamp($rough, 0.0, 1.0)
+  $kneedle = clamp($needle, 0.1, 3.0)
+  $kskew = clamp($skew, 0.0, 2.0)
+  $ktilt = clamp($tilt, 0.0, 2.0)
+  $klean = clamp($lean, 0.0, 4.0)
+  $kshelf = clamp($shelf, 0.0, 1.0)
+  $klayers = clamp($layers, 1.0, 16.0)
+  $kjog = clamp($jog, 0.0, 1.0)
+  $kwander = clamp($wander, 0.0, 0.5)
+  $kslant = clamp($slant, 0.0, 0.5)
+  $ksub = clamp($sub, 0.0, 0.5)
+  $ksubw = clamp($subw, 0.05, 1.0)
+  $ksubrows = clamp($subrows, 1.0, 8.0)
+  $kfray = clamp($fray, 0.0, 3.0)
+  $kstrip = clamp($strip, 0.005, 0.5)
+  $kply = clamp($ply, 0.01, 1.0)
+  $ksparse = clamp($sparse, 0.5, 4.0)
+  $ktipfray = clamp($tipfray, 0.0, 3.0)
+  $kloss = clamp($loss, 0.0, 0.6)
+  $klossblunt = clamp($lossblunt, 0.0, 1.0)
+  $kchew = clamp($chew, 0.0, 0.4)
+  $kchewodd = clamp($chewodd, 0.0, 0.9)
+  $kbitlen = clamp($bitlen, 0.1, 5.0)
+  $kthin = clamp($thin, 0.0, 0.6)
+  $kthinlen = clamp($thinlen, 0.2, 10.0)
+  $kpeel = clamp($peel, 0.0, 1.0)
+  $kpeelang = clamp($peelang, 0.0, 80.0)
+  $kcurl = clamp($curl, -90.0, 90.0)
+  $kpeelw = clamp($peelw, 0.01, 0.3)
+  $kpeelback = clamp($peelback, 0.0, 5.0)
+  $kroot = clamp($root, 0.0, 1.0)
+  $khorn = clamp($horn, 0.0, 6.0)
+  $khornrib = clamp($hornrib, 0.0, 1.0)
+  $ktaper = clamp($taper, 0.0, 1.0)
+  $ktvar = clamp($tvar, 0.0, 1.0)
+  $kstap = clamp($stap, 0.0, 1.0)
+  $krowjog = clamp($rowjog, 0.0, 1.0)
+  $klong = clamp($long, 0.0, 3.0)
+  $kvdep = clamp($vdep, 0.0, 2.0)
+  $kuvfit = clamp($uvfit, 0.0, 2.0)
+  $krings = clamp($rings, 0.0, 1.0)
+  $kpithx = clamp($pithx, -3.0, 3.0)
+  $kpithz = clamp($pithz, -10.0, 10.0)
+  $kpithd = clamp($pithd, 0.0, 1.0)
+  $khold = clamp($hold, 0.0, 1.0)
+  $kheart = clamp($heart, 0.0, 1.0)
+  $ktorn = clamp($torn, 0.0, 0.98)
+  $ktorntilt = clamp($torntilt, 0.0, 1.0)
+  $ktornrib = clamp($tornrib, 0.0, 1.0)
+  $ktornsep = clamp($tornsep, 0.0, 1.0)
+  $klongside = clamp($longside, 0.0, 1.0)
+  $klossfollow = clamp($lossfollow, 0.0, 1.0)
+  $kdetail = clamp($detail, 0.05, 4.0)
+  $ktile = clamp($tile, 1.0, 10000.0)
+  $kaspect = clamp($aspect, 0.1, 20.0)
+  add($BoardAtBreak, width=$kwidth, thick=$kthick, length=$klength, at_break=$kat_break, age=$kage)
+  $Dmg.SnapOff(width=$kwidth, thick=$kthick, deep=$kdeep, grain=$kgrain, uneven=$kuneven, rough=$krough, needle=$kneedle, skew=$kskew, tilt=$ktilt, lean=$klean, shelf=$kshelf, layers=$klayers, jog=$kjog, wander=$kwander, slant=$kslant, sub=$ksub, subw=$ksubw, subrows=$ksubrows, fray=$kfray, strip=$kstrip, ply=$kply, sparse=$ksparse, tipfray=$ktipfray, loss=$kloss, lossblunt=$klossblunt, chew=$kchew, chewodd=$kchewodd, bitlen=$kbitlen, thin=$kthin, thinlen=$kthinlen, peel=$kpeel, peelang=$kpeelang, curl=$kcurl, peelw=$kpeelw, peelback=$kpeelback, root=$kroot, horn=$khorn, hornrib=$khornrib, taper=$ktaper, tvar=$ktvar, stap=$kstap, rowjog=$krowjog, long=$klong, vdep=$kvdep, uvfit=$kuvfit, rings=$krings, pithx=$kpithx, pithz=$kpithz, pithd=$kpithd, hold=$khold, heart=$kheart, torn=$ktorn, torntilt=$ktorntilt, tornrib=$ktornrib, tornsep=$ktornsep, longside=$klongside, lossfollow=$klossfollow, detail=$kdetail, damage=$kdamage, age=$kage, budget=$kbudget, noise=$noise, tile=$ktile, aspect=$kaspect)
+  uv(plane, facing=(0.707, 0, 0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.486, -0.558, 0.672), facing=(0.672, 0.558, 0.486), facing=(0.974, -0.132, 0.184), facing=(0.184, 0.132, 0.974)]
+  uv(plane, facing=(0.707, 0, -0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.627, -0.57, -0.532), facing=(0.532, 0.57, -0.627), facing=(0.176, -0.067, -0.982), facing=(0.982, 0.067, -0.176)]
+  uv(plane, facing=(-0.707, 0, 0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.627, 0.57, 0.532), facing=(-0.532, -0.57, 0.627), facing=(-0.982, -0.067, 0.176), facing=(-0.176, 0.067, 0.982)]
+  uv(plane, facing=(-0.707, 0, -0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.486, 0.558, -0.672), facing=(-0.672, -0.558, -0.486), facing=(-0.184, -0.132, -0.974), facing=(-0.974, 0.132, -0.184)]
+  keep(largest)
+  material($Face)
+  material($Broken) [cut]
+}
+
+# BOTH HALVES OF ONE BOARD, lying CLOSE: the same break cuts both, so they
+# interlock tooth into socket, and each then loses its own strips, chew, thinned
+# bottom and peel; the piece that came off has slid `slide` cm along the grain
+# (the break moves only along the grain, so any slide keeps the teeth apart;
+# the swing and the sidestep need a few cm of it), stepped `sidestep` x width
+# sideways and turned `swing` degrees about the break (not `gap=`, `turn=` or
+# `apart=`: `add()` claims all three), as a board that gave way under a load
+# lies, its UVs turning with it. Round 4: 19 cm apart hid that the ends match.
+# `offpeel` 1 lets the piece that came off peel its own strip too (0 by default:
+# lying close, its lifted strip stood out of the crack as a needle).
+# Round 10: a CHUNKIER break (`grain` 0.3, `subw` 0.5, `fray` 0.6: fewer, wider
+# bundles) and the far half slid 11 cm and turned 5 degrees: at 6 cm the
+# teeth still interleaved, so the pair read as one board with a thin band of
+# strips and see-through pockets where both halves left a gap.
+# Two separate parts, by design.
+# KNOBS (unit, range; clamped to it), the top-level ones first; every other knob is the Damage instruction's,
+# passed through by the same name and clamped there to the range written on it:
+#   length     cm           20 to 600        the board's length along the grain
+#   width      cm           1 to 200         the board's width (across the grain, X)
+#   thick      cm           0.3 to 100       the board's thickness (Z)
+#   damage     x            0 to 3           how broken: scales the break's reach and its loose material (see the entry's line); 1 as written
+#   age        0-2          0 to 2           how worn: 0 fresh, 1 as written, 2 weathered (see the entry's line)
+#   noise      seed         not clamped      the seed: any number, every one valid (not clamped)
+#   budget     0-2          0 to 2           point spacing: 0 game (half the detail), 1 high (as written), 2 ultra (1.5 x the detail); the build line's [triangles=] sets the final count
+#   at_break   x length     0.05 to 0.95     where the break falls, from the -Y end
+#   slide      cm           0 to 100         how far the far half slid along the grain
+#   swing      degrees      -45 to 45        how far the far half turned
+#   sidestep   x width      -1 to 1          how far the far half stepped sideways
+#   offpeel    switch       0 to 1           1 lets the far half peel its own strip
+#   tile       cm           1 to 10000       one texture tile
+#   aspect     x            0.1 to 20        the along-grain tile over the across tile (1 square; 4 the direction checker)
+PlankHalves = mesh(length=120.0, width=22.5, thick=3.8, damage=1.0, age=1.0, noise=3, budget=1, at_break=0.55, slide=11.0, swing=5.0, sidestep=0.02, offpeel=0, deep=1.0, grain=0.3, uneven=0.25, rough=0.8, needle=0.7, skew=0.8, tilt=0.35, lean=1.8, shelf=0.65, layers=3, jog=0.35, wander=0.1, slant=0.15, sub=0.06, subw=0.5, subrows=2, fray=0.6, strip=0.045, ply=0.18, sparse=1.3, tipfray=0.6, loss=0.15, lossblunt=0.5, chew=0.08, chewodd=0.5, bitlen=1.2, thin=0.22, thinlen=3.0, peel=0, peelang=25.0, curl=25.0, peelw=0.07, peelback=1.2, root=0.25, horn=0.0, hornrib=0.5, taper=1.0, tvar=0.5, stap=1.0, rowjog=1.0, long=0.8, vdep=0.7, uvfit=1, rings=1, pithx=0.0, pithz=-3.0, pithd=0.15, hold=1.0, heart=0, torn=0.85, torntilt=0.15, tornrib=1, tornsep=0.15, longside=0, lossfollow=0, detail=0.75, tile=100.0, aspect=1.0) {
+  $kdamage = clamp($damage, 0.0, 3.0)
+  $kage = clamp($age, 0.0, 2.0)
+  $kbudget = clamp($budget, 0.0, 2.0)
+  $klength = clamp($length, 20.0, 600.0)
+  $kwidth = clamp($width, 1.0, 200.0)
+  $kthick = clamp($thick, 0.3, 100.0)
+  $kat_break = clamp($at_break, 0.05, 0.95)
+  $kslide = clamp($slide, 0.0, 100.0)
+  $kswing = clamp($swing, -45.0, 45.0)
+  $ksidestep = clamp($sidestep, -1.0, 1.0)
+  $koffpeel = clamp($offpeel, 0.0, 1.0)
+  $kdeep = clamp($deep, 0.0, 6.0)
+  $kgrain = clamp($grain, 0.03, 1.0)
+  $kuneven = clamp($uneven, 0.0, 1.0)
+  $krough = clamp($rough, 0.0, 1.0)
+  $kneedle = clamp($needle, 0.1, 3.0)
+  $kskew = clamp($skew, 0.0, 2.0)
+  $ktilt = clamp($tilt, 0.0, 2.0)
+  $klean = clamp($lean, 0.0, 4.0)
+  $kshelf = clamp($shelf, 0.0, 1.0)
+  $klayers = clamp($layers, 1.0, 16.0)
+  $kjog = clamp($jog, 0.0, 1.0)
+  $kwander = clamp($wander, 0.0, 0.5)
+  $kslant = clamp($slant, 0.0, 0.5)
+  $ksub = clamp($sub, 0.0, 0.5)
+  $ksubw = clamp($subw, 0.05, 1.0)
+  $ksubrows = clamp($subrows, 1.0, 8.0)
+  $kfray = clamp($fray, 0.0, 3.0)
+  $kstrip = clamp($strip, 0.005, 0.5)
+  $kply = clamp($ply, 0.01, 1.0)
+  $ksparse = clamp($sparse, 0.5, 4.0)
+  $ktipfray = clamp($tipfray, 0.0, 3.0)
+  $kloss = clamp($loss, 0.0, 0.6)
+  $klossblunt = clamp($lossblunt, 0.0, 1.0)
+  $kchew = clamp($chew, 0.0, 0.4)
+  $kchewodd = clamp($chewodd, 0.0, 0.9)
+  $kbitlen = clamp($bitlen, 0.1, 5.0)
+  $kthin = clamp($thin, 0.0, 0.6)
+  $kthinlen = clamp($thinlen, 0.2, 10.0)
+  $kpeel = clamp($peel, 0.0, 1.0)
+  $kpeelang = clamp($peelang, 0.0, 80.0)
+  $kcurl = clamp($curl, -90.0, 90.0)
+  $kpeelw = clamp($peelw, 0.01, 0.3)
+  $kpeelback = clamp($peelback, 0.0, 5.0)
+  $kroot = clamp($root, 0.0, 1.0)
+  $khorn = clamp($horn, 0.0, 6.0)
+  $khornrib = clamp($hornrib, 0.0, 1.0)
+  $ktaper = clamp($taper, 0.0, 1.0)
+  $ktvar = clamp($tvar, 0.0, 1.0)
+  $kstap = clamp($stap, 0.0, 1.0)
+  $krowjog = clamp($rowjog, 0.0, 1.0)
+  $klong = clamp($long, 0.0, 3.0)
+  $kvdep = clamp($vdep, 0.0, 2.0)
+  $kuvfit = clamp($uvfit, 0.0, 2.0)
+  $krings = clamp($rings, 0.0, 1.0)
+  $kpithx = clamp($pithx, -3.0, 3.0)
+  $kpithz = clamp($pithz, -10.0, 10.0)
+  $kpithd = clamp($pithd, 0.0, 1.0)
+  $khold = clamp($hold, 0.0, 1.0)
+  $kheart = clamp($heart, 0.0, 1.0)
+  $ktorn = clamp($torn, 0.0, 0.98)
+  $ktorntilt = clamp($torntilt, 0.0, 1.0)
+  $ktornrib = clamp($tornrib, 0.0, 1.0)
+  $ktornsep = clamp($tornsep, 0.0, 1.0)
+  $klongside = clamp($longside, 0.0, 1.0)
+  $klossfollow = clamp($lossfollow, 0.0, 1.0)
+  $kdetail = clamp($detail, 0.05, 4.0)
+  $ktile = clamp($tile, 1.0, 10000.0)
+  $kaspect = clamp($aspect, 0.1, 20.0)
+  add($BrokenPlank, length=$klength, width=$kwidth, thick=$kthick, at_break=$kat_break, deep=$kdeep, grain=$kgrain, uneven=$kuneven, rough=$krough, needle=$kneedle, skew=$kskew, tilt=$ktilt, lean=$klean, shelf=$kshelf, layers=$klayers, jog=$kjog, wander=$kwander, slant=$kslant, sub=$ksub, subw=$ksubw, subrows=$ksubrows, fray=$kfray, strip=$kstrip, ply=$kply, sparse=$ksparse, tipfray=$ktipfray, loss=$kloss, lossblunt=$klossblunt, chew=$kchew, chewodd=$kchewodd, bitlen=$kbitlen, thin=$kthin, thinlen=$kthinlen, peel=$kpeel, peelang=$kpeelang, curl=$kcurl, peelw=$kpeelw, peelback=$kpeelback, root=$kroot, horn=$khorn, hornrib=$khornrib, taper=$ktaper, tvar=$ktvar, stap=$kstap, rowjog=$krowjog, long=$klong, vdep=$kvdep, uvfit=$kuvfit, rings=$krings, pithx=$kpithx, pithz=$kpithz, pithd=$kpithd, hold=$khold, heart=$kheart, torn=$ktorn, torntilt=$ktorntilt, tornrib=$ktornrib, tornsep=$ktornsep, longside=$klongside, lossfollow=$klossfollow, detail=$kdetail, damage=$kdamage, age=$kage, budget=$kbudget, noise=$noise, tile=$ktile, aspect=$kaspect)
+  add($PlankOff, length=$klength, width=$kwidth, thick=$kthick, at_break=$kat_break, deep=$kdeep, grain=$kgrain, uneven=$kuneven, rough=$krough, needle=$kneedle, skew=$kskew, tilt=$ktilt, lean=$klean, shelf=$kshelf, layers=$klayers, jog=$kjog, wander=$kwander, slant=$kslant, sub=$ksub, subw=$ksubw, subrows=$ksubrows, fray=$kfray, strip=$kstrip, ply=$kply, sparse=$ksparse, tipfray=$ktipfray, loss=$kloss, lossblunt=$klossblunt, chew=$kchew, chewodd=$kchewodd, bitlen=$kbitlen, thin=$kthin, thinlen=$kthinlen, peel=$koffpeel, peelang=$kpeelang, curl=$kcurl, peelw=$kpeelw, peelback=$kpeelback, root=$kroot, horn=$khorn, hornrib=$khornrib, taper=$ktaper, tvar=$ktvar, stap=$kstap, rowjog=$krowjog, long=$klong, vdep=$kvdep, uvfit=$kuvfit, rings=$krings, pithx=$kpithx, pithz=$kpithz, pithd=$kpithd, hold=$khold, heart=$kheart, torn=$ktorn, torntilt=$ktorntilt, tornrib=$ktornrib, tornsep=$ktornsep, longside=$klongside, lossfollow=$klossfollow, detail=$kdetail, damage=$kdamage, age=$kage, budget=$kbudget, noise=$noise, tile=$ktile, aspect=$kaspect, at=($ksidestep * $kwidth, $kslide, 0.0), rotate=(0.0, 0.0, $kswing), join=none)
+}
+
+# A ROTTEN PLANK: both ends crumbled in blocky steps (`Damage.Crumble`, whose
+# knobs these are: `deep` the steps' reach, `grain` the blocks' width, `steps`
+# the shelves through the thickness, `square` how squared the block ends are,
+# `clump*` the crumbs, `bite` the V bite); the far end `far` x as deep and with
+# no bite. No splinters: rot breaks short.
+# Round 12: the bite tilted block by block and only half stepped with them,
+# its floor nearly pointed (`bitetilt` 1, `bitestep` 0.5, `bitecap` 0.1), the
+# blocks less squared and their ends tilted further (`square` 0.85, `tiltend`
+# 1.5): round 11's bite was a flat-floored rectangular slot.
+# Round 13: the scoop's floor TORN, not a soap curve: every crumb cell inside the
+# bite stops its own share short (`biterib` 0.8), so fibre stubs stand out of
+# it, and the crumbs stay in the scoop (`bitecrumb` 1).
+# KNOBS (unit, range; clamped to it), the top-level ones first; every other knob is the Damage instruction's,
+# passed through by the same name and clamped there to the range written on it:
+#   length     cm           20 to 600        the board's length along the grain
+#   width      cm           1 to 200         the board's width (across the grain, X)
+#   thick      cm           0.3 to 100       the board's thickness (Z)
+#   damage     x            0 to 3           how broken: scales the break's reach and its loose material (see the entry's line); 1 as written
+#   age        0-2          0 to 2           how worn: 0 fresh, 1 as written, 2 weathered (see the entry's line)
+#   noise      seed         not clamped      the seed: any number, every one valid (not clamped)
+#   budget     0-2          0 to 2           point spacing: 0 game (half the detail), 1 high (as written), 2 ultra (1.5 x the detail); the build line's [triangles=] sets the final count
+#   at_break   x length     0.05 to 0.95     where the break falls, from the -Y end
+#   far        x            0 to 1           the far end's crumble, x as deep, with no bite
+#   tile       cm           1 to 10000       one texture tile
+#   aspect     x            0.1 to 20        the along-grain tile over the across tile (1 square; 4 the direction checker)
+RottenPlank = mesh(length=100.0, width=22.5, thick=3.8, damage=1.0, age=1.0, noise=5, budget=1, at_break=0.88, far=0.6, deep=0.3, grain=0.26, steps=3, lean=0.5, shelf=1.0, jog=0.7, wander=0.06, slant=0.1, square=0.85, tilt=0.4, tiltend=1.5, sub=0.045, subw=0.33, subrows=2, clump=0.1, clumpw=0.05, clumpt=0.3, clumpu=0.45, clumpd=0.5, bite=0.3, bitew=0.6, bitecap=0.1, bitecrumb=1.0, bitestep=0.5, bitevar=0.7, bitetilt=1.0, biterib=0.8, uvfit=1, detail=0.75, tile=100.0, aspect=1.0) {
+  $kdamage = clamp($damage, 0.0, 3.0)
+  $kage = clamp($age, 0.0, 2.0)
+  $kbudget = clamp($budget, 0.0, 2.0)
+  $klength = clamp($length, 20.0, 600.0)
+  $kwidth = clamp($width, 1.0, 200.0)
+  $kthick = clamp($thick, 0.3, 100.0)
+  $kat_break = clamp($at_break, 0.05, 0.95)
+  $kfar = clamp($far, 0.0, 1.0)
+  $kdeep = clamp($deep, 0.0, 6.0)
+  $kgrain = clamp($grain, 0.03, 1.0)
+  $ksteps = clamp($steps, 1.0, 8.0)
+  $klean = clamp($lean, 0.0, 4.0)
+  $kshelf = clamp($shelf, 0.0, 1.0)
+  $kjog = clamp($jog, 0.0, 1.0)
+  $kwander = clamp($wander, 0.0, 0.5)
+  $kslant = clamp($slant, 0.0, 0.5)
+  $ksquare = clamp($square, 0.0, 0.99)
+  $ktilt = clamp($tilt, 0.0, 2.0)
+  $ktiltend = clamp($tiltend, 0.0, 3.0)
+  $ksub = clamp($sub, 0.0, 0.5)
+  $ksubw = clamp($subw, 0.05, 1.0)
+  $ksubrows = clamp($subrows, 1.0, 8.0)
+  $kclump = clamp($clump, 0.0, 0.5)
+  $kclumpw = clamp($clumpw, 0.005, 0.3)
+  $kclumpt = clamp($clumpt, 0.02, 1.0)
+  $kclumpu = clamp($clumpu, 0.0, 1.0)
+  $kclumpd = clamp($clumpd, 0.0, 1.0)
+  $kbite = clamp($bite, 0.0, 1.0)
+  $kbitew = clamp($bitew, 0.1, 2.0)
+  $kbitecap = clamp($bitecap, 0.0, 0.95)
+  $kbitecrumb = clamp($bitecrumb, 0.0, 1.0)
+  $kbitestep = clamp($bitestep, 0.0, 1.0)
+  $kbitevar = clamp($bitevar, 0.0, 1.0)
+  $kbitetilt = clamp($bitetilt, 0.0, 2.0)
+  $kbiterib = clamp($biterib, 0.0, 1.0)
+  $kuvfit = clamp($uvfit, 0.0, 2.0)
+  $kdetail = clamp($detail, 0.05, 4.0)
+  $ktile = clamp($tile, 1.0, 10000.0)
+  $kaspect = clamp($aspect, 0.1, 20.0)
+  add($BoardAtBreak, width=$kwidth, thick=$kthick, length=$klength, at_break=$kat_break, age=$kage)
+  $Dmg.Crumble(width=$kwidth, thick=$kthick, deep=$kdeep, grain=$kgrain, steps=$ksteps, lean=$klean, shelf=$kshelf, jog=$kjog, wander=$kwander, slant=$kslant, square=$ksquare, tilt=$ktilt, tiltend=$ktiltend, sub=$ksub, subw=$ksubw, subrows=$ksubrows, clump=$kclump, clumpw=$kclumpw, clumpt=$kclumpt, clumpu=$kclumpu, clumpd=$kclumpd, bite=$kbite, bitew=$kbitew, bitecap=$kbitecap, bitecrumb=$kbitecrumb, bitestep=$kbitestep, bitevar=$kbitevar, bitetilt=$kbitetilt, biterib=$kbiterib, uvfit=$kuvfit, detail=$kdetail, damage=$kdamage, age=$kage, budget=$kbudget, noise=$noise, tile=$ktile, aspect=$kaspect)
+  $Dmg.Crumble(width=$kwidth, thick=$kthick, deep=$kfar * $kdeep, grain=$kgrain, steps=$ksteps, lean=$klean, shelf=$kshelf, jog=$kjog, wander=$kwander, slant=$kslant, square=$ksquare, tilt=$ktilt, tiltend=$ktiltend, sub=$ksub, subw=$ksubw, subrows=$ksubrows, clump=$kclump, clumpw=$kclumpw, clumpt=$kclumpt, clumpu=$kclumpu, clumpd=$kclumpd, bite=0.0, bitew=$kbitew, bitecap=$kbitecap, bitecrumb=$kbitecrumb, bitestep=$kbitestep, bitevar=$kbitevar, bitetilt=$kbitetilt, biterib=$kbiterib, uvfit=$kuvfit, detail=$kdetail, damage=$kdamage, age=$kage, budget=$kbudget, noise=$noise + 2, origin=(0.0, -$kat_break * $klength + $kfar * $kdeep * $kdamage * $kwidth + 1.0, 0.0), rotation=(0.0, 0.0, 180.0), tile=$ktile, aspect=$kaspect)
+  uv(plane, facing=(0.707, 0, 0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.486, -0.558, 0.672), facing=(0.672, 0.558, 0.486), facing=(0.974, -0.132, 0.184), facing=(0.184, 0.132, 0.974)]
+  uv(plane, facing=(0.707, 0, -0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.627, -0.57, -0.532), facing=(0.532, 0.57, -0.627), facing=(0.176, -0.067, -0.982), facing=(0.982, 0.067, -0.176)]
+  uv(plane, facing=(-0.707, 0, 0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.627, 0.57, 0.532), facing=(-0.532, -0.57, 0.627), facing=(-0.982, -0.067, 0.176), facing=(-0.176, 0.067, 0.982)]
+  uv(plane, facing=(-0.707, 0, -0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.486, 0.558, -0.672), facing=(-0.672, -0.558, -0.486), facing=(-0.184, -0.132, -0.974), facing=(-0.974, 0.132, -0.184)]
+  keep(largest)
+  material($Face)
+  material($Broken) [cut]
+}
+
+# A BOARD SPLIT ALONG THE GRAIN from one end (`Damage.Split`, whose knobs these
+# are: `open`/`close`/`bevel` the mouth, `wander`/`ledge`/`stair` the path and
+# its stepped ledges, `plies`/`peelw` the layers it steps through, `tear`/
+# `ridges` the torn faces): the crack starts `across` x width off the middle at
+# the +Y end and runs `split` cm back; the strip it cut off SPRINGS OUT,
+# `spring` x width at the mouth and nothing at the tip, as a split board's
+# tongue does, so the split reads from above.
+# Round 12: the torn walls on four narrow windows (`uvfit` 1: stretch 1.35-1.38
+# -> 1.29-1.30) and the lips fraying in layers (`lipfray` 0.25: the plies' steps
+# and torn ridges reach the faces instead of fading out before them).
+# Round 13: FIBRE-RIDGED LIPS (`lipridge` 1): each ply's jog and each torn band
+# tapers along the grain into a sliver pointing at the mouth, so the lips are
+# rows of fibres, not smooth block steps; the walls' windows narrowed so the
+# tapers stay under 1.3 stretch, and the strip's spring follows the new wall.
+# KNOBS (unit, range; clamped to it), the top-level ones first; every other knob is the Damage instruction's,
+# passed through by the same name and clamped there to the range written on it:
+#   length     cm           20 to 600        the board's length along the grain
+#   width      cm           1 to 200         the board's width (across the grain, X)
+#   thick      cm           0.3 to 100       the board's thickness (Z)
+#   damage     x            0 to 3           how broken: scales the break's reach and its loose material (see the entry's line); 1 as written
+#   age        0-2          0 to 2           how worn: 0 fresh, 1 as written, 2 weathered (see the entry's line)
+#   noise      seed         not clamped      the seed: any number, every one valid (not clamped)
+#   budget     0-2          0 to 2           point spacing: 0 game (half the detail), 1 high (as written), 2 ultra (1.5 x the detail); the build line's [triangles=] sets the final count
+#   split      cm           5 to 1000        how far back the split runs
+#   across     x width      -0.45 to 0.45    the split's mouth off the middle
+#   spring     x width      0 to 0.3         how far the split-off strip springs out at the mouth
+#   tile       cm           1 to 10000       one texture tile
+#   aspect     x            0.1 to 20        the along-grain tile over the across tile (1 square; 4 the direction checker)
+SplitBoard = mesh(length=120.0, width=22.5, thick=3.8, damage=1.0, age=1.0, noise=7, budget=1, split=80.0, across=0.12, spring=0.06, open=0.12, wedge=0.5, close=2.0, bevel=0.08, wander=0.12, ledge=0.03, stair=1.0, plies=3, peelw=0.08, tear=0.045, ridges=0.03, tearblk=0.07, lipfray=0.25, uvfit=1, lipridge=1.0, detail=0.75, tile=100.0, aspect=1.0) {
+  $kdamage = clamp($damage, 0.0, 3.0)
+  $kage = clamp($age, 0.0, 2.0)
+  $kbudget = clamp($budget, 0.0, 2.0)
+  $klength = clamp($length, 20.0, 600.0)
+  $kwidth = clamp($width, 1.0, 200.0)
+  $kthick = clamp($thick, 0.3, 100.0)
+  $ksplit = clamp($split, 5.0, 1000.0)
+  $kacross = clamp($across, -0.45, 0.45)
+  $kspring = clamp($spring, 0.0, 0.3)
+  $kopen = clamp($open, 0.0, 0.6)
+  $kwedge = clamp($wedge, -1.0, 1.0)
+  $kclose = clamp($close, 0.0, 6.0)
+  $kbevel = clamp($bevel, 0.0, 0.4)
+  $kwander = clamp($wander, 0.0, 0.5)
+  $kledge = clamp($ledge, 0.0, 0.2)
+  $kstair = clamp($stair, 0.1, 5.0)
+  $kplies = clamp($plies, 1.0, 8.0)
+  $kpeelw = clamp($peelw, 0.01, 0.3)
+  $ktear = clamp($tear, 0.0, 0.3)
+  $kridges = clamp($ridges, 0.005, 0.3)
+  $ktearblk = clamp($tearblk, 0.01, 1.0)
+  $klipfray = clamp($lipfray, 0.0, 1.0)
+  $kuvfit = clamp($uvfit, 0.0, 2.0)
+  $klipridge = clamp($lipridge, 0.0, 1.0)
+  $kdetail = clamp($detail, 0.05, 4.0)
+  $ktile = clamp($tile, 1.0, 10000.0)
+  $kaspect = clamp($aspect, 0.1, 20.0)
+  add($Board, width=$kwidth, thick=$kthick, length=$klength, age=$kage)
+  $Dmg.Split(width=$kwidth, thick=$kthick, length=$ksplit, open=$kopen, wedge=$kwedge, close=$kclose, bevel=$kbevel, wander=$kwander, ledge=$kledge, stair=$kstair, plies=$kplies, peelw=$kpeelw, tear=$ktear, ridges=$kridges, tearblk=$ktearblk, lipfray=$klipfray, uvfit=$kuvfit, lipridge=$klipridge, detail=$kdetail, damage=$kdamage, age=$kage, budget=$kbudget, noise=$noise, origin=($kacross * $kwidth, 0.5 * $klength, 0.0), tile=$ktile, aspect=$kaspect)
+  uv(plane, facing=(0.707, 0, 0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.486, -0.558, 0.672), facing=(0.672, 0.558, 0.486), facing=(0.974, -0.132, 0.184), facing=(0.184, 0.132, 0.974)]
+  uv(plane, facing=(0.707, 0, -0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.627, -0.57, -0.532), facing=(0.532, 0.57, -0.627), facing=(0.176, -0.067, -0.982), facing=(0.982, 0.067, -0.176)]
+  uv(plane, facing=(-0.707, 0, 0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.627, 0.57, 0.532), facing=(-0.532, -0.57, 0.627), facing=(-0.982, -0.067, 0.176), facing=(-0.176, 0.067, 0.982)]
+  uv(plane, facing=(-0.707, 0, -0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.486, 0.558, -0.672), facing=(-0.672, -0.558, -0.486), facing=(-0.184, -0.132, -0.974), facing=(-0.974, 0.132, -0.184)]
+  if ($kspring > 0) {
+    if ($klipridge > 0) {
+      warp(by=($kspring * $kwidth * pow(clamp(1 + (point.y - 0.5 * $klength) / $ksplit, 0, 1), 2) * clamp((point.x - $kacross * $kwidth - ($kwander * $kwidth * (0.6 * sin(360 * (point.y - 0.5 * $klength) / (3.3 * $kwidth) + 360 * (atan(tan((sin($noise * 3.3) * 4375.85) * 180 - 90)) / 180 + 0.5)) + 0.4 * sin(360 * (point.y - 0.5 * $klength) / (1.3 * $kwidth) + 360 * (atan(tan((sin($noise * 4.4) * 4375.85) * 180 - 90)) / 180 + 0.5))) * clamp(-(point.y - 0.5 * $klength) / (0.5 * $kwidth), 0, 1) + $kledge * $kwidth * (2 * (atan(tan((sin(floor((point.y - 0.5 * $klength) / ($kstair * $kwidth) + 0.37 * (atan(tan((sin($noise * 5.5) * 4375.85) * 180 - 90)) / 180 + 0.5)) * 127.1 + $noise * 13.1) * 43758.5) * 180 - 90)) / 180 + 0.5) - 1) * clamp(-(point.y - 0.5 * $klength) / (0.5 * $kstair * $kwidth), 0, 1) + max(clamp(min(point.z, $kthick - point.z) / (0.12 * $kthick), 0, 1), $klipfray) * $kpeelw * $kwidth * (2 * (0.5 + 0.5 * sin(floor($kplies * clamp((point.z + 0.3) / ($kthick + 0.6), 0, 1) + 0.3 * sin(360 * (point.y - 0.5 * $klength) / (1.7 * $kwidth))) * 211.3 + floor((point.y - 0.5 * $klength) / (3 * $ktearblk * $kstair * $kwidth)) * 97.1 + $noise * 7.7)) - 1) * (1 - 0.5 * $klipridge + $klipridge * (atan(tan(((point.y - 0.5 * $klength) / (3 * $ktearblk * $kstair * $kwidth)) * 180 - 90)) / 180 + 0.5)))) * 20.0, 0, 1), 0, 0))
+    } else {
+      warp(by=($kspring * $kwidth * pow(clamp(1 + (point.y - 0.5 * $klength) / $ksplit, 0, 1), 2) * clamp((point.x - $kacross * $kwidth - ($kwander * $kwidth * (0.6 * sin(360 * (point.y - 0.5 * $klength) / (3.3 * $kwidth) + 360 * (atan(tan((sin($noise * 3.3) * 4375.85) * 180 - 90)) / 180 + 0.5)) + 0.4 * sin(360 * (point.y - 0.5 * $klength) / (1.3 * $kwidth) + 360 * (atan(tan((sin($noise * 4.4) * 4375.85) * 180 - 90)) / 180 + 0.5))) * clamp(-(point.y - 0.5 * $klength) / (0.5 * $kwidth), 0, 1) + $kledge * $kwidth * (2 * (atan(tan((sin(floor((point.y - 0.5 * $klength) / ($kstair * $kwidth) + 0.37 * (atan(tan((sin($noise * 5.5) * 4375.85) * 180 - 90)) / 180 + 0.5)) * 127.1 + $noise * 13.1) * 43758.5) * 180 - 90)) / 180 + 0.5) - 1) * clamp(-(point.y - 0.5 * $klength) / (0.5 * $kstair * $kwidth), 0, 1) + max(clamp(min(point.z, $kthick - point.z) / (0.12 * $kthick), 0, 1), $klipfray) * $kpeelw * $kwidth * (2 * (0.5 + 0.5 * sin(floor($kplies * clamp((point.z + 0.3) / ($kthick + 0.6), 0, 1) + 0.3 * sin(360 * (point.y - 0.5 * $klength) / (1.7 * $kwidth))) * 211.3 + floor((point.y - 0.5 * $klength) / (3 * $ktearblk * $kstair * $kwidth)) * 97.1 + $noise * 7.7)) - 1))) * 20.0, 0, 1), 0, 0))
+    }
+  }
+  material($Face)
+  material($Broken) [cut]
+}
+
+# A THICK BEAM SNAPPED, lying (`Damage.BeamBreak`, whose knobs these are): one
+# stair step `lip` of the depth high and `run` x depth long with a torn,
+# ribbed tread (`ridge`, `rib`), the upper part in `layers` shelves with spires
+# and one horn (`horn` x depth long), a delamination at `delam` of the depth;
+# not the board's saw-tooth.
+# Round 10: the tread's ridges are `rib` 0.25 x width (0.1 read end-on as a
+# zipper of 2 cm teeth along the bottom) and take the break's torn ends
+# (`treadtorn` 1).
+# Round 12: `detail` 0.75 (fewer, larger facets: the 4:1 checker's stripes
+# break less along the bundles) and the lower step's ribbons at half
+# (`lowfray` 0.3: a row of small chips along the end-on's lower edge).
+# Round 13: THE PLANK'S FIELD, cm for cm, on the beam (a beam is a thick
+# board): 3.8 cm bundles in 1.9 cm bands (`grain` 0.19, `layers` 8), 9 cm reach,
+# the plank's ribbons, slope and shelves, growth rings about a pith below
+# (`rings` 1, `pithz` -0.57). 20,000 triangles on its build line.
+# KNOBS (unit, range; clamped to it), the top-level ones first; every other knob is the Damage instruction's,
+# passed through by the same name and clamped there to the range written on it:
+#   length     cm           20 to 600        the board's length along the grain
+#   width      cm           1 to 200         the board's width (across the grain, X)
+#   thick      cm           0.3 to 100       the board's thickness (Z)
+#   damage     x            0 to 3           how broken: scales the break's reach and its loose material (see the entry's line); 1 as written
+#   age        0-2          0 to 2           how worn: 0 fresh, 1 as written, 2 weathered (see the entry's line)
+#   noise      seed         not clamped      the seed: any number, every one valid (not clamped)
+#   budget     0-2          0 to 2           point spacing: 0 game (half the detail), 1 high (as written), 2 ultra (1.5 x the detail); the build line's [triangles=] sets the final count
+#   at_break   x length     0.05 to 0.95     where the break falls, from the -Y end
+#   tile       cm           1 to 10000       one texture tile
+#   aspect     x            0.1 to 20        the along-grain tile over the across tile (1 square; 4 the direction checker)
+BrokenBeam = mesh(length=160.0, width=20.0, thick=20.0, damage=1.0, age=1.0, noise=9, budget=1, at_break=0.7, deep=1.125, grain=0.19, layers=8, lean=1.8, shelf=0.65, tilt=0.35, skew=0.8, sub=0.0675, subw=0.33, subrows=2, fray=0.19, strip=0.05, ply=0.034, needle=0.7, tipfray=0.6, lip=0.25, run=0.5, ridge=0.05, rib=0.25, delam=0.33, split=1.0, horn=0.0, hornw=0.11, hornq=1.1, hornrib=0.5, sparse=1.3, taper=1.0, tvar=0.5, stap=1.0, rowjog=1.0, long=0.8, vdep=0.7, uvfit=1, rings=1, pithx=0.0, pithz=-0.57, pithd=0.17, hold=1.0, heart=0, torn=0.85, torntilt=0.15, tornrib=1, tornsep=0.15, treadtorn=1, lowfray=0.3, treadfray=0.35, detail=1.0, tile=100.0, aspect=1.0) {
+  $kdamage = clamp($damage, 0.0, 3.0)
+  $kage = clamp($age, 0.0, 2.0)
+  $kbudget = clamp($budget, 0.0, 2.0)
+  $klength = clamp($length, 20.0, 600.0)
+  $kwidth = clamp($width, 1.0, 200.0)
+  $kthick = clamp($thick, 0.3, 100.0)
+  $kat_break = clamp($at_break, 0.05, 0.95)
+  $kdeep = clamp($deep, 0.0, 6.0)
+  $kgrain = clamp($grain, 0.03, 1.0)
+  $klayers = clamp($layers, 1.0, 16.0)
+  $klean = clamp($lean, 0.0, 4.0)
+  $kshelf = clamp($shelf, 0.0, 1.0)
+  $ktilt = clamp($tilt, 0.0, 2.0)
+  $kskew = clamp($skew, 0.0, 2.0)
+  $ksub = clamp($sub, 0.0, 0.5)
+  $ksubw = clamp($subw, 0.05, 1.0)
+  $ksubrows = clamp($subrows, 1.0, 8.0)
+  $kfray = clamp($fray, 0.0, 3.0)
+  $kstrip = clamp($strip, 0.005, 0.5)
+  $kply = clamp($ply, 0.01, 1.0)
+  $kneedle = clamp($needle, 0.1, 3.0)
+  $ktipfray = clamp($tipfray, 0.0, 3.0)
+  $klip = clamp($lip, 0.05, 0.6)
+  $krun = clamp($run, 0.0, 2.0)
+  $kridge = clamp($ridge, 0.0, 0.3)
+  $krib = clamp($rib, 0.02, 1.0)
+  $kdelam = clamp($delam, 0.05, 0.95)
+  $ksplit = clamp($split, 0.0, 4.0)
+  $khorn = clamp($horn, 0.0, 6.0)
+  $khornw = clamp($hornw, 0.02, 0.6)
+  $khornq = clamp($hornq, 0.2, 4.0)
+  $khornrib = clamp($hornrib, 0.0, 1.0)
+  $ksparse = clamp($sparse, 0.5, 4.0)
+  $ktaper = clamp($taper, 0.0, 1.0)
+  $ktvar = clamp($tvar, 0.0, 1.0)
+  $kstap = clamp($stap, 0.0, 1.0)
+  $krowjog = clamp($rowjog, 0.0, 1.0)
+  $klong = clamp($long, 0.0, 3.0)
+  $kvdep = clamp($vdep, 0.0, 2.0)
+  $kuvfit = clamp($uvfit, 0.0, 2.0)
+  $krings = clamp($rings, 0.0, 1.0)
+  $kpithx = clamp($pithx, -3.0, 3.0)
+  $kpithz = clamp($pithz, -10.0, 10.0)
+  $kpithd = clamp($pithd, 0.0, 1.0)
+  $khold = clamp($hold, 0.0, 1.0)
+  $kheart = clamp($heart, 0.0, 1.0)
+  $ktorn = clamp($torn, 0.0, 0.98)
+  $ktorntilt = clamp($torntilt, 0.0, 1.0)
+  $ktornrib = clamp($tornrib, 0.0, 1.0)
+  $ktornsep = clamp($tornsep, 0.0, 1.0)
+  $ktreadtorn = clamp($treadtorn, 0.0, 1.0)
+  $klowfray = clamp($lowfray, 0.0, 2.0)
+  $ktreadfray = clamp($treadfray, 0.0, 2.0)
+  $kdetail = clamp($detail, 0.05, 4.0)
+  $ktile = clamp($tile, 1.0, 10000.0)
+  $kaspect = clamp($aspect, 0.1, 20.0)
+  add($Section, width=$kwidth, thick=$kthick, length=$klength, ease=0.5 * (0.5 + 0.5 * $kage), at=(0.0, (1.0 - $kat_break) * $klength, 0.5 * $kthick), rotate=(-90.0, 0.0, 0.0))
+  $Dmg.BeamBreak(width=$kwidth, thick=$kthick, deep=$kdeep, grain=$kgrain, layers=$klayers, lean=$klean, shelf=$kshelf, tilt=$ktilt, skew=$kskew, sub=$ksub, subw=$ksubw, subrows=$ksubrows, fray=$kfray, strip=$kstrip, ply=$kply, needle=$kneedle, tipfray=$ktipfray, lip=$klip, run=$krun, ridge=$kridge, rib=$krib, delam=$kdelam, split=$ksplit, horn=$khorn, hornw=$khornw, hornq=$khornq, hornrib=$khornrib, sparse=$ksparse, taper=$ktaper, tvar=$ktvar, stap=$kstap, rowjog=$krowjog, long=$klong, vdep=$kvdep, uvfit=$kuvfit, rings=$krings, pithx=$kpithx, pithz=$kpithz, pithd=$kpithd, hold=$khold, heart=$kheart, torn=$ktorn, torntilt=$ktorntilt, tornrib=$ktornrib, tornsep=$ktornsep, treadtorn=$ktreadtorn, lowfray=$klowfray, treadfray=$ktreadfray, detail=$kdetail, damage=$kdamage, age=$kage, budget=$kbudget, noise=$noise, tile=$ktile, aspect=$kaspect)
+  uv(plane, facing=(0.707, 0, 0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.486, -0.558, 0.672), facing=(0.672, 0.558, 0.486), facing=(0.974, -0.132, 0.184), facing=(0.184, 0.132, 0.974)]
+  uv(plane, facing=(0.707, 0, -0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.627, -0.57, -0.532), facing=(0.532, 0.57, -0.627), facing=(0.176, -0.067, -0.982), facing=(0.982, 0.067, -0.176)]
+  uv(plane, facing=(-0.707, 0, 0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.627, 0.57, 0.532), facing=(-0.532, -0.57, 0.627), facing=(-0.982, -0.067, 0.176), facing=(-0.176, 0.067, 0.982)]
+  uv(plane, facing=(-0.707, 0, -0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.486, 0.558, -0.672), facing=(-0.672, -0.558, -0.486), facing=(-0.184, -0.132, -0.974), facing=(-0.974, 0.132, -0.184)]
+  keep(largest)
+  material($Face)
+  material($Broken) [cut]
+}
+
+# A FENCE POST SNAPPED, STANDING. Its grain runs up +Z, so the break's frame is
+# turned: `rotation=(-90, 0, 0)` carries the frame's grain (+Y) onto +Z and its
+# thickness (+Z) onto -Y, so the frame's "bottom face" is the post's +Y face and
+# `origin=` sits on it, mid-width, at the break height. The UV frame turns with
+# it: `fibre=(0, 0, 1)`, `face=(0, -1, 0)`, and `upright=1` turns the torn faces'
+# facing split with it (an instruction cannot read them out of `rotation=`). The
+# section is swept straight up, so its ends are flat. The knobs are
+# `Damage.Snap`'s, with a post's defaults: two shelves on one long slanted
+# plane, their cell walls leaning (`tilt`), wide spires of very unequal length
+# stepped by sub-cells (`sub`), fibre SHEETS fraying at the tips (round 6: four to a
+# shelf, `subrows`; wider and thinner, `strip` 0.1, `ply` 0.08; walls leaning less,
+# `tilt` 0.3: end-on round 4's narrow bundles crossed by leaning walls read as a
+# faceted mound), one
+# ribboned horn, a shallow chew and no peeled strip or thinned face (round 4:
+# on a post's long break zone both read as a ladder of notches down its side).
+# Round 10: the pith sits OUTSIDE the post (`pithz` -3, `heart` 0: flat-sawn
+# layering, as the Plank) and the bundles are chunky (`grain` 0.35, `subw` 1,
+# `subrows` 2, `fray` 0.3): a boxed heart and a forest of narrow needles read
+# end-on, from above, as a radial crystal.
+# Round 11: no horn (`horn` 0) and the loss on the break's own slant
+# (`lossfollow` 1), so no seed's high side is planed into a near-clean cut.
+# Round 12: a less slanted break (`lean` 0.8) and Snap's chew (`chew` 0.08),
+# so a seed whose high side faces you still shows a splintered top.
+# Round 13: THE PLANK'S FIELD, cm for cm, on the post's section (a post is a
+# thick board): 3.8 cm bundles in 1.3 cm bands (`grain` 0.32, `layers` 9), 9 cm
+# reach (`deep` 1.875), the plank's ribbons, slope and shelves; the pith 11.4 cm
+# off the face. End-on it reads as layered slabs where rounds 10-12 read as
+# terraces; 16,000 triangles on its build line.
+# KNOBS (unit, range; clamped to it), the top-level ones first; every other knob is the Damage instruction's,
+# passed through by the same name and clamped there to the range written on it:
+#   height     cm           30 to 500        the post's height (its grain runs up +Z)
+#   width      cm           1 to 200         the board's width (across the grain, X)
+#   thick      cm           0.3 to 100       the board's thickness (Z)
+#   damage     x            0 to 3           how broken: scales the break's reach and its loose material (see the entry's line); 1 as written
+#   age        0-2          0 to 2           how worn: 0 fresh, 1 as written, 2 weathered (see the entry's line)
+#   noise      seed         not clamped      the seed: any number, every one valid (not clamped)
+#   budget     0-2          0 to 2           point spacing: 0 game (half the detail), 1 high (as written), 2 ultra (1.5 x the detail); the build line's [triangles=] sets the final count
+#   at_break   x length     0.05 to 0.95     where the break falls, from the -Y end
+#   tile       cm           1 to 10000       one texture tile
+#   aspect     x            0.1 to 20        the along-grain tile over the across tile (1 square; 4 the direction checker)
+BrokenPost = mesh(height=110.0, width=12.0, thick=12.0, damage=1.0, age=1.0, noise=13, budget=1, at_break=0.8, deep=1.875, grain=0.32, uneven=0.25, rough=0.8, needle=0.7, skew=0.8, tilt=0.35, lean=1.8, shelf=0.65, layers=9, jog=0.35, wander=0.1, slant=0.15, sub=0.11, subw=0.33, subrows=2, fray=0.32, strip=0.084, ply=0.057, sparse=1.3, tipfray=0.6, loss=0.15, lossblunt=0.5, chew=0.08, chewodd=0.5, bitlen=0.38, thin=0.0, thinlen=3.0, peel=0, peelang=25.0, curl=25.0, peelw=0.07, peelback=1.2, root=0.25, horn=0.0, hornrib=0.5, taper=1.0, tvar=0.5, stap=1.0, rowjog=1.0, long=0.8, vdep=0.7, uvfit=1, rings=1, pithx=0.0, pithz=-0.95, pithd=0.28, hold=1.0, heart=0, torn=0.85, torntilt=0.15, tornrib=1, tornsep=0.15, longside=0, lossfollow=1, detail=0.75, tile=100.0, aspect=1.0) {
+  $kdamage = clamp($damage, 0.0, 3.0)
+  $kage = clamp($age, 0.0, 2.0)
+  $kbudget = clamp($budget, 0.0, 2.0)
+  $kheight = clamp($height, 30.0, 500.0)
+  $kwidth = clamp($width, 1.0, 200.0)
+  $kthick = clamp($thick, 0.3, 100.0)
+  $kat_break = clamp($at_break, 0.05, 0.95)
+  $kdeep = clamp($deep, 0.0, 6.0)
+  $kgrain = clamp($grain, 0.03, 1.0)
+  $kuneven = clamp($uneven, 0.0, 1.0)
+  $krough = clamp($rough, 0.0, 1.0)
+  $kneedle = clamp($needle, 0.1, 3.0)
+  $kskew = clamp($skew, 0.0, 2.0)
+  $ktilt = clamp($tilt, 0.0, 2.0)
+  $klean = clamp($lean, 0.0, 4.0)
+  $kshelf = clamp($shelf, 0.0, 1.0)
+  $klayers = clamp($layers, 1.0, 16.0)
+  $kjog = clamp($jog, 0.0, 1.0)
+  $kwander = clamp($wander, 0.0, 0.5)
+  $kslant = clamp($slant, 0.0, 0.5)
+  $ksub = clamp($sub, 0.0, 0.5)
+  $ksubw = clamp($subw, 0.05, 1.0)
+  $ksubrows = clamp($subrows, 1.0, 8.0)
+  $kfray = clamp($fray, 0.0, 3.0)
+  $kstrip = clamp($strip, 0.005, 0.5)
+  $kply = clamp($ply, 0.01, 1.0)
+  $ksparse = clamp($sparse, 0.5, 4.0)
+  $ktipfray = clamp($tipfray, 0.0, 3.0)
+  $kloss = clamp($loss, 0.0, 0.6)
+  $klossblunt = clamp($lossblunt, 0.0, 1.0)
+  $kchew = clamp($chew, 0.0, 0.4)
+  $kchewodd = clamp($chewodd, 0.0, 0.9)
+  $kbitlen = clamp($bitlen, 0.1, 5.0)
+  $kthin = clamp($thin, 0.0, 0.6)
+  $kthinlen = clamp($thinlen, 0.2, 10.0)
+  $kpeel = clamp($peel, 0.0, 1.0)
+  $kpeelang = clamp($peelang, 0.0, 80.0)
+  $kcurl = clamp($curl, -90.0, 90.0)
+  $kpeelw = clamp($peelw, 0.01, 0.3)
+  $kpeelback = clamp($peelback, 0.0, 5.0)
+  $kroot = clamp($root, 0.0, 1.0)
+  $khorn = clamp($horn, 0.0, 6.0)
+  $khornrib = clamp($hornrib, 0.0, 1.0)
+  $ktaper = clamp($taper, 0.0, 1.0)
+  $ktvar = clamp($tvar, 0.0, 1.0)
+  $kstap = clamp($stap, 0.0, 1.0)
+  $krowjog = clamp($rowjog, 0.0, 1.0)
+  $klong = clamp($long, 0.0, 3.0)
+  $kvdep = clamp($vdep, 0.0, 2.0)
+  $kuvfit = clamp($uvfit, 0.0, 2.0)
+  $krings = clamp($rings, 0.0, 1.0)
+  $kpithx = clamp($pithx, -3.0, 3.0)
+  $kpithz = clamp($pithz, -10.0, 10.0)
+  $kpithd = clamp($pithd, 0.0, 1.0)
+  $khold = clamp($hold, 0.0, 1.0)
+  $kheart = clamp($heart, 0.0, 1.0)
+  $ktorn = clamp($torn, 0.0, 0.98)
+  $ktorntilt = clamp($torntilt, 0.0, 1.0)
+  $ktornrib = clamp($tornrib, 0.0, 1.0)
+  $ktornsep = clamp($tornsep, 0.0, 1.0)
+  $klongside = clamp($longside, 0.0, 1.0)
+  $klossfollow = clamp($lossfollow, 0.0, 1.0)
+  $kdetail = clamp($detail, 0.05, 4.0)
+  $ktile = clamp($tile, 1.0, 10000.0)
+  $kaspect = clamp($aspect, 0.1, 20.0)
+  add($Section, width=$kwidth, thick=$kthick, length=$kheight, ease=0.4 * (0.5 + 0.5 * $kage))
+  $Dmg.Snap(width=$kwidth, thick=$kthick, deep=$kdeep, grain=$kgrain, uneven=$kuneven, rough=$krough, needle=$kneedle, skew=$kskew, tilt=$ktilt, lean=$klean, shelf=$kshelf, layers=$klayers, jog=$kjog, wander=$kwander, slant=$kslant, sub=$ksub, subw=$ksubw, subrows=$ksubrows, fray=$kfray, strip=$kstrip, ply=$kply, sparse=$ksparse, tipfray=$ktipfray, loss=$kloss, lossblunt=$klossblunt, chew=$kchew, chewodd=$kchewodd, bitlen=$kbitlen, thin=$kthin, thinlen=$kthinlen, peel=$kpeel, peelang=$kpeelang, curl=$kcurl, peelw=$kpeelw, peelback=$kpeelback, root=$kroot, horn=$khorn, hornrib=$khornrib, taper=$ktaper, tvar=$ktvar, stap=$kstap, rowjog=$krowjog, long=$klong, vdep=$kvdep, uvfit=$kuvfit, rings=$krings, pithx=$kpithx, pithz=$kpithz, pithd=$kpithd, hold=$khold, heart=$kheart, torn=$ktorn, torntilt=$ktorntilt, tornrib=$ktornrib, tornsep=$ktornsep, longside=$klongside, lossfollow=$klossfollow, detail=$kdetail, damage=$kdamage, age=$kage, budget=$kbudget, noise=$noise, origin=(0.0, 0.5 * $kthick, $kat_break * $kheight), rotation=(-90.0, 0.0, 0.0), fibre=(0, 0, 1), face=(0, -1, 0), upright=1, tile=$ktile, aspect=$kaspect)
+  uv(plane, facing=(0.707, -0.707, 0), up=(0, 0, 1), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.486, -0.672, -0.558), facing=(0.672, -0.486, 0.558), facing=(0.974, -0.184, -0.132), facing=(0.184, -0.974, 0.132)]
+  uv(plane, facing=(0.707, 0.707, 0), up=(0, 0, 1), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.627, 0.532, -0.57), facing=(0.532, 0.627, 0.57), facing=(0.176, 0.982, -0.067), facing=(0.982, 0.176, 0.067)]
+  uv(plane, facing=(-0.707, -0.707, 0), up=(0, 0, 1), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.627, -0.532, 0.57), facing=(-0.532, -0.627, -0.57), facing=(-0.982, -0.176, -0.067), facing=(-0.176, -0.982, 0.067)]
+  uv(plane, facing=(-0.707, 0.707, 0), up=(0, 0, 1), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.486, 0.672, 0.558), facing=(-0.672, 0.486, -0.558), facing=(-0.184, 0.974, -0.132), facing=(-0.974, 0.184, 0.132)]
+  keep(largest)
+  material($Face)
+  material($Broken) [cut]
+}
+
+# A CRATE OR FENCE SLAT, 9 x 1.6 cm — the commonest broken wood in games —
+# snapped near one end; the knobs are `Damage.Snap`'s, which scale with the
+# slat's own width and thickness, with a slat's defaults (round 4): two shelves
+# of fewer, wider spires whose lengths differ many times over and fewer
+# ribbons (round 3's even needles read as a broom).
+# KNOBS (unit, range; clamped to it), the top-level ones first; every other knob is the Damage instruction's,
+# passed through by the same name and clamped there to the range written on it:
+#   length     cm           20 to 600        the board's length along the grain
+#   width      cm           1 to 200         the board's width (across the grain, X)
+#   thick      cm           0.3 to 100       the board's thickness (Z)
+#   damage     x            0 to 3           how broken: scales the break's reach and its loose material (see the entry's line); 1 as written
+#   age        0-2          0 to 2           how worn: 0 fresh, 1 as written, 2 weathered (see the entry's line)
+#   noise      seed         not clamped      the seed: any number, every one valid (not clamped)
+#   budget     0-2          0 to 2           point spacing: 0 game (half the detail), 1 high (as written), 2 ultra (1.5 x the detail); the build line's [triangles=] sets the final count
+#   at_break   x length     0.05 to 0.95     where the break falls, from the -Y end
+#   tile       cm           1 to 10000       one texture tile
+#   aspect     x            0.1 to 20        the along-grain tile over the across tile (1 square; 4 the direction checker)
+BrokenSlat = mesh(length=60.0, width=9.0, thick=1.6, damage=1.0, age=1.0, noise=11, budget=1, at_break=0.75, deep=1.0, grain=0.26, uneven=0.25, rough=1.0, needle=0.7, skew=0.8, tilt=0.35, lean=1.8, shelf=0.65, layers=2, jog=0.35, wander=0.1, slant=0.15, sub=0.08, subw=0.33, subrows=2, fray=0.8, strip=0.045, ply=0.18, sparse=2.5, tipfray=0.5, loss=0.15, lossblunt=0.5, chew=0.08, chewodd=0.5, bitlen=1.2, thin=0.22, thinlen=3.0, peel=0, peelang=40.0, curl=25.0, peelw=0.07, peelback=1.2, root=0.25, horn=0.0, hornrib=0.5, taper=1.0, tvar=0.5, stap=1.0, rowjog=1.0, long=0.8, vdep=0.7, uvfit=1, rings=0, pithx=0.0, pithz=-3.0, pithd=0.15, hold=1.0, heart=0, torn=0.0, torntilt=0.0, tornrib=0, tornsep=0.15, longside=0, lossfollow=0, detail=1.0, tile=100.0, aspect=1.0) {
+  $kdamage = clamp($damage, 0.0, 3.0)
+  $kage = clamp($age, 0.0, 2.0)
+  $kbudget = clamp($budget, 0.0, 2.0)
+  $klength = clamp($length, 20.0, 600.0)
+  $kwidth = clamp($width, 1.0, 200.0)
+  $kthick = clamp($thick, 0.3, 100.0)
+  $kat_break = clamp($at_break, 0.05, 0.95)
+  $kdeep = clamp($deep, 0.0, 6.0)
+  $kgrain = clamp($grain, 0.03, 1.0)
+  $kuneven = clamp($uneven, 0.0, 1.0)
+  $krough = clamp($rough, 0.0, 1.0)
+  $kneedle = clamp($needle, 0.1, 3.0)
+  $kskew = clamp($skew, 0.0, 2.0)
+  $ktilt = clamp($tilt, 0.0, 2.0)
+  $klean = clamp($lean, 0.0, 4.0)
+  $kshelf = clamp($shelf, 0.0, 1.0)
+  $klayers = clamp($layers, 1.0, 16.0)
+  $kjog = clamp($jog, 0.0, 1.0)
+  $kwander = clamp($wander, 0.0, 0.5)
+  $kslant = clamp($slant, 0.0, 0.5)
+  $ksub = clamp($sub, 0.0, 0.5)
+  $ksubw = clamp($subw, 0.05, 1.0)
+  $ksubrows = clamp($subrows, 1.0, 8.0)
+  $kfray = clamp($fray, 0.0, 3.0)
+  $kstrip = clamp($strip, 0.005, 0.5)
+  $kply = clamp($ply, 0.01, 1.0)
+  $ksparse = clamp($sparse, 0.5, 4.0)
+  $ktipfray = clamp($tipfray, 0.0, 3.0)
+  $kloss = clamp($loss, 0.0, 0.6)
+  $klossblunt = clamp($lossblunt, 0.0, 1.0)
+  $kchew = clamp($chew, 0.0, 0.4)
+  $kchewodd = clamp($chewodd, 0.0, 0.9)
+  $kbitlen = clamp($bitlen, 0.1, 5.0)
+  $kthin = clamp($thin, 0.0, 0.6)
+  $kthinlen = clamp($thinlen, 0.2, 10.0)
+  $kpeel = clamp($peel, 0.0, 1.0)
+  $kpeelang = clamp($peelang, 0.0, 80.0)
+  $kcurl = clamp($curl, -90.0, 90.0)
+  $kpeelw = clamp($peelw, 0.01, 0.3)
+  $kpeelback = clamp($peelback, 0.0, 5.0)
+  $kroot = clamp($root, 0.0, 1.0)
+  $khorn = clamp($horn, 0.0, 6.0)
+  $khornrib = clamp($hornrib, 0.0, 1.0)
+  $ktaper = clamp($taper, 0.0, 1.0)
+  $ktvar = clamp($tvar, 0.0, 1.0)
+  $kstap = clamp($stap, 0.0, 1.0)
+  $krowjog = clamp($rowjog, 0.0, 1.0)
+  $klong = clamp($long, 0.0, 3.0)
+  $kvdep = clamp($vdep, 0.0, 2.0)
+  $kuvfit = clamp($uvfit, 0.0, 2.0)
+  $krings = clamp($rings, 0.0, 1.0)
+  $kpithx = clamp($pithx, -3.0, 3.0)
+  $kpithz = clamp($pithz, -10.0, 10.0)
+  $kpithd = clamp($pithd, 0.0, 1.0)
+  $khold = clamp($hold, 0.0, 1.0)
+  $kheart = clamp($heart, 0.0, 1.0)
+  $ktorn = clamp($torn, 0.0, 0.98)
+  $ktorntilt = clamp($torntilt, 0.0, 1.0)
+  $ktornrib = clamp($tornrib, 0.0, 1.0)
+  $ktornsep = clamp($tornsep, 0.0, 1.0)
+  $klongside = clamp($longside, 0.0, 1.0)
+  $klossfollow = clamp($lossfollow, 0.0, 1.0)
+  $kdetail = clamp($detail, 0.05, 4.0)
+  $ktile = clamp($tile, 1.0, 10000.0)
+  $kaspect = clamp($aspect, 0.1, 20.0)
+  add($BoardAtBreak, width=$kwidth, thick=$kthick, length=$klength, at_break=$kat_break, age=$kage)
+  $Dmg.Snap(width=$kwidth, thick=$kthick, deep=$kdeep, grain=$kgrain, uneven=$kuneven, rough=$krough, needle=$kneedle, skew=$kskew, tilt=$ktilt, lean=$klean, shelf=$kshelf, layers=$klayers, jog=$kjog, wander=$kwander, slant=$kslant, sub=$ksub, subw=$ksubw, subrows=$ksubrows, fray=$kfray, strip=$kstrip, ply=$kply, sparse=$ksparse, tipfray=$ktipfray, loss=$kloss, lossblunt=$klossblunt, chew=$kchew, chewodd=$kchewodd, bitlen=$kbitlen, thin=$kthin, thinlen=$kthinlen, peel=$kpeel, peelang=$kpeelang, curl=$kcurl, peelw=$kpeelw, peelback=$kpeelback, root=$kroot, horn=$khorn, hornrib=$khornrib, taper=$ktaper, tvar=$ktvar, stap=$kstap, rowjog=$krowjog, long=$klong, vdep=$kvdep, uvfit=$kuvfit, rings=$krings, pithx=$kpithx, pithz=$kpithz, pithd=$kpithd, hold=$khold, heart=$kheart, torn=$ktorn, torntilt=$ktorntilt, tornrib=$ktornrib, tornsep=$ktornsep, longside=$klongside, lossfollow=$klossfollow, detail=$kdetail, damage=$kdamage, age=$kage, budget=$kbudget, noise=$noise, tile=$ktile, aspect=$kaspect)
+  uv(plane, facing=(0.707, 0, 0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.486, -0.558, 0.672), facing=(0.672, 0.558, 0.486), facing=(0.974, -0.132, 0.184), facing=(0.184, 0.132, 0.974)]
+  uv(plane, facing=(0.707, 0, -0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(0.627, -0.57, -0.532), facing=(0.532, 0.57, -0.627), facing=(0.176, -0.067, -0.982), facing=(0.982, 0.067, -0.176)]
+  uv(plane, facing=(-0.707, 0, 0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.627, 0.57, 0.532), facing=(-0.532, -0.57, 0.627), facing=(-0.982, -0.067, 0.176), facing=(-0.176, 0.067, 0.982)]
+  uv(plane, facing=(-0.707, 0, -0.707), up=(0, 1, 0), scale=($kaspect * $ktile, $ktile)) [!cut, facing=(-0.486, 0.558, -0.672), facing=(-0.672, -0.558, -0.486), facing=(-0.184, -0.132, -0.974), facing=(-0.974, 0.132, -0.184)]
+  keep(largest)
+  material($Face)
+  material($Broken) [cut]
+}

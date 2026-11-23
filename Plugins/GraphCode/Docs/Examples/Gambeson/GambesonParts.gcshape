@@ -1,0 +1,11 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/Gambeson  smooth:0.02
+# Hard parts for the Gambeson example.
+
+build { }
+
+ButtonRadius = 0.925
+
+Button = mesh() {
+  arc(radius=$ButtonRadius, from=0.0, to=90.0)
+  revolve()
+}

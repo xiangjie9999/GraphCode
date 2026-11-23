@@ -1,0 +1,106 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.01  shade:42
+
+# FIXINGS — ISO metric M8 hardware, and the first resident of the Presets
+# folder. `GC-SHAPE-GRAMMAR.md` §3.1.
+#
+# THIS FILE IS MEANT TO BE IMPORTED, NOT BUILT:
+#
+#   Fixings = shape('/GraphCodeShape/Presets/Fixings')
+#   Plate   = mesh() { rect(w=20, h=20) extrude(height=1) add($Fixings.HexNut, at=(0,0,1)) }
+#
+# An imported file's own `build { }` NEVER RUNS — only the top file's targets
+# are built — so the block below costs an importer nothing. It is here because
+# a preset that cannot be built on its own is a preset nobody can look at, and
+# because the `[bounds=]` contracts are this file's own self-check: every one is
+# a refusal if the shape overshoots it, so a preset that silently changes size
+# stops building rather than quietly shipping wrong.
+#
+# EVERYTHING IS IN CENTIMETRES, which is the format's unit and NOT the unit
+# hardware is sold in. M8 means an 8 mm thread, so the shank radius is 0.40.
+#
+# THE SIZES ARE THE ISO STANDARDS rather than invented numbers: 13 mm across the
+# flats for an M8 nut and bolt head, 6.5 mm nut thickness, 5.3 mm head height,
+# a 17 mm washer on an 8.4 mm hole. A game rarely needs the real number, but
+# getting it free costs nothing and a wrong one reads as wrong at close range.
+#
+# `smooth:0.01` is a 0.1 mm chord tolerance, not the 5 mm default — the same
+# reason `CabinetHandles.gcshape` sets it. An 8 mm shank under the default is a
+# triangle.
+
+build {
+  SM_Fixing_HexNut  = $HexNut  [pivot=(0,0,0), bounds=(1.51, 1.51, 0.66)]
+  SM_Fixing_Washer  = $Washer  [pivot=(0,0,0), bounds=(1.71, 1.71, 0.17)]
+  SM_Fixing_HexBolt = $HexBolt [pivot=(0,0,0), bounds=(1.51, 1.51, 3.54)]
+}
+
+# THE BOUNDS ABOVE ARE SQUARE IN X AND Y ON PURPOSE, though a hexagon is not.
+# Across the flats is 13 mm and across the corners 15, so one axis is 1.5 and
+# the other 1.3 — but WHICH is which depends on where `circle(segments=6)` puts
+# its first vertex, and that is the evaluator's business rather than this file's.
+# A square contract holds whichever way the hexagon is clocked and still catches
+# every error worth catching: a nut twice its size, or one that came back round.
+
+# ---- material slot ------------------------------------------------------
+
+# One slot for the family: fixings are one finish. What it WEARS is the static
+# mesh's own `.gc`, not this file.
+Steel = material()
+
+# ---- shared dimensions --------------------------------------------------
+
+# Named rather than repeated, so an importer reading `$Fixings.Thread_R` can see
+# what the family is built around — and so the bolt and the nut cannot drift
+# apart. THESE RESOLVE AGAINST THIS FILE even when an importer's own file has a
+# `Thread_R` of its own: an imported body reads its own document (§3.1).
+Thread_R = 0.40
+Flats_R  = 0.75
+
+# ---- the hex nut — M8, 13 mm across the flats, 6.5 thick ----------------
+
+Nut_Hole = plane() { circle(radius=$Thread_R) }
+
+# `segments=6` is the INTENT and not a tolerance the evaluator may improve on —
+# `smooth:` prices curvature, and a hexagon has none to price. The grammar names
+# this exact case: "a hexagonal nut is `segments=6` and must never be smoothed
+# to 24."
+HexNut = mesh() {
+  circle(radius=$Flats_R, segments=6)
+  subtract($Nut_Hole)
+  extrude(height=0.65)
+  material($Steel)
+}
+
+# ---- the washer — M8, 17 mm outside on an 8.4 mm hole, 1.6 thick --------
+
+# The hole is 8.4 and not 8.0: a washer that fits an M8 bolt has to clear it.
+Washer_Hole = plane() { circle(radius=0.42) }
+
+Washer = mesh() {
+  circle(radius=0.85)
+  subtract($Washer_Hole)
+  extrude(height=0.16)
+  material($Steel)
+}
+
+# ---- the hex bolt — M8 x 30, 13 mm head across the flats ----------------
+
+Bolt_Head = mesh() {
+  circle(radius=$Flats_R, segments=6)
+  extrude(height=0.53)
+}
+
+# 3.13 rather than 3.00, because THE JOIN OVERLAPS. The shank is seated at 0.40,
+# which is 0.13 inside the head, and still tops out at 3.53 for a 30 mm shank
+# clear of a 5.3 mm head. Two closed shells that merely touch are a legal union
+# whose result is both of them side by side — `CabinetHandles.gcshape` says the
+# same thing, and it is the commonest way a fixing comes back as two objects.
+Bolt_Shank = mesh() {
+  circle(radius=$Thread_R)
+  extrude(height=3.13)
+}
+
+HexBolt = mesh() {
+  add($Bolt_Head)
+  add($Bolt_Shank, at=(0.0, 0.0, 0.40))
+  material($Steel)
+}

@@ -1,0 +1,1965 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "generator": "contact_ccd_controls.py",
+  "source_sha256": {
+    "contact_ccd_controls.py": "d53c8b9a875af70ba707f499515dde6eca5ebf13c874bcfca52ecaf6e14dcc34",
+    "contact_controls.py": "66a3761fcbbccc16b2c303e741d5983ac110df1aef34803cdfdc24820a65fc1d"
+  },
+  "contract": {
+    "units": "cm",
+    "motion": "Linear per vertex for t in [0,1]",
+    "thickness": "Cases have constant per-feature half-thickness, sum min_distance=0.1",
+    "first_contact_time": "Exact geometric threshold time, not the required return of a conservative CCD method",
+    "safe_fraction": "Clear cases accept 1; impact/touch cases accept positive time strictly before first_contact_time, with validated whole-prefix clearance",
+    "status": "Converged means this query resolved; it does not mean the motion is clear or a cloth solve converged",
+    "tangent": "Touch must not be missed because distance-minus-thickness does not change sign",
+    "degeneracy": "Coplanar but separated is allowed. Initial overlap and degenerate primitives require diagnosed handling.",
+    "comparison": "Own non-certified conservative-advancement replay at eta=0.9; its output is diagnostic, not an exact required solver result",
+    "limits": "No certified arithmetic or general deforming-mesh proof. Numerical sampling cross-checks analytic fixtures only."
+  },
+  "cases": [
+    {
+      "id": "vf_sheet_sweep",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.2
+          ],
+          "position_end": [
+            0.0,
+            0.0,
+            -0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Impact",
+        "first_contact_time": 0.25,
+        "zero_thickness_crossing_time": 0.5,
+        "safe_fraction_upper_exclusive": 0.25,
+        "must_accept_full_step": false,
+        "must_make_positive_progress": true,
+        "contact_witness": {
+          "weights_a": [
+            1.0
+          ],
+          "weights_b": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "normal_b_to_a": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "feature_ids_a": [
+            0
+          ],
+          "feature_ids_b": [
+            1,
+            2,
+            3
+          ]
+        },
+        "status": "Converged"
+      },
+      "analytic_derivation": "Interior remains inside face; d(t)=abs(0.2-0.4t); first d=0.1 at t=1/4, zero at 1/2.",
+      "sample_crosscheck_min_distance": 0.1,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 0.225,
+        "iterations": 2,
+        "outcome": "Limited"
+      }
+    },
+    {
+      "id": "vf_sheet_sweep_reversed_winding",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.2
+          ],
+          "position_end": [
+            0.0,
+            0.0,
+            -0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          3,
+          2,
+          1
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Impact",
+        "first_contact_time": 0.25,
+        "zero_thickness_crossing_time": 0.5,
+        "safe_fraction_upper_exclusive": 0.25,
+        "must_accept_full_step": false,
+        "must_make_positive_progress": true,
+        "contact_witness": {
+          "weights_a": [
+            1.0
+          ],
+          "weights_b": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "normal_b_to_a": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "feature_ids_a": [
+            0
+          ],
+          "feature_ids_b": [
+            3,
+            2,
+            1
+          ]
+        },
+        "status": "Converged"
+      },
+      "analytic_derivation": "Interior remains inside face; d(t)=abs(0.2-0.4t); first d=0.1 at t=1/4, zero at 1/2.",
+      "sample_crosscheck_min_distance": 0.1,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 0.225,
+        "iterations": 2,
+        "outcome": "Limited"
+      }
+    },
+    {
+      "id": "vf_safe_tangential",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -0.25,
+            0.0,
+            0.11
+          ],
+          "position_end": [
+            0.25,
+            0.0,
+            0.11
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Clear",
+        "first_contact_time": null,
+        "zero_thickness_crossing_time": null,
+        "safe_fraction_upper_exclusive": null,
+        "must_accept_full_step": true,
+        "must_make_positive_progress": false,
+        "status": "Converged"
+      },
+      "analytic_derivation": "Projection stays in face; distance is exactly 0.11 > 0.1 for the full motion.",
+      "sample_crosscheck_min_distance": 0.11,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 1.0,
+        "iterations": 56,
+        "outcome": "Clear",
+        "meets_full_step_requirement": true
+      }
+    },
+    {
+      "id": "vf_common_translation",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.2
+          ],
+          "position_end": [
+            3.0,
+            -2.0,
+            1.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            2.0,
+            -3.0,
+            1.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            4.0,
+            -3.0,
+            1.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "position_end": [
+            3.0,
+            0.0,
+            1.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Clear",
+        "first_contact_time": null,
+        "zero_thickness_crossing_time": null,
+        "safe_fraction_upper_exclusive": null,
+        "must_accept_full_step": true,
+        "must_make_positive_progress": false,
+        "status": "Converged"
+      },
+      "analytic_derivation": "All vertices translate together; relative distance stays 0.2.",
+      "sample_crosscheck_min_distance": 0.19999999999999996,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 1.0,
+        "iterations": 0,
+        "outcome": "Clear",
+        "meets_full_step_requirement": true
+      }
+    },
+    {
+      "id": "ee_perpendicular_sweep",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -2.0,
+            0.0,
+            0.2
+          ],
+          "position_end": [
+            -2.0,
+            0.0,
+            -0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            2.0,
+            0.0,
+            0.2
+          ],
+          "position_end": [
+            2.0,
+            0.0,
+            -0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            0.0,
+            -2.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            -2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "edge_edge",
+        "a": [
+          0,
+          1
+        ],
+        "b": [
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Impact",
+        "first_contact_time": 0.25,
+        "zero_thickness_crossing_time": 0.5,
+        "safe_fraction_upper_exclusive": 0.25,
+        "must_accept_full_step": false,
+        "must_make_positive_progress": true,
+        "contact_witness": {
+          "weights_a": [
+            0.5,
+            0.5
+          ],
+          "weights_b": [
+            0.5,
+            0.5
+          ],
+          "normal_b_to_a": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "feature_ids_a": [
+            0,
+            1
+          ],
+          "feature_ids_b": [
+            2,
+            3
+          ]
+        },
+        "status": "Converged"
+      },
+      "analytic_derivation": "Both closest points are segment midpoints; d(t)=abs(0.2-0.4t).",
+      "sample_crosscheck_min_distance": 0.1,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 0.225,
+        "iterations": 2,
+        "outcome": "Limited"
+      }
+    },
+    {
+      "id": "ee_both_primitives_move",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -2.0,
+            0.0,
+            0.2
+          ],
+          "position_end": [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            2.0,
+            0.0,
+            0.2
+          ],
+          "position_end": [
+            2.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            0.0,
+            -2.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            -2.0,
+            0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            2.0,
+            0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "edge_edge",
+        "a": [
+          0,
+          1
+        ],
+        "b": [
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Impact",
+        "first_contact_time": 0.25,
+        "zero_thickness_crossing_time": 0.5,
+        "safe_fraction_upper_exclusive": 0.25,
+        "must_accept_full_step": false,
+        "must_make_positive_progress": true,
+        "contact_witness": {
+          "weights_a": [
+            0.5,
+            0.5
+          ],
+          "weights_b": [
+            0.5,
+            0.5
+          ],
+          "normal_b_to_a": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "feature_ids_a": [
+            0,
+            1
+          ],
+          "feature_ids_b": [
+            2,
+            3
+          ]
+        },
+        "status": "Converged"
+      },
+      "analytic_derivation": "Relative normal displacement is -0.4 despite neither moving farther than 0.2.",
+      "sample_crosscheck_min_distance": 0.10000000000000002,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 0.225,
+        "iterations": 2,
+        "outcome": "Limited"
+      }
+    },
+    {
+      "id": "ee_parallel_sweep",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -1.0,
+            0.2,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            -0.2,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            1.0,
+            0.2,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            -0.2,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "edge_edge",
+        "a": [
+          0,
+          1
+        ],
+        "b": [
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Impact",
+        "first_contact_time": 0.25,
+        "zero_thickness_crossing_time": 0.5,
+        "safe_fraction_upper_exclusive": 0.25,
+        "must_accept_full_step": false,
+        "must_make_positive_progress": true,
+        "contact_witness": {
+          "weights_a": [
+            0.5,
+            0.5
+          ],
+          "weights_b": [
+            0.5,
+            0.5
+          ],
+          "normal_b_to_a": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "feature_ids_a": [
+            0,
+            1
+          ],
+          "feature_ids_b": [
+            2,
+            3
+          ]
+        },
+        "status": "Converged"
+      },
+      "analytic_derivation": "Parallel overlap remains; midpoint tie. d(t)=abs(0.2-0.4t).",
+      "sample_crosscheck_min_distance": 0.1,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 0.225,
+        "iterations": 2,
+        "outcome": "Limited"
+      }
+    },
+    {
+      "id": "ee_parallel_safe_slide",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -1.0,
+            0.11,
+            0.0
+          ],
+          "position_end": [
+            -0.5,
+            0.11,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            1.0,
+            0.11,
+            0.0
+          ],
+          "position_end": [
+            1.5,
+            0.11,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "edge_edge",
+        "a": [
+          0,
+          1
+        ],
+        "b": [
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Clear",
+        "first_contact_time": null,
+        "zero_thickness_crossing_time": null,
+        "safe_fraction_upper_exclusive": null,
+        "must_accept_full_step": true,
+        "must_make_positive_progress": false,
+        "status": "Converged"
+      },
+      "analytic_derivation": "Projected segment intervals overlap throughout; closest distance remains 0.11.",
+      "sample_crosscheck_min_distance": 0.10999999999999999,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 1.0,
+        "iterations": 56,
+        "outcome": "Clear",
+        "meets_full_step_requirement": true
+      }
+    },
+    {
+      "id": "vf_corner_grazing_clear",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -0.2,
+            -1.11,
+            0.0
+          ],
+          "position_end": [
+            0.2,
+            -1.11,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            1.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            -1.0,
+            1.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Clear",
+        "first_contact_time": null,
+        "zero_thickness_crossing_time": null,
+        "safe_fraction_upper_exclusive": null,
+        "must_accept_full_step": true,
+        "must_make_positive_progress": false,
+        "status": "Converged"
+      },
+      "analytic_derivation": "Closest feature is the corner; d(t)=sqrt((-0.2+0.4t)^2+0.11^2), minimum 0.11.",
+      "sample_crosscheck_min_distance": 0.1100000000000001,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 0.42234960844547065,
+        "iterations": 4,
+        "outcome": "Limited",
+        "meets_full_step_requirement": false
+      }
+    },
+    {
+      "id": "vf_corner_tangent_touch",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -0.2,
+            -1.1,
+            0.0
+          ],
+          "position_end": [
+            0.2,
+            -1.1,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            1.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            -1.0,
+            1.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Touch",
+        "first_contact_time": 0.5,
+        "zero_thickness_crossing_time": null,
+        "safe_fraction_upper_exclusive": 0.5,
+        "must_accept_full_step": false,
+        "must_make_positive_progress": true,
+        "contact_witness": {
+          "weights_a": [
+            1.0
+          ],
+          "weights_b": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "normal_b_to_a": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "feature_ids_a": [
+            0
+          ],
+          "feature_ids_b": [
+            1,
+            2,
+            3
+          ]
+        },
+        "status": "Converged"
+      },
+      "analytic_derivation": "Corner distance sqrt((-0.2+0.4t)^2+0.1^2) touches 0.1 at t=1/2 without a sign change.",
+      "sample_crosscheck_min_distance": 0.10000000000000009,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 0.35395343430140025,
+        "iterations": 3,
+        "outcome": "Limited"
+      }
+    },
+    {
+      "id": "vf_corner_near_miss_is_thickness_hit",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -0.2,
+            -1.08,
+            0.0
+          ],
+          "position_end": [
+            0.2,
+            -1.08,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            1.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            -1.0,
+            1.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Impact",
+        "first_contact_time": 0.35,
+        "zero_thickness_crossing_time": null,
+        "safe_fraction_upper_exclusive": 0.35,
+        "must_accept_full_step": false,
+        "must_make_positive_progress": true,
+        "contact_witness": {
+          "weights_a": [
+            1.0
+          ],
+          "weights_b": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "normal_b_to_a": [
+            -0.6,
+            -0.8,
+            0.0
+          ],
+          "feature_ids_a": [
+            0
+          ],
+          "feature_ids_b": [
+            1,
+            2,
+            3
+          ]
+        },
+        "status": "Converged"
+      },
+      "analytic_derivation": "At first contact the closest feature is corner; x^2+0.08^2=0.1^2 gives x=-0.06 and t=0.35. No zero-thickness intersection.",
+      "sample_crosscheck_min_distance": 0.10000000000000007,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 0.25799068313995466,
+        "iterations": 2,
+        "outcome": "Limited"
+      }
+    },
+    {
+      "id": "vf_coplanar_clear",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -2.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            -1.2,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Clear",
+        "first_contact_time": null,
+        "zero_thickness_crossing_time": null,
+        "safe_fraction_upper_exclusive": null,
+        "must_accept_full_step": true,
+        "must_make_positive_progress": false,
+        "status": "Converged"
+      },
+      "analytic_derivation": "Coplanarity alone is not invalid; closest corner distance decreases from 1 to 0.2, always clear.",
+      "sample_crosscheck_min_distance": 0.19999999999999996,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 1.0,
+        "iterations": 1,
+        "outcome": "Clear",
+        "meets_full_step_requirement": true
+      }
+    },
+    {
+      "id": "vf_coplanar_entry",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -2.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            -0.8,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "Impact",
+        "first_contact_time": 0.75,
+        "zero_thickness_crossing_time": 0.8333333333333334,
+        "safe_fraction_upper_exclusive": 0.75,
+        "must_accept_full_step": false,
+        "must_make_positive_progress": true,
+        "contact_witness": {
+          "weights_a": [
+            1.0
+          ],
+          "weights_b": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "normal_b_to_a": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "feature_ids_a": [
+            0
+          ],
+          "feature_ids_b": [
+            1,
+            2,
+            3
+          ]
+        },
+        "status": "Converged"
+      },
+      "analytic_derivation": "Initial corner distance 1, approach speed 1.2; first thickness contact (1-0.1)/1.2=0.75.",
+      "sample_crosscheck_min_distance": 0.10000000000000009,
+      "noncertified_accd_comparison": {
+        "status": "Converged",
+        "safe_fraction": 0.675,
+        "iterations": 2,
+        "outcome": "Limited"
+      }
+    },
+    {
+      "id": "vf_coplanar_initial_overlap",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "InitialOverlap",
+        "first_contact_time": 0.0,
+        "zero_thickness_crossing_time": null,
+        "safe_fraction_upper_exclusive": 0.0,
+        "must_accept_full_step": false,
+        "must_make_positive_progress": false,
+        "status": "InvalidInitialContact",
+        "safe_fraction": 0.0
+      },
+      "analytic_derivation": "Point starts on face with positive thickness; CCD cannot certify the starting state, even if the endpoint separates.",
+      "noncertified_accd_comparison": {
+        "status": "InvalidInitialContact",
+        "safe_fraction": 0.0,
+        "iterations": 0,
+        "outcome": "InitialOverlap"
+      }
+    },
+    {
+      "id": "vf_initial_penetration",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.05
+          ],
+          "position_end": [
+            0.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "InitialOverlap",
+        "first_contact_time": 0.0,
+        "zero_thickness_crossing_time": null,
+        "safe_fraction_upper_exclusive": 0.0,
+        "must_accept_full_step": false,
+        "must_make_positive_progress": false,
+        "status": "InvalidInitialContact",
+        "safe_fraction": 0.0
+      },
+      "analytic_derivation": "Initial 0.05 separation violates 0.1 before motion.",
+      "noncertified_accd_comparison": {
+        "status": "InvalidInitialContact",
+        "safe_fraction": 0.0,
+        "iterations": 0,
+        "outcome": "InitialOverlap"
+      }
+    },
+    {
+      "id": "vf_degenerate_triangle",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            0.0,
+            0.0,
+            0.2
+          ],
+          "position_end": [
+            0.0,
+            0.0,
+            -0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "position_end": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "position_end": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "point_triangle",
+        "a": [
+          0
+        ],
+        "b": [
+          1,
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "InvalidGeometry",
+        "first_contact_time": null,
+        "zero_thickness_crossing_time": null,
+        "safe_fraction_upper_exclusive": null,
+        "must_accept_full_step": false,
+        "must_make_positive_progress": false,
+        "status": "ContactFailure",
+        "safe_fraction": 0.0
+      },
+      "analytic_derivation": "Triangle query is degenerate; diagnose or dispatch an explicitly implemented lower-dimensional fallback.",
+      "noncertified_accd_comparison": {
+        "status": "ContactFailure",
+        "safe_fraction": 0.0,
+        "iterations": 0,
+        "outcome": "InvalidGeometry"
+      }
+    },
+    {
+      "id": "ee_coplanar_initial_overlap",
+      "units": "cm",
+      "vertices": [
+        {
+          "id": 0,
+          "position": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "position_end": [
+            -2.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 1,
+          "position": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "position_end": [
+            2.0,
+            0.0,
+            0.2
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 2,
+          "position": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            -2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        },
+        {
+          "id": 3,
+          "position": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "position_end": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.05
+        }
+      ],
+      "candidate": {
+        "kind": "edge_edge",
+        "a": [
+          0,
+          1
+        ],
+        "b": [
+          2,
+          3
+        ]
+      },
+      "motion": "x(t)=position+t*(position_end-position), 0<=t<=1",
+      "min_distance": 0.1,
+      "tolerance": {
+        "distance": 1e-09,
+        "time": 1e-09
+      },
+      "expected": {
+        "classification": "InitialOverlap",
+        "first_contact_time": 0.0,
+        "zero_thickness_crossing_time": null,
+        "safe_fraction_upper_exclusive": 0.0,
+        "must_accept_full_step": false,
+        "must_make_positive_progress": false,
+        "status": "InvalidInitialContact",
+        "safe_fraction": 0.0
+      },
+      "analytic_derivation": "Two segments initially cross; positive thickness is violated.",
+      "noncertified_accd_comparison": {
+        "status": "InvalidInitialContact",
+        "safe_fraction": 0.0,
+        "iterations": 0,
+        "outcome": "InitialOverlap"
+      }
+    }
+  ],
+  "forced_iteration_cap_control": {
+    "status": "IterationLimit",
+    "safe_fraction": 0.225,
+    "iterations": 1,
+    "outcome": "Unresolved"
+  },
+  "model_counterexamples": [
+    {
+      "id": "constant_distance_growing_thickness",
+      "units": "cm",
+      "point_start": [
+        0.1,
+        0.1,
+        0.15
+      ],
+      "point_end": [
+        0.7,
+        0.1,
+        0.15
+      ],
+      "point_half_thickness": 0.05,
+      "triangle": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ]
+      ],
+      "triangle_half_thickness": [
+        0.01,
+        0.21,
+        0.01
+      ],
+      "exact_first_contact_time": 0.5833333333333334,
+      "constant_geometric_distance": 0.15,
+      "threshold_at_start": 0.08,
+      "threshold_at_end": 0.2,
+      "constant_start_threshold_would_report": "Clear (incorrect under interpolated-thickness contract)",
+      "maximum_feature_envelope_threshold": 0.26,
+      "maximum_envelope_start_status": "InvalidInitialContact despite a locally valid interpolated start",
+      "disposition": "ModelDecisionRequired; not a constant-min-distance CCD conformance case"
+    }
+  ]
+}

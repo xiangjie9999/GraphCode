@@ -1,0 +1,1039 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "generator": "contact_block_controls.py",
+  "source_sha256": "0f6667defd304a6e7e14382c0f95b1cae927fc1854511f6640b14bb3153cb840",
+  "shared_helper_sha256": "5c3d41d630c698b3c8752e5a582dfa87e1a91fd36c937fdc7a08e9aaac28724c",
+  "contract": {
+    "equation": "K=J W J^T; A=K+alpha; q=C-K lambda_old; solve min0.5*y^T*A*y+q^T*y subject contact y>=0, material y free. dx=W J^T(y-lambda_old).",
+    "active_set": "Bound-feasible dual iterates. Solve current free face; ratio-test any negative total contact multiplier, release zero hits, recompute. Check all inactive predicted gaps and add a negative one. Never release just because delta_lambda<0 or current gap>=0.",
+    "PSD_null_rule": "If free gradient has null-space component, descend along its negative until a contact bound is hit. No such bound means linearized incompatibility/unbounded dual, not global nonlinear infeasibility or Taut.",
+    "globalization": "Both positions and TOTAL multipliers take the same Armijo fraction. Merit uses equality C+alpha*lambda plus min(lambda/beta,gap) for contact, beta>0 fixed during line search. Requery actual geometry in production.",
+    "scope": "Dense small reference. Eigenspace calculations deliberately serve as the rank oracle; production should retain augmented-B QR/rank and verify complete KKT/reconstruction residuals."
+  },
+  "cases": [
+    {
+      "id": "partial_release_total_stays_positive",
+      "input": {
+        "J": [
+          [
+            1.0
+          ]
+        ],
+        "C": [
+          0.25
+        ],
+        "lambda_old": [
+          1.0
+        ],
+        "equalities": 0,
+        "inverse_mass": [
+          1.0
+        ],
+        "alpha": [
+          0.0
+        ]
+      },
+      "expected": {
+        "status": "Solved",
+        "lambda_new": [
+          0.75
+        ],
+        "linear_residual": [
+          0.0
+        ],
+        "complementarity_residual": 0.0,
+        "history": [
+          {
+            "event": "face_minimum",
+            "free": [
+              0
+            ],
+            "share": 1.0,
+            "released": [],
+            "lambda_after": [
+              0.75
+            ]
+          }
+        ],
+        "face_solves": 1,
+        "iterations": 1,
+        "delta_lambda": [
+          -0.25
+        ],
+        "delta_position": [
+          -0.25
+        ],
+        "independent_enumeration_physical_error": 0.0,
+        "unconstrained_pseudoinverse_lambda": [
+          0.75
+        ]
+      }
+    },
+    {
+      "id": "full_release_with_positive_gap",
+      "input": {
+        "J": [
+          [
+            1.0
+          ]
+        ],
+        "C": [
+          2.0
+        ],
+        "lambda_old": [
+          1.0
+        ],
+        "equalities": 0,
+        "inverse_mass": [
+          1.0
+        ],
+        "alpha": [
+          0.0
+        ]
+      },
+      "expected": {
+        "status": "Solved",
+        "lambda_new": [
+          0.0
+        ],
+        "linear_residual": [
+          1.0
+        ],
+        "complementarity_residual": 0.0,
+        "history": [
+          {
+            "event": "face_minimum",
+            "free": [
+              0
+            ],
+            "share": 0.5,
+            "released": [
+              0
+            ],
+            "lambda_after": [
+              0.0
+            ]
+          }
+        ],
+        "face_solves": 1,
+        "iterations": 2,
+        "delta_lambda": [
+          -1.0
+        ],
+        "delta_position": [
+          -1.0
+        ],
+        "independent_enumeration_physical_error": 0.0,
+        "unconstrained_pseudoinverse_lambda": [
+          -1.0
+        ]
+      }
+    },
+    {
+      "id": "material_step_activates_touching_contact",
+      "input": {
+        "J": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "C": [
+          0.2,
+          0.0
+        ],
+        "lambda_old": [
+          0.0,
+          0.0
+        ],
+        "equalities": 1,
+        "inverse_mass": [
+          1.0,
+          1.0
+        ],
+        "alpha": [
+          0.0,
+          0.0
+        ]
+      },
+      "expected": {
+        "status": "Solved",
+        "lambda_new": [
+          -0.19999999999999996,
+          0.19999999999999996
+        ],
+        "linear_residual": [
+          5.551115123125783e-17,
+          0.0
+        ],
+        "complementarity_residual": 5.551115123125783e-17,
+        "history": [
+          {
+            "event": "face_minimum",
+            "free": [
+              0
+            ],
+            "share": 1.0,
+            "released": [],
+            "lambda_after": [
+              -0.1,
+              0.0
+            ]
+          },
+          {
+            "event": "activate",
+            "row": 1,
+            "predicted_gap": -0.1
+          },
+          {
+            "event": "face_minimum",
+            "free": [
+              0,
+              1
+            ],
+            "share": 1.0,
+            "released": [],
+            "lambda_after": [
+              -0.19999999999999996,
+              0.19999999999999996
+            ]
+          }
+        ],
+        "face_solves": 2,
+        "iterations": 2,
+        "delta_lambda": [
+          -0.19999999999999996,
+          0.19999999999999996
+        ],
+        "delta_position": [
+          -0.19999999999999996,
+          0.0
+        ],
+        "independent_enumeration_physical_error": 7.850462293418876e-17,
+        "unconstrained_pseudoinverse_lambda": [
+          -0.2,
+          0.20000000000000007
+        ]
+      }
+    },
+    {
+      "id": "dependent_contact_gauge",
+      "input": {
+        "J": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "C": [
+          0.0,
+          1.0,
+          1.0
+        ],
+        "lambda_old": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "equalities": 0,
+        "inverse_mass": [
+          1.0,
+          1.0
+        ],
+        "alpha": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "expected": {
+        "status": "Solved",
+        "lambda_new": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "linear_residual": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "complementarity_residual": 0.0,
+        "history": [
+          {
+            "event": "face_minimum",
+            "free": [
+              0,
+              1,
+              2
+            ],
+            "share": 0.7500000000000006,
+            "released": [
+              1
+            ],
+            "lambda_after": [
+              0.7499999999999998,
+              0.0,
+              0.24999999999999983
+            ]
+          },
+          {
+            "event": "face_minimum",
+            "free": [
+              0,
+              2
+            ],
+            "share": 0.9999999999999997,
+            "released": [
+              2
+            ],
+            "lambda_after": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "event": "face_minimum",
+            "free": [
+              0
+            ],
+            "share": 1.0,
+            "released": [],
+            "lambda_after": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          }
+        ],
+        "face_solves": 3,
+        "iterations": 3,
+        "delta_lambda": [
+          0.5,
+          -0.5,
+          -0.5
+        ],
+        "delta_position": [
+          0.0,
+          -1.0
+        ],
+        "independent_enumeration_physical_error": 0.0,
+        "unconstrained_pseudoinverse_lambda": [
+          0.6666666666666663,
+          -0.33333333333333315,
+          0.33333333333333337
+        ]
+      }
+    },
+    {
+      "id": "inconsistent_active_faces_but_feasible_inequalities",
+      "input": {
+        "J": [
+          [
+            1.0
+          ],
+          [
+            1.0
+          ]
+        ],
+        "C": [
+          -1.0,
+          -2.0
+        ],
+        "lambda_old": [
+          1.0,
+          1.0
+        ],
+        "equalities": 0,
+        "inverse_mass": [
+          1.0
+        ],
+        "alpha": [
+          0.0,
+          0.0
+        ]
+      },
+      "expected": {
+        "status": "Solved",
+        "lambda_new": [
+          0.0,
+          4.0
+        ],
+        "linear_residual": [
+          1.0,
+          0.0
+        ],
+        "complementarity_residual": 0.0,
+        "history": [
+          {
+            "event": "null_descent",
+            "free": [
+              0,
+              1
+            ],
+            "share": 2.000000000000001,
+            "released": [
+              0
+            ],
+            "lambda_after": [
+              0.0,
+              2.000000000000001
+            ]
+          },
+          {
+            "event": "face_minimum",
+            "free": [
+              1
+            ],
+            "share": 1.0,
+            "released": [],
+            "lambda_after": [
+              0.0,
+              4.0
+            ]
+          }
+        ],
+        "face_solves": 2,
+        "iterations": 2,
+        "delta_lambda": [
+          -1.0,
+          3.0
+        ],
+        "delta_position": [
+          2.0
+        ],
+        "independent_enumeration_physical_error": 0.0,
+        "unconstrained_pseudoinverse_lambda": [
+          1.7499999999999998,
+          1.7499999999999996
+        ]
+      }
+    },
+    {
+      "id": "incompatible_linearized_equalities",
+      "input": {
+        "J": [
+          [
+            1.0
+          ],
+          [
+            1.0
+          ]
+        ],
+        "C": [
+          -1.0,
+          -2.0
+        ],
+        "lambda_old": [
+          0.0,
+          0.0
+        ],
+        "equalities": 2,
+        "inverse_mass": [
+          1.0
+        ],
+        "alpha": [
+          0.0,
+          0.0
+        ]
+      },
+      "expected": {
+        "status": "LinearizedInfeasibleOrUnbounded",
+        "lambda_new": [
+          0.0,
+          0.0
+        ],
+        "history": [],
+        "null_direction": [
+          -0.4999999999999998,
+          0.5000000000000002
+        ],
+        "null_A_error": 4.440892098500626e-16,
+        "negative_slope": -0.5000000000000007
+      }
+    },
+    {
+      "id": "compliant_material_hard_contact_with_stored_lambda",
+      "input": {
+        "J": [
+          [
+            1.0
+          ],
+          [
+            1.0
+          ]
+        ],
+        "C": [
+          0.7,
+          -0.2
+        ],
+        "lambda_old": [
+          0.4,
+          0.2
+        ],
+        "equalities": 1,
+        "inverse_mass": [
+          1.0
+        ],
+        "alpha": [
+          2.0,
+          0.0
+        ]
+      },
+      "expected": {
+        "status": "Solved",
+        "lambda_new": [
+          -0.44999999999999996,
+          1.2499999999999998
+        ],
+        "linear_residual": [
+          -2.220446049250313e-16,
+          -2.220446049250313e-16
+        ],
+        "complementarity_residual": 2.220446049250313e-16,
+        "history": [
+          {
+            "event": "face_minimum",
+            "free": [
+              0,
+              1
+            ],
+            "share": 1.0,
+            "released": [],
+            "lambda_after": [
+              -0.44999999999999996,
+              1.2499999999999998
+            ]
+          }
+        ],
+        "face_solves": 1,
+        "iterations": 1,
+        "delta_lambda": [
+          -0.85,
+          1.0499999999999998
+        ],
+        "delta_position": [
+          0.19999999999999984
+        ],
+        "independent_enumeration_physical_error": 2.220446049250313e-16,
+        "unconstrained_pseudoinverse_lambda": [
+          -0.4500000000000002,
+          1.2500000000000002
+        ]
+      }
+    },
+    {
+      "id": "held_penetrating_contact_zero_gradient",
+      "input": {
+        "J": [
+          [
+            0.0
+          ]
+        ],
+        "C": [
+          -0.1
+        ],
+        "lambda_old": [
+          0.0
+        ],
+        "equalities": 0,
+        "inverse_mass": [
+          1.0
+        ],
+        "alpha": [
+          0.0
+        ]
+      },
+      "expected": {
+        "status": "LinearizedInfeasibleOrUnbounded",
+        "lambda_new": [
+          0.0
+        ],
+        "history": [
+          {
+            "event": "activate",
+            "row": 0,
+            "predicted_gap": -0.1
+          }
+        ],
+        "null_direction": [
+          0.1
+        ],
+        "null_A_error": 0.0,
+        "negative_slope": -0.010000000000000002
+      }
+    },
+    {
+      "id": "near_tangent_unit_yarn_0.02",
+      "input": {
+        "root": [
+          0.0,
+          0.0
+        ],
+        "rest_length_cm": 1.0,
+        "free_initial": [
+          0.022000000000000002,
+          0.999799979995999
+        ],
+        "inverse_mass": 1.0,
+        "contact_normal": [
+          0.0,
+          1.0
+        ],
+        "contact_plane_height_cm": 0.999799979995999,
+        "contact_clearance_included_in_plane": true,
+        "material_compliance": 0.0,
+        "contact_compliance": 0.0
+      },
+      "expected": {
+        "reference": [
+          0.02,
+          0.999799979995999
+        ],
+        "block_position": [
+          0.020000000001054567,
+          0.999799979995999
+        ],
+        "block_iterations": 3,
+        "history": [
+          {
+            "iteration": 1,
+            "positions": [
+              0.020090869001688782,
+              0.999799979995999
+            ],
+            "lambda_final": [
+              -0.08678232636951669,
+              0.08676132426915002
+            ],
+            "merit_before": 1.7639259158798404e-09,
+            "merit_after": 3.317887614785617e-12,
+            "scale": 1.0,
+            "inner_active_set": {
+              "status": "Solved",
+              "lambda_new": [
+                -0.08678232636951669,
+                0.08676132426915002
+              ],
+              "linear_residual": [
+                -5.3939058081153846e-18,
+                5.320503268635037e-18
+              ],
+              "complementarity_residual": 5.3939058081153846e-18,
+              "history": [
+                {
+                  "event": "face_minimum",
+                  "free": [
+                    0
+                  ],
+                  "share": 1.0,
+                  "released": [],
+                  "lambda_after": [
+                    -4.1999118036928344e-05,
+                    0.0
+                  ]
+                },
+                {
+                  "event": "activate",
+                  "row": 1,
+                  "predicted_gap": -4.198895387414055e-05
+                },
+                {
+                  "event": "face_minimum",
+                  "free": [
+                    0,
+                    1
+                  ],
+                  "share": 1.0,
+                  "released": [],
+                  "lambda_after": [
+                    -0.08678232636951669,
+                    0.08676132426915002
+                  ]
+                }
+              ],
+              "face_solves": 2,
+              "iterations": 2
+            }
+          },
+          {
+            "iteration": 2,
+            "positions": [
+              0.02000020541315356,
+              0.999799979995999
+            ],
+            "lambda_final": [
+              -0.09129501089660003,
+              0.09127309795082902
+            ],
+            "merit_before": 3.317887614785617e-12,
+            "merit_after": 1.6877998717216327e-17,
+            "scale": 1.0,
+            "inner_active_set": {
+              "status": "Solved",
+              "lambda_new": [
+                -0.09129501089660003,
+                0.09127309795082902
+              ],
+              "linear_residual": [
+                5.014435047745458e-19,
+                7.707999820014133e-19
+              ],
+              "complementarity_residual": 7.707999820014133e-19,
+              "history": [
+                {
+                  "event": "face_minimum",
+                  "free": [
+                    0,
+                    1
+                  ],
+                  "share": 1.0,
+                  "released": [],
+                  "lambda_after": [
+                    -0.09129501089660003,
+                    0.09127309795082902
+                  ]
+                }
+              ],
+              "face_solves": 1,
+              "iterations": 1
+            }
+          },
+          {
+            "iteration": 3,
+            "positions": [
+              0.020000000001054567,
+              0.999799979995999
+            ],
+            "lambda_final": [
+              -0.09130528139610705,
+              0.09128336639598851
+            ],
+            "merit_before": 1.6877998717216327e-17,
+            "merit_after": 4.44966854351227e-28,
+            "scale": 1.0,
+            "inner_active_set": {
+              "status": "Solved",
+              "lambda_new": [
+                -0.09130528139610705,
+                0.09128336639598851
+              ],
+              "linear_residual": [
+                0.0,
+                -1.1265538198482195e-18
+              ],
+              "complementarity_residual": 1.1265538198482195e-18,
+              "history": [
+                {
+                  "event": "face_minimum",
+                  "free": [
+                    0,
+                    1
+                  ],
+                  "share": 1.0,
+                  "released": [],
+                  "lambda_after": [
+                    -0.09130528139610705,
+                    0.09128336639598851
+                  ]
+                }
+              ],
+              "face_solves": 1,
+              "iterations": 1
+            }
+          }
+        ],
+        "final_lambda": [
+          -0.09130528139610705,
+          0.09128336639598851
+        ],
+        "final_residual": 2.1094237467877974e-14,
+        "gs_snapshots": {
+          "10": {
+            "position": [
+              0.021990782410506525,
+              0.999799979995999
+            ],
+            "strain": 4.1796382044267943e-05,
+            "gap": 0.0
+          },
+          "100": {
+            "position": [
+              0.02190996162000177,
+              0.999799979995999
+            ],
+            "strain": 4.0022408198447934e-05,
+            "gap": 0.0
+          },
+          "1000": {
+            "position": [
+              0.021275719642768576,
+              0.999799979995999
+            ],
+            "strain": 2.632777658284624e-05,
+            "gap": 0.0
+          },
+          "3000": {
+            "position": [
+              0.020544027137385405,
+              0.999799979995999
+            ],
+            "strain": 1.1028464697249163e-05,
+            "gap": 0.0
+          }
+        },
+        "gs_steps": 43398,
+        "gs_final_position": [
+          0.02000000004999651,
+          0.999799979995999
+        ],
+        "gs_final_strain": 9.99866855977416e-13,
+        "local_GS_contraction": 0.9996,
+        "scope": "Two-degree-of-freedom analogue; no captured ribbon or native solver run."
+      }
+    },
+    {
+      "id": "near_tangent_unit_yarn_0.005",
+      "input": {
+        "root": [
+          0.0,
+          0.0
+        ],
+        "rest_length_cm": 1.0,
+        "free_initial": [
+          0.0055000000000000005,
+          0.999987499921874
+        ],
+        "inverse_mass": 1.0,
+        "contact_normal": [
+          0.0,
+          1.0
+        ],
+        "contact_plane_height_cm": 0.999987499921874,
+        "contact_clearance_included_in_plane": true,
+        "material_compliance": 0.0,
+        "contact_compliance": 0.0
+      },
+      "expected": {
+        "reference": [
+          0.005,
+          0.999987499921874
+        ],
+        "block_position": [
+          0.0050000000002687625,
+          0.999987499921874
+        ],
+        "block_iterations": 3,
+        "history": [
+          {
+            "iteration": 1,
+            "positions": [
+              0.005022726646330677,
+              0.999987499921874
+            ],
+            "lambda_final": [
+              -0.08677720118367864,
+              0.08677588867547549
+            ],
+            "merit_before": 6.890606911492378e-12,
+            "merit_after": 1.2971268160083526e-14,
+            "scale": 1.0,
+            "inner_active_set": {
+              "status": "Solved",
+              "lambda_new": [
+                -0.08677720118367864,
+                0.08677588867547549
+              ],
+              "linear_residual": [
+                0.0,
+                5.552722269045968e-19
+              ],
+              "complementarity_residual": 5.552722269045968e-19,
+              "history": [
+                {
+                  "event": "face_minimum",
+                  "free": [
+                    0
+                  ],
+                  "share": 1.0,
+                  "released": [],
+                  "lambda_after": [
+                    -2.6249965545677156e-06,
+                    0.0
+                  ]
+                },
+                {
+                  "event": "activate",
+                  "row": 1,
+                  "predicted_gap": -2.624956851403012e-06
+                },
+                {
+                  "event": "face_minimum",
+                  "free": [
+                    0,
+                    1
+                  ],
+                  "share": 1.0,
+                  "released": [],
+                  "lambda_after": [
+                    -0.08677720118367864,
+                    0.08677588867547549
+                  ]
+                }
+              ],
+              "face_solves": 2,
+              "iterations": 2
+            }
+          },
+          {
+            "iteration": 2,
+            "positions": [
+              0.005000051415056526,
+              0.999987499921874
+            ],
+            "lambda_final": [
+              -0.09129172794440372,
+              0.09129035849010374
+            ],
+            "merit_before": 1.2971268160083526e-14,
+            "merit_after": 6.60883691382836e-20,
+            "scale": 1.0,
+            "inner_active_set": {
+              "status": "Solved",
+              "lambda_new": [
+                -0.09129172794440372,
+                0.09129035849010374
+              ],
+              "linear_residual": [
+                0.0,
+                7.271777852178168e-19
+              ],
+              "complementarity_residual": 7.271777852178168e-19,
+              "history": [
+                {
+                  "event": "face_minimum",
+                  "free": [
+                    0,
+                    1
+                  ],
+                  "share": 1.0,
+                  "released": [],
+                  "lambda_after": [
+                    -0.09129172794440372,
+                    0.09129035849010374
+                  ]
+                }
+              ],
+              "face_solves": 1,
+              "iterations": 1
+            }
+          },
+          {
+            "iteration": 3,
+            "positions": [
+              0.0050000000002687625,
+              0.999987499921874
+            ],
+            "lambda_final": [
+              -0.09130201079622034,
+              0.09130064121338126
+            ],
+            "merit_before": 6.60883691382836e-20,
+            "merit_after": 1.7749370367472766e-30,
+            "scale": 1.0,
+            "inner_active_set": {
+              "status": "Solved",
+              "lambda_new": [
+                -0.09130201079622034,
+                0.09130064121338126
+              ],
+              "linear_residual": [
+                0.0,
+                -1.5202917914234606e-18
+              ],
+              "complementarity_residual": 1.5202917914234606e-18,
+              "history": [
+                {
+                  "event": "face_minimum",
+                  "free": [
+                    0,
+                    1
+                  ],
+                  "share": 1.0,
+                  "released": [],
+                  "lambda_after": [
+                    -0.09130201079622034,
+                    0.09130064121338126
+                  ]
+                }
+              ],
+              "face_solves": 1,
+              "iterations": 1
+            }
+          }
+        ],
+        "final_lambda": [
+          -0.09130201079622034,
+          0.09130064121338126
+        ],
+        "final_residual": 1.3322676295501878e-15,
+        "gs_snapshots": {
+          "10": {
+            "position": [
+              0.005499855646924348,
+              0.999987499921874
+            ],
+            "strain": 2.624202625201022e-06,
+            "gap": 0.0
+          },
+          "100": {
+            "position": [
+              0.005498558602006376,
+              0.999987499921874
+            ],
+            "strain": 2.617069925214821e-06,
+            "gap": 0.0
+          },
+          "1000": {
+            "position": [
+              0.005485796508019813,
+              0.999987499921874
+            ],
+            "strain": 2.546978420170376e-06,
+            "gap": 0.0
+          },
+          "3000": {
+            "position": [
+              0.005458740329015858,
+              0.999987499921874
+            ],
+            "strain": 2.398920112334224e-06,
+            "gap": 0.0
+          }
+        },
+        "gs_steps": 100000,
+        "gs_final_position": [
+          0.005035999366324466,
+          0.999987499921874
+        ],
+        "gs_final_strain": 1.8064479245794018e-07,
+        "local_GS_contraction": 0.9999749999999998,
+        "scope": "Two-degree-of-freedom analogue; no captured ribbon or native solver run."
+      }
+    }
+  ]
+}

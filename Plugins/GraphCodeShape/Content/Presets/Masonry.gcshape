@@ -1,0 +1,292 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.12  shade:40
+
+# MASONRY — L3 Parts, structural. One recognizable building unit per entry, each
+# still one entry. `Docs/GC-SHAPE-PRESET-LIBRARY.md` §3, L3.
+#
+# THIS FILE IS MEANT TO BE IMPORTED, NOT BUILT:
+#
+#   M    = shape('/GraphCodeShape/Presets/Masonry')
+#   Wall = mesh() { add($M.Brick, repeat=(20, 1, 12), step=(22.5, 0, 7.5)) }
+#
+# WHAT THIS FAMILY IS FOR: the unit a wall, a floor, a roof or a frame is made of
+# — one brick, one slab, one tile, one board. WHAT IT IS NOT FOR: the wall. An
+# arrangement of these is L4 `Structures`, and the split is the ladder's whole
+# point — a bond pattern that lived inside `Brick` could not be changed without
+# editing every caller's brick.
+#
+# THE SIZES ARE REAL FORMATS, not numbers that looked right. A UK metric brick is
+# 215 x 102.5 x 65 mm and lays on a 10 mm joint, which is why 225 and 75 are the
+# coursing numbers and why `Structures` will not have to invent them. A paving
+# slab is 450 square, a plain clay roof tile 265 x 165, a scaffold board 225 wide.
+# Dimensions from published standards are facts and carry no licence.
+#
+# EVERY ENTRY KEEPS §2's CONTRACT: authored at the origin, centred in X and Y,
+# growing +Z from a mounting face at z = 0. A brick therefore stacks by
+# `against($lower, +Z)` with no arithmetic, and a course steps in X.
+#
+# `grain=` IS THE COST DIAL AND IT IS NOT DECORATION. `roughen` refines the
+# surface to a third of its own feature size before it moves anything, so
+# TRIANGLES GROW AS 1/grain² — measured on this file: a brick at `grain=3.5` is
+# 8,704 triangles and at `grain=16` it is about 420, for the same `wear`. A wall
+# is hundreds of these, so every default here is chosen for the ARRAY case, and a
+# hero prop buys its detail deliberately by passing a smaller `grain`.
+#
+# THE CONSEQUENCE IS A DESIGN RULE, not just a number: WEAR HERE IS SILHOUETTE,
+# NOT TEXTURE. A feature big enough to afford is a broad warp and a softened
+# arris — which is what actually reads at wall distance. Pore and grain detail
+# belongs in the material, and a mesh that tries to carry it prices a wall at two
+# million triangles. The `[triangles=]` contracts on the build lines hold this
+# file to its own rule.
+#
+# `vary=` IS THE VARIATION NUMBER AND IT IS NOT SPELLED `seed=`. A group-5 line
+# reads its OWN argument names before the target entry's, and `seed=` is the
+# array's — so a parameter called `seed` is one no caller could ever pass.
+# `Solids.gcshape`'s header carries the full reserved list. Give every copy in a
+# run its own `vary=`, or they are one brick repeated.
+
+build {
+  SM_Masonry_Brick       = $Brick       [bounds=(22.0, 11.0, 7.0),     triangles=600]
+  SM_Masonry_HalfBrick   = $HalfBrick   [bounds=(11.0, 11.0, 7.0),     triangles=800]
+  SM_Masonry_Quoin       = $Quoin       [bounds=(45.5, 23.0, 20.5),    triangles=1000]
+  SM_Masonry_PavingStone = $PavingStone [bounds=(45.5, 45.5, 6.5),     triangles=600]
+  SM_Masonry_Kerb        = $Kerb        [bounds=(90.5, 26.0, 31.0),    triangles=1100]
+  SM_Masonry_RoofTile    = $RoofTile    [bounds=(17.0, 27.0, 2.8),     triangles=1000]
+  SM_Masonry_Slate       = $Slate       [bounds=(25.5, 50.5, 1.4),     triangles=1400]
+  SM_Masonry_Plank       = $Plank       [bounds=(23.0, 200.5, 4.3),    triangles=8200]
+  SM_Masonry_Beam        = $Beam        [bounds=(20.5, 20.5, 300.5),   triangles=5600]
+  SM_Masonry_Baluster    = $Baluster    [bounds=(12.5, 12.0, 60.5),    triangles=350]
+  SM_Masonry_Voussoir    = $Voussoir    [bounds=(18.4, 25.5, 20.5),    triangles=800]
+  SM_Masonry_Corbel      = $Corbel      [bounds=(24.5, 34.5, 30.5),    triangles=1100]
+}
+
+# ---- material slots -----------------------------------------------------
+
+# THREE slots, because masonry genuinely spans three materials and an entry that
+# named one of them would be wrong two thirds of the time. An entry gets only the
+# slots it names, so a Brick asset has one and a RoofTile has one; declaration
+# order is slot order. NO PATHS — what any of these wears is the static mesh's
+# own `.gc`, and a library that imported `/Game/…` would be broken in every
+# project but the one it came from.
+Stone  = material()
+Clay   = material()
+Timber = material()
+
+# ---- shared dimensions --------------------------------------------------
+
+# Named once so the brick and everything coursed with it cannot drift apart.
+Brick_L = 21.5
+Brick_W = 10.25
+Brick_H = 6.5
+
+# THE JOINT IS 10 mm and it belongs HERE rather than in `Structures`, because it
+# is a property of the brick format: the reason a brick is 215 and not 225 is
+# that the joint makes up the difference. A course therefore steps 22.5 along and
+# 7.5 up, and `Structures` reads these rather than re-typing them.
+Joint = 1.0
+
+# ---- the unit ------------------------------------------------------------
+
+# A stretcher brick. `wear` runs 0 (crisp, as-fired) to 1 (soft, weathered); it
+# drives both the arris radius and the surface noise, because those two move
+# together on a real brick and an author who has to set them apart will set them
+# inconsistently.
+#
+# THE `if` IS LOAD-BEARING: `roughen(by=0)` and `round(0)` are both no-ops and
+# this format refuses a line that does nothing — correctly — so an entry whose
+# wear may be zero has to say so rather than emit a dead line.
+Brick = mesh(w=21.5, d=10.25, h=6.5, wear=0.35, grain=16.0, vary=1) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  if ($wear > 0.02) {
+    round(0.08 + $wear * 0.22, segments=2) [sharp]
+    roughen(by=$wear * 0.10, scale=$grain, seed=$vary)
+  }
+  material($Clay)
+}
+
+# The half brick — a snapped or cut brick, and the piece every bond needs at the
+# end of a course. It is `Brick` at half the LAID length: 215 less one 10 mm
+# joint, halved, which is 102.5 and exactly the brick's own width. That equality
+# is why a bond closes at all, and it is worth seeing in the arithmetic rather
+# than as a typed 10.25.
+HalfBrick = mesh(d=10.25, h=6.5, wear=0.45, grain=10.0, vary=2) {
+  add($Brick, w=($Brick_L - $Joint) * 0.5, d=$d, h=$h, wear=$wear, grain=$grain, vary=$vary)
+}
+
+# A dressed corner stone — the big squared block that turns a wall's angle and
+# ties two faces together. Crisper than a brick because it is cut, not moulded,
+# so its arrises get a chamfer rather than a wear radius.
+Quoin = mesh(w=45.0, d=22.5, h=20.0, wear=0.2, grain=22.0, vary=3) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  round(0.6, segments=1) [sharp]
+  if ($wear > 0.02) {
+    roughen(by=$wear * 0.18, scale=$grain, seed=$vary)
+  }
+  material($Stone)
+}
+
+# A paving slab, 450 square. The TOP is worn and the sides are not, which is the
+# whole difference between a slab that reads as laid and one that reads as
+# floating: `[top]` is the selection that says so, and it costs one bracket.
+PavingStone = mesh(w=45.0, d=45.0, h=6.0, wear=0.5, grain=18.0, vary=4) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  round(0.4, segments=1) [sharp]
+  if ($wear > 0.02) {
+    roughen(by=$wear * 0.12, scale=$grain, seed=$vary) [top]
+  }
+  material($Stone)
+}
+
+# A kerbstone, 900 long on a 125 x 255 section, with the half-battered top arris
+# a real kerb carries on its road side. THE CHAMFER IS A CUT rather than a
+# `round`, because a kerb's is a flat splay and not an arc — and because a cut
+# names the one edge, where `[sharp]` would take all twelve.
+# The plane holds the two lines the splay runs between, so its normal is the
+# perpendicular to that 45 degrees: (0, -1, 1), and the material kept is the side
+# the normal points away from.
+Kerb = mesh(w=90.0, d=25.5, h=30.5, chamfer=2.5, wear=0.3, grain=38.0, vary=5) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  cut(plane=(0.0, -1.0, 1.0), at=(0.0, -$d * 0.5, $h - $chamfer), fill=true)
+  round(0.3, segments=1) [sharp]
+  if ($wear > 0.02) {
+    roughen(by=$wear * 0.10, scale=$grain, seed=$vary)
+  }
+  material($Stone)
+}
+
+# A plain clay roof tile, 265 x 165, with the nib that hangs it on the batten.
+# THE NIB IS WHY THIS IS NOT A FLAT BOX: it is the part that makes a roof read as
+# tiled rather than as a textured plane, and it is two per tile at the head end.
+RoofTile_Nib = mesh(w=2.4, d=1.2, h=1.1) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+}
+
+RoofTile = mesh(w=16.5, d=26.5, h=1.2, wear=0.3, grain=16.0, vary=6) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  round(0.25, segments=1) [sharp]
+  add($RoofTile_Nib, at=(-$w * 0.22, $d * 0.44, $h))
+  add($RoofTile_Nib, at=( $w * 0.22, $d * 0.44, $h))
+  if ($wear > 0.02) {
+    roughen(by=$wear * 0.06, scale=$grain, seed=$vary)
+  }
+  material($Clay)
+}
+
+# A riven roofing slate. NOT A RECTANGLE: a slate is split, then dressed to a
+# rough head and a squarer tail, so its outline is the reason a slate roof has a
+# broken shadow line where a tiled one does not.
+Slate_Face = plane(w=25.0, d=50.0) {
+  points((-$w*0.5, -$d*0.5), ($w*0.5, -$d*0.5), ($w*0.46, $d*0.30), ($w*0.30, $d*0.5), (-$w*0.34, $d*0.5), (-$w*0.47, $d*0.26), loop=true)
+}
+
+Slate = mesh(w=25.0, d=50.0, h=0.8, wear=0.6, grain=14.0, vary=7) {
+  add($Slate_Face, w=$w, d=$d)
+  extrude(height=$h)
+  if ($wear > 0.02) {
+    roughen(by=$wear * 0.09, scale=$grain, seed=$vary)
+  }
+  material($Stone)
+}
+
+# ---- timber --------------------------------------------------------------
+
+# A sawn board — a scaffold board's 225 x 38 section, two metres long.
+# THE GRAIN IS ANISOTROPIC AND THAT IS THE ENTRY'S ONE REAL IDEA: `scale=` takes
+# three lengths, so a feature 60 cm long and 2 cm across runs ALONG the board.
+# The same noise with one number is gravel, and it is the commonest way timber
+# comes out looking like stone.
+Plank = mesh(w=22.5, d=200.0, h=3.8, wear=0.4, grain=14.0, vary=8) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  round(0.25, segments=1) [sharp]
+  if ($wear > 0.02) {
+    roughen(by=$wear * 0.10, scale=($grain, $grain * 5.0, $grain), seed=$vary)
+  }
+  material($Timber)
+}
+
+# A structural timber, 200 square and three metres long, standing on end so that
+# it keeps the family's +Z contract. Its arrises are eased the way a dressed
+# baulk's are; the grain runs up it, which is the same anisotropy as the plank
+# turned onto its end.
+Beam = mesh(w=20.0, d=20.0, h=300.0, wear=0.3, grain=16.0, vary=9) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  round(0.5, segments=1) [sharp]
+  if ($wear > 0.02) {
+    roughen(by=$wear * 0.09, scale=($grain, $grain, $grain * 5.0), seed=$vary)
+  }
+  material($Timber)
+}
+
+# ---- turned and dressed ---------------------------------------------------
+
+# A turned baluster. A REVOLVE READS ITS OUTLINE AS (radius, height) — the
+# outline's X is the distance from the axis and its Y is the rise — so a
+# silhouette is written once, down the page, and the lathe is free.
+# The stops are the classical ones: a square plinth, a torus base, a slender
+# stem, a swelling vase and a square cap.
+Baluster = mesh(r=6.0, h=60.0) {
+  points((0.0,0.0), ($r,0.0), ($r,$h*0.09), ($r*0.62,$h*0.15), ($r*0.70,$h*0.22), ($r*0.42,$h*0.33), ($r*0.38,$h*0.47), ($r*0.86,$h*0.62), ($r*0.96,$h*0.72), ($r*0.55,$h*0.84), ($r*0.62,$h*0.90), ($r,$h*0.94), ($r,$h), (0.0,$h))
+  revolve()
+  material($Stone)
+}
+
+# An arch stone. THE TAPER IS THE OUTLINE, not a pair of oblique cuts, and that
+# is the second construction this entry was written with — the first is worth
+# recording because it is a trap anyone building a tapered block will fall into.
+#
+# TWO OBLIQUE `cut`s ON A PLAIN BLOCK IS THE OBVIOUS ROUTE AND IT IS REFUSED BY A
+# DEFECT. `cut()` guards against a plane that misses by comparing the TRIANGLE
+# COUNT before and after — and it takes that count BEFORE `SimpleHoleFill` adds
+# the cut face, so a slice that removes one quad face and turns two others into
+# pentagons comes back at exactly the count it started with. Measured: an 18 x 20
+# x 25 block (9000 cm3) cut at 12 wide on the inner face is refused as *"took
+# nothing off"*, while the SAME plane facing the other way is accepted and keeps
+# a 750 cm3 sliver — so the refused cut demonstrably removes that 750. A count is
+# not a measurement. Filed on the board; this entry does not wait on it.
+#
+# The outline route is better anyway: it is exact, it costs no boolean, and a
+# trapezoid is what a mason marks out.
+#
+# `w_in` is the width at the INTRADOS — the inner face of the arch — `splay` how
+# much further each side reaches at the extrados, and `rise` the radial depth
+# between them. The stone grows +Z through the WALL, which is what `thick` is, so
+# the family contract holds and an arch is laid by turning copies about Z.
+# How many stones close a given arc follows from `w_in` and `rise`, and
+# `Structures.Arch` is the file that does that arithmetic, not this one.
+Voussoir = mesh(w_in=12.0, splay=3.0, rise=25.0, thick=20.0, wear=0.25, grain=18.0, vary=10) {
+  points((-$w_in*0.5, -$rise*0.5), ($w_in*0.5, -$rise*0.5), ($w_in*0.5 + $splay, $rise*0.5), (-$w_in*0.5 - $splay, $rise*0.5), loop=true)
+  extrude(height=$thick)
+  round(0.4, segments=1) [sharp]
+  if ($wear > 0.02) {
+    roughen(by=$wear * 0.14, scale=$grain, seed=$vary)
+  }
+  material($Stone)
+}
+
+# A corbel — the stepped block that carries a beam end or a parapet out from a
+# wall face. Three courses, each oversailing the one below, which is how a corbel
+# is actually built and why it is three entries' worth of geometry in one.
+# STACKED BY HANDLE, NOT BY ARITHMETIC: `against($lower, +Z)` reads where the
+# block below ACTUALLY ended, so changing `h` moves nothing else.
+Corbel_Course = mesh(w=24.0, d=12.0, h=10.0) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+}
+
+Corbel = mesh(w=24.0, d=12.0, h=10.0, oversail=11.0, wear=0.2, grain=20.0, vary=11) {
+  first  = add($Corbel_Course, w=$w, d=$d, h=$h)
+  second = add($Corbel_Course, w=$w, d=$d + $oversail, h=$h, at=against($first, +Z), align=(Y: (target=0%, self=0%)))
+  third  = add($Corbel_Course, w=$w, d=$d + $oversail * 2.0, h=$h, at=against($second, +Z), align=(Y: (target=0%, self=0%)))
+  round(0.5, segments=1) [sharp]
+  if ($wear > 0.02) {
+    roughen(by=$wear * 0.12, scale=$grain, seed=$vary)
+  }
+  material($Stone)
+}

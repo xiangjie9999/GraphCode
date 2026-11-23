@@ -1,0 +1,111 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.05  shade:42
+
+# FOOTPRINTS — the outlines everything else is stamped, cut or grown from. Layer
+# L1 of the preset library (`Docs/GC-SHAPE-PRESET-LIBRARY.md` §1): values other
+# files take as arguments, and no triangle of their own until somebody gives one
+# depth.
+#
+#   Footprints = shape('/GraphCodeShape/Presets/Footprints')
+#   Rock = mesh() { … raise(by=3.0) [in=$Footprints.Splat, along=-Z, at=(40%, 60%, 100%)] }
+#   Peg  = mesh() { add($Footprints.Hex)  extrude(height=12.0) }
+#
+# AN OUTLINE IS READ TWO WAYS AND BOTH ARE THE POINT. As `[in=]` with an
+# `along=` it is a BRUSH — the outline is swept into a solid and whatever it
+# passes through is selected. As the first line of a `mesh()` body it is a
+# SHAPE, ready for `extrude`, `revolve`, `sweep` or `loft`.
+#
+# EVERY CONTRACT ON THE BUILD LINES IS THE MEASURED SIZE PLUS ABOUT HALF A
+# CENTIMETRE, because a loose contract catches nothing — that is the whole point
+# of writing one.
+#
+# EVERYTHING HERE IS CENTRED ON THE ORIGIN AND LIES IN XY, so `at=` on the line
+# that reads it is the only thing that decides where it lands. Sizes are the ones
+# the shape reads best at; `scale=` is how you take a different one, and a
+# footprint that must be exact is worth typing where it is used.
+#
+# SHARP CORNERS ARE DELIBERATE AND THEY SURVIVE. `Teardrop` and `Leafshape` keep
+# their tips because `round`'s per-corner tuple leaves them at 0.0 — a smooth
+# `curve` through the same points would round them off and nothing would say so.
+
+build {
+  SM_Footprint_Disk      = $Plate_Disk      [bounds=(20.5, 20.5, 1.6)]
+  SM_Footprint_Slot      = $Plate_Slot      [bounds=(40.5, 10.5, 1.6)]
+  SM_Footprint_Capsule   = $Plate_Capsule   [bounds=(40.5, 10.5, 1.6)]
+  SM_Footprint_Teardrop  = $Plate_Teardrop  [bounds=(19.5, 27.0, 1.6)]
+  SM_Footprint_Hex       = $Plate_Hex       [bounds=(20.5, 18.0, 1.6)]
+  SM_Footprint_Star      = $Plate_Star      [bounds=(23.5, 22.5, 1.6)]
+  SM_Footprint_Splat     = $Plate_Splat     [bounds=(27.5, 26.5, 1.6)]
+  SM_Footprint_Fissure   = $Plate_Fissure   [bounds=(3.5, 40.5, 1.6)]
+  SM_Footprint_Leafshape = $Plate_Leafshape [bounds=(15.0, 30.5, 1.6)]
+}
+
+# A circle, and the one every other entry here is a departure from. The default
+# brush: a dent, a stud, a rivet head, a bolt hole.
+Disk = plane() { circle(radius=10.0) }
+
+# A long hole with its corners eased — a keyway, a letterbox, a vent, a mortice.
+# The ends are FLAT: `Capsule` is the one with round ends.
+Slot = plane() { rect(w=40.0, h=10.0)  round(2.0) }
+
+# `Slot` with its ends taken all the way round: a track, a grip, a slide. 4.9 on
+# a 10 cm width and not 5.0, which is the exact half — measured 2026-09-11, the
+# guard refuses a radius that consumes its whole edge while naming that same
+# radius as the widest that fits: *cannot fit a 5.0 cm radius … the widest that
+# fits there is 5.0 cm*. A millimetre short of a true semicircle, and the arc is
+# indistinguishable at any size this is used at.
+Capsule = plane() { rect(w=40.0, h=10.0)  round(4.9) }
+
+# Round at one end and POINTED at the other. A claw root, a scale, a petal, a
+# drip. The first corner's radius is 0.0, which is what keeps the tip.
+Teardrop = plane() {
+  points((0,-15), (7,-5), (10,2), (6,9), (0,12), (-6,9), (-10,2), (-7,-5), loop=true)
+  round((0.0, 4.0, 5.0, 5.0, 5.0, 5.0, 5.0, 4.0))
+}
+
+# Six flats. `segments=6` is the count as INTENT — the header's `smooth:` would
+# otherwise spend a hexagon on twenty-four sides and there would be no hexagon
+# left. A nut, a boss, a tile, a cell.
+Hex = plane() { circle(radius=10.0, segments=6) }
+
+# Five points, outer 12 and inner 5. A stamp, a rowel, a mark, a badge; also the
+# cheapest test that a brush footprint really follows its outline rather than its
+# bounding box, because a star's box is nearly all empty.
+Star = plane() {
+  points((0,12), (2.94,4.05), (11.41,3.71), (4.76,-1.55), (7.05,-9.71), (0,-5), (-7.05,-9.71), (-4.76,-1.55), (-11.41,3.71), (-2.94,4.05), loop=true)
+}
+
+# An irregular blob with no straight anywhere and no symmetry either — a smooth
+# closed `curve`, so the shape carries on between the points rather than turning
+# at them. Wear, lichen, a stain, a patch of damage, a puddle of rust.
+Splat = plane() {
+  curve((0,13), (8,9), (13,1), (9,-8), (1,-13), (-8,-9), (-14,0), (-9,8), loop=true)
+}
+
+# A long, thin, uneven sliver: the footprint of a crack rather than the crack.
+# Straight segments on purpose — a fracture is flat planes meeting at angles, and
+# a `curve` here reads as a worm.
+Fissure = plane() {
+  points((-0.9,-20), (0.9,-20), (1.4,-6), (0.5,2), (1.2,11), (0.4,20), (-0.7,20), (-1.5,11), (-0.3,2), (-1.2,-6), loop=true)
+}
+
+# A vesica — pointed at BOTH ends and full through the middle. A leaf, a blade, a
+# fish, an eye, a Gothic light. Both tips are 0.0 in the tuple.
+Leafshape = plane() {
+  points((0,-15), (8,0), (0,15), (-8,0), loop=true)
+  round((0.0, 6.0, 0.0, 6.0))
+}
+
+# THE SHOP WINDOW AND THIS FILE'S OWN SELF-CHECK — one 1.5 cm plate per outline,
+# because an outline you cannot look at is an outline nobody will reach for. Each
+# plate is its own asset rather than one chart, so every `[bounds=]` contract
+# names ONE footprint and a preset that silently changes size stops building
+# instead of quietly shipping wrong.
+Plate_Disk      = mesh() { add($Disk)      extrude(height=1.5) }
+Plate_Slot      = mesh() { add($Slot)      extrude(height=1.5) }
+Plate_Capsule   = mesh() { add($Capsule)   extrude(height=1.5) }
+Plate_Teardrop  = mesh() { add($Teardrop)  extrude(height=1.5) }
+Plate_Hex       = mesh() { add($Hex)       extrude(height=1.5) }
+Plate_Star      = mesh() { add($Star)      extrude(height=1.5) }
+Plate_Splat     = mesh() { add($Splat)     extrude(height=1.5) }
+Plate_Fissure   = mesh() { add($Fissure)   extrude(height=1.5) }
+Plate_Leafshape = mesh() { add($Leafshape) extrude(height=1.5) }

@@ -1,0 +1,14 @@
+# GraphCode activation.
+#
+# REPLACE THIS FILE with the setup file your GraphCode licence came with -- usually downloaded as
+# graphcode-activation-<your-email>.txt. Keep the name activation.txt, or drop the downloaded file in
+# beside this one; either works.
+#
+# Then open the project and ask your AI to write something. GraphCode moves the file to
+# %USERPROFILE%\.graphcode\activation.txt, where it belongs, and this PC is activated. You never
+# have to edit it by hand.
+#
+# No licence yet? Leave this file exactly as it is.
+email =
+code =
+server =

@@ -1,0 +1,69 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_ArmsDownBody  into:/Game/GraphCodeExamples/Garment/TShirt/Built/TShirtOversizedArmsDown
+# A heavyweight oversized, dropped-shoulder tee on the arms-down body: TShirtArmsDown with the cut changed. Chest girth 112 and the hem the same (a boxy straight side seam),
+# length 71 from the shoulder-neck point (hem z 77.00): a published size chart for a garment-dyed oversized heavyweight tee, size S (chest 56 flat x 2, length 71, sleeve 23);
+# chest ease +19.7 over this body's 92.3 agrees with VikiSews Marc's +19.5 for a loose, straight, dropped-shoulder pattern. The armhole is grown by the new chest ease and the
+# sleeve cuff is the biceps girth plus 15 (Marc's upper-arm ease). This variant keeps the older neck treatment: a rib band cut 95 % and a pressed neck allowance, no shoulder lines.
+
+build {
+  SM_TShirt = $TShirt
+  T_TShirtStitches = bake(decal, resolution=2048)
+}
+
+Jersey = fabric(weight=144.9, thickness=0.68mm, stretch=(20.75%, 20.75%), shear=20.30, stiffness=(1.16, 1.04), friction=1.92)
+Rib = fabric(weight=183, thickness=0.72mm, stretch=(122.47%, 119%), shear=11.74, stiffness=(1.18, 0.99), friction=1.75)
+
+Neck = ring((0.000, 10.254, 141.400), (3.636, 9.478, 142.218), (6.299, 7.173, 144.450), (7.273, -0.636, 147.500), (5.143, -6.109, 146.157), (0.000, -7.674, 145.600), (-5.143, -6.109, 146.157), (-7.273, -0.636, 147.500), (-6.299, 7.173, 144.450), (-3.636, 9.478, 142.218)) {
+  expand(0.306)
+}
+ChestOnSkin = ring((0.000, 13.414, 128.090), (16.842, 1.350, 128.090), (0.000, -10.604, 128.090), (-16.842, 1.350, 128.090)) {
+  expand((0.497, 4.39))
+}
+Chest = ring($ChestOnSkin) {
+  move((0, 0.095, 0))
+}
+Hem = ring((0.000, 14.006, 77.000), (21.930, 0.803, 77.000), (0.000, -12.400, 77.000), (-21.930, 0.803, 77.000))
+Armhole_L = ring((28.830, 0.000, 134.235), (23.158, 6.107, 132.170), (16.994, 1.500, 129.930), (23.158, -6.107, 132.170)) {
+  expand(3.135)
+}
+Armhole_R = ring((-28.830, 0.000, 134.235), (-23.158, 6.107, 132.170), (-16.994, 1.500, 129.930), (-23.158, -6.107, 132.170)) {
+  expand(3.135)
+}
+HemArm_L = ring((35.790, 0.000, 112.238), (31.042, 5.319, 110.510), (26.292, 0.000, 108.782), (31.042, -5.319, 110.510)) {
+  circular()
+}
+HemArm_R = ring((-35.790, 0.000, 112.238), (-31.042, 5.319, 110.510), (-26.292, 0.000, 108.782), (-31.042, -5.319, 110.510)) {
+  circular()
+}
+Cuff_L = ring($HemArm_L) {
+  expand(3.121)
+  move((-2.895, 0, -1.054))
+}
+Cuff_R = ring($HemArm_R) {
+  expand(3.121)
+  move((2.895, 0, -1.054))
+}
+
+Sleeve_L = garment($Armhole_L, $Cuff_L, loose=100%, fabric=$Jersey)
+Sleeve_R = garment($Armhole_R, $Cuff_R, loose=100%, fabric=$Jersey)
+Yoke = profile(0=0%, 1=100%)
+TShirt = garment($Neck, $Chest, $Hem, loose@1=$Yoke, loose@2=100%, fabric=$Jersey) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  add($Sleeve_L)
+  add($Sleeve_R)
+  construct(rim=(turned=2.54cm))
+  relax(1)
+  band($Neck, width=2cm, fabric=$Rib, cut=95%)
+  press($Neck, 1cm)
+  stitch($Neck, offset=1cm)
+  press($Armhole_L, -0.635cm)
+  press($Armhole_R, -0.635cm)
+  stitch($Armhole_L)
+  stitch($Armhole_R)
+  stitch($Hem, offset=1cm)
+  stitch($Hem, offset=1.6cm)
+  stitch($Cuff_L, offset=1cm)
+  stitch($Cuff_L, offset=1.6cm)
+  stitch($Cuff_R, offset=1cm)
+  stitch($Cuff_R, offset=1.6cm)
+}

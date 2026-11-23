@@ -1,0 +1,121 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/ButtonShirt/Built  reference:(0, 0, 180)
+# ButtonShirt: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_ButtonShirt = $Shirt
+  T_ShirtStitches = bake(decal, resolution=2048)
+}
+
+Shirting = fabric(weight=135.1, thickness=0.38mm, stretch=(1.5%, 7.6%), shear=106.52, stiffness=(1.97, 1.83), friction=0.49)
+ShirtingFused = fabric(weight=154.56, thickness=0.70mm, stretch=(1.5%, 7.6%), shear=294, stiffness=(3.13, 3.06), friction=0.49)
+
+Neck = ring((-1.592, 6.006, 148.000), (0.000, 6.200, 148.000), (3.132, 5.425, 148.000), (5.554, 3.207, 148.000), (6.500, 0.000, 148.000), (5.554, -3.207, 148.000), (3.132, -5.425, 148.000), (0.000, -6.200, 148.000), (-3.132, -5.425, 148.000), (-5.554, -3.207, 148.000), (-6.500, 0.000, 148.000), (-5.554, 3.207, 148.000), (-3.132, 5.425, 148.000)) {
+  expand(0.13)
+}
+ChestOnSkin = ring((-1.592, 12.672, 123.640), (0.000, 12.746, 123.640), (16.475, 1.350, 123.640), (0.000, -10.382, 123.640), (-16.475, 1.350, 123.640)) {
+  expand((0.93, 2.54))
+}
+Chest = ring($ChestOnSkin) {
+  move((0, 0.318, 0))
+}
+WaistOnSkin = ring((-1.592, 9.724, 105.000), (0.000, 9.800, 105.000), (13.500, 0.000, 105.000), (0.000, -9.800, 105.000), (-13.500, 0.000, 105.000)) {
+  expand((3.122, 0.89))
+}
+Waist = ring($WaistOnSkin) {
+  move((0, 1.072, 0))
+}
+HipsOnSkin = ring((-1.592, 9.928, 98.000), (0.000, 10.000, 98.000), (15.350, -0.500, 98.000), (0.000, -11.000, 98.000), (-15.350, -0.500, 98.000)) {
+  expand((2.583, 1.65))
+}
+Hips = ring($HipsOnSkin) {
+  move((0, 1.411, 0))
+}
+HemOnSkin = ring((-1.592, 9.587, 84.760), (0.000, 9.654, 84.760), (5.420, 9.017, 84.760), (10.671, 7.677, 84.760), (13.590, 6.463, 85.736), (14.942, 4.886, 87.885), (16.066, 2.592, 90.034), (17.192, -0.950, 91.010), (16.241, -4.134, 90.034), (14.787, -5.562, 87.885), (13.111, -6.725, 85.736), (10.435, -8.316, 84.760), (5.382, -10.245, 84.760), (0.000, -10.874, 84.760), (-5.382, -10.245, 84.760), (-10.435, -8.316, 84.760), (-13.111, -6.725, 85.736), (-14.787, -5.562, 87.885), (-16.241, -4.134, 90.034), (-17.192, -0.950, 91.010), (-16.066, 2.592, 90.034), (-14.942, 4.886, 87.885), (-13.590, 6.463, 85.736), (-10.671, 7.677, 84.760), (-5.420, 9.017, 84.760)) {
+  expand((1.585, 0.87))
+}
+Hem = ring($HemOnSkin) {
+  move((0, -0.385, 0.74))
+}
+Armhole_L = ring((17.100, 0.000, 142.880), (17.100, 6.020, 136.990), (16.883, 1.500, 128.620), (17.100, -6.020, 136.990)) {
+  expand(2.33)
+}
+Armhole_R = ring((-17.100, 0.000, 142.880), (-17.100, 6.020, 136.990), (-16.883, 1.500, 128.620), (-17.100, -6.020, 136.990)) {
+  expand(2.33)
+}
+WristArm_L = ring((69.200, 0.000, 139.780), (69.200, 3.340, 137.000), (69.200, 0.000, 134.220), (69.200, -3.340, 137.000)) {
+  circular()
+}
+WristArm_R = ring((-69.200, 0.000, 139.780), (-69.200, 3.340, 137.000), (-69.200, 0.000, 134.220), (-69.200, -3.340, 137.000)) {
+  circular()
+}
+Wrist_L = ring($WristArm_L) {
+  expand(0.77)
+  move((0, 0, -1.04))
+}
+Wrist_R = ring($WristArm_R) {
+  expand(0.77)
+  move((0, 0, -1.04))
+}
+
+Btn = shape('/Game/GraphCodeExamples/Garment/ButtonShirt/ShirtButton')
+CollarDepth = profile(0=6.6, 0.0762=6.6, 0.1276=9.17, 0.2392=7.60, 0.5392=7.12, 0.8392=7.60, 0.9508=9.17, 1=6.6)
+CuffAt_L = ring($Wrist_L) {
+  move((2.915, 0, 0))
+}
+CuffAt_R = ring($Wrist_R) {
+  move((-2.915, 0, 0))
+}
+
+Sleeve_L = garment($Armhole_L, $Wrist_L, loose=100%, fabric=$Shirting) {
+  construct()
+  band($Wrist_L, width=5.83cm, fabric=$Shirting, cut=78.9%)
+  stitch($Wrist_L)
+  add($Btn.Button, at=$CuffAt_L@0.0625)
+  add($Btn.Button, at=$CuffAt_L@0.1875)
+}
+Sleeve_R = garment($Armhole_R, $Wrist_R, loose=100%, fabric=$Shirting) {
+  construct()
+  band($Wrist_R, width=5.83cm, fabric=$Shirting, cut=78.9%)
+  stitch($Wrist_R)
+  add($Btn.Button, at=$CuffAt_R@0.9375)
+  add($Btn.Button, at=$CuffAt_R@0.8125)
+}
+Shirt = garment($Neck, $Chest, $Waist, $Hips, $Hem, loose@1=0%, loose@2=100%, loose@3=100%, loose@4=100%, fabric=$Shirting) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  add($Sleeve_L)
+  add($Sleeve_R)
+  construct(rim=(turned=0.635cm, layers=3))
+  relax(1)
+  CentreFront = line($Neck@1.592cm, $Hem@1.592cm)
+  PlacketSeam = line($CentreFront@0.5cm offset=-1.592cm, $CentreFront@1-0.5cm offset=-1.592cm)
+  Placket = extend($PlacketSeam, 3.184, fabric=$ShirtingFused)
+  stitch($CentreFront, offset=1.083cm)
+  stitch($CentreFront, offset=-1.083cm)
+  add($Btn.Button, at=$Placket@3.11cm offset=1.592cm)
+  add($Btn.Button, at=$Placket@6.72cm offset=1.592cm)
+  add($Btn.Button, at=$Placket@13.95cm offset=1.592cm)
+  add($Btn.Button, at=$Placket@21.17cm offset=1.592cm)
+  add($Btn.Button, at=$Placket@28.40cm offset=1.592cm)
+  add($Btn.Button, at=$Placket@35.62cm offset=1.592cm)
+  add($Btn.Button, at=$Placket@42.84cm offset=1.592cm)
+  add($Btn.Button, at=$Placket@50.07cm offset=1.592cm)
+  BackNeck = line($Neck@2cm, $Neck@0.5, $Neck@1cm)
+  Collar = extend($BackNeck, $CollarDepth, fabric=$ShirtingFused)
+  fold($Collar, stand=3.18cm, gap=0.25cm)
+  stitch($Hem, offset=0.5cm)
+  stitch($Collar, offset=0.159cm) [both]
+  stitch($Armhole_L)
+  stitch($Armhole_R)
+  # The chest pocket, a second piece of shirting sewn on: sides and foot turned under 1/4 in, the mouth folded 1 in and left open
+  # (Archer sew-along; Docs/Research/shirt-patch-pocket-allowances.md). Its sides in order: mouth, outer side, foot, inner side.
+  PocketMouth = line($CentreFront@14.45cm offset=5.08cm, $CentreFront@14.45cm offset=16.1925cm)
+  PocketOut = line($CentreFront@14.45cm offset=16.1925cm, $CentreFront@26.515cm offset=16.1925cm)
+  PocketFoot = line($CentreFront@26.515cm offset=16.1925cm, $CentreFront@26.515cm offset=5.08cm)
+  PocketIn = line($CentreFront@26.515cm offset=5.08cm, $CentreFront@14.45cm offset=5.08cm)
+  Pocket = patch($PocketMouth, $PocketOut, $PocketFoot, $PocketIn, open=$PocketMouth, turn=0.635cm, hem=2.54cm, fabric=$Shirting)
+  stitch($PocketOut, offset=-0.159cm)
+  stitch($PocketFoot, offset=-0.159cm)
+  stitch($PocketIn, offset=-0.159cm)
+  stitch($PocketMouth, offset=-2.381cm)
+}

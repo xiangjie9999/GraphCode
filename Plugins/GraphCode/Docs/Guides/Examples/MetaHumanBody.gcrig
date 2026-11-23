@@ -1,0 +1,297 @@
+gcrig 1  faces:+Y  mirror:false
+
+# WHAT A METAHUMAN BODY'S JOINTS CAN DO — one file for every MetaHuman (Docs/GC-MOVE-METAHUMAN-BODY-ADAPTER-PLAN.md items 0-7,
+# user-ruled 2026-10-09: "override joints? and the axes, and basically, make gcmove on metahuman more like native").
+# No mesh, no points, no frames: a character's own file names its body mesh with parent: this one, and the import's
+# 342 bones, places and frames come in front of both. Only what each core joint can DO is said here;
+# corrective/helper and twist bones are MetaHuman's post-process's. Faces +Y with its left at +X (measured on the
+# template body: ball_l stands 11.7 cm ahead of foot_l). The ranges follow the human anatomy studies (the joints
+# block says how; until 2026-10-09 they were RifleMan.gcrig's widened to hold the rest pose). Fingers state no closes=: MetaHuman stands in an
+# A-pose with its hands hanging, where RifleMan's T-pose 'down' is the back of the hand (pinky_02_l measured -13.7),
+# so each finger folds the way it already curls at rest; the wrists close 'back' (down ran along the hanging hand and
+# folded 43 degrees off its axes; back lands on the wrist's own hinge, 2026-10-09). The 84 body/placement joints
+# below include the palm and toes. Corrective and twist helpers remain imported; a bare declaration is rigid.
+# The chains say which way each limb RUNS (Research/imported-bone-direction-and-correctives.md): the import's
+# read-out has one root-to-leaf path per leaf, so a corrective leaf ran 'through' the upper arm as much as the
+# forearm did. Each link is the bone's real parent in the MetaHuman hierarchy (read 2026-10-09).
+chains {
+  spine = pelvis -> spine_01 -> spine_02 -> spine_03 -> spine_04 -> spine_05 -> neck_01 -> neck_02 -> head
+  arm_l = clavicle_l -> upperarm_l -> lowerarm_l -> hand_l -> middle_metacarpal_l  [goal=$hand_l]
+  leg_l = pelvis -> thigh_l -> calf_l -> foot_l -> ball_l
+  thumb_l = hand_l -> thumb_01_l -> thumb_02_l -> thumb_03_l
+  index_l = hand_l -> index_metacarpal_l -> index_01_l -> index_02_l -> index_03_l
+  middle_l = hand_l -> middle_metacarpal_l -> middle_01_l -> middle_02_l -> middle_03_l
+  ring_l = hand_l -> ring_metacarpal_l -> ring_01_l -> ring_02_l -> ring_03_l
+  pinky_l = hand_l -> pinky_metacarpal_l -> pinky_01_l -> pinky_02_l -> pinky_03_l
+  arm_r = clavicle_r -> upperarm_r -> lowerarm_r -> hand_r -> middle_metacarpal_r  [goal=$hand_r]
+  leg_r = pelvis -> thigh_r -> calf_r -> foot_r -> ball_r
+  thumb_r = hand_r -> thumb_01_r -> thumb_02_r -> thumb_03_r
+  index_r = hand_r -> index_metacarpal_r -> index_01_r -> index_02_r -> index_03_r
+  middle_r = hand_r -> middle_metacarpal_r -> middle_01_r -> middle_02_r -> middle_03_r
+  ring_r = hand_r -> ring_metacarpal_r -> ring_01_r -> ring_02_r -> ring_03_r
+  pinky_r = hand_r -> pinky_metacarpal_r -> pinky_01_r -> pinky_02_r -> pinky_03_r
+  # Only the central index-toe path runs THROUGH the ball. The other toes branch there: their lateral offsets
+  # must not tip its hinge across the foot. Existing leg goals stay at ball_l/r and ankle directions stay unchanged.
+  toe_index_l = foot_l -> ball_l -> indextoe_01_l -> indextoe_02_l
+  toe_big_l = ball_l -> bigtoe_01_l -> bigtoe_02_l
+  toe_middle_l = ball_l -> middletoe_01_l -> middletoe_02_l
+  toe_ring_l = ball_l -> ringtoe_01_l -> ringtoe_02_l
+  toe_little_l = ball_l -> littletoe_01_l -> littletoe_02_l
+  toe_index_r = foot_r -> ball_r -> indextoe_01_r -> indextoe_02_r
+  toe_big_r = ball_r -> bigtoe_01_r -> bigtoe_02_r
+  toe_middle_r = ball_r -> middletoe_01_r -> middletoe_02_r
+  toe_ring_r = ball_r -> ringtoe_01_r -> ringtoe_02_r
+  toe_little_r = ball_r -> littletoe_01_r -> littletoe_02_r
+  # THE HEAD FOR A LOOK (2026-10-14, BlueEdge_20261013/BUILD.md): `spine` is the only other chain to the head and it starts
+  # at the pelvis, so an aim on it turns the hips and the whole back. This turns the neck and the head only. Started at
+  # spine_05 (KitchenCupBody.gcrig's own `neck`), a look bent the upper chest to its stop and moved both shoulders, which
+  # hang off spine_05 (the sword elbow 18 cm). The head bone's +X is not where the face looks; the face is its +Y (the mouth
+  # sits 12.5 cm along it), so aim from a frame: Face = frame(bone=head, toward=+Y, up=+X).
+  neck = neck_01 -> neck_02 -> head  [goal=$head]
+  # THE CHEST FOR A FACING (2026-10-16, Docs/GC-MOVE-SEE-AND-POINT-PLAN.md "K3 PLAN"; the user, on BlueEdge's landing: "the torso isnt
+  # turning to the side", "the sphere doesnt necessarily need to be reachable, it can also be used to aim, like for the chest"). The
+  # hips and the back to the chest, not the neck and head: `spine` runs on to the head, so an aim on it also turns the look. A bones
+  # bubble on spine_05 draws this chain's aim sphere (where the chest can be turned to face, every joint in its arcs) and the ask gives
+  # the toward= for `aim(chest, from=$Chest, toward=...)` with Chest = frame(bone=spine_05, toward=forward). The feet's stand_ chains
+  # start at the thigh, so planted feet keep their footholds while this turns the hips.
+  chest = pelvis -> spine_01 -> spine_02 -> spine_03 -> spine_04 -> spine_05
+  # FEET ON FOOTHOLDS, THE HIPS LEFT AS POSED (2026-10-14, BlueEdge_20261013/BUILD.md). A reach turns its whole chain and
+  # holds what is above it; leg_l / leg_r start at the pelvis, so reaching a foot turned the hips (BlueEdge key 0: 25 back
+  # and 23 round instead of the written 15 and 10). These start at the thigh. stand_ puts the ball of the foot on its
+  # foothold (a frame); heel_ also puts the ankle on a point, which fixes the knee bend and the heel's height together.
+  stand_l = thigh_l -> calf_l -> foot_l -> ball_l
+  stand_r = thigh_r -> calf_r -> foot_r -> ball_r
+  heel_l = thigh_l -> calf_l -> foot_l
+  heel_r = thigh_r -> calf_r -> foot_r
+}
+# WHAT EACH JOINT CAN DO, FROM THE HUMAN ANATOMY STUDIES (user, 2026-10-09: "We have human anatomy studies, follow
+# those"; Plugins/GraphCode/Docs/Guides/HUMAN-JOINT-RANGES.md, Docs/Research/human-joint-ranges.md). One consistent set
+# where the guide has one: the CDC passive means for adults 20-44 (Soucie 2011, women's column, the larger), with the
+# guide's named alternatives where CDC has no row. They are passive ends; a character moving itself stays inside them.
+#
+# HOW A STUDY ANGLE BECOMES A RANGE HERE. A range counts from STRAIGHT: the bone continuing the line from its parent's
+# joint (GraphCodeRigLimits.cpp). Where straight IS anatomical neutral (knee, elbow, wrist, fingers, thumb MCP/IP) the
+# study's pair goes in as it is. So does the hip's: its line in runs along the axis it folds about, so the build takes
+# the hip as it stands for straight. Elsewhere anatomical neutral is MetaHuman's standing rest, so the pair is moved by
+# the joint's rest bend, measured on SKM_MH_ClothedReference_BodyMesh: ankle 62.4-62.7, spine_01..05 12.1 / -7.3 /
+# -9.5 / -8.5 / 3.9, neck_01 20.8, neck_02 -1.0, head 0, shoulder fold 3.4, clavicle -75.2. On Epic's template body
+# these rest within 4 degrees of that (clavicle -79.0, wrist -7.8, neck_01 23.5, spine_05 1.2, the rest within 2), and
+# its hip, whose line in lies 30 % across and is measured there, at -4.7; so on another MetaHuman an end may sit up to
+# about 5 degrees off the study. That is what two measured bodies showed, not a check: the build refuses only a
+# rest bend outside a joint's declared range, so a body that rests 10 degrees off but inside it shifts both ends 10.
+# side= and twists= already count from rest. Where a study's two ends differ (pronation 82 / supination 90.6, ulnar 30
+# / radial 20, hip abduction 38.8 / adduction 30.5, rotation in / out) and the rig's sign for that side is not yet
+# checked with a one-pose render, the pair is the larger end both ways: never tighter than anatomy, never assumed.
+# MOTION REFERENCES, revised 2026-10-10: velocity in deg/s, accel in deg/s^2, ramp in seconds.
+# Authored from Docs/Research/joint-speed-and-acceleration-references.md section 4; these are starting
+# references, not hard limits or calibrated measurements of this body. See RIG.md for values and evidence.
+# Elbow 40000/0.025, hip 25000/0.035 and knee 40000/0.035 use the revised research. Other accelerations
+# and ramps mostly remain extrapolations; the revised citations include search-snippet evidence and model runs.
+# Whole-trunk 950/37000 is shared over five spine joints; whole-neck 800/10000 over three neck/head joints.
+# One reference set per joint is supported. The shoulder uses fold/side 1100/25000/0.05, the elbow uses
+# flexion/extension 2200/40000/0.025. Throwing twist needs separate axis references: shoulder
+# 7000/500000/0.01 and forearm 2000/150000/0.015 are NOT assigned to the bending references below.
+# DIP joints have only the researched speed 600: acceleration/ramp remain unknown. Clavicles and thumbs
+# have no matching research row and stay unknown; rigid toes and corrective/twist helpers inherit no default.
+# Everyday reaches use about 1-9% accel, walking 3-17%, running 22-53%; a skilled strike can use 50-100%.
+# RELAXED ANIMATION REST, 2026-10-11: empty .gcmove clips hold these defaults.
+# Shoulder side=25 and elbow fold=10 are authored standing choices, verified visually on two bodies.
+# Fingers/thumb MCP/IP use Lee et al. 2008, neutral forearm / shoulder flexion 0, table 3:
+# https://www.jstage.jst.go.jp/article/jergo/44spl/0/44spl_0_436/_pdf
+# These sample means are starting poses, not universal anatomy. Trunk, legs, wrists and thumb base
+# retain each imported body's native stance. Bind, ranges, sockets and motion references are unchanged.
+# Constrained rest folds use the native motion axis; build notes disclose anatomical-axis differences.
+# A child may override each named rest angle. Existing baked clips change only when rebuilt.
+joints {
+  # Root is whole-character placement, not an anatomical ROM. Positive fold tips forward, side leans left,
+  # twist turns RIGHT (left shoulder forward). Native signed probes: MetaHumanJointMap_20261013.
+  # A full-turn envelope permits placement while preserving the imported root frame.
+  root [closes=forward, range=(-180, 180), side=(-180, 180), twists=(-180, 180)]
+  # Pelvis: a body-placement envelope, not a clinical joint range. Positive fold tips the body forward;
+  # positive side leans to the character's LEFT; positive twist turns RIGHT (left shoulder forward).
+  # Built and visually checked 2026-10-13 on BlueEdge JointSigns, side/top captures 1a1337674471 / 4eae79e94ab5;
+  # Twist wording corrected by compressed native poses 2026-10-13: +15 advances the left hand 7.89 cm,
+  # retreats the right 8.11 cm; the earlier sheet was read backwards. Axes/ranges have not been flipped.
+  # SPEED (2026-10-14, BlueEdge_20261013): effort timing times every joint that turns, and none was given here, so a timed
+  # travel that turned the hips was refused. The pelvis turns ON THE HIPS over planted feet, so the hip's references apply
+  # (850 / 25000 / 0.035; a pitch's measured pelvis peak, 400-700 deg/s, HUMAN-THROW-AND-STRIKE.md, sits inside).
+  pelvis [closes=forward, range=(-60, 60), side=(-45, 45), twists=(-90, 90), velocity=850, accel=25000, ramp=0.035]
+
+  # Trunk, whole-spine clinical totals (VA: flexion 90, extension 30, side bend 30 each side) spread evenly over the
+  # five spine joints; twist from the measured level split (Fujimori 2012, Fujii 2007): about 9 degrees in the lumbar
+  # spine (spine_01-03, 3 each), about 25 a side in the thoracic (spine_04-05, 12.5 each).
+  spine_01 [closes=forward, range=(6.1, 30.1), side=(-6, 6), twists=(-3, 3), velocity=190, accel=7400, ramp=0.04]
+  spine_02 [closes=forward, range=(-13.3, 10.7), side=(-6, 6), twists=(-3, 3), velocity=190, accel=7400, ramp=0.04]
+  spine_03 [closes=forward, range=(-15.5, 8.5), side=(-6, 6), twists=(-3, 3), velocity=190, accel=7400, ramp=0.04]
+  spine_04 [closes=forward, range=(-14.5, 9.5), side=(-6, 6), twists=(-12.5, 12.5), velocity=190, accel=7400, ramp=0.04]
+  spine_05 [closes=forward, range=(-2.1, 21.9), side=(-6, 6), twists=(-12.5, 12.5), velocity=190, accel=7400, ramp=0.04]
+  # Neck and head (Wolan-Nieroda 2020, measured: flexion 55.7, extension 84.2, side 50.2, rotation 74) over three
+  # joints evenly: 18.6 / 28.1 / 16.7 / 24.7 each.
+  neck_01 [closes=forward, range=(-7.3, 39.4), side=(-16.7, 16.7), twists=(-24.7, 24.7), velocity=266.67, accel=3333.33, ramp=0.08]
+  neck_02 [closes=forward, range=(-29.1, 17.6), side=(-16.7, 16.7), twists=(-24.7, 24.7), velocity=266.67, accel=3333.33, ramp=0.08]
+  head [closes=forward, range=(-28.1, 18.6), side=(-16.7, 16.7), twists=(-24.7, 24.7), velocity=266.67, accel=3333.33, ramp=0.08]
+
+  # Collarbones: no measured full range in the project; clinical reference (GPnotebook: elevation/depression arc
+  # about 60, protraction/retraction 35, axial rotation about 40; teaching summaries 45 up / 15 down). Ludewig 2009
+  # (measured): a 120-degree arm raise uses 6 up, 16 back and 31 of posterior roll, which these hold. Each rests
+  # -75.2 bent (the line in runs up the spine to the sternum), so the pair is that moved 15 down and 45 up.
+  # SPEED (2026-10-14, BlueEdge_20261013): no research row gives the collarbone one, and without one a timed arm raise was
+  # refused. It rides the arm raise at about half the shoulder's rate (scapulohumeral rhythm 2.1-2.4 : 1,
+  # HUMAN-JOINT-RANGES.md), so half the shoulder's speed and acceleration at its ramp: derived, not measured.
+  clavicle_l [closes=up, range=(-90.2, -30.2), side=(-17.5, 17.5), twists=(-35, 35), velocity=550, accel=12500, ramp=0.05]
+  clavicle_r [closes=up, range=(-90.2, -30.2), side=(-17.5, 17.5), twists=(-35, 35), velocity=550, accel=12500, ramp=0.05]
+  # Shoulder: flexion 172 (CDC), extension 50 (DSHS), abduction 156.4 (Gill 2020, women 20-24) of which the A-pose
+  # already uses 37.4, adduction 30 (DSHS), external rotation 73.8 (Gill 2020; internal not verified). side= on the
+  # right arm is negative outward (WaveProbe.gcmove); the left's sign is unchecked.
+  upperarm_l [closes=forward, range=(-46.7, 175.4), side=(-119, 119), twists=(-73.8, 73.8), velocity=1100, accel=25000, ramp=0.05, rest=(side=25)]
+  upperarm_r [closes=forward, range=(-46.7, 175.4), side=(-119, 67.4), twists=(-73.8, 73.8), velocity=1100, accel=25000, ramp=0.05, rest=(side=25)]
+  # Elbow: flexion 150, extension 4.7 past straight (CDC); pronation 82 / supination 90.6 (CDC).
+  lowerarm_l [closes=forward, range=(-4.7, 150), twists=(-90.6, 90.6), velocity=2200, accel=40000, ramp=0.025, rest=(fold=10)]
+  lowerarm_r [closes=forward, range=(-4.7, 150), twists=(-90.6, 90.6), velocity=2200, accel=40000, ramp=0.025, rest=(fold=10)]
+  # Wrist: flexion 60, extension 60, ulnar 30, radial 20 (DSHS; Ryu 1991 functional use stays inside). closes=back
+  # lands on the hanging hand's own hinge (2026-10-09).
+  hand_l [closes=back, range=(-60, 60), side=(-30, 30), velocity=2500, accel=150000, ramp=0.015]
+  hand_r [closes=back, range=(-60, 60), side=(-30, 30), velocity=2500, accel=150000, ramp=0.015]
+
+  # Palm cupping: index/middle CMCs are rigid in this model. Ring gets a 10-degree modelling excursion
+  # (Buffi 2013 measured 7.65 in one subject); pinky gets 25 (Buren 2022 measured coupled palm-arc motion,
+  # not an isolated hinge). closes=in makes positive fold cup toward the palm on either hand. Ranges are
+  # the union of the fitted/template bind offsets plus those excursions: ring -0.93/-1.77 vs -5.09;
+  # pinky 9.65/10.80 vs 4.86. This cross-body envelope is wider than one person's measured excursion.
+  # Source methods/caveats: Docs/Research/metahuman-distal-joint-ranges.md. No finger defaults are changed.
+  index_metacarpal_l
+  middle_metacarpal_l
+  ring_metacarpal_l [closes=in, range=(-5.2, 9.1)]
+  pinky_metacarpal_l [closes=in, range=(4.8, 34.7)]
+  index_metacarpal_r
+  middle_metacarpal_r
+  ring_metacarpal_r [closes=in, range=(-5.2, 8.3)]
+  pinky_metacarpal_r [closes=in, range=(4.8, 35.9)]
+
+  # Thumbs (Barakat 2013): MCP flexion 60, extension 8.1; IP flexion 88, extension 12. The CMC base moves in planes
+  # (palmar and radial abduction 61-63, retroposition 31, adduction 10) that do not land on one fold of this bone,
+  # which folds 37 degrees off its own axes; it keeps its working pair until that is mapped. It rests 21.4 bent.
+  # ITS AXIAL ROLL, added 2026-10-11 (user: give the MetaHuman thumb the opposition the pistol hand has): opposition
+  # combines flexion, adduction and PRONATION of the first metacarpal, and a thumb with no roll cannot turn its pad
+  # to face the fingers or a held thing's far side (the kitchen cup grip, GC-MOVE-OBJECT-INTERACTION-PLAN.md). The
+  # pistol hand gets that roll from a second hinge its rig adds (thumb_roll_r); this skeleton is Epic's and takes no
+  # new bone, so the roll is the base's own twist. Cooney 1981: 17 degrees of axial rotation (pronation-supination)
+  # of the first metacarpal against the third, in vivo, 19 adults (biplane X-ray). That 17 is the mean TOTAL arc, so
+  # +-17 (34 degrees) is a WORKING MODELLING ALLOWANCE, not study-proven endpoints: the study's neutral and axis (first
+  # metacarpal against the third) are not mapped onto this bone's twist, and the left's sign is unchecked (codex
+  # review A1A6FBC2, 2026-10-11; Docs/Research/human-joint-ranges.md). Do not narrow it to +-8.5 or guess uneven stops
+  # until that mapping is done. Sign on the RIGHT thumb, rendered 2026-10-11 (KitchenCupKeys.gcmove ThumbWrap): twist -17 turns the
+  # pad toward the fingers (opposition), and the curled thumb then lands on a held cup's side; +17 sent it over the rim.
+  # The left's sign is unchecked. The thumb joints' limit messages report a curl toward the palm as a negative fold, as
+  # the fingers' do; thumb_03 stops 34 degrees past its rest curl, at the 88 degree anatomical end.
+  # SPEED of the thumb and the fingertips (2026-10-15, BlueEdge_20261013: a timed cut whose grip settles a fingertip differently from one key
+  # to the next was refused, as these had no acceleration): no research row gives them one. Derived, not measured: a thumb joint as a
+  # finger's MCP/PIP (1000 deg/s, 26000 deg/s2, ramp 0.04); a tip at its 600 deg/s with the same time to speed (15600 deg/s2).
+  thumb_01_l [range=(-30, 50), side=(-20, 20), twists=(-17, 17), velocity=1000, accel=26000, ramp=0.04]
+  thumb_02_l [range=(-8.1, 60), velocity=1000, accel=26000, ramp=0.04, rest=(fold=46.1)]
+  thumb_03_l [range=(-12, 88), velocity=600, accel=15600, ramp=0.04, rest=(fold=8.5)]
+  thumb_01_r [range=(-30, 50), side=(-20, 20), twists=(-17, 17), velocity=1000, accel=26000, ramp=0.04]
+  thumb_02_r [range=(-8.1, 60), velocity=1000, accel=26000, ramp=0.04, rest=(fold=46.1)]
+  thumb_03_r [range=(-12, 88), velocity=600, accel=15600, ramp=0.04, rest=(fold=8.5)]
+
+  # Fingers (Bhat 2024, active, the upper of each range): MCP flexion 86.6, hyperextension 26.3; PIP 97.2 / 16.2
+  # past straight; DIP 84.6 / 8.4. They state no closes=: MetaHuman's A-pose hands hang, so each folds the way it
+  # already curls at rest. MCP side (+-15) has no study here and keeps its working value.
+  index_01_l [range=(-26.3, 86.6), side=(-15, 15), velocity=1000, accel=26000, ramp=0.04, rest=(fold=28.4)]
+  index_02_l [range=(-16.2, 97.2), velocity=1000, accel=26000, ramp=0.04, rest=(fold=25.5)]
+  index_03_l [range=(-8.4, 84.6), velocity=600, accel=15600, ramp=0.04, rest=(fold=13.1)]
+  middle_01_l [range=(-26.3, 86.6), side=(-15, 15), velocity=1000, accel=26000, ramp=0.04, rest=(fold=32.8)]
+  middle_02_l [range=(-16.2, 97.2), velocity=1000, accel=26000, ramp=0.04, rest=(fold=30.1)]
+  middle_03_l [range=(-8.4, 84.6), velocity=600, accel=15600, ramp=0.04, rest=(fold=12.7)]
+  ring_01_l [range=(-26.3, 86.6), side=(-15, 15), velocity=1000, accel=26000, ramp=0.04, rest=(fold=24.7)]
+  ring_02_l [range=(-16.2, 97.2), velocity=1000, accel=26000, ramp=0.04, rest=(fold=34.5)]
+  ring_03_l [range=(-8.4, 84.6), velocity=600, accel=15600, ramp=0.04, rest=(fold=11.7)]
+  pinky_01_l [range=(-26.3, 86.6), side=(-15, 15), velocity=1000, accel=26000, ramp=0.04, rest=(fold=16.6)]
+  pinky_02_l [range=(-16.2, 97.2), velocity=1000, accel=26000, ramp=0.04, rest=(fold=32.1)]
+  pinky_03_l [range=(-8.4, 84.6), velocity=600, accel=15600, ramp=0.04, rest=(fold=15.6)]
+  index_01_r [range=(-26.3, 86.6), side=(-15, 15), velocity=1000, accel=26000, ramp=0.04, rest=(fold=28.4)]
+  index_02_r [range=(-16.2, 97.2), velocity=1000, accel=26000, ramp=0.04, rest=(fold=25.5)]
+  index_03_r [range=(-8.4, 84.6), velocity=600, accel=15600, ramp=0.04, rest=(fold=13.1)]
+  middle_01_r [range=(-26.3, 86.6), side=(-15, 15), velocity=1000, accel=26000, ramp=0.04, rest=(fold=32.8)]
+  middle_02_r [range=(-16.2, 97.2), velocity=1000, accel=26000, ramp=0.04, rest=(fold=30.1)]
+  middle_03_r [range=(-8.4, 84.6), velocity=600, accel=15600, ramp=0.04, rest=(fold=12.7)]
+  ring_01_r [range=(-26.3, 86.6), side=(-15, 15), velocity=1000, accel=26000, ramp=0.04, rest=(fold=24.7)]
+  ring_02_r [range=(-16.2, 97.2), velocity=1000, accel=26000, ramp=0.04, rest=(fold=34.5)]
+  ring_03_r [range=(-8.4, 84.6), velocity=600, accel=15600, ramp=0.04, rest=(fold=11.7)]
+  pinky_01_r [range=(-26.3, 86.6), side=(-15, 15), velocity=1000, accel=26000, ramp=0.04, rest=(fold=16.6)]
+  pinky_02_r [range=(-16.2, 97.2), velocity=1000, accel=26000, ramp=0.04, rest=(fold=32.1)]
+  pinky_03_r [range=(-8.4, 84.6), velocity=600, accel=15600, ramp=0.04, rest=(fold=15.6)]
+
+  # Hip: flexion 133.8 (CDC); extension 35, what a run needs (WALK-AND-RUN.md; passive 18.1 would clamp a stride);
+  # abduction 38.8 / adduction 30.5 (Roaas 1982); rotation in 53.5 / out 46.8 (Han 2015, prone, women). The line into
+  # the hip runs sideways from the pelvis, along the axis the hip folds about, so the build takes the hip as it stands
+  # for straight and the study pair goes in as it is (2026-10-09; it read -42.6 on one body and -4.7 on another before).
+  thigh_l [closes=forward, range=(-35, 133.8), side=(-38.8, 38.8), twists=(-53.5, 53.5), velocity=850, accel=25000, ramp=0.035]
+  thigh_r [closes=forward, range=(-35, 133.8), side=(-38.8, 38.8), twists=(-53.5, 53.5), velocity=850, accel=25000, ramp=0.035]
+  # Knee: flexion 141.9, 1.6 past straight (CDC). Its rotation (Almquist 2013: women 10-20 % more) has no absolute
+  # value here, so it stays locked.
+  calf_l [closes=back, range=(-1.6, 141.9), velocity=1600, accel=40000, ramp=0.035]
+  calf_r [closes=back, range=(-1.6, 141.9), velocity=1600, accel=40000, ramp=0.035]
+  # Ankle: plantarflexion 62.1, dorsiflexion 13.8 (CDC); inversion 27.7 / eversion 27.6 (Roaas 1982).
+  # THE FOOT ROLLS ABOUT ITS LENGTH (2026-10-25, MOVE-ACTION1 W10 G13): inversion and eversion are that roll, `twists=` (a turn
+  # about the bone's length). Typed as `side=` until now, they let the toes turn in and out by that much and locked the roll, so a
+  # shin leaning over a flat foot could not keep it flat: a kick's standing foot was refused 4.9 degrees of roll on 1436 of 1622
+  # balance trials. Which sign is inversion is not checked here; the pair differs by 0.1. `side=` (the toes in and out) keeps
+  # +-27.7 as a MODELLING ALLOWANCE for all that turns a foot under a still thigh: the ankle complex itself (17.5 and 26.5 total
+  # in cadavers, McCullough 1980, Siegler 1988; 8.4 in vivo under 30 of leg rotation, Lundberg 1989) and the knee's own rotation,
+  # which this rig keeps locked (35-44 total with the knee bent 70-110; Docs/Research/human-joint-ranges.md).
+  # THE ANKLE BENDS UNDER WEIGHT (2026-10-14, BlueEdge_20261013; HUMAN-JOINT-RANGES.md "A range too short for the motion"):
+  # CDC's dorsiflexion, 13.8, is measured knee straight with no weight on the foot; a standing body bends it under its own
+  # weight, and a weight-bearing lunge reaches 39 [36-42] (Baumbach 2014). With 13.8 a crouch or lunge hit the ankle stop
+  # and the IK bent the toes into the foot (refused). Upper end = rest + 39 (left 62.7, right 62.4); plantarflexion unchanged.
+  foot_l [closes=forward, range=(0.6, 101.7), side=(-27.7, 27.7), twists=(-27.6, 27.7), velocity=1000, accel=40000, ramp=0.025]
+  foot_r [closes=forward, range=(0.3, 101.4), side=(-27.7, 27.7), twists=(-27.6, 27.7), velocity=1000, accel=40000, ramp=0.025]
+
+  # The ball carries the shared MTP motion: 65 extension for toe-off (Hopson 1995), 35 flexion as the
+  # shared-toe modelling allowance. Positive fold curls DOWN; negative fold extends UP. The central
+  # toe path above measures bind bends -92.23 L / -94.22 R on the fitted body, -94.74 on the template body;
+  # these pairs cover the union of their shifted excursions. Their slight extra travel is bind variation.
+  # MIGRATION 2026-10-13: the old undeclared ball's averaged branch read +98.5/+100.5. A child range measured
+  # against that old line must be removed or recalibrated; positive fold now curls down on BOTH feet.
+  # The five _01 carriers stay rigid so MTP motion is not counted twice at ball and each toe base.
+  # _02 provides IP curl: hallux 63 (Munuera 2012 clinical maximum, 30 selected controls), lesser toes
+  # 50 as an explicitly unsourced modelling allowance. Their imported leaf bind is straight (zero).
+  # MetaHuman represents the lesser PIP/DIP together with one distal bone; this is not two 50-degree hinges.
+  # SPEED (2026-10-14, BlueEdge_20261013): the toe joint extends while the heel lifts about the ball, at the foot's own
+  # rate, so the ankle's references (derived, not measured); without them a timed heel lift was refused.
+  ball_l [closes=forward, range=(-159.8, -57.2), velocity=1000, accel=40000, ramp=0.025]
+  ball_r [closes=forward, range=(-159.8, -59.2), velocity=1000, accel=40000, ramp=0.025]
+  bigtoe_01_l
+  indextoe_01_l
+  middletoe_01_l
+  ringtoe_01_l
+  littletoe_01_l
+  bigtoe_01_r
+  indextoe_01_r
+  middletoe_01_r
+  ringtoe_01_r
+  littletoe_01_r
+  bigtoe_02_l [closes=down, range=(0, 63)]
+  indextoe_02_l [closes=down, range=(0, 50)]
+  middletoe_02_l [closes=down, range=(0, 50)]
+  ringtoe_02_l [closes=down, range=(0, 50)]
+  littletoe_02_l [closes=down, range=(0, 50)]
+  bigtoe_02_r [closes=down, range=(0, 63)]
+  indextoe_02_r [closes=down, range=(0, 50)]
+  middletoe_02_r [closes=down, range=(0, 50)]
+  ringtoe_02_r [closes=down, range=(0, 50)]
+  littletoe_02_r [closes=down, range=(0, 50)]
+}
+
+# WHERE A METAHUMAN HOLDS THINGS (item 6/7, user-ruled 2026-10-09: "we should do it the correct way", then "one correct
+# gcrig ... any human can just use"). A socket rides its hand bone, so these numbers are in hand_r's / hand_l's own frame
+# and every MetaHuman body gets the grip on ITS palm; the build writes them onto that character's body mesh, never onto
+# Epic's shared skeleton. Measured once on SKM_MH_ClothedReference_BodyMesh with gc_render ask (palm normal (0.784,
+# 0.177, -0.596) at rest), then read back from the socket the build wrote there: +X out of the palm, +Z along a held
+# handle from the palm's little-finger edge to the web between thumb and forefinger, 22 degrees off square (a fist's
+# slant; RifleMan measured 24, and at 34 the ring and little fingers folded beside the handle). The place is midway on
+# that line, 0.3 cm off the palm. The left hand's frame is the right's mirror, so its numbers are the right's negated.
+sockets {
+  palm_grip_r = hand_r [at=(-5.425, 2.758, -0.205), toward=(-0.0740, 0.9928, 0.0946), up=(-0.5873, -0.1201, 0.8004)]
+  palm_grip_l = hand_l [at=(5.425, -2.758, 0.205), toward=(0.0740, -0.9928, -0.0946), up=(0.5873, 0.1201, -0.8004)]
+}

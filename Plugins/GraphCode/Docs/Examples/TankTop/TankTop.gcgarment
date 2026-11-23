@@ -1,0 +1,43 @@
+gcgarment 1  mesh:/Game/GraphCodeExamples/Garment/SM_TPoseBody  into:/Game/GraphCodeExamples/Garment/TankTop/Built
+# TankTop: a GraphCode Garment example. Rings and numbers are measured on the example body (../GarmentBodies); re-measure them on yours.
+
+build {
+  SM_TankTop = $Tank
+  T_TankStitches = bake(decal, resolution=2048)
+}
+
+Jersey = fabric(weight=144.9, thickness=0.68mm, stretch=(20.75%, 20.75%), shear=20.30, stiffness=(1.16, 1.04), friction=1.92)
+
+Neck = ring((0.000, 11.544, 137.410), (1.200, 11.470, 137.487), (2.225, 11.276, 138.022), (3.469, 10.711, 139.476), (5.324, 9.105, 142.308), (8.182, 0.000, 146.977), (6.145, -6.463, 145.267), (3.417, -8.066, 144.390), (1.026, -8.568, 144.066), (0.000, -8.645, 144.020), (-1.026, -8.568, 144.066), (-3.417, -8.066, 144.390), (-6.145, -6.463, 145.267), (-8.182, 0.000, 146.977), (-5.324, 9.105, 142.308), (-3.469, 10.711, 139.476), (-2.225, 11.276, 138.022), (-1.200, 11.470, 137.487)) {
+  expand(0.274)
+}
+Chest = ring((0.000, 12.968, 125.120), (16.596, 1.400, 125.120), (0.000, -10.456, 125.120), (-16.596, 1.400, 125.120)) {
+  expand((0.42, 0.43))
+}
+Hips = ring((0.000, 10.000, 98.000), (15.350, -0.500, 98.000), (0.000, -11.000, 98.000), (-15.350, -0.500, 98.000)) {
+  expand(0.34)
+}
+Hem = ring((0.000, 10.143, 93.000), (16.668, -0.900, 93.000), (0.000, -11.857, 93.000), (-16.668, -0.900, 93.000)) {
+  expand(0.274)
+}
+Armhole_L = ring((11.458, 0.000, 144.985), (9.179, 9.556, 138.793), (10.695, 10.201, 133.392), (14.281, 7.998, 129.572), (16.052, 5.071, 128.502), (16.849, 1.400, 128.123), (16.055, -2.222, 128.502), (14.281, -5.042, 129.572), (10.695, -8.126, 133.392), (9.179, -8.954, 138.793)) {
+  expand(0.46)
+}
+Armhole_R = ring((-11.458, 0.000, 144.985), (-9.179, 9.556, 138.793), (-10.695, 10.201, 133.392), (-14.281, 7.998, 129.572), (-16.052, 5.071, 128.502), (-16.849, 1.400, 128.123), (-16.055, -2.222, 128.502), (-14.281, -5.042, 129.572), (-10.695, -8.126, 133.392), (-9.179, -8.954, 138.793)) {
+  expand(0.46)
+}
+
+Tank = garment($Neck, $Chest, $Hips, $Hem, loose@1=0%, loose@2=100%, loose@3=0%, fabric=$Jersey) {
+  cut($Armhole_L)
+  cut($Armhole_R)
+  construct(rim=(turned=1.9cm))
+  relax(1)
+  rim($Neck, turned=1.5cm, layers=3)
+  rim($Armhole_L, turned=1.5cm, layers=3)
+  rim($Armhole_R, turned=1.5cm, layers=3)
+  stitch($Hem, offset=1cm)
+  stitch($Hem, offset=1.6cm)
+  stitch($Neck, offset=1.5cm)
+  stitch($Armhole_L, offset=1.5cm)
+  stitch($Armhole_R, offset=1.5cm)
+}

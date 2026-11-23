@@ -1,0 +1,742 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.5  shade:25
+
+# ROOFKIT: an old roof as a kit module: a GABLE (two slopes of rafters, battens and tiles or slate, a ridge, a fascia or open eave,
+# verge boards) or one SLOPE (a lean-to, a hip's side). Sound, old (the default), ruined, or the weathered pan-and-roll roof.
+#
+#   RK = shape('/GraphCodeShape/Presets/RoofKit', Tile = $Clay, Wood = $Oak, Cap = $Clay)
+#   Gable = mesh() { add($RK.Roof, len=300, run=250, pitch=40, age=1, noise=7) }
+#   Asian = mesh() { add($RK.Roof, curve=0.22, roll=1, width=27, length=30, headlap=8, sweep=6, ridgeshape=1, stack=3, ends=1.5, overhang=30, open=1, uneven=1, age=2, rafter=30) }
+#
+# HOW IT IS MADE: built FLAT (x along the ridge, y up the slope, z the roof's normal), sagged by ONE warp, then tipped by `pitch`.
+# COURSES (roll 0) from the eave at the gauge (length - headlap) / 2, each unit a plate turned about its head contact so it lies one
+# thickness above the course below; OLD waves the courses, lifts a few units, slips a cluster; DAMAGE draws a hole (battens and rafters
+# show), a broken eave corner, caps gone.
+# PAN AND ROLL (roll 1, R6): COLUMNS, not courses. Pans arched by `curve` lie in columns `width` apart down the slope on a board deck over
+# close rafters, lapped at the same gauge; a half-round roll covers every joint, so each joint is ONE continuous rib from the eave edge to
+# the ridge (High: lapped roll tiles, each lower end a step; Game: one swept strip per rib and one arched channel strip per column, the
+# joints from the material). The eave is a scalloped row: a round end tile (disc) on every rib, a hanging lip on every pan, an eave board
+# lifting the lowest pans, the rafter tails (`overhang`) under the deck and one beam at the wall line; the verge is a raised roll line on a
+# barge board; the ridge (gable) a mortar bed, `stack` courses of flat tiles, the caps, and with `ends` a flaring end tile.
+# `uneven` (separate from `age`, which keeps sag and slips) is mostly a LOW-FREQUENCY warp of the tiles (lumps 80-150 cm, about +-2.5 cm
+# at 1; ribs wander as wholes about +-3 cm; the eave line lumpy) PLUS every roll its own (R7): up to 4 deg yaw, a few deg turned about its
+# axis, up to 2.5 cm lift, length and diameter +-8 %, worn and chipped lower ends (High), a few slipped, broken short or missing; pans' lips worn.
+# Game ribs are one lapped solid roll per lap, so each rib steps at every lap.
+# `sweep` turns the eave up.
+# TIERS: High = every unit its own mesh; Game = course plates (roll 0) or rib and channel strips (roll 1).
+# SLOTS: Tile (tiles, slate, plates, pans, rolls, end tiles, lips), Wood (frame, deck, boards, beam), Cap (ridge caps, stack, end tiles).
+#
+# KNOBS (every one clamped to the range written; 0 on a dimension = the unit's own value):
+#   len 200-600 cm (300) ridge length / run 150-400 cm (250) slope length of a rafter / pitch 25-60 deg (40)
+#   unit 0 plain tile / 1 slate  age 0-2 (1)  damage 0-1 (0)  noise 1-99999 seed  budget 0 game / 1 high
+#   curve 0-1 (0) pan arch, rise = curve x half the width (0 flat, 1 half-round)    roll 0/1 (0) round cover over each pan joint
+#   width 6-40 cm (0: 16.7 tile / 25 slate)  length 15-60 cm (0: 26.5 / 50)  thick 0.5-3 cm (0: 1.2 / 0.8)  headlap 2-24 cm (0: 6.5 / 7.5)
+#   sweep 0-30 cm (0) the eave turns up over the lowest 40 % of the rafter    uneven 0-1 (0) broad lumps, wandering ribs and lines, a few slipped units
+#   ridgeshape 0-2 (0: by unit; 1 half-round, 2 angular)  ridge 0/1 caps  stack 0-6 (0) flat-tile courses under the caps  ends 0-2 (0) flaring end tiles
+#   overhang 0-80 cm (0) rafter tails past the eave (roll 1: the tiles run out over them)  open 0/1 (0) 1: no fascia, the tails show
+#   advanced: sag 0-20 (10.5), belly 0-1 (0.4), slip 0-2 (1), wave 0-2 (1), rafter 20-60 cm (40)
+# Game by the recipe 3,000-8,000 triangles per gable (cap 8,000); High about 72,000-100,000 (cap 140,000). A section edge longer than
+# about 13 cm is split by a sweep, and every route station costs the section's faces again: keep Game routes short.
+
+build {
+  # the old clay-tile gable at High: every tile its own unit, no bake
+  SM_Roof_Tile_Old_High       = $TileOldHigh      [pivot=(0, 0, 0), triangles=140000]
+  # the old clay-tile gable at Game: course strips, joints from the roof material
+  SM_Roof_Tile_Old_Game       = $TileOldGame      [pivot=(0, 0, 0), triangles=8000]
+  # a sound clay-tile gable at Game (a hair of sag, straight courses, no slipped tiles)
+  SM_Roof_Tile_Sound_Game     = $TileSoundGame    [pivot=(0, 0, 0), triangles=8000]
+  # a ruined clay-tile gable at Game: a hole showing battens and rafters, a broken eave corner, caps missing
+  SM_Roof_Tile_Ruined_Game    = $TileRuinedGame   [pivot=(0, 0, 0), triangles=8000]
+  # the old slate gable at Game: every slate a unit, no bake
+  SM_Roof_Slate_Old_Game      = $SlateOldGame     [pivot=(0, 0, 0), triangles=8000]
+  # the old slate gable at High: every slate with chamfered edges
+  SM_Roof_Slate_Old_High      = $SlateOldHigh     [pivot=(0, 0, 0), triangles=60000]
+  # one old clay-tile slope at Game for a lean-to or a hip's side, eave at y = 0 rising toward +y
+  SM_Roof_Slope_Tile_Old_Game = $SlopeTileOldGame [pivot=(0, 0, 0), triangles=8000]
+  # the weathered East Asian pan-and-roll roof (R6): pans in columns, a continuous roll rib over every joint, a scalloped disc-and-lip eave on
+  # short rafter tails, a stacked ridge with a roll cap and flaring end tiles, broad lumps; High lapped units, Game rib and channel strips
+  SM_Roof_Pan_Weathered_High  = $PanWeatheredHigh  [pivot=(0, 0, 0), triangles=140000]
+  SM_Roof_Pan_Weathered_Game  = $PanWeatheredGame  [pivot=(0, 0, 0), triangles=8000]
+  SM_Roof_Gate_Pan_Weathered_Game = $GatePanWeatheredGame [pivot=(0, 0, 0), triangles=8000]
+}
+
+# the tiles, slate and plates' slot (bind your clay or slate at import: Tile = $Clay)
+Tile = material()
+# the frame's slot: rafters, battens, ridge board, fascia and verge boards (Wood = $Oak)
+Wood = material()
+# the ridge caps' slot (Cap = $Clay)
+Cap  = material()
+
+# a batten, rafter or board section, centred in x and y, base on z = 0
+Cell = mesh(ln=50.0, bw=5.0, bh=2.5) {
+  rect(w=$ln, h=$bw)  extrude(height=$bh)
+  material($Wood)
+}
+
+# a bar along x built in bays of about `seg` cm, so the warp bends it
+Bar = mesh(ln=100.0, bw=5.0, bh=2.5, seg=50.0) {
+  $n = max(1, ceil($ln / $seg))
+  $sl = $ln / $n
+  loop ($n) {
+    $k = output.index - 1
+    add($Cell, ln=$sl + 0.2, bw=$bw, bh=$bh, at=(0 - 0.5 * $ln + ($k + 0.5) * $sl, 0, 0), join=none)
+  }
+}
+
+# a nib: the lug under a plain tile's head that hangs it on the batten
+Nib = mesh(w=2.4, d=1.2, h=1.3) {
+  rect(w=$w, h=$d)  extrude(height=$h)
+  material($Tile)
+}
+
+# ONE UNIT: a plain tile (un=0; nibs under the head at High) or a slate (un=1): a plate, chamfered at High
+Unit = mesh(w=16.0, d=26.5, h=1.2, bd=1, un=0) {
+  $nb = $bd * (1 - $un)
+  rect(w=$w, h=$d)  extrude(height=$h)
+  if ($bd > 0.5) {
+    round(0.25 - 0.12 * $un, segments=1) [sharp]
+  }
+  if ($nb > 0.5) {
+    add($Nib, at=(0 - 0.22 * $w, 0.5 * $d - 0.6, -1.1), join=none)
+    add($Nib, at=(0.22 * $w, 0.5 * $d - 0.6, -1.1), join=none)
+  }
+  material($Tile)
+}
+
+# GAME: one bay of a course, a plain plate (the joints come from the baked normal map)
+Plate = mesh(w=50.0, d=26.5, h=1.2) {
+  rect(w=$w, h=$d)  extrude(height=$h)
+  material($Tile)
+}
+
+# A PAN (roll 0, curve above 0, High): a plate arched across its width, ns flat slabs round the arc
+Pan = mesh(w=16.0, d=26.5, h=1.2, cv=0.25, ns=3) {
+  $s = max(0.05, $cv * 0.5 * $w)
+  $r = (0.25 * $w * $w + $s * $s) / (2 * $s)
+  $b = 2 * atan(2 * $s / $w)
+  $da = 2 * $b / $ns
+  loop ($ns) {
+    $am = 0 - $b + (output.index - 0.5) * $da
+    add($Plate, w=2 * $r * sin(0.5 * $da) + 0.4, d=$d, h=$h, at=(floor(500 * $r * sin($am) + 0.5) / 500, 0, floor(500 * $r * (1 - cos($am)) + 0.5) / 500), rotate=(0, $am, 0), join=none)
+  }
+}
+
+# PAN AND ROLL UNITS (R6). Every one is a section SWEPT 1 cm up +y from y = 0 (its lower end), the section's x across and its y up, and
+# STRETCHED to its length where it is placed: add(..., scale=(1, <length>, 1)). A strip sweeps a route of 7 stations so the warps bend it.
+RouteU = plane() { points((0, 0, 0), (0, 1, 0)) }
+RouteS = plane() { points((0, 0, 0), (0, 0.1667, 0), (0, 0.3333, 0), (0, 0.5, 0), (0, 0.6667, 0), (0, 0.8333, 0), (0, 1, 0)) }
+# the frame's routes: 4 and 3 stations (a section edge past about 13 cm is split, and every station span costs its faces again)
+RouteW = plane() { points((0, 0, 0), (0, 0.3333, 0), (0, 0.6667, 0), (0, 1, 0)) }
+RouteR = plane() { points((0, 0, 0), (0, 0.5, 0), (0, 1, 0)) }
+# A PAN (High): a trough arched across its width, rise s at the edges, t thick
+PanU = mesh(hw=13.0, s=3.0, t=1.3) {
+  points((0 - $hw, $s), (0 - 0.5 * $hw, 0.25 * $s), (0, 0), (0.5 * $hw, 0.25 * $s), ($hw, $s), ($hw, $s + $t), (0.5 * $hw, 0.25 * $s + $t), (0, $t), (0 - 0.5 * $hw, 0.25 * $s + $t), (0 - $hw, $s + $t), loop=true)
+  sweep(along=$RouteU)
+  material($Tile)
+}
+# A PAN CHANNEL (Game): one arched strip for a whole column, t thick (the lapped stack's top)
+PanStrip = mesh(hw=13.0, s=3.0, t=4.0) {
+  points((0 - $hw, $s), (0 - 0.33 * $hw, 0.11 * $s), (0.33 * $hw, 0.11 * $s), ($hw, $s), ($hw, $s + $t), (0.33 * $hw, 0.11 * $s + $t), (0 - 0.33 * $hw, 0.11 * $s + $t), (0 - $hw, $s + $t), loop=true)
+  sweep(along=$RouteS)
+  material($Tile)
+}
+# A ROLL TILE (High, and a fallen one at Game): a half-round shell of outer radius rr, t thick, narrowing to 92 % at its upper end so the
+# next one laps over it
+RollU = mesh(rr=6.5, t=1.4) {
+  $ri = $rr - $t
+  points(($rr, 0), (0.87 * $rr, 0.5 * $rr), (0.5 * $rr, 0.87 * $rr), (0, $rr), (0 - 0.5 * $rr, 0.87 * $rr), (0 - 0.87 * $rr, 0.5 * $rr), (0 - $rr, 0), (0 - $ri, 0), (0 - 0.87 * $ri, 0.5 * $ri), (0 - 0.5 * $ri, 0.87 * $ri), (0, $ri), (0.5 * $ri, 0.87 * $ri), (0.87 * $ri, 0.5 * $ri), ($ri, 0), loop=true)
+  sweep(along=$RouteU, to=92%)
+  material($Tile)
+}
+# A ROLL TILE AS LAID (High, R7): stretched to len, its lower rim worn back and down unevenly by up to chip cm (ph picks the pattern)
+RollW = mesh(rr=6.5, t=1.4, len=27.0, chip=0.0, ph=0.0) {
+  add($RollU, rr=$rr, t=$t, scale=(1, $len, 1))
+  warp(by=(0, $chip * clamp(1 - point.y / 2, 0, 1) * (0.5 + 0.5 * sin(97 * point.x + 53 * point.z + $ph)), 0 - 0.3 * $chip * clamp(1 - point.y / 2, 0, 1) * (0.5 + 0.5 * sin(61 * point.x + 2 * $ph))))
+}
+# A PAN AS LAID (High, R7): stretched to len, its lower lip worn back unevenly by up to chip cm
+PanW = mesh(hw=13.0, s=3.0, t=1.3, len=30.0, chip=0.0, ph=0.0) {
+  add($PanU, hw=$hw, s=$s, t=$t, scale=(1, $len, 1))
+  warp(by=(0, $chip * clamp(1 - point.y / 2, 0, 1) * (0.5 + 0.5 * sin(83 * point.x + $ph)), 0))
+}
+# A RIB ROLL (Game, R7): one roll as a solid of three faces over a base 1.7 rr wide (no face split), narrowing to 94 % so the next laps over
+RibU = mesh(rr=7.5) {
+  points((0 - 0.85 * $rr, 0), (0 - 0.45 * $rr, 0.92 * $rr), (0.45 * $rr, 0.92 * $rr), (0.85 * $rr, 0), loop=true)
+  sweep(along=$RouteU, to=94%)
+  material($Tile)
+}
+# A RIB (Game, R6, no longer laid): one solid half-round strip of four faces for a whole roll line
+RibStrip = mesh(rr=6.5) {
+  points((0 - $rr, 0), (0 - 0.71 * $rr, 0.71 * $rr), (0, $rr), (0.71 * $rr, 0.71 * $rr), ($rr, 0), loop=true)
+  sweep(along=$RouteS)
+  material($Tile)
+}
+# A TIMBER (pan and roll frame): a bw x bh section on 4 stations (WoodS) or 3 (WoodR, the rafters); stretch it with
+# scale=(1, <length>, 1), turn it with yaw -90 to run along x
+WoodS = mesh(bw=5.0, bh=2.5) {
+  points((0 - 0.5 * $bw, 0), (0.5 * $bw, 0), (0.5 * $bw, $bh), (0 - 0.5 * $bw, $bh), loop=true)
+  sweep(along=$RouteW)
+  material($Wood)
+}
+WoodR = mesh(bw=7.0, bh=8.0) {
+  points((0 - 0.5 * $bw, 0), (0.5 * $bw, 0), (0.5 * $bw, $bh), (0 - 0.5 * $bw, $bh), loop=true)
+  sweep(along=$RouteR)
+  material($Wood)
+}
+# THE ROUND END TILE on a rib at the eave: a disc of radius r facing down the slope (-y), centred on the rib's axis
+Disc = mesh(r=7.0, ns=8) {
+  circle(radius=$r, segments=$ns)
+  sweep(along=$RouteU)
+  material($Tile)
+}
+# THE LIPS hanging from the pans' lower ends at the eave, as ONE scalloped row: a band 1.5 high over n pointed drops h deep, hw half
+# wide, p apart (the outline is a points list built pass by pass)
+LipRow = mesh(n=11, p=27.0, hw=12.0, h=6.0) {
+  $pts[0] = (0 - 0.5 * $n * $p, 1.5)
+  $pts[1] = (0 - 0.5 * $n * $p, 0)
+  loop ($n) {
+    $xc = 0 - 0.5 * $n * $p + (output.index - 0.5) * $p
+    $b = 4 * output.index - 2
+    $pts[$b] = ($xc - 0.55 * $hw, 0 - 0.55 * $h)
+    $pts[$b + 1] = ($xc, 0 - $h)
+    $pts[$b + 2] = ($xc + 0.55 * $hw, 0 - 0.55 * $h)
+    $pts[$b + 3] = ($xc + 0.5 * $p, 0)
+  }
+  $pts[4 * $n + 2] = (0.5 * $n * $p, 1.5)
+  points($pts, loop=true)
+  sweep(along=$RouteU)
+  material($Tile)
+}
+# THE RIDGE BED (pan and roll): a mortar bed on the two pan planes, w wide, h high over its centre bottom, len long along x; it dips dp at
+# mid-length and lumps lu
+BedS = mesh(w=26.0, h=9.0, pt=35.0) {
+  points((0 - 0.5 * $w, 0 - 0.5 * $w * tan($pt)), (0, 0), (0.5 * $w, 0 - 0.5 * $w * tan($pt)), (0.5 * $w, $h), (0 - 0.5 * $w, $h), loop=true)
+  sweep(along=$RouteS)
+  material($Cap)
+}
+# THE RIDGE ROLL (pan and roll): the caps as one half-round strip of radius rr along x, dipping and lumping with the bed
+RidgeRoll = mesh(len=300.0, rr=10.0, dp=0.0, lu=0.0, ph=0.0) {
+  add($RibStrip, rr=$rr, scale=(1, $len, 1), at=(0 - 0.5 * $len, 0, 0), rotate=(0, 0, -90))
+  warp(by=(0, 0, 0 - $dp * sin(180 * clamp((point.x + 0.5 * $len) / $len, 0, 1)) * sin(180 * clamp((point.x + 0.5 * $len) / $len, 0, 1)) + $lu * (sin(360 * point.x / 97 + $ph) + 0.6 * sin(360 * point.x / 53 + 2 * $ph))))
+  material($Cap)
+}
+RidgeBed = mesh(len=300.0, w=26.0, h=9.0, pt=35.0, dp=0.0, lu=0.0, ph=0.0) {
+  add($BedS, w=$w, h=$h, pt=$pt, scale=(1, $len, 1), at=(0 - 0.5 * $len, 0, 0), rotate=(0, 0, -90))
+  warp(by=(0, 0, 0 - $dp * sin(180 * clamp((point.x + 0.5 * $len) / $len, 0, 1)) * sin(180 * clamp((point.x + 0.5 * $len) / $len, 0, 1)) + $lu * (sin(360 * point.x / 97 + $ph) + 0.6 * sin(360 * point.x / 53 + 2 * $ph))))
+}
+# THE RIDGE END TILE: a heavy tile on a base 22 k long, low on its inner side and flaring up and OUT (+x) to a horn 24 k high (stretched across the ridge where it is placed)
+RidgeEnd = mesh(k=1.0) {
+  curve((0, 0), (22 * $k, 0)@sharp, (27 * $k, 10 * $k), (31 * $k, 23 * $k)@sharp, (23 * $k, 25 * $k), (12 * $k, 19 * $k), (0, 17 * $k)@sharp, loop=true)
+  sweep(along=$RouteU)
+  material($Cap)
+}
+
+# ONE SLOPE, flat: len x run, rafters and battens, the units, the sag.
+Slope = mesh(len=300.0, run=250.0, unit=0, age=1.0, damage=0.0, noise=1, budget=1, sag=10.5, belly=0.4, slip=1.0, wave=1.0, rafter=40.0, curve=0.0, roll=0, width=0.0, length=0.0, thick=0.0, headlap=0.0, sweep=0.0, uneven=0.0, overhang=0.0, open=0) {
+  $un = clamp(floor($unit + 0.5), 0, 1)
+  $L = clamp($len, 200, 600)
+  $R = clamp($run, 150, 400)
+  $ag = clamp($age, 0, 2)
+  $dm = clamp($damage, 0, 1)
+  $bd = clamp($budget, 0, 1)
+  $sd = floor(clamp($noise, 1, 99999))
+  $sgn = clamp($sag, 0, 20) * (0.1 + 0.9 * min($ag, 1)) * (0.75 + 0.25 * $ag)
+  $bel = clamp($belly, 0, 1)
+  $slp = clamp($slip, 0, 2)
+  $uv = clamp($uneven, 0, 1)
+  $wv = clamp($wave, 0, 2) * (0.25 + 0.75 * min($ag, 1)) * (0.8 + 0.2 * $ag) * (1 + 0.4 * $uv)
+  $rf = clamp($rafter, 20, 60)
+  # the FORM knobs (0 = the unit's own value): curve 0-1 the pan's arch, roll 0/1, width 6-40, length 15-60, thick 0.5-3, headlap 2-24 cm, sweep 0-30 cm, overhang 0-80 cm, open 0/1
+  $cv = clamp($curve, 0, 1)
+  $pn = clamp($cv * 1000, 0, 1)
+  $rcv = clamp(floor($roll + 0.5), 0, 1)
+  $swp = clamp($sweep, 0, 30)
+  $ov = clamp($overhang, 0, 80)
+  $opn = clamp(floor($open + 0.5), 0, 1)
+  $ow = clamp($width * 1000, 0, 1)
+  $oL = clamp($length * 1000, 0, 1)
+  $ot = clamp($thick * 1000, 0, 1)
+  $oh = clamp($headlap * 1000, 0, 1)
+  $wd = (16.7 + 8.3 * $un) * (1 - $ow) + $ow * clamp($width, 6, 40)
+  # the lap: thickness T, length d, headlap 6.5 (tile) / 7.5 (slate), gauge g, nib seat, batten 5 x 2.5
+  $T = (1.2 - 0.4 * $un) * (1 - $ot) + $ot * clamp($thick, 0.5, 3)
+  $d = (26.5 + 23.5 * $un) * (1 - $oL) + $oL * clamp($length, 15, 60)
+  $hl = (6.5 + $un) * (1 - $oh) + $oh * clamp($headlap, 2, 24)
+  $g = ($d - $hl) / 2
+  $nib = $T
+  $bB = 2.5
+  $th0 = atan($T / $g)
+  $m = ($T / cos($th0) + 0.04) / $g
+  $th = atan($m)
+  $np = max(4, floor($L / $wd + 0.5))
+  $p = $L / $np
+  $ns = $np + 1
+  $nc = 2 + floor(($R - $d - 3.5) / $g)
+  # the waving bays of about 50 cm
+  $nsg = max(3, floor($L / (50 + 25 * $rcv) + 0.5))
+  $sw = $L / $nsg
+  $ph = random(seed=$sd * 61, min=0, max=360)
+  # tile slips and proud tiles are halved against slate (the lead's ruling)
+  $hf = 1 - 0.5 * (1 - $un)
+  # the hole: a polar ellipse of half-sizes ha x hb about (hcx, hcy)
+  $on = clamp(($dm - 0.02) * 1000, 0, 1)
+  $ha = max(1, $dm * 70)
+  $hb = max(1, $dm * 55)
+  $hcx = lerp(0 - 0.2 * $L, 0.12 * $L, random(seed=$sd * 7, min=0, max=1))
+  $hcy = $R * (0.32 + 0.2 * random(seed=$sd * 11, min=0, max=1))
+  $hph = random(seed=$sd * 13, min=0, max=360)
+  # the broken eave corner: the last bay, the three lowest courses, no fascia
+  $eb = clamp(($dm - 0.25) * 1000, 0, 1)
+  # one cluster of slipped units
+  $scx = random(seed=$sd * 17, min=0 - 0.3 * $L, max=0.3 * $L)
+  $scy = $R * (0.5 + 0.25 * random(seed=$sd * 19, min=0, max=1))
+  # the overhang kept apart (the course loop reuses $ov); the eave edge of a pan-and-roll field
+  $ovk = $ov
+  $ove = $ov * $rcv
+  # COURSES (roll 0): unchanged since R3/R5, so every shipped line builds as before
+  if ($rcv < 0.5) {
+  # the frame: rafters (behind the fascia), ridge board, fascia (an overhang of the tails), verge boards
+  $nr = floor($L / $rf + 0.5) + 1
+  loop ($nr) {
+    $i = output.index - 1
+    $rx = 0 - 0.5 * $L + $i * $L / ($nr - 1)
+    $rsh = max($bd, max($on * clamp(1000 * ($ha + $rf - abs($rx - $hcx)), 0, 1), $eb * clamp(1000 * ($sw + 1 - (0.5 * $L - $rx)), 0, 1)))
+    if ($rsh > 0.5) {
+      add($Bar, ln=$R + $ov, bw=5, bh=10, seg=85 - 35 * $bd, at=($rx, 2.5 + 0.5 * $R - 0.5 * $ov, -10), rotate=(0, 0, 90), join=none)
+    }
+    # an overhang shows its rafter tails at every tier
+    if ($rsh < 0.5) {
+      if ($ov > 0.5) {
+        add($Bar, ln=$ov + 15, bw=5, bh=10, seg=60, at=($rx, 2.5 + 0.5 * (15 - $ov), -10), rotate=(0, 0, 90), join=none)
+      }
+    }
+  }
+  add($Bar, ln=$L + 5, bw=3, bh=17.5, seg=60, at=(0, $R + 1.5, -15), join=none)
+  $fl = $L + 2 - $eb * $sw
+  if ($opn < 0.5) {
+    add($Bar, ln=$fl, bw=2, bh=17.5, seg=60, at=(0 - 0.5 * $L - 1 + 0.5 * $fl, 1.5, -12), join=none)
+  }
+  add($Bar, ln=$R + 4, bw=2, bh=21, seg=60, at=(0 - 0.5 * $L - 1.2, 0.5 * $R + 1, -14), rotate=(0, 0, 90), join=none)
+  add($Bar, ln=$R + 4, bw=2, bh=21, seg=60, at=(0.5 * $L + 1.2, 0.5 * $R + 1, -14), rotate=(0, 0, 90), join=none)
+  loop ($nc) {
+    $c = output.index - 1
+    $first = clamp(1 - $c, 0, 1)
+    $dc = $d - $first * $g
+    $yt = (1 - $first) * $g * ($c - 1)
+    $hcn = $yt + $dc - $nib
+    $ytc = $yt + 0.5 * $dc
+    $par = ($c - 2 * floor($c / 2)) * (1 - $rcv)
+    $dd = 0.5 * $dc - $nib
+    # the doubled eave stays straight under the fascia; courses above it wave
+    $ew = 1 - 0.75 * clamp(2 - $c, 0, 1) * (1 - $uv)
+    $ebc = $eb * clamp(3 - $c, 0, 1)
+    $cdr = random(seed=$sd * 53 + $c, min=0 - 1, max=1) * 1.6
+    # the hole's reach in this course: units whose centre lies in (xa, xb) are not built
+    $dyn = ($ytc - $hcy) / $hb
+    $ok = $on * clamp((1 - abs($dyn)) * 1000, 0, 1)
+    $thR = atan2($dyn, sqrt(max(0.0001, 1 - $dyn * $dyn)))
+    $limR = 1 + 0.16 * sin(3 * $thR + $hph)
+    $limL = 1 + 0.16 * sin(3 * (180 - $thR) + $hph)
+    $xb = $hcx + $ha * sqrt(max(0, $limR * $limR - $dyn * $dyn))
+    $xa = $hcx - $ha * sqrt(max(0, $limL * $limL - $dyn * $dyn))
+    $j0 = ceil(($xa + 0.5 * $L) / $p - 0.5 + 0.5 * $par)
+    $j1 = floor(($xb + 0.5 * $L) / $p - 0.5 + 0.5 * $par)
+    $has = $ok * clamp(($j1 - $j0 + 1) * 1000, 0, 1)
+    # the batten: whole, or broken inside the hole at a drawn point on each side. Game builds it only where it can be seen.
+    $brk = $has * floor(random(seed=$sd * 23 + $c, min=0, max=1) + 0.75)
+    $rl = random(seed=$sd * 29 + $c, min=0, max=0.3) * ($xb - $xa)
+    $rr = random(seed=$sd * 31 + $c, min=0, max=0.3) * ($xb - $xa)
+    $bl = $brk * ($xa + $rl) + (1 - $brk) * 0.5 * $L
+    $br = $brk * ($xb - $rr) + (1 - $brk) * 0.5 * $L
+    $bln = $bl + 0.5 * $L
+    $brn = 0.5 * $L - $br
+    $bshow = max($bd, max($has, $ebc))
+    if ($bshow > 0.5) {
+      if ($bln > 1) {
+        add($Bar, ln=$bln, bw=5, bh=$bB, seg=75, at=(0 - 0.5 * $L + 0.5 * $bln, $hcn - 2.5, 0), join=none)
+      }
+      if ($brn > 1) {
+        add($Bar, ln=$brn, bw=5, bh=$bB, seg=75, at=($br + 0.5 * $brn, $hcn - 2.5, 0), join=none)
+      }
+    }
+    # Game: the course as one plate per bay, between the hole's unit edges
+    if ($bd < 0.5) {
+      $pL = $has * clamp(0 - 0.5 * $L + $p * ($j0 - 0.5 * $par), 0 - 0.5 * $L, 0.5 * $L) + (1 - $has) * 0.5 * $L
+      $pR = $has * clamp(0 - 0.5 * $L + $p * ($j1 + 1 - 0.5 * $par), 0 - 0.5 * $L, 0.5 * $L) + (1 - $has) * 0.5 * $L
+      loop ($nsg) {
+        $kk = output.index - 1
+        $xk0 = 0 - 0.5 * $L + $kk * $sw
+        $xk1 = $xk0 + $sw
+        $xk = $xk0 + 0.5 * $sw
+        $s2 = $sd * 977 + $c * 131 + $kk
+        $dyk = $ew * ($wv * (1.3 * sin(150 * $kk + 33 * $c + $ph) + 0.6 * random(seed=$s2, min=0 - 1, max=1)) + $wv * $cdr * $xk / $L) + $uv * $ew * 0.6 * random(seed=$s2 + 500000, min=0 - 1, max=1)
+        $dzk = $ew * $wv * (0.35 + 0.35 * sin(190 * $kk + 41 * $c + 2 * $ph) + 0.15 * random(seed=$s2 + 200000, min=0, max=1)) + $uv * random(seed=$s2 + 600000, min=0, max=0.5)
+        $dlk = $wv * random(seed=$s2 + 300000, min=0, max=0.5) + $uv * random(seed=$s2 + 700000, min=0, max=0.6)
+        $ywk = $wv * random(seed=$s2 + 400000, min=0 - 0.7, max=0.7) + $uv * random(seed=$s2 + 800000, min=0 - 0.8, max=0.8)
+        $thx = floor(1000 * ($th + $dlk) + 0.5) / 1000
+        $ywr = floor(1000 * $ywk + 0.5) / 1000
+        $py0 = floor(500 * ($hcn - $dd * cos($thx) + $dyk) + 0.5) / 500
+        $pz0 = floor(500 * ($bB + $dd * sin($thx) + $dzk) + 0.5) / 500
+        $ebd = $ebc * clamp($kk - $nsg + 2, 0, 1)
+        $a1 = max($xk0, 0 - 0.5 * $L)
+        $b1 = min($xk1, $pL)
+        $a2 = max($xk0, $pR)
+        $b2 = min($xk1, 0.5 * $L)
+        $l1 = floor(500 * ($b1 - $a1) + 0.5) / 500
+        $l2 = floor(500 * ($b2 - $a2) + 0.5) / 500
+        if ($l1 > 1) {
+          if ($ebd < 0.5) {
+            add($Plate, w=$l1 + 0.2, d=$dc, h=$T, at=(floor(500 * ($a1 + 0.5 * $l1) + 0.5) / 500, $py0, $pz0), rotate=($thx, 0, $ywr), join=none)
+          }
+        }
+        if ($l2 > 1) {
+          if ($ebd < 0.5) {
+            add($Plate, w=$l2 + 0.2, d=$dc, h=$T, at=(floor(500 * ($a2 + 0.5 * $l2) + 0.5) / 500, $py0, $pz0), rotate=($thx, 0, $ywr), join=none)
+          }
+        }
+      }
+    }
+    # the units: every one at High; only the slipped and the proud at Game
+    loop ($ns) {
+      $j = output.index - 1
+      $Lj = max(0 - 0.5 * $L, 0 - 0.5 * $L + $p * ($j - 0.5 * $par))
+      $Rj = min(0.5 * $L, 0 - 0.5 * $L + $p * ($j + 1 - 0.5 * $par))
+      $Wj = $Rj - $Lj
+      $X = floor(500 * ($Lj + $Rj) + 0.5) / 1000
+      $drop = $ok * clamp(($X - $xa) * 1000, 0, 1) * clamp(($xb - $X) * 1000, 0, 1)
+      $kk = clamp(floor(($X + 0.5 * $L) / $sw), 0, $nsg - 1)
+      $xk = 0 - 0.5 * $L + ($kk + 0.5) * $sw
+      $s2 = $sd * 977 + $c * 131 + $kk
+      $ebd = $ebc * clamp($kk - $nsg + 2, 0, 1)
+      $sk = $sd * 1009 + $c * 61 + $j
+      $dx1 = $X - $scx
+      $dy1 = $ytc - $scy
+      $sw0 = clamp(1 - sqrt($dx1 * $dx1 + $dy1 * $dy1) / 36, 0, 1)
+      $rdx = ($X - $hcx) / $ha
+      $rr2 = sqrt($rdx * $rdx + $dyn * $dyn)
+      $rimw = $on * clamp(1 - abs($rr2 - 1.25) / 0.35, 0, 1)
+      $sl = clamp(floor(random(seed=$sk + 7000, min=0, max=1) + $slp * $hf * (0.012 + 0.3 * $sw0 + 0.03 * $rimw)), 0, 1) * clamp($ag * 1000, 0, 1) * (1 - $drop)
+      $sx = 2 * floor(random(seed=$sk + 63000, min=0, max=1) + 0.5) - 1
+      $ds = $sl * ($un * random(seed=$sk + 14000, min=3, max=10 - 6.5 * $rimw * (1 - $sw0)) + (1 - $un) * random(seed=$sk + 14000, min=0.5, max=2.5))
+      $syw = $sl * $un * random(seed=$sk + 21000, min=0 - 4, max=4) * (1 - $rimw * (1 - $sw0))
+      # a slipped TILE hangs by one nib: turned 5-20 degrees in its plane about its upper nib corner, its lower end lifted
+      $hga = $sl * (1 - $un) * $sx * random(seed=$sk + 21000, min=5, max=20)
+      $hu = 0 - $sx * 0.5 * ($Wj - 0.6)
+      $ox = cos($hga) * $hu + sin($hga) * $dd - $hu
+      $ov = sin($hga) * $hu - cos($hga) * $dd + $dd
+      $yw = random(seed=$sk + 28000, min=0 - 1.4, max=1.4) * min($ag, 1) + $uv * random(seed=$sk + 93000, min=0 - 1.5, max=1.5)
+      $pr = clamp(floor(random(seed=$sk + 49000, min=0, max=1) + 0.018 * $ag * $hf + 0.015 * $uv), 0, 1) * (1 - $sl) * (1 - $drop)
+      $dl = $pr * random(seed=$sk + 56000, min=3.5, max=7) + $sl * (1 - $un) * random(seed=$sk + 70000, min=2, max=5) + random(seed=$sk + 35000, min=0, max=1.1) * $ag * (1 - $sl) * (1 - $pr) + $uv * random(seed=$sk + 92000, min=0, max=1.2) * (1 - $sl)
+      # the same course wave as the plates (shared per bay)
+      $dyk = $ew * ($wv * (1.3 * sin(150 * $kk + 33 * $c + $ph) + 0.6 * random(seed=$s2, min=0 - 1, max=1)) + $wv * $cdr * $xk / $L) + $uv * $ew * 0.6 * random(seed=$s2 + 500000, min=0 - 1, max=1)
+      $dzk = $ew * $wv * (0.35 + 0.35 * sin(190 * $kk + 41 * $c + 2 * $ph) + 0.15 * random(seed=$s2 + 200000, min=0, max=1)) + $uv * random(seed=$s2 + 600000, min=0, max=0.5)
+      $dlk = $wv * random(seed=$s2 + 300000, min=0, max=0.5) + $uv * random(seed=$s2 + 700000, min=0, max=0.6)
+      $ywk = $wv * random(seed=$s2 + 400000, min=0 - 0.7, max=0.7) + $uv * random(seed=$s2 + 800000, min=0 - 0.8, max=0.8)
+      $dz = random(seed=$sk + 42000, min=0, max=0.2) * $ag * (1 - $sl) + (0.25 + 0.5 * (1 - $un)) * $sl + 0.25 * $pr + $uv * 1.5 * random(seed=$sk + 91000, min=0, max=1) * random(seed=$sk + 91500, min=0, max=1) * (1 - $sl)
+      $thx = floor(1000 * ($th + $dlk + $dl) + 0.5) / 1000
+      $py = floor(500 * ($hcn - ($dd + $ds) * cos($thx) + $dyk + $ov * cos($thx)) + 0.5) / 500
+      $pz = floor(500 * ($bB + $dz + $dzk + ($dd + $ds) * sin($thx) - $ov * sin($thx)) + 0.5) / 500
+      $ywr = floor(1000 * ($yw + $syw + $ywk + $hga) + 0.5) / 1000
+      $show = clamp(($Wj - 1) * 1000, 0, 1) * (1 - $drop) * (1 - $ebd) * max($bd, max($sl, $pr))
+      $ux = floor(500 * ($X + $ox) + 0.5) / 500
+      if ($show > 0.5) {
+        if ($pn * $bd < 0.5) {
+          add($Unit, w=$Wj - 0.6, d=$dc, h=$T, bd=$bd, un=$un, at=($ux, $py, $pz), rotate=($thx, 0, $ywr), join=none)
+        }
+        if ($pn * $bd > 0.5) {
+          add($Pan, w=$Wj - 0.6, d=$dc, h=$T, cv=$cv, at=($ux, $py, $pz), rotate=($thx, 0, $ywr), join=none)
+        }
+      }
+    }
+  }
+  }
+  # PAN AND ROLL (roll 1, R6): pans in COLUMNS down the slope and a roll over every joint, so each joint is one continuous rib. The tiles
+  # run from the eave edge (y = -overhang) to 2 cm short of the ridge, over a board deck on close rafters.
+  if ($rcv > 0.5) {
+    $qy0 = 0 - $ov
+    $qtr = $R - 2 - $qy0
+    # pan half-width, arch rise, roll radius; a pan's lower end stands qlf above its head (the lap: T / gauge)
+    $qhw = 0.5 * $p - 0.4
+    $qs = max(0.3, $cv * 0.5 * $p)
+    $qrr = 0.28 * $p
+    $qlf = $T * $d / $g
+    # the pans' visible top at a column's middle, and the roll's base where its legs rest on the pans
+    $qzp = 2.5 + $qlf + 0.5 * $T
+    $qq = ($qhw - $qrr) / $qhw
+    $qzr = $qzp + $qs * $qq * $qq
+    # roll tiles: 0.9 x the pan length, lapped 4 cm, each lower end 1.6 cm proud of the one below
+    $qdr = 0.9 * $d
+    $qgr = $qdr - 4
+    $qrl = 1.6
+    $qnp = floor(($qtr - $d) / $g) + 1
+    $qnk = floor(($qtr - $qdr) / $qgr) + 1
+    # the frame: rafters every `rafter` cm out to the eave edge, the board deck, the ridge board, the eave board under the lowest pans,
+    # the barge boards, and one beam under the rafters at the wall line (y = 0)
+    $qpar = $sd - 2 * floor($sd / 2)
+    $qnr = floor(($L - 8) / $rf + 0.5) + 1
+    loop ($qnr) {
+      $qrx = 0 - 0.5 * $L + 4 + (output.index - 1) * ($L - 8) / ($qnr - 1) + 1.2 * ($sd - 2 * floor($sd / 2))
+      add($WoodR, bw=7, bh=8, scale=(1, $R + $ov - 0.4 * ($sd - 2 * floor($sd / 2)), 1), at=($qrx, $qy0, -8), join=none)
+    }
+    $qnb = ceil(($R + $ov) / 40)
+    $qbw = ($R + $ov) / $qnb
+    if ($bd < 0.5) {
+      add($WoodS, bw=$ov + 3, bh=2, scale=(1, $L + 2, 1), rotate=(0, 0, -90), at=(0 - 0.5 * $L - 1, $qy0 + 0.5 * $ov + 1.5, 0), join=none)
+    }
+    if ($bd > 0.5) {
+    loop ($qnb) {
+      add($WoodS, bw=$qbw - 0.3, bh=2, scale=(1, $L + 2, 1), rotate=(0, 0, -90), at=(0 - 0.5 * $L - 1, $qy0 + (output.index - 0.5) * $qbw, 0), join=none)
+    }
+    }
+    add($WoodS, bw=3, bh=17.5, scale=(1, $L + 1 + 0.6 * $qpar, 1), rotate=(0, 0, -90), at=(0 - 0.5 * $L - 0.5 - 0.3 * $qpar, $R + 1.5, -15), join=none)
+    add($WoodS, bw=5, bh=0.5 + $qlf, scale=(1, $L, 1), rotate=(0, 0, -90), at=(0 - 0.5 * $L, $qy0 + 2.5, 2), join=none)
+    loop (2) {
+      add($WoodS, bw=2.5, bh=12.9, scale=(1, $R + $ov + 4, 1), at=((2 * output.index - 3) * (0.5 * $L + 1.25 + 0.3 * $qpar), $qy0 - 1, -10.9), join=none)
+    }
+    add($WoodS, bw=12.9, bh=12.9, scale=(1, $L + 24, 1), rotate=(0, 0, -90), at=(0 - 0.5 * $L - 12, 0, -20.9), join=none)
+    # the pans: one scalloped row of lips at the eave; High lapped units, each lower lip worn unevenly, a few slipped or broken short;
+    # Game one channel strip per column
+    add($LipRow, n=$np, p=$p, hw=$qhw - 0.3, h=6, scale=(1, 1.5, 1), at=(0, $qy0 - 1.5, $qzp + 0.5 * $T - 1.5), join=none)
+    loop ($np) {
+      $qj = output.index - 1
+      $qxc = 0 - 0.5 * $L + ($qj + 0.5) * $p
+      if ($bd < 0.5) {
+        add($PanStrip, hw=$qhw, s=$qs, t=$qzp + 0.5 * $T - 2.5, scale=(1, $qtr, 1), at=($qxc, $qy0, 2.5), join=none)
+      }
+      if ($bd > 0.5) {
+        loop ($qnp) {
+          $qk = output.index - 1
+          $qsd = $sd * 1009 + $qj * 211 + $qk
+          $qsl = clamp(floor(random(seed=$qsd + 100, min=0, max=1) + 0.03 * $uv * clamp($qk - 1, 0, 1)), 0, 1)
+          $qbk = clamp(floor(random(seed=$qsd + 700, min=0, max=1) + 0.03 * $uv * clamp($qk - 1, 0, 1)), 0, 1) * (1 - $qsl) * $d * random(seed=$qsd + 750, min=0.25, max=0.45)
+          $qdz = $uv * random(seed=$qsd + 200, min=0, max=1.0) + 0.3 * $qsl
+          $qdx = $uv * random(seed=$qsd + 300, min=0 - 0.5, max=0.5)
+          $qyw = $uv * random(seed=$qsd + 400, min=0 - 2, max=2) + $qsl * random(seed=$qsd + 500, min=0 - 6, max=6)
+          $qdy = 0 - $qsl * random(seed=$qsd + 600, min=2, max=5)
+          $qch = $uv * random(seed=$qsd + 800, min=0.2, max=1.4) + 1.5 * clamp($qbk, 0, 1)
+          add($PanW, hw=$qhw, s=$qs, t=$T, len=$d - $qbk, chip=floor(100 * $qch + 0.5) / 100, ph=floor(random(seed=$qsd + 900, min=0, max=360)), at=(floor(500 * ($qxc + $qdx) + 0.5) / 500, floor(500 * ($qy0 + $qk * $g + $qdy + $qbk) + 0.5) / 500, floor(500 * (2.5 + $qlf * (1 - $qbk / $d) + $qdz) + 0.5) / 500), rotate=(floor(1000 * atan($T / $g) + 0.5) / 1000, 0, floor(1000 * $qyw + 0.5) / 1000), join=none)
+        }
+      }
+    }
+    # the ribs: a roll line over every joint; the two at the verges sit in from the edge, 10 % fuller and 1.5 cm proud on their bed. Every
+    # roll is its own: up to 4 deg yaw, a few deg turned about its own axis, up to 2.5 cm lift, length and diameter +-8 %, the lower end worn
+    # and chipped (High); a few slipped, broken short or missing. The rib stays in line as a whole.
+    loop ($np + 1) {
+      $qi = output.index - 1
+      $qve = clamp(1000 * (abs($qi - 0.5 * $np) - 0.5 * $np + 0.5), 0, 1)
+      $qxr = 0 - 0.5 * $L + $qi * $p - $qve * (2 * $qi / $np - 1) * 0.35 * $qrr
+      $qvz = 1.5 * $qve
+      $qr = $qrr * (1 + 0.1 * $qve)
+      add($Disc, r=$qr + 1.6, ns=6 + 6 * $bd, scale=(1, 2.5, 1), at=($qxr, $qy0 - 2.5, $qzr + $qvz - 0.8 + $qrl), join=none)
+      # Game: about one rib in eight has one roll slipped askew
+      $qgp = clamp(floor(random(seed=$sd * 431 + $qi, min=0, max=1) + 0.12 * $uv), 0, 1) * (1 - $qve)
+      $qgk = floor(random(seed=$sd * 433 + $qi, min=1, max=$qnk - 1))
+      loop ($qnk) {
+        $qk = output.index - 1
+        $qsd = $sd * 1013 + $qi * 211 + $qk
+        $qfl = 1 + $uv * random(seed=$qsd + 800, min=0 - 0.08, max=0.08)
+        $qfd = 1 + $uv * random(seed=$qsd + 900, min=0 - 0.08, max=0.05)
+        $qrw = $uv * random(seed=$qsd + 1200, min=0 - 4, max=4)
+        if ($bd < 0.5) {
+          # Game: one solid four-faced roll per lap, its lower end proud (the rib's sawtooth)
+          $qgs = $qgp * clamp(1 - abs($qk - $qgk) * 1000, 0, 1)
+          $qdz = $uv * random(seed=$qsd + 200, min=0, max=1.6) + 1.2 * $qgs
+          $qyw = $uv * random(seed=$qsd + 400, min=0 - 3, max=3) + 9 * $qgs
+          $qln = $qdr * $qfl
+          add($RibU, rr=$qr * $qfd, scale=(1, $qln, 1), at=(floor(500 * ($qxr + 1.5 * $qgs) + 0.5) / 500, floor(500 * ($qy0 - 0.3 + $qk * $qgr - 5 * $qgs) + 0.5) / 500, floor(500 * ($qzr + $qvz + $qrl + $qdz) + 0.5) / 500), rotate=(floor(1000 * atan($qrl / $qln) + 0.5) / 1000, floor(1000 * $qrw + 0.5) / 1000, floor(1000 * $qyw + 0.5) / 1000), join=none)
+        }
+        if ($bd > 0.5) {
+          # High: lapped roll tiles; 1.5 % missing, 3 % slipped (slid down, turned), 4 % broken short (a gap to the next)
+          $qms = clamp(floor(random(seed=$qsd + 100, min=0, max=1) + 0.015 * $uv * clamp($qk, 0, 1)), 0, 1) * (1 - $qve)
+          $qsl = clamp(floor(random(seed=$qsd + 150, min=0, max=1) + 0.03 * $uv), 0, 1) * (1 - $qms)
+          $qbr = clamp(floor(random(seed=$qsd + 700, min=0, max=1) + 0.04 * $uv), 0, 1) * (1 - $qms) * (1 - $qsl)
+          $qdz = $uv * random(seed=$qsd + 200, min=0, max=2.5) + 0.8 * $qsl
+          $qdx = $uv * random(seed=$qsd + 300, min=0 - 0.7, max=0.7) + $qsl * random(seed=$qsd + 350, min=0 - 1.5, max=1.5)
+          $qyw = $uv * random(seed=$qsd + 400, min=0 - 4, max=4) + $qsl * random(seed=$qsd + 500, min=0 - 9, max=9)
+          $qdy = 0 - $qsl * random(seed=$qsd + 600, min=3, max=7)
+          $qln = $qdr * $qfl * (1 - $qbr * random(seed=$qsd + 1300, min=0.25, max=0.5))
+          $qch = $uv * random(seed=$qsd + 1000, min=0.3, max=2.2) + 2 * $qbr
+          if ($qms < 0.5) {
+            add($RollW, rr=floor(100 * $qr * $qfd + 0.5) / 100, t=$T + 0.1, len=floor(100 * $qln + 0.5) / 100, chip=floor(100 * $qch + 0.5) / 100, ph=floor(random(seed=$qsd + 1100, min=0, max=360)), at=(floor(500 * ($qxr + $qdx) + 0.5) / 500, floor(500 * ($qy0 + $qk * $qgr + $qdy) + 0.5) / 500, floor(500 * ($qzr + $qvz + $qrl + $qdz) + 0.5) / 500), rotate=(floor(1000 * atan($qrl / $qdr) + 0.5) / 1000, floor(1000 * $qrw + 0.5) / 1000, floor(1000 * $qyw + 0.5) / 1000), join=none)
+          }
+        }
+      }
+    }
+  }
+  # the sag: ONE warp in the module frame, a dip along the ridge and a belly mid-rafter, the whole slope together; `sweep` lifts the eave
+  # from the eave edge (on a pan-and-roll field the tiles' edge at -overhang)
+  warp(by=(0, 0, 0 - $sgn * sin(180 * clamp((point.x + 0.5 * $L) / $L, 0, 1)) * sin(180 * clamp((point.x + 0.5 * $L) / $L, 0, 1)) * (clamp(point.y / $R, 0, 1) + $bel * sin(180 * clamp(point.y / $R, 0, 1))) + $swp * clamp(1 - (point.y + $ove) / (0.4 * $R + $ove), 0, 1) * clamp(1 - (point.y + $ove) / (0.4 * $R + $ove), 0, 1)))
+  # `uneven`: broad lumps (waves 89-149 cm, about 0-4.8 cm up, less at the ridge), the ribs wandering as wholes (about +-3 cm, none at
+  # the verges) and a lumpy eave line; the tiles only, so the deck and rafters stay true under them
+  if ($uv > 0.001) {
+    $u1 = random(seed=$sd * 101 + 1, min=0, max=360)
+    $u2 = random(seed=$sd * 101 + 2, min=0, max=360)
+    $u3 = random(seed=$sd * 101 + 3, min=0, max=360)
+    $u4 = random(seed=$sd * 101 + 4, min=0, max=360)
+    $u5 = random(seed=$sd * 101 + 5, min=0, max=360)
+    $u6 = random(seed=$sd * 101 + 6, min=0, max=360)
+    $u7 = random(seed=$sd * 101 + 7, min=0, max=360)
+    warp(by=($uv * clamp((0.5 * $L - abs(point.x)) / 30, 0, 1) * (2.1 * sin(360 * point.y / 163 + 360 * point.x / 263 + $u5) + 0.9 * sin(360 * point.y / 241 + 360 * point.x / 101 + $u6)), $uv * 2.0 * sin(360 * point.x / 97 + $u7) * clamp(1 - (point.y + $ovk) / 60, 0, 1), $uv * clamp(($R - point.y) / 40, 0.25, 1) * (2.0 + 1.4 * sin(360 * point.x / 117 + $u1) * sin(360 * point.y / 103 + $u2) + 0.9 * sin(360 * (0.8 * point.x + 0.6 * point.y) / 149 + $u3) + 0.5 * sin(360 * (0.6 * point.x - 0.8 * point.y) / 89 + $u4) + 1.6 * sin(360 * point.x / 131 + $u7 + 90) * clamp(1 - (point.y + $ovk) / 70, 0, 1)))) [material=$Tile]
+  }
+}
+
+# one flat cap plate, w along the ridge (x), h across, th thick, its base on z = 0
+CapSlab = mesh(w=33.0, h=6.0, th=1.4) {
+  rect(w=$w, h=$h)  extrude(height=$th)
+  material($Cap)
+}
+
+# ONE RIDGE CAP, its long axis along x. rd 1: a half-round of ns flat plates round an arc of inner radius ri running from ae degrees
+# below horizontal over the top to ae below on the other side (the arc's centre is c0 above the apex surface, at the local origin);
+# rd 0: an angular V of two plates vw wide along the slopes (the local origin is the apex surface). Few plates: a polygon outline
+# extruded costs ten times as many triangles.
+RidgeCap = mesh(len=33.0, ri=9.0, th=1.4, p=40.0, rd=1, ae=15.0, ns=8, vw=17.0) {
+  $a0 = 0 - $ae
+  $da = (180 - 2 * $a0) / $ns
+  $rm = $ri * cos(0.5 * $da)
+  $ch = 2 * $ri * sin(0.5 * $da) + 0.4
+  loop ($ns) {
+    $m = output.index - 1
+    $am = $a0 + ($m + 0.5) * $da
+    $on = clamp($rd * 1000, 0, 1)
+    if ($on > 0.5) {
+      add($CapSlab, w=$len, h=$ch, th=$th, at=(0, floor(500 * $rm * cos($am) + 0.5) / 500, floor(500 * $rm * sin($am) + 0.5) / 500), rotate=(floor(1000 * (90 - $am) + 0.5) / 1000, 0, 0), join=none)
+    }
+  }
+  $v = clamp((1 - $rd) * 1000, 0, 1)
+  if ($v > 0.5) {
+    add($CapSlab, w=$len, h=$vw, th=$th, at=(0, floor(500 * (0.5 * $vw) * cos($p) + 0.5) / 500, floor(500 * (0.25 - (0.5 * $vw) * sin($p)) + 0.5) / 500), rotate=($p, 0, 0), join=none)
+    add($CapSlab, w=$len, h=$vw, th=$th, at=(0, 0 - floor(500 * (0.5 * $vw) * cos($p) + 0.5) / 500, floor(500 * (0.25 - (0.5 * $vw) * sin($p)) + 0.5) / 500), rotate=(0 - $p, 0, 0), join=none)
+  }
+}
+
+# A GABLE: two slopes meeting at a ridge on y = 0, the eaves at y = +-run cos(pitch), z = 0, the ridge at run sin(pitch). It takes every
+# Slope knob (K1) and adds pitch, ridge (the caps 0/1), ridgeshape (0 by the unit, 1 half-round, 2 angular), stack (0-6 layers under the
+# caps) and ends (0-2: raised end blocks).
+Roof = mesh($Slope, pitch=40.0, ridge=1.0, ridgeshape=0, stack=0, ends=0) {
+  $pt = clamp($pitch, 25, 60)
+  $L = clamp($len, 200, 600)
+  $R = clamp($run, 150, 400)
+  $ag = clamp($age, 0, 2)
+  $dm = clamp($damage, 0, 1)
+  $un = clamp(floor($unit + 0.5), 0, 1)
+  $sd = floor(clamp($noise, 1, 99999))
+  $uv = clamp($uneven, 0, 1)
+  $ov = clamp($overhang, 0, 80)
+  $ot = clamp($thick * 1000, 0, 1)
+  $T = (1.2 - 0.4 * $un) * (1 - $ot) + $ot * clamp($thick, 0.5, 3)
+  $sgn = clamp($sag, 0, 20) * (0.1 + 0.9 * min($ag, 1)) * (0.75 + 0.25 * $ag)
+  $cpt = cos($pt)
+  add($Slope, at=(0, 0 - $R * $cpt, 0), rotate=(0 - $pt, 0, 0), join=none)
+  add($Slope, age=min(2, $ag + 0.3), damage=0, noise=$sd + 17, at=(0, $R * $cpt, 0), rotate=(0 - $pt, 0, 180), join=none)
+  # the ridge: caps along it, a little out of line, a few gone on an old or ruined roof. On pan and roll (roll 1) the caps ride a mortar bed
+  # and `stack` courses of flat tiles, and the whole ridge line lumps with `uneven` (one wave, not per cap).
+  $rcv = clamp(floor($roll + 0.5), 0, 1)
+  $ow = clamp($width * 1000, 0, 1)
+  $oL = clamp($length * 1000, 0, 1)
+  $oh = clamp($headlap * 1000, 0, 1)
+  $d6 = (26.5 + 23.5 * $un) * (1 - $oL) + $oL * clamp($length, 15, 60)
+  $g6 = ($d6 - ((6.5 + $un) * (1 - $oh) + $oh * clamp($headlap, 2, 24))) / 2
+  $zbc = $R * sin($pt) + (2.5 + $T * $d6 / $g6) / $cpt
+  $rph = random(seed=$sd * 107, min=0, max=360)
+  $nk = max(4, ceil($L / 30))
+  $lk = $L / $nk
+  $rsn = clamp(floor($ridgeshape + 0.5), 0, 2)
+  $rso = clamp($rsn * 1000, 0, 1)
+  $rd = (1 - $un) * (1 - $rso) + $rso * (2 - $rsn)
+  $nst = clamp(floor($stack + 0.5), 0, 6)
+  $sl = $nst * 2.8 / $cpt * (1 - $rcv) + $rcv * $nst * 2.6
+  $ma = min($ag, 1) * (1 + 3 * $uv * (1 - $rcv)) + $uv * (1 - 0.6 * $rcv)
+  $zs = ($R * sin($pt) + (2.5 + 1.2 - 0.4 * $un + 0.4 + ($T - (1.2 - 0.4 * $un))) / $cpt) * (1 - $rcv) + $rcv * ($zbc + 8)
+  $ri = 9.0
+  $c0 = (0 - $ri * (sin(0 - 15) + cos(15) * tan($pt))) * $rd * (1 - $rcv)
+  $cns = 8 - 4 * (1 - clamp($budget, 0, 1)) * $rso
+  if ($rcv > 0.5) {
+    add($RidgeBed, len=$L + 2, w=28, h=8, pt=$pt, dp=$sgn / $cpt, lu=2.2 * $uv, ph=$rph, at=(0, 0, $zbc), join=none)
+
+    # the caps as one continuous roll on the stack, dipping and lumping with it
+    add($RidgeRoll, len=$L + 2, rr=$ri + 1.5, dp=$sgn / $cpt, lu=2.2 * $uv, ph=$rph, at=(0, 0, $zs + $sl - 0.4 * $ri), join=none)
+  }
+  loop ($nk) {
+    $i = output.index - 1
+    $xc = 0 - 0.5 * $L + ($i + 0.5) * $lk
+    $u = ($xc + 0.5 * $L) / $L
+    $sn = sin(180 * $u)
+    $dip = $sgn * $sn * $sn / $cpt
+    $tilt = atan(0 - $sgn / $cpt * 3.14159 / $L * sin(360 * $u))
+    $gone = clamp(floor(random(seed=$sd * 71 + $i, min=0, max=1) + 0.08 * min($ag, 1) + 0.2 * $dm + 0.1 * $uv), 0, 1)
+    $off = random(seed=$sd * 73 + $i, min=0 - 0.8, max=0.8) * $ma
+    $lz = random(seed=$sd * 79 + $i, min=0 - 0.2, max=0.5) * $ma
+    $cy = random(seed=$sd * 83 + $i, min=0 - 1.5, max=1.5) * $ma
+    $lmp = $rcv * $uv * 1.5 * sin(360 * $xc / 137 + $rph)
+    $zr = floor(500 * ($zs + $c0 - $dip + $lz + $sl + $lmp) + 0.5) / 500
+    $xr = floor(500 * $xc + 0.5) / 500
+    $pr = floor(1000 * $tilt + 0.5) / 1000
+    $yr = floor(1000 * $cy + 0.5) / 1000
+    $yo = floor(500 * $off + 0.5) / 500
+    $showc = clamp($ridge * 1000, 0, 1) * (1 - $gone) * (1 - $rcv)
+    if ($showc > 0.5) {
+      add($RidgeCap, len=$lk + 0.8, ri=$ri, th=1.2, p=$pt, rd=$rd, ae=15, ns=$cns, at=($xr, $yo, $zr), rotate=(0, $pr, $yr), join=none)
+    }
+  }
+  # the stack: `stack` courses of flat tiles along the ridge under the caps, each tile its own (about 26 cm at High, 50 at Game), stepping in
+  # 1.5 cm a course
+  if ($nst > 0.5) {
+    $ks = max(2, ceil($L / (26 + 49 * (1 - clamp($budget, 0, 1)))))
+    $kl = $L / $ks
+    $zl = $zs
+    loop ($ks) {
+      $i = output.index - 1
+      $xc = 0 - 0.5 * $L + ($i + 0.5) * $kl
+      $u = ($xc + 0.5 * $L) / $L
+      $dip = $sgn * sin(180 * $u) * sin(180 * $u) / $cpt
+      $tilt = atan(0 - $sgn / $cpt * 3.14159 / $L * sin(360 * $u))
+      $lmq = $uv * 2.2 * (sin(360 * $xc / 97 + $rph) + 0.6 * sin(360 * $xc / 53 + 2 * $rph))
+      loop ($nst) {
+        $m = output.index - 1
+        $lo = $uv * random(seed=$sd * 89 + $i * 7 + $m, min=0 - 0.6, max=0.6)
+        $lr = $uv * random(seed=$sd * 97 + $i * 7 + $m, min=0 - 1.5, max=1.5)
+        $lq = $uv * random(seed=$sd * 103 + $i * 7 + $m, min=0, max=0.4)
+        add($CapSlab, w=$kl - 0.5, h=27 - 1.2 * $m, th=2.4, at=(floor(500 * $xc + 0.5) / 500, floor(500 * $lo + 0.5) / 500, floor(500 * ($zl + $m * 2.6 - $dip + $lmq + $lq) + 0.5) / 500), rotate=(0, floor(1000 * $tilt + 0.5) / 1000, floor(1000 * $lr + 0.5) / 1000), join=none)
+      }
+    }
+  }
+  # `ends`: a heavy end tile on each end of the ridge, flaring up and out over the gable
+  $en = clamp($ends, 0, 2)
+  if ($en > 0.05) {
+    $ek = 0.75 + 0.4 * $en
+    $ez = $zs + $sl * (1 - $rcv) - 2 * (1 - $rcv)
+    add($RidgeEnd, k=$ek, scale=(1, 24, 1), at=(0.5 * $L - 18 * $ek, -12, $ez), join=none)
+    add($RidgeEnd, k=$ek, scale=(1, 24, 1), at=(0 - 0.5 * $L + 18 * $ek, -12, $ez), mirror=X, join=none)
+  }
+}
+
+# ONE SLOPE tipped at the pitch: a lean-to, a hip's side, a shed roof. Its eave is at y = 0, z = 0 and it rises toward +y.
+SlopeRoof = mesh($Slope, pitch=40.0) {
+  add($Slope, rotate=(0 - clamp($pitch, 25, 60), 0, 0), join=none)
+}
+
+# the old tile gable, High
+TileOldHigh       = mesh() { add($Roof, unit=0, age=1, damage=0, budget=1, noise=3) }
+# the old tile gable, Game
+TileOldGame       = mesh() { add($Roof, unit=0, age=1, damage=0, budget=0, noise=3) }
+# the sound tile gable, High (the Sound bake source)
+TileSoundHigh     = mesh() { add($Roof, unit=0, age=0, damage=0, budget=1, noise=3) }
+# the sound tile gable, Game
+TileSoundGame     = mesh() { add($Roof, unit=0, age=0, damage=0, budget=0, noise=3) }
+# the ruined tile gable, High (the Ruined bake source)
+TileRuinedHigh    = mesh() { add($Roof, unit=0, age=1.3, damage=0.6, budget=1, noise=3) }
+# the ruined tile gable, Game
+TileRuinedGame    = mesh() { add($Roof, unit=0, age=1.3, damage=0.6, budget=0, noise=3) }
+# the old slate gable, High
+SlateOldHigh      = mesh() { add($Roof, unit=1, age=1, damage=0, budget=1, noise=3) }
+# the old slate gable, Game
+SlateOldGame      = mesh() { add($Roof, unit=1, age=1, damage=0, budget=0, noise=3) }
+# one old tile slope, High (the slope's bake source)
+SlopeTileOldHigh  = mesh() { add($SlopeRoof, unit=0, age=1, damage=0, budget=1, noise=5) }
+# one old tile slope, Game
+SlopeTileOldGame  = mesh() { add($SlopeRoof, unit=0, age=1, damage=0, budget=0, noise=5) }
+
+# the weathered pan-and-roll roof (R6): every form knob is a value of the one recipe
+Weathered = mesh($Roof, curve=0.22, roll=1, width=27.0, length=30.0, thick=1.3, headlap=8.0, sweep=6.0, ridgeshape=1, stack=4, ends=1.5, overhang=30.0, open=1, uneven=1.0, age=2.0, sag=4.0, belly=1.0, noise=11, run=220.0, pitch=32.0, rafter=30.0) { add($Roof) }
+PanWeatheredHigh     = mesh() { add($Weathered, budget=1) }
+PanWeatheredGame     = mesh() { add($Weathered, budget=0) }
+GatePanWeatheredGame = mesh() { add($Weathered, budget=0, run=170.0, pitch=28.0, noise=23) }

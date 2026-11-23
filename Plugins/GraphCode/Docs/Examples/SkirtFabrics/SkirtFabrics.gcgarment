@@ -1,0 +1,32 @@
+gcgarment 1 mesh:/Game/__MCPTests/Human/MH_RigProbe into:/Game/__MCPTests/Garment/Cloth
+
+# GC-GARMENT-CLOTH.md §E1 step 4: HangingSkirt's skirt in two fabrics and nothing else different — the same rings, cut,
+# hang, thickness and friction — so the picture shows what the fabric's own numbers do to the cloth in the game. Silk is
+# light and limp (80 g/m², 1.5 cm bending length); denim is heavy and stiff (STITCH §3's 400 g/m², 4.5/4 cm).
+build {
+  OA_SkirtSilk = $SilkSkirt [as=cloth]
+  OA_SkirtDenim = $DenimSkirt [as=cloth]
+}
+
+Blue = material('/Game/__MCPTests/Garment/MI_StitchDenim')
+Ivory = material('/Game/__MCPTests/Garment/MetaHuman/TunicDress/MI_Ivory')
+Silk = fabric(weight=80, thickness=1mm, stretch=(3.8%, 5.567%), shear=13.717, stiffness=1.5, friction=0.4, material=$Ivory)   # stretch/shear measured: E100 3.8/5.567 %, G 13.717 N/m of an 88 g/m2 silk satin (Kuijpers S2) (Research/fabric-tensile-shear-fast.md)
+Denim = fabric(weight=400, thickness=1mm, stretch=(3.2%, 2.3%), shear=100.4, stiffness=(4.5, 4), friction=0.4, material=$Blue)   # stretch a proxy: E100 3.2/2.3 % of a 279 g/m2 heavy cotton plain (Kuijpers C3), no rigid denim E100 measured; shear KES G 1.822/1.750 gf/(cm deg) = 100.4 N/m of a 380 g/m2 cotton denim (Luible 1) (Research/fabric-tensile-shear-fast.md)
+
+# HangingSkirt.gcgarment's rings, unchanged.
+Waist = ring((0, 12.8, 110.2), (-1, -4.8, 110.1)) { expand(2) }
+Hips = ring((0.034, 13.268, 92.301), (8.066, -10.624, 90.959), (-8.150, -10.587, 90.959)) { expand(1.5) }
+HipsRound = ring((0.034, 13.268, 92.301), (0.043, -8.795, 90.763)) { circular() }
+Hem = ring($HipsRound) {
+  move((0, 0, -40))
+  expand(14)
+}
+
+SilkSkirt = garment($Waist, $Hips, $Hem, loose=100%, fabric=$Silk) {
+  construct()
+  hang(from=$Hips)
+}
+DenimSkirt = garment($Waist, $Hips, $Hem, loose=100%, fabric=$Denim) {
+  construct()
+  hang(from=$Hips)
+}

@@ -1,0 +1,118 @@
+gcshape 1  into:/Game/GraphCodeExamples/Garment/ZipJacket  smooth:0.01
+# Hard parts for the ZipJacket example.
+
+build { }
+
+ChainWidth = 0.5
+ChainRise = 0.2
+Pitch = 0.25
+
+Element = mesh() {
+  rect(w=$ChainWidth * 0.56, h=$Pitch * 0.44)
+  extrude(height=$ChainRise)
+  round(0.04) [top]
+}
+
+Chain = mesh() {
+  add($Element, at=(-$ChainWidth * 0.22, $Pitch * 0.25, 0), repeat=4, step=(0, $Pitch, 0))
+  add($Element, at=($ChainWidth * 0.22, $Pitch * 0.75, 0), repeat=4, step=(0, $Pitch, 0), join=none)
+}
+
+OpenChain = mesh() {
+  add($Element, repeat=8, step=(0, $Pitch, 0))
+}
+
+SliderLength = 2.0
+SliderWidth = 1.0
+SliderRise = 0.45
+PullLength = 2.6
+PullWidth = 0.8
+PullDepth = 0.15
+
+SliderBody = mesh() {
+  rect(w=$SliderWidth, h=$SliderLength)
+  round(0.25)
+  extrude(height=$SliderRise, to=85%)
+  round(0.1) [top]
+}
+
+PullEye = mesh() {
+  rect(w=$PullWidth * 0.5, h=0.3)
+  round(0.12)
+  extrude(height=$PullDepth * 3.0)
+}
+
+PullTab = mesh() {
+  rect(w=$PullWidth, h=$PullLength)
+  round(0.3)
+  extrude(height=$PullDepth)
+  round(0.05) [top]
+  subtract($PullEye, at=(0, -$PullLength * 0.3, -$PullDepth))
+}
+
+Slider = mesh() {
+  add($SliderBody, at=(0, -$SliderLength * 0.5, 0))
+  add($PullTab, at=(0, -0.8 - $PullLength * 0.5, $SliderRise))
+}
+
+FlapWidth = 14.38
+FlapPanels = 3
+FlapPanelWidth = 4.7933
+FlapDepth = 6.33
+FlapThick = 0.34
+SnapSize = 1.5
+SnapRise = 0.25
+
+FlapBody = mesh() {
+  rect(w=$FlapPanelWidth, h=$FlapDepth)
+  round(0.3)
+  extrude(height=$FlapThick)
+  round(0.08) [top]
+}
+
+Snap = mesh() {
+  rect(w=$SnapSize, h=$SnapSize)
+  round(0.6)
+  extrude(height=$SnapRise)
+  round(0.08) [top]
+}
+
+FlapStitch = mesh() {
+  rect(w=$FlapPanelWidth, h=0.1)
+  extrude(height=0.04)
+}
+
+FlapPanel = mesh() {
+  add($FlapBody, at=(0, -$FlapDepth * 0.5, 0))
+  add($FlapStitch, at=(0, -$FlapDepth + 0.6, $FlapThick))
+}
+
+FlapPanelSnap = mesh() {
+  add($FlapBody, at=(0, -$FlapDepth * 0.5, 0))
+  add($FlapStitch, at=(0, -$FlapDepth + 0.6, $FlapThick))
+  add($Snap, at=(0, -$FlapDepth + 1.9, $FlapThick))
+}
+
+SleevePatchW = 7.0
+SleevePatchH = 10.5
+SleeveZipLength = 10.0
+SleevePatchThick = 0.2
+
+SleevePatch = mesh() {
+  rect(w=$SleevePatchW, h=$SleevePatchH)
+  round(0.5)
+  extrude(height=$SleevePatchThick)
+  round(0.05) [top]
+}
+
+SleeveZip = mesh() {
+  rect(w=$ChainWidth, h=$SleeveZipLength)
+  extrude(height=$ChainRise)
+  round(0.04) [top]
+}
+
+SleevePocket = mesh() {
+  add($SleevePatch, at=(0, 0, 0))
+  add($SleeveZip, at=(-$SleevePatchW * 0.5 + 0.4, $SleevePatchH * 0.5 - 1.0 - $SleeveZipLength * 0.5, $SleevePatchThick))
+  add($PullTab, at=(-$SleevePatchW * 0.5 + 0.4, $SleevePatchH * 0.5 - 1.0 - $PullLength * 0.5, $SleevePatchThick + $ChainRise))
+}

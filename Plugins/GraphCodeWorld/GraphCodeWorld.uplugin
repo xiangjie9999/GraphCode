@@ -1,0 +1,65 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.13",
+  "FriendlyName": "GraphCode World",
+  "Description": "Environment systems, and the level facets that only matter at streaming scale.",
+  "Category": "Editor",
+  "CreatedBy": "OraStudio",
+  "CanContainContent": false,
+  "IsBetaVersion": true,
+  "Modules": [
+    {
+      "Name": "GraphCodeWorld",
+      "Type": "Editor",
+      "LoadingPhase": "Default",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "GraphCodeWater",
+      "Type": "Editor",
+      "LoadingPhase": "None",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
+    {
+      "Name": "GraphCodePcg",
+      "Type": "Editor",
+      "LoadingPhase": "None",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "GraphCode",
+      "Enabled": true
+    },
+    {
+      "Name": "PCG",
+      "Enabled": false,
+      "Optional": true
+    },
+    {
+      "Name": "Water",
+      "Enabled": false,
+      "Optional": true
+    }
+  ],
+  "Installed": true,
+  "EnabledByDefault": false,
+  "EngineVersion": "5.7.0",
+  "SupportedTargetPlatforms": [
+    "Win64"
+  ]
+}
