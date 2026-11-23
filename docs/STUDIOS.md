@@ -22,7 +22,7 @@ write to support@graphcode.dev.
 | What you install | Precompiled editor plugins with public C++ headers and build rules. No implementation source. |
 | Code signing | Releases are signed with our own ES256 keys (see below). The DLLs and the bridge `.exe` are **not Authenticode-signed**, so SmartScreen or endpoint tools may ask about them. |
 | Licence | Per user, per product or all products, one PC at a time; a 14-day trial of everything first. [Pricing](https://graphcode.dev/pricing). |
-| Network | Licence tokens before writes, an update check (can be switched off), Market downloads when used. No project content, no telemetry. [Full table](../README.md#trust). |
+| Network | Licence tokens before writes, an update check (can be switched off), Market downloads when used. No project content, no telemetry. [Full table](../README.md#trust-and-privacy). |
 | AI | GraphCode calls no AI provider. Your AI client does, with the provider you chose. MetaHuman rigging and assembly use Epic's services. |
 | Version control | Plain-text sidecars beside each asset, with any VCS. Git has a recommended setup and an optional three-way `.gc` merge driver; in Perforce, check files out before a write. |
 | CI | `GcCheck` runs headless with no licence and no network. |
