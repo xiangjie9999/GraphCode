@@ -54,6 +54,9 @@ namespace GcMarket::Testing
 		FString Form;
 		bool bLibrary = false;
 		FString Use;
+		/** R20: `materials: true`, and the optional texture set (paths among Files) written as `textures`. */
+		bool bMaterials = false;
+		TArray<FString> TextureFiles;
 		/** A thumbnail's bytes, written as thumb.png when set. */
 		TArray<uint8> Thumbnail;
 	};

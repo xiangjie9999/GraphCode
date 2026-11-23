@@ -3,13 +3,13 @@
   "phase": "binary-only-product",
   "readyToSend": false,
   "plugin": "GraphCodeRig",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "engine": "5.7.4",
   "engineBuildId": "47537391",
   "platform": "Win64",
-  "sourceRevision": "5f663049b53dc0a1b614611f84fe74ebff2e9c49",
-  "sourceWasDirty": false,
-  "packagedAtUtc": "2026-11-16T04:08:03.8876325Z",
+  "sourceRevision": "6864c959358e50bb622b73602cf91f05bd0180cf",
+  "sourceWasDirty": true,
+  "packagedAtUtc": "2026-11-20T13:44:16.8604291Z",
   "fileCount": 45,
   "privateImplementationIncluded": false
 }

@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.5  shade:40
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Wheels  smooth:0.5  shade:40
 
 # WHEELS — a tyre whose tread is MOVED into it rather than cut out of it (2026-10-30).
 #

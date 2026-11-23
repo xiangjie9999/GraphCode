@@ -1,0 +1,170 @@
+gcshape 1 into:/Game/AnimalStudies/QuadrupedNeck smooth:.04 shade:80 uv:keep
+
+# Skin and fitting frames in the trunk's local centimetre space.
+build { SM_QuadrupedNeck = $Neck [pivot=(0,0,0)] }
+Length = 40
+LoinExtra = 0
+ChestWidth = 14
+ChestDepth = 17
+HipWidth = 12
+WaistWidth = 10
+Tuck = 4
+CroupRise = 0
+WitherRise = 1
+Skin = material('/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial')
+SpineOffset = profile(0=0,1=0)
+BellyOffset = profile(0=0,1=0)
+Feline = 0
+StandingFit = 0
+TrunkGirthScale = profile(0=1,1=1)
+ShoulderStation = .83
+HipStation = .145
+ForeTrack = .315
+HindTrack = .285
+TailStation = .067
+TailRootLevel = .75
+LoinTravelOffset = profile(0=0,1=0)
+HipShareOffset = profile(0=0,1=0)
+RibShareOffset = profile(0=0,1=0)
+PelvisOffset = profile(0=0,1=0)
+WithersOffset = profile(0=0,1=0)
+BackProfileOffset = profile(0=0,1=0)
+UnderProfileOffsetScale = 1
+UnderProfileOffset = profile(0=0,1=0)
+FlankOffset = profile(0=0,1=0)
+TorsoStandards = shape('/GraphCodeShape/Presets/QuadrupedTorso')
+RumpCapSpan = $TorsoStandards.RumpCapSpan
+BreastCapStart = $TorsoStandards.BreastCapStart
+BladeStationOffset = $TorsoStandards.BladeStationOffset
+BladeRake = $TorsoStandards.BladeRake
+BladeSpan = $TorsoStandards.BladeSpan
+BladeRelief = $TorsoStandards.BladeRelief
+HaunchStationOffset = $TorsoStandards.HaunchStationOffset
+HaunchRake = $TorsoStandards.HaunchRake
+HaunchSpan = $TorsoStandards.HaunchSpan
+HaunchRelief = $TorsoStandards.HaunchRelief
+KeelTaper = $TorsoStandards.KeelTaper
+CervicalSeatStation = $TorsoStandards.CervicalSeatStation
+CervicalSeatLevel = $TorsoStandards.CervicalSeatLevel
+CervicalWithersShare = $TorsoStandards.CervicalWithersShare
+CervicalSeatPitch = $TorsoStandards.CervicalSeatPitch
+CervicalSeatBand = $TorsoStandards.CervicalSeatBand
+ShoulderSeatLevel = $TorsoStandards.ShoulderSeatLevel
+HipSeatLevel = $TorsoStandards.HipSeatLevel
+HipCroupShare = $TorsoStandards.HipCroupShare
+ShoulderSeatRake = $TorsoStandards.ShoulderSeatRake
+HipSeatRake = $TorsoStandards.HipSeatRake
+TailSeatSlope = $TorsoStandards.TailSeatSlope
+CervicalOnset = .62
+CervicalCapStart = .98
+CervicalRootBlend = .30
+SkullCapDepth = .19
+SkullBandDepth = .20
+CervicalMuscleLevel = .12
+CervicalMuscleSlope = .48
+CervicalMuscleSpan = .68
+CervicalBladeStation = .40
+CervicalBladeRake = .26
+CervicalBladeSpan = .24
+CervicalHollowStation = .16
+CervicalHollowRake = .24
+CervicalHollowSpan = .15
+CervicalHollowDepth = .28
+CervicalBladeLevel = .1
+CervicalBladeHeight = 1.15
+Body = shape('/GraphCodeShape/Presets/QuadrupedTorso',RumpCapSpan=$RumpCapSpan,BreastCapStart=$BreastCapStart,BladeStationOffset=$BladeStationOffset,BladeRake=$BladeRake,BladeSpan=$BladeSpan,BladeRelief=$BladeRelief,HaunchStationOffset=$HaunchStationOffset,HaunchRake=$HaunchRake,HaunchSpan=$HaunchSpan,HaunchRelief=$HaunchRelief,KeelTaper=$KeelTaper,CervicalSeatStation=$CervicalSeatStation,CervicalSeatLevel=$CervicalSeatLevel,CervicalWithersShare=$CervicalWithersShare,CervicalSeatPitch=$CervicalSeatPitch,CervicalSeatBand=$CervicalSeatBand,ShoulderSeatLevel=$ShoulderSeatLevel,HipSeatLevel=$HipSeatLevel,HipCroupShare=$HipCroupShare,ShoulderSeatRake=$ShoulderSeatRake,HipSeatRake=$HipSeatRake,TailSeatSlope=$TailSeatSlope,LoinTravelOffset=$LoinTravelOffset,HipShareOffset=$HipShareOffset,RibShareOffset=$RibShareOffset,PelvisOffset=$PelvisOffset,WithersOffset=$WithersOffset,BackProfileOffset=$BackProfileOffset,UnderProfileOffsetScale=$UnderProfileOffsetScale,UnderProfileOffset=$UnderProfileOffset,FlankOffset=$FlankOffset,Feline=$Feline,StandingFit=$StandingFit,SpineOffset=$SpineOffset,BellyOffset=$BellyOffset,TrunkGirthScale=$TrunkGirthScale,ShoulderStation=$ShoulderStation,HipStation=$HipStation,ForeTrack=$ForeTrack,HindTrack=$HindTrack,TailStation=$TailStation,TailRootLevel=$TailRootLevel,Length=$Length,LoinExtra=$LoinExtra,ChestWidth=$ChestWidth,ChestDepth=$ChestDepth,HipWidth=$HipWidth,WaistWidth=$WaistWidth,Tuck=$Tuck,CroupRise=$CroupRise,WitherRise=$WitherRise,Skin=$Skin)
+PelvisAt = formula(s) { $Body.Pelvis($s)+$PelvisOffset($s) }
+WithersAt = formula(s) { $Body.Withers($s)+$WithersOffset($s) }
+BackAt = formula(s) { $Body.Back($s)+$BackProfileOffset($s) }
+UnderAt = formula(s) { $Body.Under($s)+$UnderProfileOffsetScale*$UnderProfileOffset($s) }
+FlankAt = formula(s) { $Body.Flank($s)+$FlankOffset($s) }
+StandingBelly = formula(s) { $StandingFit*lerp($Body.DogStandingBelly($s),$Body.CatStandingBelly($s),$Feline)+$BellyOffset($s) }
+Reach = .23*$Length
+Rise = .56*$ChestDepth
+RootWidth = .85*$ChestWidth
+SkullWidth = .52*$ChestWidth
+SkullDepth = .44*$ChestDepth
+SkullPitch = 45
+ThroatFullness = .07*$ChestDepth
+BreastProjection = .075*$ChestDepth
+JawInset = .044*$ChestDepth
+MuscleRelief = .075
+ShoulderRelief = .115
+Stations = 144
+Sides = 96
+HeadX = $Body.NeckX+$Reach
+HeadZ = $Body.NeckZ+$Rise
+CervicalVentralReach = profile(0=0,1=0)
+CervicalVentralRise = profile(0=0,1=0)
+CervicalDorsalReach = profile(0=0,1=0)
+CervicalDorsalRise = profile(0=0,1=0)
+CervicalWidthScale = profile(0=1,1=1)
+ShoulderX = $Body.ShoulderX
+ShoulderY = $Body.ShoulderY
+HipX = $Body.HipX
+HipY = $Body.HipY
+TailX = $Body.TailX
+TailZ = $Body.TailZ
+Forward = cos($SkullPitch)
+Upward = sin($SkullPitch)
+# At the poll and under the jaw the ring lies perpendicular to skull carry.
+# Through the breast the ventral edge leads the dorsal edge in X. This
+# includes the sloping shoulder in the neck root instead of stacking rings.
+PollX = $HeadX-.5*$SkullDepth*$Upward
+JawX = $HeadX+.5*$SkullDepth*$Upward
+PollZ = $HeadZ+.5*$SkullDepth*$Forward
+JawZ = $HeadZ-.5*$SkullDepth*$Forward
+NapeX = profile(0=$CervicalOnset*$Length+$LoinExtra,.40=.79*$Length+$LoinExtra,.7=.5*($Body.NeckX+$PollX),1=$PollX)
+NapeZ = profile(0=.96*$ChestDepth,.40=$ChestDepth+.82*$WitherRise,.70=.58*$PollZ+.42*($ChestDepth+$WitherRise),1=$PollZ)
+ThroatX = profile(0=$CervicalOnset*$Length+$LoinExtra,.28=.82*$Length+$LoinExtra,.43=.91*$Length+$LoinExtra+.46*$BreastProjection,.58=.985*$Length+$LoinExtra+$BreastProjection,.73=.63*($Length+$LoinExtra)+.37*$JawX+.28*$BreastProjection,.87=.34*($Length+$LoinExtra)+.66*$JawX-$JawInset,1=$JawX)
+ThroatZ = profile(0=.015*$ChestDepth,.28=.027*$ChestDepth,.43=.105*$ChestDepth,.58=.33*$ChestDepth,.73=.54*$JawZ+.12*$ChestDepth-.60*$ThroatFullness,.87=.79*$JawZ+.08*$ChestDepth-.24*$ThroatFullness,1=$JawZ)
+Breadth = profile(0=$ChestWidth,.38=$RootWidth,.67=.55*$RootWidth+.45*$SkullWidth,.85=.97*$SkullWidth,1=$SkullWidth)
+Lateral = profile(0=0,.35=.82,.6=1,.83=.52,1=.16)
+
+# These fields read ring angles and ease the neck into the thorax. All public
+# lengths are centimetres, SkullPitch is in degrees, MuscleRelief is a fraction.
+RoundCap = formula(u) { sqrt(max(0,1-$u*$u)) }
+RingHeight = formula(z,roof,floorZ,cap) { clamp((2*$z-$roof-$floorZ)/max(.00001,($roof-$floorZ)*$cap),-1,1) }
+RootBlend = formula(t) { .5-.5*cos(180*clamp($t/max(.00001,$CervicalRootBlend),0,1)) }
+MusclePlane = formula(h,t) { .5+.5*cos(180*clamp(($h-$CervicalMuscleLevel-$CervicalMuscleSlope*$t)/max(.00001,$CervicalMuscleSpan),-1,1)) }
+
+# The scapular ridge descends forward across the lateral ribs. Its caudal
+# hollow and the lateral neck muscle meet on a broad, softly turning plane.
+ShoulderPlane = formula(t,h) { (.5+.5*cos(180*clamp(($t-$CervicalBladeStation+$CervicalBladeRake*$h)/max(.00001,$CervicalBladeSpan),-1,1))-$CervicalHollowDepth*(.5+.5*cos(180*clamp(($t-$CervicalHollowStation+$CervicalHollowRake*$h)/max(.00001,$CervicalHollowSpan),-1,1))))*(.5+.5*cos(180*clamp(($h-$CervicalBladeLevel)/max(.00001,$CervicalBladeHeight),-1,1))) }
+
+Form = instruction() {
+  # Recover the ring angle from the original roof and floor. The original
+  # round breast narrows near its pole. Its angular coordinate stays intact.
+  warp(with=(S: clamp((point.x-$LoinExtra)/$Length,0,1), T: clamp(($S-$CervicalOnset)/max(.00001,$CervicalCapStart-$CervicalOnset),0,1), Fore: clamp(($S-$BreastCapStart)/max(.00001,1-$BreastCapStart),0,1), OldCap: $RoundCap($Fore), Roof: $ChestDepth*$BackAt($S)+$SpineOffset($S)+$CroupRise*$PelvisAt($S)+$WitherRise*$WithersAt($S), FloorZ: $ChestDepth*$UnderAt($S)+$StandingBelly($S)+$Tuck*$FlankAt($S), H: $RingHeight(point.z,$Roof,$FloorZ,$OldCap), V: $RoundCap($H)*clamp(point.y*10000,-1,1), EndT: clamp(($S-$CervicalCapStart)/max(.00001,1-$CervicalCapStart),0,1), Cap: $RoundCap($EndT), A: .5+.5*$H*$Cap, Blend: $RootBlend($T), Ridge: $MusclePlane($H,$T), X: lerp($ThroatX($T)+$CervicalVentralReach($T),$NapeX($T)+$CervicalDorsalReach($T),$A)+$SkullCapDepth*$SkullDepth*$Forward*$EndT, Y: .5*$Breadth($T)*$CervicalWidthScale($T)*$V*$Cap*(1+$MuscleRelief*$Lateral($T)*$Ridge+$ShoulderRelief*$ShoulderPlane($T,$H)), Z: lerp($ThroatZ($T)+$CervicalVentralRise($T),$NapeZ($T)+$CervicalDorsalRise($T),$A)+$SkullCapDepth*$SkullDepth*$Upward*$EndT),to=(lerp(point.x,$X,$Blend),lerp(point.y,$Y,$Blend),lerp(point.z,$Z,$Blend)))
+}
+# Each caller supplies a concrete torso at its requested tessellation.
+# A landmark-bearing replacement preserves the named cervical transition band.
+TorsoPart = mesh(source=$RequiredSurface,landmarks=1) {
+  add($source,join=none)
+  if ($landmarks > 0) { save($NeckBand) [$output.NeckBand] }
+}
+CervicalForm = instruction(baseline=$RequiredCervicalForm) { $baseline() }
+FittedTorso = mesh() {
+  add($Body.Torso,stations=$Stations,sides=$Sides,join=none)
+  save($NeckBand) [$output.NeckBand]
+}
+FittedSurface = mesh() { add($Body.Surface,stations=$Stations,sides=$Sides,join=none) }
+StandaloneTorso = mesh() {
+  add($TorsoPart,source=$FittedTorso,landmarks=1,join=none)
+  save($NeckBand) [$output.NeckBand]
+}
+WithNeck = mesh() {
+  add($StandaloneTorso,join=none)
+  $CervicalForm(baseline=$Form)
+  save($SkullBand) [value=(point.x-$HeadX)*$Forward+(point.z-$HeadZ)*$Upward,above=-$SkullBandDepth*$SkullDepth]
+  socket(Skull,at=($HeadX,0,$HeadZ),facing=($Forward,0,$Upward),up=(-$Upward,0,$Forward),type='mammal/skull@1',transition=$SkullBand)
+}
+Neck = mesh() {
+  add($TorsoPart,source=$FittedSurface,landmarks=0,join=none)
+  $CervicalForm(baseline=$Form)
+  cut(plane=(-cos($CervicalSeatPitch),0,-sin($CervicalSeatPitch)),at=($Body.NeckX,0,$Body.NeckZ),fill=true)
+  material($Skin) [cut]
+  socket(Root,at=($Body.NeckX,0,$Body.NeckZ),facing=(-cos($CervicalSeatPitch),0,-sin($CervicalSeatPitch)),up=(-sin($CervicalSeatPitch),0,cos($CervicalSeatPitch)),type='mammal/neck@1')
+  save($SkullBand) [value=(point.x-$HeadX)*$Forward+(point.z-$HeadZ)*$Upward,above=-$SkullBandDepth*$SkullDepth]
+  socket(Skull,at=($HeadX,0,$HeadZ),facing=($Forward,0,$Upward),up=(-$Upward,0,$Forward),type='mammal/skull@1',transition=$SkullBand)
+}

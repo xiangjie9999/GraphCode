@@ -1,0 +1,12 @@
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/UnderstoryKit  smooth:0.25  shade:60
+
+# UnderstoryBoxwood: one shrub per file (a shrub's nested twigs, branches and shoots all stay resident: two shrubs pass the 8M
+# triangle ceiling of one build).
+
+build {
+  SM_Und_Shrub_Box = $DemoShrubBox [pivot=(0, 0, 0)]
+}
+
+# boxwood wears the kit's shrub leaf slot (hazel); MI_Und_Boxwood ships in UnderstoryMaterials for your own use (a build choice may import only its base preset)
+DemoShrubBox = mesh() { add($U.KitShrub, species=1, size=100, density=0.7, noise=13, budget=0, join=none)  uv(keep) }
+U = shape('/GraphCodeShape/Presets/UnderstoryKit')

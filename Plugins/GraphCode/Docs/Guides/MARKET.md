@@ -1,12 +1,16 @@
 # The GraphCode Market: find, install and use a pack
 
 A pack is a **recipe**: a small versioned bundle of GraphCode text (a `.gcshape`, `.gcmove`, `.gcrig`,
-`.gcgroom`, `.gcgarment` or `.gc` file, a guide, or an agent skill). It never contains meshes, textures
-or binaries. The meshes come from running the recipe on your machine. The Market is free, and the one
+`.gcgroom`, `.gcgarment` or `.gc` file, a guide, or an agent skill). It never contains meshes or
+binaries; the one exception is a pack's optional texture set (PNG images, below), which you choose to
+download. The meshes come from running the recipe on your machine. The Market is free, and the one
 verb for it is `unreal_gc_market`. Ask the verb for its parameters (`{ "help": true }`, then
 `{ "help": "mode" }`); this page gives the order of work, not the schema.
 
 ## The order of work
+
+Start here for every asset, recipe or workflow. A precedent can supply the whole result or
+the construction you need for one part. Inspect the closest pack and adapt it as needed.
 
 1. **Search.** `mode:"search"`, plain words in `target` (every word must match, over title, entry
    names, tags and summary: "chip" finds the Damage pack because it has `EdgeChip`). Filters are their
@@ -20,8 +24,29 @@ verb for it is `unreal_gc_market`. Ask the verb for its parameters (`{ "help": t
    it requires (`met` true or false), its description, and its build choices. Take names and
    parameters from here, never from memory.
 3. **Install**: `mode:"install"`, `pack:`. Add `dry_run:true` first to see what would be written.
-4. **Use it** from your own file with the answer's import line.
+4. **Use and adapt it.** Import the pack from your own file. Change exposed values where they
+   cover the design. When the recipe itself needs changes, start from a project-owned copy and
+   verify the changed part in context.
 5. **Build** only if you want the pack's own example assets (below).
+
+## "Get in Unreal" from GraphCode.dev
+
+A pack page on GraphCode.dev/marketplace has a **Get in Unreal** button. It opens
+`graphcode://market/install/<Publisher>/<Name>` and Window > GraphCode Market comes up on that pack with
+its install confirmation already showing. **One click on Install there installs it; the link alone never
+installs anything.** If the pack is already installed, unknown to the catalog, or cannot be installed in
+this project, the tab says so instead.
+
+- The link works once Unreal has opened a project with GraphCode at least once: the editor registers
+  `graphcode://` for your Windows account (per user, no admin) to the handler GraphCode ships,
+  `Plugins/GraphCode/Resources/mcp-bridge/graphcode-bridge.exe --market-link`. Moving the folder is fine:
+  the next editor start points it at the new place.
+- With no editor open, the link is kept for the next editor you start (for a day) and a message says so.
+  With several editors open, each shows it; install in the one you want.
+- Anything but that one form (another address, a query, `..`, an encoded `/`) is refused with a message,
+  and nothing happens. The request store is `%LOCALAPPDATA%\GraphCode\MarketLinks` (`handler.log` there
+  records what each link did); nothing is written into a project until you press Install.
+- To open a link without a browser: the console command `GraphCode.Market.Link <link>`.
 
 ## Install writes text, nothing else
 
@@ -46,10 +71,25 @@ write path: `gc_apply` with `asset_path` set to the install answer's `main`. Tha
 and needs a GraphCode authoring licence; the Market tab's **Build** button does the same thing. Skip it
 when you only want to use the pack from your own file, which is the usual case.
 
+**Materials and textures.** A pack may bring its own materials (`describe` says `materials: true`): they
+are `.gc` text and install with the pack. It may also offer a texture set (`describe`'s `textures`: how many
+files, how many bytes, with every source and licence in `Textures/ATTRIBUTION.txt`). The textures download
+only when you ask: `install` with `textures:true`, or the **Textures** tick beside Install in the tab.
+Installing again with it adds them to a pack you installed without; an update keeps the ones you have.
+Building the pack makes its materials first, before the first mesh: with the textures, they are imported
+and bound; without them, the same material instances are flat colours measured from those textures. Add
+the textures later and build again: the same instances take the maps in place, and every mesh already
+wearing them shows the change. To use your own material instead, bind it at import, as any slot:
+`shape('<the pack>', LeafBeech = $MyLeaf)`.
+
 **Build choices.** One recipe can offer several things to build: a tier, a state, a map layer. `describe`
 lists them under `choices` (label, file, `asset_path`, `default`, `time`, `builds`). The default is the
 main file. Any other choice is a file of its own that imports the main file: `gc_apply` it by its own
 `asset_path` to build just that choice. They are not separate packs, and none needs another built first.
+
+On GraphCode.dev, each product has a scrollable showcase strip with a photograph of every mesh and its
+name at the bottom left, including tiers and states. Scroll or drag to browse, and open a picture to
+inspect it at a larger size.
 
 **A library pack** (its `build {}` is empty, as with Move pose libraries) has nothing to build. Use it
 from your own file by importing it: `presets:/Game/GraphCodeMarket/<Publisher>/<Name>/<Name>` in a

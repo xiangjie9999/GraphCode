@@ -1,0 +1,21 @@
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/UnderstoryKit  smooth:0.25  shade:60
+
+# UnderstoryGround: builds one group of the understory parts from Understory.gcshape (one file per group: the 8M resident
+# triangle ceiling is per build).
+
+build {
+  SM_Und_Ground_Clover = $DemoClover [pivot=(0, 0, 0)]
+  SM_Und_Ground_Moss = $DemoMoss [pivot=(0, 0, 0)]
+  SM_Und_Fungus_Field = $DemoMushField [pivot=(0, 0, 0)]
+  SM_Und_Fungus_PennyBun = $DemoMushPenny [pivot=(0, 0, 0)]
+  SM_Und_Fungus_FlyAgaric = $DemoMushAgaric [pivot=(0, 0, 0)]
+  SM_Und_Fungus_Bracket = $DemoBracket [pivot=(0, 0, 0)]
+}
+
+DemoClover = mesh() { add($U.KitGroundCover, kind=0, size=40, count=300, heads=9, noise=41, join=none)  uv(keep) }
+DemoMoss = mesh() { add($U.KitGroundCover, kind=1, size=30, count=10, noise=43, join=none)  uv(keep) }
+DemoMushField = mesh() { add($U.KitFungus, kind=0, count=5, size=6, noise=51, join=none)  uv(keep) }
+DemoMushPenny = mesh() { add($U.KitFungus, kind=1, count=3, size=10, noise=53, join=none)  uv(keep) }
+DemoMushAgaric = mesh() { add($U.KitFungus, kind=2, count=3, size=12, noise=55, join=none)  uv(keep) }
+DemoBracket = mesh() { add($U.KitFungus, kind=3, count=4, size=8, noise=57, join=none)  uv(keep) }
+U = shape('/GraphCodeShape/Presets/UnderstoryKit')

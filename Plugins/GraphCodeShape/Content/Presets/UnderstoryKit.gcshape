@@ -1,0 +1,1070 @@
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/UnderstoryKit  smooth:0.25  shade:60
+
+# 1.0.2 (23 Nov 2026): wears the UnderstoryMaterials pack (Codex fern, hazel, boxwood, daisy, poppy, clover and moss art).
+# 1.0.1 (23 Nov 2026): real material renders and per-mesh gallery.
+# UNDERSTORY (Vegetation 2, 23 Nov 2026; owner: "keep going, vegetations, rocks, cliffs"): the plants under the trees,
+# every feature a knob. It imports the VegetationKit preset for its `Leaf`, `Stem`, `Twig` and `Blade`.
+# Frame: z up, the plant's crown at the origin, cm.
+# It builds the ferns; the build choices (shrubs, boxwood, bramble, flowers, conifer, ground and fungi) import it and build the rest, one file per
+# group, because one build holds at most 8M triangles resident across everything it reaches.
+
+# MATERIALS: ferns, hazel, boxwood, daisy, poppy, clover and moss wear the UnderstoryMaterials pack; the other slots name the Foliage and Bark packs.
+# Codex's fungus, bluebell, foxglove and conifer art is not released yet: the nearest released leaf, grass or bark wears those.
+
+build {
+  SM_Und_Frond_Male = $DemoFrondMale [pivot=(0, 0, 0)]
+  SM_Und_Fern_Male = $DemoFernMale [pivot=(0, 0, 0)]
+  SM_Und_Fern_Bracken = $DemoFernBracken [pivot=(0, 0, 0)]
+  SM_Und_Fern_Lady = $DemoFernLady [pivot=(0, 0, 0)]
+}
+
+ShrubBark = material('/Game/GraphCodeMarket/GraphCode/BarkMaterials/Materials/MI_Bark_Oak')
+# the shrub leaf (Codex ShrubSurfaceR1 trial, 23 Nov): hazel here; a build file passes `ShrubLeaf = $Box` for boxwood
+BoxLeaf = material('/Game/GraphCodeMarket/GraphCode/UnderstoryMaterials/Materials/MI_Und_Boxwood')
+ShrubLeaf = material('/Game/GraphCodeMarket/GraphCode/UnderstoryMaterials/Materials/MI_Und_Hazel')
+V = shape('/GraphCodeShape/Presets/VegetationKit', TwigBark = $ShrubBark, LeafBeech = $ShrubLeaf)
+# slots: Codex's fern art is requested (preset-assets, 23 Nov); until then the beech leaf instance and the grass stem
+# fern pinnae (Codex FernSurfaceR1 trial, 23 Nov): male/lady fern, and bracken its own
+LeafFern = material('/Game/GraphCodeMarket/GraphCode/UnderstoryMaterials/Materials/MI_Und_FernMale')
+LeafBracken = material('/Game/GraphCodeMarket/GraphCode/UnderstoryMaterials/Materials/MI_Und_FernBracken')
+FernStem = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Grass_Meadow')
+# flower slots: placeholders on the grass and leaf instances until Codex's petal art lands (preset-assets, 23 Nov)
+FlowerStem = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Grass_Meadow')
+LeafHerb = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Leaf_Beech')
+PetalWhite = material('/Game/GraphCodeMarket/GraphCode/UnderstoryMaterials/Materials/MI_Und_DaisyRay')
+PetalRed = material('/Game/GraphCodeMarket/GraphCode/UnderstoryMaterials/Materials/MI_Und_PoppyPetal')
+PetalBlue = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Leaf_IvyYoung')
+PetalPurple = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Leaf_IvyYoung')
+FlowerDisc = material('/Game/GraphCodeMarket/GraphCode/UnderstoryMaterials/Materials/MI_Und_DaisyDisc')
+FlowerPod = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Grass_Meadow')
+# conifer, ground cover and fungus slots: placeholders until Codex's art lands (preset-assets, 23 Nov)
+NeedleMat = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Leaf_Ivy')
+ConeWood = material('/Game/GraphCodeMarket/GraphCode/BarkMaterials/Materials/MI_Bark_Oak')
+CloverMat = material('/Game/GraphCodeMarket/GraphCode/UnderstoryMaterials/Materials/MI_Und_Clover')
+Moss = material('/Game/GraphCodeMarket/GraphCode/UnderstoryMaterials/Materials/MI_Und_Moss')
+MushCapMat = material('/Game/GraphCodeMarket/GraphCode/BarkMaterials/Materials/MI_Bark_Beech')
+MushStemMat = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Leaf_Birch')
+MushGillMat = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Leaf_Birch')
+MushWartMat = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Leaf_Birch')
+BracketMat = material('/Game/GraphCodeMarket/GraphCode/BarkMaterials/Materials/MI_Bark_Oak')
+
+# =====================================================================================================================
+# FERNS (photos 01-05). A frond is a stalk (the stipe, bare) running on into a rachis carrying PINNAE in near-opposite
+# pairs; each pinna is a narrow leaf deeply lobed into PINNULES. Built FLAT (rachis up +Z, pinnae out to +-Y, their
+# upper faces toward -X), then the whole frond is ARCHED toward +X by one bend, so every pinna follows the curve.
+# =====================================================================================================================
+
+# PINNA: a narrow lobed leaf (`lobes` pinnules a side, `lobe` how deep), turned so its tip runs out to +Y (side 1) or
+# -Y (side -1) with its face toward -X, then swept `tilt` degrees toward the frond's tip.
+Pinna = mesh(len=10, side=1, tilt=20, wr=0.22, lobes=12, lobe=0.6, br=0, age=0, res=0.35, noise=1) {
+  add($V.Leaf, len=$len, wr=$wr, widest=0.35, apex=1.6, base=0.5, lobes=$lobes, lobe=$lobe, lvar=0.15, sinus=1.4, petiole=0.02 * $len, pr=0.01 * $len, curl=0.05 * $len, droop=0.08 * $len, arch=6, rise=0, wave=0.02 * $len, ltwist=4, age=$age, holes=0, res=$res, noise=$noise, join=none)
+  # PVE leaf frame (tip +Z, face +Y) -> tip +-Y, face -X (proper turns, no mirror)
+  if ($side > 0) {
+    warp(to=(-1 * point.y, point.z, -1 * point.x))
+    warp(to=(point.x, point.y * cos($tilt) - point.z * sin($tilt), point.y * sin($tilt) + point.z * cos($tilt)))
+  } else {
+    warp(to=(-1 * point.y, -1 * point.z, point.x))
+    warp(to=(point.x, point.y * cos($tilt) + point.z * sin($tilt), -1 * point.y * sin($tilt) + point.z * cos($tilt)))
+  }
+  if ($br > 0.5) {
+    material($LeafBracken)
+  } else {
+    material($LeafFern)
+  }
+  uv(keep)
+}
+
+# FROND: `len` long, the bottom `stipe` of it bare; `pairs` pinna pairs whose length follows the blade's outline (the
+# widest at `peak` of the blade, a fraction; `plen` the longest pinna as a fraction of `len`), swept more toward the tip;
+# `arch` the degrees the whole frond bends over (a bow toward +X).
+# `bend` where the arch starts (a fraction; -1 = at the top of the stipe, which stays straight); `basew` the lowest
+# pinna's length against the longest (lady fern tapers to small pinnae at the base, male fern less)
+Frond = mesh(len=70, pairs=20, plen=0.22, stipe=0.25, peak=0.3, basew=0.45, arch=110, bend=-1, lobes=12, lobe=0.6, wr=0.22, br=0, age=0, res=0.35, noise=1) {
+  add($V.Stem, len=$len, r=0.005 * $len + 0.12, bend=0, join=none)
+  material($FernStem)
+  $bl = $len * (1 - $stipe)
+  $gap = $bl / max($pairs, 1)
+  loop ($pairs) {
+    $i = output.index
+    $k = $noise * 1009 + 17 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $t = ($i - 0.5) / max($pairs, 1)
+    $pr = 1 - 0.92 * ($t - $peak) / max(1 - $peak, 0.05)
+    if ($t < $peak) {
+      $pr = $basew + (1 - $basew) * $t / max($peak, 0.01)
+    }
+    $l = $plen * $len * $pr * (0.9 + 0.2 * random(seed=$k, min=0, max=1))
+    $tl = 15 + 30 * $t + 8 * (random(seed=$k + 1, min=0, max=1) - 0.5)
+    $z = $len * $stipe + $bl * $t
+    add($Pinna, len=$l, side=1, tilt=$tl, wr=$wr, lobes=$lobes, lobe=$lobe, br=$br, age=$age, res=$res, noise=$k + 2, at=(0, 0.15, $z), join=none)
+    add($Pinna, len=$l * (0.92 + 0.12 * random(seed=$k + 3, min=0, max=1)), side=-1, tilt=$tl, wr=$wr, lobes=$lobes, lobe=$lobe, br=$br, age=$age, res=$res, noise=$k + 4, at=(0, -0.15, $z + 0.35 * $gap), join=none)
+  }
+  # the bow: above `bend` the axis turns through `arch` degrees on a circle toward +X, the stipe below it straight;
+  # the pinnae ride it (critic r1: a frond arched from the ground up read as a stripped bow)
+  $b0 = $stipe
+  if ($bend > -0.5) {
+    $b0 = $bend
+  }
+  $z0 = $len * $b0
+  $R = ($len - $z0) * 57.29578 / max($arch, 1)
+  warp(to=($R - ($R - point.x) * cos(57.29578 * max(point.z - $z0, 0) / $R), point.y, min(point.z, $z0) + ($R - point.x) * sin(57.29578 * max(point.z - $z0, 0) / $R)))
+  uv(keep)
+}
+
+# CROZIER (fiddlehead, photo 04): a young frond still coiled - a stalk whose top `coil` share rolls into a tight spiral
+Crozier = mesh(len=20, coil=0.4, r=0.35, noise=1) {
+  add($V.Stem, len=$len, r=$r, bend=0, join=none)
+  $z0 = $len * (1 - $coil)
+  $rc = 0.12 * $len
+  # past z0 the stalk rolls on a shrinking circle (a spiral): angle grows as the arc over a radius that falls to 40 %
+  warp(to=(point.x + $rc * (1 - 0.6 * max(point.z - $z0, 0) / ($len - $z0)) * (1 - cos(57.29578 * max(point.z - $z0, 0) / $rc)), point.y, min(point.z, $z0) + $rc * (1 - 0.6 * max(point.z - $z0, 0) / ($len - $z0)) * sin(57.29578 * max(point.z - $z0, 0) / $rc)))
+  material($FernStem)
+}
+
+# FERN PLANT: `fronds` fronds round the crown, each its own length, lean and turn; `crozier` young coiled fronds in
+# the middle; species 0 male fern (shuttlecock), 1 bracken (one tall frond a stem, a broad triangular blade held
+# out flat), 2 lady fern (finer, more pinnae, arching further)
+# `patch` spreads the fronds' feet over a patch that many frond lengths across (bracken rises frond by frond from a
+# running rhizome; a male or lady fern grows from one crown, patch 0)
+FernPlant = mesh(species=0, len=70, fronds=9, lvar=0.2, tilt=30, crozier=2, patch=-1, age=0, res=0.35, noise=1) {
+  # male fern (photo 02): a stout shuttlecock, short stipe, blade widest near its middle, firm pinnae
+  $pairs = 26
+  $plen = 0.2
+  $stipe = 0.18
+  $peak = 0.45
+  $basew = 0.5
+  $arch = 70
+  $lobes = 12
+  $lobe = 0.6
+  $wr = 0.26
+  $pt = 0
+  $br = 0
+  if ($species > 0.5) {
+    if ($species < 1.5) {
+      # bracken (photo 01): a straight stipe ~60 % of the height, the blade held out flat, broad and triangular
+      # (longest pinnae at its foot), deeply cut
+      $pairs = 12
+      $plen = 0.3
+      $stipe = 0.58
+      $peak = 0.04
+      $basew = 0.9
+      $arch = 85
+      $lobes = 16
+      $lobe = 0.85
+      $wr = 0.34
+      $pt = 0.7
+      $br = 1
+    } else {
+      # lady fern (photo 03): finer and lighter, widest at 55 %, tapering to small pinnae at the base, arching
+      # further
+      $pairs = 32
+      $plen = 0.19
+      $stipe = 0.14
+      $peak = 0.55
+      $basew = 0.25
+      $arch = 100
+      $lobes = 16
+      $lobe = 0.75
+      $wr = 0.22
+    }
+  }
+  if ($patch > -0.5) {
+    $pt = $patch
+  }
+  loop ($fronds) {
+    $i = output.index
+    $k = $noise * 1009 + 31 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $yaw = 360 * $i / max($fronds, 1) + 25 * (random(seed=$k, min=0, max=1) - 0.5)
+    $l = $len * (1 - $lvar * random(seed=$k + 1, min=0, max=1))
+    # a vase: every other frond stands nearer upright (critic r1: inner fronds ~65 deg)
+    $tl = $tilt * (0.45 + 0.35 * ($i - 2 * floor($i / 2)) + 0.4 * random(seed=$k + 2, min=0, max=1))
+    $pd = 0.5 * $pt * $len * sqrt(random(seed=$k + 5, min=0, max=1))
+    $pa = 360 * random(seed=$k + 6, min=0, max=1)
+    add($Frond, len=$l, pairs=$pairs, plen=$plen, stipe=$stipe, peak=$peak, basew=$basew, arch=$arch * (0.8 + 0.4 * random(seed=$k + 3, min=0, max=1)), lobes=$lobes, lobe=$lobe, wr=$wr, br=$br, age=$age, res=$res, noise=$k + 4, at=($pd * cos($pa), $pd * sin($pa), 0), rotate=(0, -1 * $tl, $yaw), join=none)
+  }
+  loop ($crozier) {
+    $i = output.index
+    $k = $noise * 1009 + 7919 + 13 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    add($Crozier, len=0.22 * $len * (0.7 + 0.6 * random(seed=$k, min=0, max=1)), noise=$k, at=(2 * (random(seed=$k + 1, min=0, max=1) - 0.5), 2 * (random(seed=$k + 2, min=0, max=1) - 0.5), 0), rotate=(0, -8 * random(seed=$k + 3, min=0, max=1), 360 * random(seed=$k + 4, min=0, max=1)), join=none)
+  }
+  uv(keep)
+}
+
+# THE KIT LAYER: every knob clamped
+#   KitFern(species 0 male | 1 bracken | 2 lady, size = frond length 15-200 cm, fronds 1-24, tilt 0-70 deg (how far the
+#           fronds lean out), crozier 0-6 young coiled fronds, age 0-2, noise, budget 0-2)
+#           patch = how many frond lengths the feet spread over (-1 the species' own: bracken 0.7, others 0)
+KitFern = mesh(species=0, size=70, fronds=9, tilt=30, crozier=2, patch=-1, age=0, noise=1, budget=1) {
+  add($FernPlant, species=clamp(floor($species + 0.5), 0, 2), len=clamp($size, 15, 200), fronds=clamp(floor($fronds + 0.5), 1, 24), tilt=clamp($tilt, 0, 70), crozier=clamp(floor($crozier + 0.5), 0, 6), patch=$patch, age=clamp($age, 0, 2), res=0.25 + 0.2 * clamp(floor($budget + 0.5), 0, 2), noise=$noise, join=none)
+  uv(keep)
+}
+
+DemoFrondMale = mesh() { add($Frond, len=70, noise=3, join=none)  uv(keep) }
+DemoFernMale = mesh() { add($KitFern, species=0, size=80, fronds=12, tilt=28, crozier=2, noise=5, budget=0, join=none)  uv(keep) }
+DemoFernBracken = mesh() { add($KitFern, species=1, size=110, fronds=16, tilt=8, crozier=0, noise=7, budget=0, join=none)  uv(keep) }
+DemoFernLady = mesh() { add($KitFern, species=2, size=65, fronds=14, tilt=35, crozier=1, noise=9, budget=0, join=none)  uv(keep) }
+
+# =====================================================================================================================
+# SHRUBS (photos 06-09). A shrub is SHOOTS rising from one base, each a bowed main stem carrying side BRANCHES, each
+# branch carrying leafy TWIGS (the vegetation kit's `Twig`, phyllotaxis and all). Every level is a part placed by a
+# turn, so the shoots fan out, branch round by the golden angle and the leaves face the light.
+# =====================================================================================================================
+
+# BRANCH: `len` long, bowing over by a fifth of it, `twigs` leafy twigs along its outer two thirds and one at the tip
+Branch = mesh(len=40, twigs=3, sp=0, leaf=7, tlen=18, age=0, res=0.3, noise=1) {
+  add($V.Stem, len=$len, r=0.012 * $len + 0.25, bend=0.2 * $len, join=none)
+  loop ($twigs) {
+    $i = output.index
+    $k = $noise * 1009 + 23 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $t = 0.2 + 0.75 * ($i - 0.5) / max($twigs, 1)
+    $ya = 180 * ($i - 2 * floor($i / 2)) - 90 + 40 * (random(seed=$k, min=0, max=1) - 0.5)
+    add($V.Twig, sp=$sp, len=$tlen * (0.8 + 0.4 * random(seed=$k + 1, min=0, max=1)), n=8, leaf=$leaf, age=$age, res=$res, noise=$k + 2, at=(0.2 * $len * $t * $t, 0, $len * $t), rotate=(0, -45 - 15 * random(seed=$k + 3, min=0, max=1), $ya), join=none)
+  }
+  $kt = $noise * 1009 + 977
+  $kt = $kt - 99991 * floor($kt / 99991)
+  add($V.Twig, sp=$sp, len=$tlen, n=9, leaf=$leaf, age=$age, res=$res, noise=$kt, at=(0.2 * $len, 0, $len), rotate=(0, -15, 0), join=none)
+}
+
+# SHOOT: a main stem `len` long carrying `branches` branches up its upper two thirds, round it by the golden angle,
+# leaning out by `fan` degrees, shorter toward the top; a branch continues the tip
+Shoot = mesh(len=110, branches=4, low=0.35, fan=50, twigs=3, sp=0, leaf=7, tlen=18, age=0, res=0.3, noise=1) {
+  add($V.Stem, len=$len, r=0.008 * $len + 0.5, bend=0.15 * $len, join=none)
+  loop ($branches) {
+    $i = output.index
+    $k = $noise * 1009 + 41 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $t = $low + (0.95 - $low) * ($i - 0.5) / max($branches, 1)
+    add($Branch, len=0.5 * $len * (1 - 0.45 * $t) * (0.8 + 0.4 * random(seed=$k, min=0, max=1)), twigs=$twigs, sp=$sp, leaf=$leaf, tlen=$tlen, age=$age, res=$res, noise=$k + 1, at=(0.15 * $len * $t * $t, 0, $len * $t), rotate=(0, -1 * $fan * (0.8 + 0.4 * random(seed=$k + 2, min=0, max=1)), 137.5 * $i + 30 * (random(seed=$k + 3, min=0, max=1) - 0.5)), join=none)
+  }
+  $kt = $noise * 1009 + 653
+  $kt = $kt - 99991 * floor($kt / 99991)
+  add($Branch, len=0.3 * $len, twigs=$twigs, sp=$sp, leaf=$leaf, tlen=$tlen, age=$age, res=$res, noise=$kt, at=(0.15 * $len, 0, $len), rotate=(0, -10, 0), join=none)
+}
+
+# SHRUB PLANT: `stems` shoots from the base, each leaning out `lean` degrees (inner ones upright), its own length and
+# turn. species 0 hazel (upright stems, big rounded leaves), 1 boxwood (many short shoots, dense small leaves, a
+# rounded mass), 2 bramble (long canes arching over to the ground, sparse leaves)
+ShrubPlant = mesh(species=0, h=150, stems=8, branches=4, twigs=3, lean=25, leaf=-1, base=-1, age=0, res=0.3, noise=1) {
+  # hazel (photo 06): a coppice stool, stems nearly upright, leafy to the ground, leaves ~10 cm
+  $sp = 0
+  $lf = 10
+  $tl = 24
+  $fan = 50
+  $bow = 1
+  $low = 0.15
+  $br = 0.06
+  if ($species > 0.5) {
+    if ($species < 1.5) {
+      $lf = 2.5
+      $tl = 12
+      $fan = 60
+      $low = 0.3
+      $br = 0.04
+    } else {
+      $lf = 6
+      $tl = 16
+      $fan = 35
+      $bow = 3.5
+      $low = 0.4
+      $br = 0.05
+    }
+  }
+  if ($leaf > 0) {
+    $lf = $leaf
+  }
+  if ($base > -0.5) {
+    $br = $base / max($h, 1)
+  }
+  loop ($stems) {
+    $i = output.index
+    $k = $noise * 1009 + 59 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $yaw = 360 * $i / max($stems, 1) + 30 * (random(seed=$k, min=0, max=1) - 0.5)
+    $ln = $lean * (0.3 + 0.9 * random(seed=$k + 1, min=0, max=1))
+    $sl = $h * (0.75 + 0.35 * random(seed=$k + 2, min=0, max=1))
+    $bd = $br * $h * sqrt(random(seed=$k + 4, min=0, max=1))
+    add($Shoot, len=$sl, branches=$branches, low=$low, fan=$fan, twigs=$twigs, sp=$sp, leaf=$lf, tlen=$tl, age=$age, res=$res, noise=$k + 3, at=($bd * cos($yaw), $bd * sin($yaw), 0), rotate=(0, -1 * $ln * $bow, $yaw), join=none)
+  }
+  uv(keep)
+}
+
+# SHRUB MASS (form 0): a shrub as gardeners and the photos see it (06 hazel, 07 boxwood): a CROWN, a leafy surface
+# over a rounded envelope, fed by stems from a stool. `twigs` leafy twigs are spread over the envelope by the golden
+# spiral (upper 70 % of an ellipsoid `w` wide and `h` tall, its belly at `belly` of the height), some sunk up to
+# `depth` into it so the mass has thickness; each points out along the envelope's normal, a little toward the light;
+# each is fed by a stem from the stool ring `stool` cm round, so the stems thicken toward the ground as a real
+# shrub's do.
+ShrubMass = mesh(sp=0, h=150, w=150, belly=0.55, low=-0.4, twigs=160, per=1, stems=14, leaf=8, tlen=22, tn=8, arr=0, depth=0.3, stool=8, age=0, res=0.2, noise=1) {
+  $a = 0.5 * $w
+  $b = (1 - $belly) * $h
+  $hc = $belly * $h
+  # the MAIN STEMS (critic r1: one stem per twig read as a firework of spokes from a point): `stems` of them rise from
+  # the stool in a vase to half the crown's radius, two thirds up it, thickening toward the ground
+  $rt = 0.45 * $a
+  $zt = $hc + 0.6 * $b
+  loop ($stems) {
+    $j = output.index
+    $phj = 360 * $j / $stems
+    $L = sqrt(($rt - $stool) * ($rt - $stool) + $zt * $zt)
+    add($V.Stem, len=$L, r=0.35 + 0.008 * $L, bend=0.04 * $L, at=($stool * cos($phj), $stool * sin($phj), 0), rotate=(0, -1 * acos(clamp($zt / $L, -1, 1)), $phj), join=none)
+  }
+  # the LEAFY TWIGS over the envelope (upper part of an ellipsoid `w` wide, `h` tall, its belly at `belly`), some sunk
+  # up to `depth` into it so the crown has body, each pointing out along the normal a little toward the light, each on
+  # a branch from the nearest main stem
+  loop ($twigs) {
+    $i = output.index
+    $zc = 1 - (1 - $low) * ($i - 0.5) / $twigs
+    $rx = sqrt(max(1 - $zc * $zc, 0))
+    $ph = 137.508 * $i
+    $phm = $ph - 360 * floor($ph / 360)
+    $j = floor($phm * $stems / 360 + 0.5)
+    $phj = 360 * $j / $stems
+    $th = 0.8 * acos(clamp($zc, -1, 1))
+    loop ($per) {
+      $q = output.index
+      $k = $noise * 1009 + 13 * $i + 7 * $q
+      $k = $k - 99991 * floor($k / 99991)
+      $d = 1 - $depth * random(seed=$k, min=0, max=1)
+      $pa = $ph + 68.75 * ($q - 1) + 8 * (random(seed=$k + 5, min=0, max=1) - 0.5)
+      $px = $a * $d * $rx
+      $pz = $hc + $b * $d * $zc
+      $x = $px * cos($pa)
+      $y = $px * sin($pa)
+      add($V.Twig, sp=$sp, arr=$arr, len=$tlen * (0.75 + 0.5 * random(seed=$k + 1, min=0, max=1)), n=$tn, leaf=$leaf, age=$age, res=$res, noise=$k + 2, at=($x, $y, $pz), rotate=(0, -1 * $th, $pa + 20 * (random(seed=$k + 3, min=0, max=1) - 0.5)), join=none)
+      # its branch: from the main stem at a little below the twig to the twig's foot
+      $zb = min(0.8 * $pz, $zt)
+      $sr = $stool + ($rt - $stool) * $zb / $zt
+      $sx = $sr * cos($phj)
+      $sy = $sr * sin($phj)
+      $dx = 0.96 * ($x - $sx)
+      $dy = 0.96 * ($y - $sy)
+      $dz = 0.96 * ($pz - $zb)
+      $L = sqrt($dx * $dx + $dy * $dy + $dz * $dz)
+      if ($L > 2) {
+        add($V.Stem, len=$L, r=0.1 + 0.005 * $L, bend=0.04 * $L, at=($sx, $sy, $zb), rotate=(0, -1 * acos(clamp($dz / $L, -1, 1)), atan2($dy, $dx + 0.001)), join=none)
+      }
+    }
+  }
+  uv(keep)
+}
+
+# CANE (bramble): a stem `len` long rising and arching over through `arch` degrees across its top `top` fraction, so
+# its tip comes back down toward the ground (photo 09)
+Cane = mesh(len=200, r=0.6, arch=150, top=0.65) {
+  circle(radius=$r, segments=6)
+  extrude(height=$len)
+  warp(by=(0, 0, 0)) [side, smooth=$len / 6]
+  warp(to=(point.x * (1 - 0.5 * point.z / $len), point.y * (1 - 0.5 * point.z / $len), point.z))
+  $z0 = $len * (1 - $top)
+  $R = $len * $top * 57.29578 / $arch
+  warp(to=($R - ($R - point.x) * cos(57.29578 * max(point.z - $z0, 0) / $R), point.y, min(point.z, $z0) + ($R - point.x) * sin(57.29578 * max(point.z - $z0, 0) / $R)))
+  material($ShrubBark)
+}
+
+# BRAMBLE: `canes` arching canes from a crown, each carrying `twigs` leafy side shoots along its arc, standing up off
+# the cane toward the light
+Bramble = mesh(h=120, canes=9, twigs=10, leaf=6, tlen=16, age=0, res=0.2, noise=1) {
+  loop ($canes) {
+    $i = output.index
+    $k = $noise * 1009 + 71 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $len = 2.2 * $h * (0.7 + 0.5 * random(seed=$k, min=0, max=1))
+    $ar = 120 + 60 * random(seed=$k + 1, min=0, max=1)
+    $yw = 360 * $i / $canes + 30 * (random(seed=$k + 2, min=0, max=1) - 0.5)
+    add($BrambleCane, len=$len, arch=$ar, twigs=$twigs, leaf=$leaf, tlen=$tlen, age=$age, res=$res, noise=$k + 3, rotate=(0, -10 - 15 * random(seed=$k + 4, min=0, max=1), $yw), join=none)
+  }
+  uv(keep)
+}
+
+BrambleCane = mesh(len=200, arch=150, twigs=10, leaf=6, tlen=16, age=0, res=0.2, noise=1) {
+  $top = 0.65
+  add($Cane, len=$len, r=0.35 + 0.002 * $len, arch=$arch, top=$top, join=none)
+  $z0 = $len * (1 - $top)
+  $R = $len * $top * 57.29578 / $arch
+  loop ($twigs) {
+    $i = output.index
+    $k = $noise * 1009 + 17 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $t = 0.25 + 0.72 * ($i - 0.5) / $twigs
+    $s = $len * $t
+    $th = 57.29578 * max($s - $z0, 0) / $R
+    $cx = $R - $R * cos($th)
+    $cz = min($s, $z0) + $R * sin($th)
+    # side shoots stand off the cane, alternating sides, leaning toward the light
+    $sd = 180 * ($i - 2 * floor($i / 2)) - 90
+    add($V.Twig, sp=0, len=$tlen * (0.8 + 0.4 * random(seed=$k, min=0, max=1)), n=7, leaf=$leaf, age=$age, res=$res, noise=$k + 1, at=($cx, 0, $cz), rotate=(0, -35 - 20 * random(seed=$k + 2, min=0, max=1), $sd + 30 * (random(seed=$k + 3, min=0, max=1) - 0.5)), join=none)
+  }
+}
+
+#   KitShrub(species 0 hazel | 1 boxwood | 2 bramble, size = height 30-400 cm, width cm (-1 the species' own),
+#            form 0 a crown (leafy twigs over a rounded envelope, fed by stems; brambles: arching canes) | 1 branching
+#            (shoots, branches, twigs - an open, young shrub), density = leaf cover 0.3-3 (form 0) or twigs per branch
+#            1-6 (form 1), stems 1-24 / branches 0-8 / lean 0-80 / base (form 1), leaf cm (-1 own), age 0-2, noise,
+#            budget 0-2)
+KitShrub = mesh(species=0, size=150, width=-1, form=0, density=1, stems=8, branches=4, lean=25, leaf=-1, base=-1, age=0, noise=1, budget=1) {
+  $sp = clamp(floor($species + 0.5), 0, 2)
+  $h = clamp($size, 30, 400)
+  $res = 0.12 + 0.1 * clamp(floor($budget + 0.5), 0, 2)
+  if ($form < 0.5) {
+    if ($sp > 1.5) {
+      $lf = 6
+      if ($leaf > 0) {
+        $lf = $leaf
+      }
+      add($Bramble, h=$h, canes=clamp(floor(6 + 4 * $density + 0.5), 2, 30), twigs=clamp(floor(6 + 4 * $density + 0.5), 2, 30), leaf=$lf, tlen=16, age=clamp($age, 0, 2), res=$res, noise=$noise, join=none)
+    } else {
+      # hazel (photo 06): ~10 cm leaves on 24 cm twigs, as wide as 0.9 of its height, belly at 0.55;
+      # boxwood (photo 07): 2.5 cm leaves on 12 cm twigs, a ball a little wider than tall, belly at 0.5
+      $lf = 13
+      $tl = 26
+      $tn = 7
+      $ar = 0
+      $pr = 1
+      $dp = 0.6
+      $wd = 0.9 * $h
+      $bl = 0.55
+      $lo = -0.75
+      $ns = 10
+      $st = 0.06 * $h
+      if ($sp > 0.5) {
+        # boxwood (critic r1): a solid flattened dome 1.3x as wide as tall, 2 cm leaves in opposite pairs, a short trunk
+        $lf = 2.6
+        $tl = 7
+        $tn = 9
+        $ar = 1
+        $pr = 2
+        $dp = 0.5
+        $wd = 1.3 * $h
+        $bl = 0.45
+        $lo = -0.45
+        $ns = 5
+        $st = 0.03 * $h
+      }
+      if ($leaf > 0) {
+        $lf = $leaf
+      }
+      if ($width > 0) {
+        $wd = $width
+      }
+      # twigs enough to cover the envelope `density` times: its upper 70 % over what one twig's leaves cover
+      $n = clamp(floor(clamp($density, 0.3, 3) * 0.5 * (1 - $lo) * 12.566 * 0.5 * $wd * 0.5 * $h / ($tl * 2 * $lf * $pr) + 0.5), 10, 500)
+      add($ShrubMass, sp=0, h=$h, w=$wd, belly=$bl, low=$lo, twigs=$n, per=$pr, stems=$ns, leaf=$lf, tlen=$tl, tn=$tn, arr=$ar, depth=$dp, stool=$st, age=clamp($age, 0, 2), res=$res, noise=$noise, join=none)
+    }
+  } else {
+    add($ShrubPlant, species=$sp, h=$h, stems=clamp(floor($stems + 0.5), 1, 24), branches=clamp(floor($branches + 0.5), 0, 8), twigs=clamp(floor($density + 0.5), 1, 6), lean=clamp($lean, 0, 80), leaf=$leaf, base=$base, age=clamp($age, 0, 2), res=$res, noise=$noise, join=none)
+  }
+  uv(keep)
+}
+
+DemoShrubHazel = mesh() { add($KitShrub, species=0, size=260, density=0.85, noise=11, budget=0, join=none)  uv(keep) }
+DemoShrubBox = mesh() { add($KitShrub, species=1, size=100, density=0.7, noise=13, budget=0, join=none)  uv(keep) }
+DemoShrubBramble = mesh() { add($KitShrub, species=2, size=120, density=1.5, noise=15, budget=0, join=none)  uv(keep) }
+
+# =====================================================================================================================
+# WILDFLOWERS (photos 10-13). A flower is a STALK carrying a HEAD; the head is PETALS round a centre (daisy: many
+# narrow white rays round a yellow disc; poppy: four broad cupped petals round a seed pod) or BELLS hung along a
+# raceme (bluebell: an arching scape, bells on one side; foxglove: a tall spike of tubes, largest at the bottom).
+# Every plant stands on a rosette of its own basal leaves.
+# =====================================================================================================================
+
+# STALK: green, tapered to 60 %, bowing `bend` cm toward +X at the top (the vegetation Stem's curve)
+# `arch` > 0 instead turns its top `top` fraction over through `arch` degrees toward +X on a circle (a bluebell's
+# scape), the stalk below it straight
+Stalk = mesh(len=40, r=0.18, bend=2, arch=0, top=0.4) {
+  circle(radius=$r, segments=6)
+  extrude(height=$len)
+  warp(by=(0, 0, 0)) [side, smooth=$len / 4]
+  if ($arch > 0.5) {
+    warp(to=(point.x * (1 - 0.4 * point.z / $len), point.y * (1 - 0.4 * point.z / $len), point.z))
+    $z0 = $len * (1 - $top)
+    $R = $len * $top * 57.29578 / $arch
+    warp(to=($R - ($R - point.x) * cos(57.29578 * max(point.z - $z0, 0) / $R), point.y, min(point.z, $z0) + ($R - point.x) * sin(57.29578 * max(point.z - $z0, 0) / $R)))
+  } else {
+    warp(to=(point.x * (1 - 0.4 * point.z / $len) + $bend * pow(point.z / $len, 2), point.y * (1 - 0.4 * point.z / $len), point.z))
+  }
+  material($FlowerStem)
+}
+
+# PETAL: a leaf outline used as a petal, turned so its tip runs out along +X with its face up (+Z), then raised
+# `cup` degrees out of the flat (0 a flat ray, 60 a poppy cup, negative a reflexed ray)
+Petal = mesh(len=1.5, wr=0.25, widest=0.6, apex=0.6, base=1.4, teeth=0, tooth=0, curl=0.05, wave=0, cup=10, res=0.35, noise=1) {
+  add($V.Leaf, len=$len, wr=$wr, widest=$widest, apex=$apex, base=$base, teeth=$teeth, tooth=$tooth, petiole=0.03 * $len, pr=0.02 * $len, curl=$curl * $len, droop=0, arch=6, rise=4, wave=$wave * $len, skew=0, lvar=0, sweep=0, ltwist=3, age=0, holes=0, res=$res, noise=$noise, join=none)
+  # PVE leaf frame (tip +Z, face +Y) -> tip +X, face +Z (a proper turn)
+  warp(to=(point.z, point.x, point.y))
+  warp(to=(point.x * cos($cup) - point.z * sin($cup), point.y, point.x * sin($cup) + point.z * cos($cup)))
+}
+
+# DISC: a low dome `r` across the base, `h` high (the daisy centre, the poppy seed pod)
+Disc = mesh(r=0.6, h=0.35, slot=0) {
+  curve((0, 0), ($r, 0)@sharp, (0.85 * $r, 0.55 * $h), (0.45 * $r, 0.92 * $h), (0, $h))
+  revolve()
+  if ($slot > 0.5) {
+    material($FlowerPod)
+  } else {
+    material($FlowerDisc)
+  }
+  uv(plane, at=(0, 0, 0), facing=+Z, up=+X, scale=2 * $r, offset=(0.5, 0.5))
+}
+
+# BELL: a thin-walled tube `len` long, `r` round at its mouth, closing to a rounded base, flaring `flare` at the lip,
+# built mouth up along +Z; the plant hangs it
+Bell = mesh(len=1.6, r=0.45, flare=0.35, waist=0.75, slot=0) {
+  curve((0.18 * $r, 0), (0.62 * $r, 0.12 * $len), ($waist * $r, 0.5 * $len), ($r, 0.86 * $len), ((1 + $flare) * $r, $len))
+  revolve(capped=false)
+  shell(0.03 * $len)
+  if ($slot > 0.5) {
+    material($PetalPurple)
+  } else {
+    material($PetalBlue)
+  }
+}
+
+# a basal leaf turned a quarter about its length so its face looks along +X: a positive pitch then lays its tip out
+# toward -X with the face UP (the vegetation kit's FacingLeaf turn); unturned, a rosette leaf stood on its edge
+RosetteLeaf = mesh(len=12, wr=0.3, widest=0.6, apex=1, base=1, teeth=0, tooth=0, res=0.35, noise=1) {
+  add($V.Leaf, len=$len, wr=$wr, widest=$widest, apex=$apex, base=$base, teeth=$teeth, tooth=$tooth, petiole=0.1 * $len, pr=0.015 * $len, curl=0.05 * $len, droop=0.12 * $len, arch=30, rise=15, wave=0.02 * $len, age=0, holes=0, res=$res, noise=$noise, rotate=(0, 0, -90), join=none)
+}
+
+# BASAL ROSETTE: `n` leaves round the foot, each lying out `lie` degrees from upright
+Rosette = mesh(n=6, len=12, wr=0.3, widest=0.6, apex=1, base=1, teeth=0, tooth=0, lie=55, res=0.35, noise=1) {
+  loop ($n) {
+    $i = output.index
+    $k = $noise * 1009 + 37 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    add($RosetteLeaf, len=$len * (0.75 + 0.4 * random(seed=$k, min=0, max=1)), wr=$wr, widest=$widest, apex=$apex, base=$base, teeth=$teeth, tooth=$tooth, res=$res, noise=$k + 1, rotate=(0, $lie * (0.8 + 0.4 * random(seed=$k + 2, min=0, max=1)), 137.5 * $i), join=none)
+  }
+  material($LeafHerb)
+}
+
+# RAY HEAD (daisy): `rays` narrow petals round a disc, cupped `cup`; faces +Z
+RayHead = mesh(rays=21, plen=1.6, pw=0.22, disc=0.55, cup=8, res=0.35, noise=1) {
+  loop ($rays) {
+    $i = output.index
+    $k = $noise * 1009 + 17 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    add($Petal, len=$plen * (0.9 + 0.2 * random(seed=$k, min=0, max=1)), wr=$pw, widest=0.7, apex=0.25, base=1.6, teeth=2, tooth=0.04, cup=$cup + 10 * (random(seed=$k + 1, min=0, max=1) - 0.5), res=$res, noise=$k + 2, at=(0, 0, 0.15 * $disc), rotate=(0, 0, 360 * $i / max($rays, 1) + 6 * random(seed=$k + 3, min=0, max=1)), join=none)
+  }
+  material($PetalWhite)
+  add($Disc, r=$disc, h=0.55 * $disc, slot=0, join=none)
+}
+
+# CUP HEAD (poppy): `n` broad crinkled petals cupped round a pod
+CupHead = mesh(n=4, plen=3.2, cup=50, res=0.35, noise=1) {
+  loop ($n) {
+    $i = output.index
+    $k = $noise * 1009 + 29 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    # two outer petals a little larger and flatter, two inner more upright
+    $o = $i - 2 * floor($i / 2)
+    add($Petal, len=$plen * (1 - 0.12 * $o), wr=1.05, widest=0.62, apex=0.2, base=1.8, curl=0.08, wave=0.06, cup=$cup + 15 * $o, res=$res, noise=$k, at=(0, 0, 0.1), rotate=(0, 0, 90 * $i + 45 * $o + 8 * random(seed=$k + 1, min=0, max=1)), join=none)
+  }
+  material($PetalRed)
+  add($Disc, r=0.45, h=1.0, slot=1, join=none)
+}
+
+# RACEME: `n` bells up the top `span` of a stalk `len` long bowing `bend` cm, all on the +X side (one-sided, as
+# bluebell and foxglove are), each hanging `hang` degrees from the stalk, the lowest the largest
+# With `arch` > 0 the top `span` of the stalk turns over through `arch` degrees and the bells hang plumb from it.
+Raceme = mesh(len=30, span=0.4, bend=6, arch=0, side=50, shrink=0.45, n=8, bl=1.6, br=0.45, flare=0.35, waist=0.75, hang=150, slot=0, noise=1) {
+  add($Stalk, len=$len, r=0.004 * $len + 0.1, bend=$bend, arch=$arch, top=$span, join=none)
+  $z0 = $len * (1 - $span)
+  $R = $len * $span * 57.29578 / max($arch, 1)
+  loop ($n) {
+    $i = output.index
+    $k = $noise * 1009 + 43 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $t = 1 - $span + $span * ($i - 0.5) / max($n, 1)
+    $s = 1 - $shrink * ($i - 1) / max($n, 1)
+    $yaw = $side * (random(seed=$k, min=0, max=1) - 0.5)
+    if ($arch > 0.5) {
+      # on the arc, a short pedicel below it, hanging plumb (mouth down) with a little sway
+      $th = 57.29578 * ($len * $t - $z0) / $R
+      add($Bell, len=$bl * $s, r=$br * $s, flare=$flare, waist=$waist, slot=$slot, at=($R - $R * cos($th) + 0.2 * $yaw / 25, 0.2 * $yaw / 25, $z0 + $R * sin($th) - 0.5 - 0.3 * $s), rotate=(0, 180 + 12 * (random(seed=$k + 1, min=0, max=1) - 0.5), $yaw), join=none)
+    } else {
+      add($Bell, len=$bl * $s, r=$br * $s, flare=$flare, waist=$waist, slot=$slot, at=($bend * $t * $t + 0.3, 0, $len * $t), rotate=(0, -1 * $hang * (0.85 + 0.3 * random(seed=$k + 1, min=0, max=1)), $yaw), join=none)
+    }
+  }
+}
+
+# BUD (poppy): a stalk `len` long hooked over at the top so the egg-shaped bud nods toward the ground
+Bud = mesh(len=30, noise=1) {
+  add($Stalk, len=$len, r=0.004 * $len + 0.1, arch=150, top=0.12, join=none)
+  # the hook's end: the arc's last point, the bud hanging below it
+  $z0 = 0.88 * $len
+  $R = 0.12 * $len * 57.29578 / 150
+  add($Disc, r=0.55, h=1.6, slot=1, at=($R - $R * cos(150), 0, $z0 + $R * sin(150) - 1.2), rotate=(0, 180, 0), join=none)
+}
+
+# FLOWER PLANT: species 0 daisy (oxeye), 1 poppy (common), 2 bluebell, 3 foxglove; `stems` flowering stalks,
+# `h` height, `leaves` basal leaves
+FlowerPlant = mesh(species=0, h=50, stems=3, leaves=8, res=0.35, noise=1) {
+  if ($species < 1.5) {
+    add($Rosette, n=$leaves, len=0.22 * $h, wr=0.28, widest=0.7, apex=1.2, base=1.6, teeth=6 + 4 * $species, tooth=0.06 + 0.1 * $species, lie=60, res=$res, noise=$noise + 5, join=none)
+    loop ($stems) {
+      $i = output.index
+      $k = $noise * 1009 + 71 * $i
+      $k = $k - 99991 * floor($k / 99991)
+      $sl = $h * (0.8 + 0.3 * random(seed=$k, min=0, max=1))
+      $bd = 0.12 * $sl * (random(seed=$k + 1, min=0, max=1) - 0.2)
+      $tl = 8 + 14 * random(seed=$k + 2, min=0, max=1)
+      $yw = 360 * $i / max($stems, 1) + 40 * random(seed=$k + 3, min=0, max=1)
+      add($Stalk, len=$sl, r=0.004 * $sl + 0.1, bend=$bd, rotate=(0, -1 * $tl, $yw), join=none)
+      # two or three small leaves up the stem (oxeye and poppy both carry them), clasping and lying out
+      loop (2 + floor(2 * random(seed=$k + 7, min=0, max=1))) {
+        $j = output.index
+        $sz = $sl * (0.12 + 0.18 * $j)
+        $sx = $bd * pow($sz / $sl, 2)
+        add($RosetteLeaf, len=(0.16 - 0.04 * $j) * $h, wr=0.22, widest=0.55, apex=1.2, base=1.2, teeth=5 + 4 * $species, tooth=0.05 + 0.08 * $species, res=$res, noise=$k + 11 * $j, at=(($sx * cos($tl) + $sz * sin($tl)) * cos($yw), ($sx * cos($tl) + $sz * sin($tl)) * sin($yw), $sz * cos($tl) - $sx * sin($tl)), rotate=(0, 55, $yw + 150 * $j + 40), join=none)
+      }
+      # the head sits on the tip, facing up and a little toward the bow
+      $hx = $bd * cos($tl) + $sl * sin($tl)
+      $hz = $sl * cos($tl) - $bd * sin($tl)
+      if ($species < 0.5) {
+        # head ~1/10 of the stem (critic r1): 20-30 rays round a 1.6 cm disc
+        add($RayHead, rays=20 + floor(10 * random(seed=$k + 4, min=0, max=1)), plen=0.045 * $sl, pw=0.22, disc=0.016 * $sl, cup=6, res=$res, noise=$k + 5, at=($hx * cos($yw), $hx * sin($yw), $hz), rotate=(0, -0.5 * $tl, $yw), join=none)
+      } else {
+        # a 7-9 cm bowl of four petals
+        add($CupHead, plen=4.2, cup=40 + 15 * random(seed=$k + 4, min=0, max=1), res=$res, noise=$k + 5, at=($hx * cos($yw), $hx * sin($yw), $hz), rotate=(0, -0.7 * $tl - 10, $yw), join=none)
+      }
+    }
+    # poppy: nodding buds, each on its own stalk hooked over at the top
+    if ($species > 0.5) {
+      loop (2) {
+        $i = output.index
+        $k = $noise * 1009 + 97 * $i + 3
+        $k = $k - 99991 * floor($k / 99991)
+        $sl = $h * (0.55 + 0.25 * random(seed=$k, min=0, max=1))
+        $yw = 360 * random(seed=$k + 1, min=0, max=1)
+        add($Bud, len=$sl, noise=$k + 2, rotate=(0, -6 - 10 * random(seed=$k + 3, min=0, max=1), $yw), join=none)
+      }
+    }
+  } else {
+    if ($species < 2.5) {
+      # bluebell: long strap leaves arching out, one scape bowing hard at the top, 6-12 bells hanging on one side
+      # 4-6 strap leaves arching out from the base (critic r1: one wide leaf stood up like a lily's)
+      loop ($leaves) {
+        $i = output.index
+        $k = $noise * 1009 + 23 * $i + 5
+        $k = $k - 99991 * floor($k / 99991)
+        add($V.Blade, len=$h * (0.7 + 0.35 * random(seed=$k, min=0, max=1)), w=0.035 * $h, wpos=0.35, tip=1.2, fold=0.008 * $h, lean=18 + 18 * random(seed=$k + 1, min=0, max=1), arc=70 + 40 * random(seed=$k + 2, min=0, max=1), twist=20, roll=0, steps=14, age=0, noise=$k + 3, rotate=(0, 0, 360 * $i / max($leaves, 1) + 30 * random(seed=$k + 4, min=0, max=1)), join=none)
+      }
+      material($LeafHerb)
+      loop ($stems) {
+        $i = output.index
+        $k = $noise * 1009 + 71 * $i
+        $k = $k - 99991 * floor($k / 99991)
+        add($Raceme, len=$h * (0.85 + 0.3 * random(seed=$k, min=0, max=1)), span=0.35, bend=0, arch=150, n=8 + floor(5 * random(seed=$k + 1, min=0, max=1)), bl=2.2, br=0.42, flare=0.5, waist=0.95, hang=180, slot=0, noise=$k + 2, rotate=(0, 6 * random(seed=$k + 3, min=0, max=1), 360 * $i / max($stems, 1) + 50 * random(seed=$k + 4, min=0, max=1)), join=none)
+      }
+    } else {
+      # foxglove: a rosette of large soft leaves, a straight spike, 20-35 tubes on its upper half, largest at the foot
+      add($Rosette, n=$leaves + 4, len=0.3 * $h, wr=0.36, widest=0.4, apex=1.4, base=0.9, teeth=14, tooth=0.02, lie=60, res=$res, noise=$noise + 5, join=none)
+      loop ($stems) {
+        $i = output.index
+        $k = $noise * 1009 + 71 * $i
+        $k = $k - 99991 * floor($k / 99991)
+        add($Raceme, len=$h * (0.85 + 0.25 * random(seed=$k, min=0, max=1)), span=0.45, bend=0.04 * $h, side=150, shrink=0.7, n=28 + floor(12 * random(seed=$k + 1, min=0, max=1)), bl=5, br=1.45, flare=0.25, waist=0.72, hang=105, slot=1, noise=$k + 2, rotate=(0, 4 * random(seed=$k + 3, min=0, max=1), 360 * $i / max($stems, 1) + 50 * random(seed=$k + 4, min=0, max=1)), join=none)
+      }
+    }
+  }
+  uv(keep)
+}
+
+#   KitFlower(species 0 daisy | 1 poppy | 2 bluebell | 3 foxglove, size = height 10-200 cm (-1 the species own),
+#             stems 1-12 (-1 own), leaves 0-24 basal leaves (-1 own), noise, budget 0-2)
+KitFlower = mesh(species=0, size=-1, stems=-1, leaves=-1, noise=1, budget=1) {
+  $sp = clamp(floor($species + 0.5), 0, 3)
+  $h = 55
+  $st = 3
+  $lv = 8
+  if ($sp > 0.5) {
+    $h = 60
+    $st = 2
+    if ($sp > 1.5) {
+      $h = 35
+      $st = 1
+      $lv = 6
+      if ($sp > 2.5) {
+        $h = 130
+        $lv = 10
+      }
+    }
+  }
+  if ($size > 0) {
+    $h = $size
+  }
+  if ($stems > 0) {
+    $st = $stems
+  }
+  if ($leaves > -0.5) {
+    $lv = $leaves
+  }
+  add($FlowerPlant, species=$sp, h=clamp($h, 10, 200), stems=clamp(floor($st + 0.5), 1, 12), leaves=clamp(floor($lv + 0.5), 0, 24), res=0.25 + 0.12 * clamp(floor($budget + 0.5), 0, 2), noise=$noise, join=none)
+  uv(keep)
+}
+
+DemoDaisy = mesh() { add($KitFlower, species=0, stems=4, noise=21, join=none)  uv(keep) }
+DemoPoppy = mesh() { add($KitFlower, species=1, stems=3, noise=23, join=none)  uv(keep) }
+DemoBluebell = mesh() { add($KitFlower, species=2, stems=2, noise=25, join=none)  uv(keep) }
+DemoFoxglove = mesh() { add($KitFlower, species=3, noise=27, join=none)  uv(keep) }
+
+# =====================================================================================================================
+# CONIFER PARTS (photos 14-16). Spruce: short stiff needles all round the shoot, single; pine: long needles in
+# bundles (fascicles) of two; cones of woody scales on a phyllotactic spiral. Parts are built along +Z and lift their
+# own pieces with a warp, so the spiral turns only by yaw.
+# =====================================================================================================================
+
+# NEEDLE: a four-sided needle `len` long, `r` thick, pointed, lying out along +X, then lifted `lift` degrees toward +Z
+Needle = mesh(len=1.8, r=0.05, lift=45) {
+  circle(radius=$r, segments=4)
+  extrude(height=$len)
+  warp(to=(point.x * pow(1 - 0.92 * point.z / $len, 0.6), point.y * pow(1 - 0.92 * point.z / $len, 0.6), point.z))
+  # +Z -> +X (a proper turn), then lift
+  warp(to=(point.z, point.y, -1 * point.x))
+  warp(to=(point.x * cos($lift) - point.z * sin($lift), point.y, point.x * sin($lift) + point.z * cos($lift)))
+  material($NeedleMat)
+}
+
+# CONIFER SHOOT: a woody shoot `len` long; species 0 spruce (single needles round it, `dens` per cm), 1 pine
+# (fascicles of two long needles, `dens` bundles per cm, the shoot bare at the foot)
+ConShoot = mesh(species=0, len=12, dens=7, nlen=-1, lift=-1, r=0.18, noise=1) {
+  # lift = degrees forward from square to the shoot (photos 15-16: spruce needles stand ~60 deg off the shoot, pine
+  # bundles ~40)
+  $nl = 1.5
+  $lf = 28
+  $bare = 0.05
+  if ($species > 0.5) {
+    $nl = 6
+    $lf = 48
+    $bare = 0.3
+  }
+  if ($nlen > 0) {
+    $nl = $nlen
+  }
+  if ($lift > 0) {
+    $lf = $lift
+  }
+  add($Stalk, len=$len, r=$r, bend=0.04 * $len, join=none)
+  material($ConeWood)
+  $n = clamp(floor($dens * $len * (1 - $bare)), 1, 400)
+  loop ($n) {
+    $i = output.index
+    $k = $noise * 1009 + 7 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $t = $bare + (1 - $bare) * ($i - 0.5) / $n
+    # needles shorter toward the tip and leaning further forward there
+    $s = 1 - 0.35 * $t * $t
+    $z = $len * $t
+    $x = 0.04 * $len * $t * $t
+    if ($species > 0.5) {
+      add($Needle, len=$nl * $s * (0.9 + 0.2 * random(seed=$k, min=0, max=1)), r=0.06, lift=$lf + 10 * random(seed=$k + 1, min=0, max=1), at=($x, 0, $z), rotate=(0, 0, 137.5 * $i), join=none)
+      add($Needle, len=$nl * $s * (0.9 + 0.2 * random(seed=$k + 2, min=0, max=1)), r=0.06, lift=$lf + 10 * random(seed=$k + 3, min=0, max=1), at=($x, 0, $z), rotate=(0, 0, 137.5 * $i + 25), join=none)
+    } else {
+      add($Needle, len=$nl * $s * (0.85 + 0.3 * random(seed=$k, min=0, max=1)), r=0.065, lift=$lf + 25 * $t + 8 * random(seed=$k + 1, min=0, max=1), at=($x, 0, $z), rotate=(0, 0, 137.5 * $i), join=none)
+    }
+  }
+}
+
+# CONIFER SPRAY: a leader shoot carrying `side` side shoots in pairs (spruce: flat to the sides; pine: round it),
+# each `fan` degrees out
+ConSpray = mesh(species=0, len=35, side=6, fan=55, dens=7, noise=1) {
+  add($ConShoot, species=$species, len=$len, dens=$dens, r=0.006 * $len + 0.15, noise=$noise, join=none)
+  loop ($side) {
+    $i = output.index
+    $k = $noise * 1009 + 53 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $t = 0.15 + 0.75 * ($i - 0.5) / max($side, 1)
+    $yaw = 180 * ($i - 2 * floor($i / 2)) + 90
+    if ($species > 0.5) {
+      $yaw = 137.5 * $i
+    }
+    add($ConShoot, species=$species, len=0.5 * $len * (1 - 0.6 * $t) * (0.8 + 0.4 * random(seed=$k, min=0, max=1)), dens=$dens, r=0.12, noise=$k + 1, at=(0.04 * $len * $t * $t, 0, $len * $t), rotate=(0, -1 * $fan * (0.85 + 0.3 * random(seed=$k + 2, min=0, max=1)), $yaw), join=none)
+  }
+}
+
+# CONE SCALE: a woody plate `w` wide, `l` long, `t` thick at its base thinning to the rim, lying out along +X, lifted
+# `lift` degrees
+ConeScale = mesh(w=0.9, l=1.0, t=0.18, lift=30, tip=0.5) {
+  curve((0, -0.25 * $w)@sharp, (0.55 * $l, -0.5 * $w), ($l, -0.5 * $tip * $w), ($l, 0.5 * $tip * $w), (0.55 * $l, 0.5 * $w), (0, 0.25 * $w)@sharp, loop=true)
+  extrude(height=$t)
+  warp(to=(point.x, point.y, (point.z - 0.5 * $t) * (1 - 0.6 * point.x / $l) - 0.15 * $l * pow(point.x / $l, 2)))
+  warp(to=(point.x * cos($lift) - point.z * sin($lift), point.y, point.x * sin($lift) + point.z * cos($lift)))
+}
+
+# CONE: `n` scales on the golden spiral up a cone `len` long and `r` round at its widest; species 0 spruce (long,
+# thin scales pressed close, a cigar), 1 pine (thick scales opened `open` degrees, an egg); built along +Z
+Cone = mesh(species=0, len=12, r=1.8, n=-1, open=-1, noise=1) {
+  $nn = 110
+  $op = 22
+  $sw = 1.0
+  $st = 0.08
+  $tp = 0.7
+  if ($species > 0.5) {
+    $nn = 70
+    $op = 55
+    $sw = 1.2
+    $st = 0.35
+    $tp = 0.55
+  }
+  if ($n > 0) {
+    $nn = $n
+  }
+  if ($open > -0.5) {
+    $op = $open
+  }
+  circle(radius=0.3 * $r, segments=8)
+  extrude(height=0.95 * $len)
+  loop ($nn) {
+    $i = output.index
+    $k = $noise * 1009 + 11 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $t = ($i - 0.5) / $nn
+    # the girth: an egg (pine) or a cigar (spruce), widest a third of the way up
+    $g = pow(sin(180 * pow($t, 0.75)), 0.8)
+    $sl = $r * (0.35 + 0.75 * $g)
+    add($ConeScale, w=$sw * $sl * 0.9, l=$sl, t=$st * $sl, lift=$op + 35 * $t + 6 * (random(seed=$k, min=0, max=1) - 0.5), tip=$tp, at=(0, 0, 0.92 * $len * $t), rotate=(0, 0, 137.508 * $i), join=none)
+  }
+  material($ConeWood)
+  uv(keep)
+}
+
+# =====================================================================================================================
+# GROUND COVER (photos 17-18): clover (three round leaflets on a long stalk, white ball heads) and moss cushions.
+# =====================================================================================================================
+
+# CLOVER LEAF: three leaflets on a stalk `len` tall, each `ll` long, lying `lie` degrees out from flat
+CloverLeaf = mesh(len=8, ll=1.2, lie=10, res=0.35, noise=1) {
+  add($Stalk, len=$len, r=0.06, bend=0.15 * $len, join=none)
+  loop (3) {
+    $i = output.index
+    $k = $noise * 1009 + 19 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    add($Petal, len=$ll * (0.9 + 0.2 * random(seed=$k, min=0, max=1)), wr=0.85, widest=0.7, apex=0.3, base=1.3, teeth=10, tooth=0.015, curl=0.04, cup=$lie, res=$res, noise=$k + 1, at=(0.15 * $len, 0, $len), rotate=(0, 0, 120 * $i + 10 * random(seed=$k + 2, min=0, max=1)), join=none)
+  }
+  material($CloverMat)
+}
+
+# CLOVER HEAD: a ball `r` round of small florets on its own stalk
+CloverHead = mesh(len=12, r=0.9, florets=40, noise=1) {
+  add($Stalk, len=$len, r=0.07, bend=0.1 * $len, join=none)
+  loop ($florets) {
+    $i = output.index
+    # florets on a Fibonacci sphere, each a short tube pointing out (the lower ones nodding down, as they fade)
+    $u = 1 - 2 * ($i - 0.5) / $florets
+    $el = asin($u)
+    add($Petal, len=0.55 * $r, wr=0.25, widest=0.6, apex=0.6, base=1, cup=$el, res=0.2, noise=$noise + $i, at=(0.1 * $len, 0, $len + 0.6 * $r), rotate=(0, 0, 137.508 * $i), join=none)
+  }
+  material($PetalWhite)
+}
+
+# CLOVER PATCH: `leaves` leaves and `heads` flower heads spread over a patch `size` across
+CloverPatch = mesh(size=40, leaves=30, heads=4, h=6, res=0.25, noise=1) {
+  loop ($leaves) {
+    $i = output.index
+    $k = $noise * 1009 + 31 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $a = 137.508 * $i
+    $d = 0.5 * $size * sqrt(($i - 0.5) / $leaves) * (0.8 + 0.4 * random(seed=$k, min=0, max=1))
+    add($CloverLeaf, len=$h * (0.4 + 0.7 * random(seed=$k + 1, min=0, max=1)), ll=1.1 + 0.5 * random(seed=$k + 2, min=0, max=1), lie=2 + 10 * random(seed=$k + 3, min=0, max=1), res=$res, noise=$k + 4, at=($d * cos($a), $d * sin($a), 0), rotate=(0, 0, 360 * random(seed=$k + 5, min=0, max=1)), join=none)
+  }
+  loop ($heads) {
+    $i = output.index
+    $k = $noise * 1009 + 83 * $i + 5
+    $k = $k - 99991 * floor($k / 99991)
+    $a = 360 * random(seed=$k, min=0, max=1)
+    $d = 0.4 * $size * random(seed=$k + 1, min=0, max=1)
+    add($CloverHead, len=1.5 * $h * (0.8 + 0.4 * random(seed=$k + 2, min=0, max=1)), noise=$k + 3, at=($d * cos($a), $d * sin($a), 0), rotate=(0, 0, 360 * random(seed=$k + 4, min=0, max=1)), join=none)
+  }
+  uv(keep)
+}
+
+# MOSS CUSHION: a low lumpy dome `r` across, `h` high, its surface broken into small knobs
+MossCushion = mesh(r=12, h=4, lump=1, noise=1) {
+  curve((0, 0), ($r, 0), (0.96 * $r, 0.18 * $h), (0.82 * $r, 0.6 * $h), (0.5 * $r, 0.93 * $h), (0, $h))
+  revolve()
+  warp(to=(point.x * (1 + 0.12 * noise(point.x / 9, point.y / 9, $noise)), point.y * (1 + 0.12 * noise(point.x / 9 + 17, point.y / 9, $noise)), point.z))
+  roughen(by=0.3 * $h * $lump, scale=0.45 * $r, seed=$noise, form=billow) [!bottom]
+  roughen(by=0.06 * $h * $lump, scale=1.5, seed=$noise + 1, form=billow) [!bottom]
+  material($Moss)
+  uv(plane, scale=30)
+}
+
+# =====================================================================================================================
+# FUNGI (photos 19-21): gilled mushrooms in a cluster and bracket fungi as shelves on wood.
+# =====================================================================================================================
+
+# MUSHROOM: a cap `cr` round and `ch` high (domed young, flat old by `age`), gills under it, on a stem `sh` tall and
+# `sr` round with a swollen foot; `warts` white flecks on the cap (fly agaric), `ring` a skirt on the stem
+# `bulb` the foot's swelling, `barrel` the stem's girth at its lower third (penny bun), both against `sr`
+Mushroom = mesh(cr=3, ch=1.8, sh=6, sr=0.5, bulb=1.35, barrel=1.05, age=0.5, gills=36, warts=0, ring=0, noise=1) {
+  # stem: swollen at the foot, a slight lean and curve
+  curve((0, 0), ($bulb * $sr, 0)@sharp, (0.95 * $bulb * $sr, 0.1 * $sh), ($barrel * $sr, 0.32 * $sh), ($sr, 0.65 * $sh), (0.88 * $sr, $sh), (0, $sh))
+  revolve()
+  warp(to=(point.x + 0.06 * $sh * pow(point.z / $sh, 2) * cos(360 * random(seed=$noise, min=0, max=1)), point.y + 0.06 * $sh * pow(point.z / $sh, 2) * sin(360 * random(seed=$noise, min=0, max=1)), point.z))
+  material($MushStemMat)
+  # cap: a dome flattening with age, its rim turned down
+  $h = $ch * (1.4 - 0.85 * clamp($age, 0, 1))
+  add($MushCap, cr=$cr, h=$h, age=$age, gills=$gills, warts=$warts, noise=$noise, at=(0.06 * $sh * cos(360 * random(seed=$noise, min=0, max=1)), 0.06 * $sh * sin(360 * random(seed=$noise, min=0, max=1)), 0.97 * $sh), join=none)
+  if ($ring > 0.5) {
+    add($MushRing, sr=$sr, sh=$sh, at=(0, 0, 0.78 * $sh), join=none)
+  }
+}
+
+MushRing = mesh(sr=0.5, sh=6) {
+  curve((0.95 * $sr, 0), (1.45 * $sr, -0.04 * $sh), (1.65 * $sr, -0.14 * $sh))
+  revolve(capped=false)
+  shell(0.06)
+  material($MushStemMat)
+}
+
+# MUSHROOM CAP: young (age 0) an egg with its rim tucked in toward the stem, old (age 1) opened flat (photo 20);
+# gills underneath (thin radial plates from the stem to the rim), optional warts sitting on the cap's own curve
+MushCap = mesh(cr=3, h=1.5, age=0.5, gills=36, warts=0, noise=1) {
+  $y = 1 - clamp($age, 0, 1)
+  curve((0, $h), ((0.55 + 0.15 * $y) * $cr, (0.9 - 0.04 * $y) * $h), ((0.9 + 0.1 * $y) * $cr, (0.5 - 0.06 * $y) * $h), ((1 - 0.22 * $y) * $cr, (0.12 - 0.08 * $y) * $h)@sharp, ((0.85 - 0.25 * $y) * $cr, (0.1 - 0.06 * $y) * $h), (0.25 * $cr, 0.25 * $h), (0, 0.25 * $h))
+  revolve()
+  material($MushCapMat)
+  loop ($gills) {
+    $i = output.index
+    add($MushGill, cr=(1 - 0.25 * $y) * $cr, h=$h, rotate=(0, 0, 360 * $i / $gills), join=none)
+  }
+  loop ($warts) {
+    $i = output.index
+    $k = $noise * 1009 + 13 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    # even over the cap: phi from the crown, cos(phi) spaced evenly (equal areas), out to 80 deg
+    $ph = acos(1 - (1 - cos(80)) * ($i - 0.5) / max($warts, 1))
+    $a = 137.508 * $i
+    $zb = (0.15 - 0.08 * $y) * $h
+    $rr = $cr * (0.95 + 0.05 * $y) * sin($ph)
+    add($MushWart, w=0.06 * $cr * (0.6 + 0.8 * random(seed=$k, min=0, max=1)), at=($rr * cos($a), $rr * sin($a), $zb + ($h - $zb) * cos($ph) - 0.02 * $cr), rotate=(0, -1 * $ph, $a), join=none)
+  }
+}
+
+MushGill = mesh(cr=3, h=1.5) {
+  points((0.28 * $cr, 0.25 * $h), (0.9 * $cr, 0.12 * $h), (0.75 * $cr, 0.02 * $h), (0.3 * $cr, 0.12 * $h), loop=true)
+  extrude(height=0.02 * $cr)
+  # outline in XY -> the plate stands in XZ, radial along +X
+  warp(to=(point.x, point.z - 0.01 * $cr, point.y))
+  material($MushGillMat)
+}
+
+MushWart = mesh(w=0.25) {
+  curve((0, 0), ($w, 0)@sharp, (0.6 * $w, 0.5 * $w), (0, 0.6 * $w))
+  revolve(segments=6)
+  material($MushWartMat)
+}
+
+# CLUSTER: `n` mushrooms of one species round a spot `across` cm wide, older ones larger and flatter.
+#   species 0 field agaric (pale, gilled), 1 penny bun (fat stem, brown cap), 2 fly agaric (red, warts, ring)
+MushCluster = mesh(species=0, n=4, size=6, across=10, noise=1) {
+  loop ($n) {
+    $i = output.index
+    $k = $noise * 1009 + 47 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $ag = random(seed=$k, min=0, max=1)
+    $s = $size * (0.55 + 0.6 * $ag)
+    $a = 137.508 * $i + 40 * random(seed=$k + 1, min=0, max=1)
+    $d = 0.5 * $across * sqrt(($i - 0.5) / $n)
+    if ($species < 0.5) {
+      add($Mushroom, cr=0.5 * $s, ch=0.34 * $s, sh=0.6 * $s, sr=0.12 * $s, age=$ag, gills=40, ring=1, noise=$k + 2, at=($d * cos($a), $d * sin($a), 0), rotate=(0, 0, 360 * random(seed=$k + 3, min=0, max=1)), join=none)
+    } else {
+      if ($species < 1.5) {
+        add($Mushroom, cr=0.55 * $s, ch=0.4 * $s, sh=0.75 * $s, sr=0.2 * $s, bulb=1.15, barrel=1.4, age=0.6 * $ag, gills=0, noise=$k + 2, at=($d * cos($a), $d * sin($a), 0), rotate=(0, 0, 360 * random(seed=$k + 3, min=0, max=1)), join=none)
+      } else {
+        add($Mushroom, cr=0.6 * $s, ch=0.46 * $s, sh=1.2 * $s, sr=0.12 * $s, bulb=1.9, age=$ag, gills=44, warts=90, ring=1, noise=$k + 2, at=($d * cos($a), $d * sin($a), 0), rotate=(0, 0, 360 * random(seed=$k + 3, min=0, max=1)), join=none)
+      }
+    }
+  }
+  uv(keep)
+}
+
+# BRACKET: a shelf reaching `d` out from the wood and `w` wide along it (the wood face is the plane x = 0, the shelf
+# grows toward +X): half a turned profile, thick where it grows from the wood, thinning to a rounded margin `t` at the
+# root, the top sloping down and out and banded by `bands` concentric growth ridges (photo 21 family: a polypore)
+Bracket = mesh(w=14, d=8, t=2.5, bands=6, noise=1) {
+  curve((0, 0), (0.6 * $d, 0.1 * $t), (0.97 * $d, 0.22 * $t), ($d, 0.32 * $t), (0.9 * $d, 0.42 * $t), (0.5 * $d, 0.78 * $t), (0, $t))
+  revolve(degrees=180)
+  # the half turn spans +Y: turn it to grow toward +X, widen it along the wood to `w`, and band the top
+  warp(to=(point.y, -0.5 * $w / $d * point.x, point.z + 0.12 * $t * sin(360 * $bands * sqrt(point.x * point.x + point.y * point.y) / $d) * clamp(point.z / (0.3 * $t), 0, 1)))
+  roughen(by=0.05 * $t, scale=0.5 * $d, seed=$noise)
+  material($BracketMat)
+}
+
+# BRACKET TIER: `n` shelves stacked up a trunk face, overlapping like roof tiles, smaller upward
+BracketTier = mesh(n=4, size=14, noise=1) {
+  loop ($n) {
+    $i = output.index
+    $k = $noise * 1009 + 61 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $s = $size * (1 - 0.15 * ($i - 1)) * (0.85 + 0.3 * random(seed=$k, min=0, max=1))
+    add($Bracket, w=$s, d=0.5 * $s, t=0.26 * $s, bands=5 + floor(4 * random(seed=$k + 1, min=0, max=1)), noise=$k + 2, at=(0, 0.25 * $size * (random(seed=$k + 3, min=0, max=1) - 0.5), 0.13 * $size * ($i - 1)), rotate=(0, 0, 18 * (random(seed=$k + 4, min=0, max=1) - 0.5)), join=none)
+  }
+  uv(keep)
+}
+
+#   KitConifer(part 0 spray | 1 shoot | 2 cone, species 0 spruce | 1 pine, size cm (-1 own), density (-1 own), noise)
+KitConifer = mesh(part=0, species=0, size=-1, density=-1, noise=1) {
+  $sp = clamp(floor($species + 0.5), 0, 1)
+  $pt = clamp(floor($part + 0.5), 0, 2)
+  # needles per cm (photo 16: spruce ~10 a cm all round; photo 15: pine ~4 bundles a cm)
+  $dn = 26 - 22 * $sp
+  if ($density > 0) {
+    $dn = $density
+  }
+  if ($pt < 0.5) {
+    $s = 40
+    if ($size > 0) {
+      $s = $size
+    }
+    add($ConSpray, species=$sp, len=clamp($s, 10, 150), side=6, fan=55 - 15 * $sp, dens=$dn, noise=$noise, join=none)
+  } else {
+    if ($pt < 1.5) {
+      $s = 14
+      if ($size > 0) {
+        $s = $size
+      }
+      add($ConShoot, species=$sp, len=clamp($s, 3, 60), dens=$dn, noise=$noise, join=none)
+    } else {
+      $s = 12 - 5 * $sp
+      if ($size > 0) {
+        $s = $size
+      }
+      add($Cone, species=$sp, len=clamp($s, 2, 30), r=(0.15 + 0.25 * $sp) * clamp($s, 2, 30), noise=$noise, join=none)
+    }
+  }
+  uv(keep)
+}
+
+#   KitGroundCover(kind 0 clover | 1 moss, size cm across, count (clover leaves; moss lumpiness x10), heads, noise)
+KitGroundCover = mesh(kind=0, size=40, count=30, heads=4, noise=1) {
+  if ($kind < 0.5) {
+    add($CloverPatch, size=clamp($size, 5, 200), leaves=clamp(floor($count + 0.5), 1, 300), heads=clamp(floor($heads + 0.5), 0, 40), noise=$noise, join=none)
+  } else {
+    add($MossCushion, r=0.5 * clamp($size, 4, 200), h=0.38 * clamp($size, 4, 200), lump=clamp($count / 10, 0, 3), noise=$noise, join=none)
+  }
+  uv(keep)
+}
+
+#   KitFungus(kind 0 field agaric | 1 penny bun | 2 fly agaric | 3 bracket tier, count 1-12, size cm, noise)
+KitFungus = mesh(kind=0, count=4, size=6, noise=1) {
+  if ($kind < 2.5) {
+    add($MushCluster, species=clamp(floor($kind + 0.5), 0, 2), n=clamp(floor($count + 0.5), 1, 12), size=clamp($size, 1, 30), across=2 * clamp($size, 1, 30), noise=$noise, join=none)
+  } else {
+    add($BracketTier, n=clamp(floor($count + 0.5), 1, 12), size=clamp(2 * $size, 3, 60), noise=$noise, join=none)
+  }
+  uv(keep)
+}
+
+DemoSpraySpruce = mesh() { add($KitConifer, part=0, species=0, noise=31, join=none)  uv(keep) }
+DemoSprayPine = mesh() { add($KitConifer, part=0, species=1, noise=33, join=none)  uv(keep) }
+DemoConeSpruce = mesh() { add($KitConifer, part=2, species=0, noise=35, join=none)  uv(keep) }
+DemoConePine = mesh() { add($KitConifer, part=2, species=1, noise=37, join=none)  uv(keep) }
+DemoClover = mesh() { add($KitGroundCover, kind=0, size=40, count=300, heads=9, noise=41, join=none)  uv(keep) }
+DemoMoss = mesh() { add($KitGroundCover, kind=1, size=30, count=10, noise=43, join=none)  uv(keep) }
+DemoMushField = mesh() { add($KitFungus, kind=0, count=5, size=6, noise=51, join=none)  uv(keep) }
+DemoMushPenny = mesh() { add($KitFungus, kind=1, count=3, size=10, noise=53, join=none)  uv(keep) }
+DemoMushAgaric = mesh() { add($KitFungus, kind=2, count=3, size=12, noise=55, join=none)  uv(keep) }
+DemoBracket = mesh() { add($KitFungus, kind=3, count=4, size=8, noise=57, join=none)  uv(keep) }

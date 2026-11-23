@@ -260,4 +260,18 @@ public:
 	using FTargetMeshObserver = TFunction<void(const FString& /*DocumentPath*/, const FString& /*PackagePath*/,
 		const FString& /*Entry*/, const UE::Geometry::FDynamicMesh3& /*Mesh*/)>;
 	static void SetTargetMeshObserverForTests(FTargetMeshObserver Observer);
+
+	/**
+	 * **TEST-ONLY: LIFTS "A BUILT ASSET NEVER GOES INTO A PLUGIN" FOR AS LONG AS IT LIVES** (owner, 2026-11-20). Every
+	 * build target and bake output must lie under `/Game/`; a spec that has to watch a target outside it pass the
+	 * resolver holds one of these. No caller in the product, the bridge or a tool makes one, and nothing a file or a
+	 * request says can open it.
+	 */
+	struct GRAPHCODESHAPE_API FPluginTargetsForTests
+	{
+		FPluginTargetsForTests();
+		~FPluginTargetsForTests();
+		FPluginTargetsForTests(const FPluginTargetsForTests&) = delete;
+		FPluginTargetsForTests& operator=(const FPluginTargetsForTests&) = delete;
+	};
 };

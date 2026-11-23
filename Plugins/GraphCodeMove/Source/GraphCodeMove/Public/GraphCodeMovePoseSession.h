@@ -56,6 +56,12 @@ struct GRAPHCODEMOVE_API FGcMovePoseResult
 	double SolveRigMs = 0.0, SolveInitializeMs = 0.0;
 	/** Inside PrepareMs when only the text was read again (N1): reading it with the parameter pass, binding, the resolve, the checks (ms). */
 	double ParseMs = 0.0, BindMs = 0.0, ResolveMs = 0.0, CheckMs = 0.0;
+	/** RULING 112 PRESS PREVIEW: asked as a preview (Pose with bPreview) and something in it was previewed: the pose is not yet what a build gives (the tab shows
+	 * "Refining..." and asks the full pass when the press or drag ends). Previewed says what, one line each. Never true for a pose asked without bPreview. */
+	bool bPreview = false;
+	TArray<FString> Previewed;
+	/** Inside PrepareMs: the keys of a pose(steps) list solved alone (ms). */
+	double StillsMs = 0.0;
 
 	/** Every bone's transform in the component's space (parents before children, as a reference skeleton orders them). */
 	void ComponentSpace(TArray<FTransform>& Out) const;
@@ -96,8 +102,10 @@ public:
 	/** Choose another clip of the file (a pose of the strip), named as a build line shows it: `KZ6`, `$KZ6` or the asset `A_T_KZ6`. */
 	bool SetClip(const FString& Clip, FString& OutError);
 
-	/** The chosen clip's pose as written, from this text. False with the build's own refusal. */
-	bool Pose(const FString& ProgramText, FGcMovePoseResult& Out, FString& OutError);
+	/** The chosen clip's pose as written, from this text. False with the build's own refusal. RULING 112 PRESS PREVIEW: bPreview (the tab's press or drag only)
+	 * lets the ask preview what is slow (GraphCodeMovePoseAccess.h, FPreview); Out.bPreview then says whether it did. Apply, Build now and every other caller
+	 * leave it false, and get the full pass. */
+	bool Pose(const FString& ProgramText, FGcMovePoseResult& Out, FString& OutError, bool bPreview = false);
 
 	/** Only read the text: the clips, the character, which asset each build line writes; no solve. THE OWNER, 19 Nov ("it should be loading the
 	 * animation, not rebuilding it every time"; Saved/Research/MOVE-PARAM1/REVIEW-LOAD-NOT-BUILD.md): this is the header and the build lines read

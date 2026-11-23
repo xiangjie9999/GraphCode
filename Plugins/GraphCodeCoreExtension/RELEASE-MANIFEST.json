@@ -3,7 +3,7 @@
   "phase": "binary-only-product",
   "readyToSend": false,
   "plugin": "GraphCodeCoreExtension",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "engine": "5.7.4",
   "engineBuildId": "47537391",
   "platform": "Win64",

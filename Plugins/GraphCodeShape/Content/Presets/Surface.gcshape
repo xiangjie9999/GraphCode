@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.5  shade:40
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Surface  smooth:0.5  shade:40
 
 # SURFACE — L2 Primitives, the finishing vocabulary. One geometric act each,
 # named. `Docs/GC-SHAPE-PRESET-LIBRARY.md` §3, L2.

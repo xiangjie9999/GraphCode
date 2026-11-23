@@ -290,6 +290,27 @@ kind; a kind on a banded edge.
 For a turned kind, `layers=` must agree with its turns: `rim($Low, turned(2cm, twice), layers=3)` reads,
 `rim($Low, turned(2cm), layers=4)` is refused ("stands 2 layers"), `layers=1` is refused (2 or more).
 
+### Rows where the machine sews them: `stitch($Edge, at=turn, ...)`
+
+*Added 22 Nov 2026; parsed and built.* A hem's stitching sits where its turn puts it, so write the rows from
+the edge's own turn, not as numbers you place by hand. `at=turn` sews the first needle at the edge's
+declared turned depth: its own `rim($Edge, turned=...)`, else the garment's `construct(rim=(turned=...))`.
+`inset=` moves that needle inside the turn's inner edge. `needles=n` with `gauge=` sews a machine's
+parallel rows, each one gauge nearer the edge. Change the turn and the rows follow.
+
+```gcgarment
+# A tee's coverstitch: the left needle even with the turn's raw edge, a twin needle 4.8 mm apart
+# (Docs/Research/knit-hem-coverstitch.md). On a 2.54 cm turn: rows at 2.54 and 2.06 cm.
+stitch($Hem, at=turn, needles=2, gauge=4.8mm, every=1.9mm)
+# A jeans hem edge-stitched 2 mm inside a 1.27 cm turn: one row at 1.07 cm.
+stitch($Ankle_R, at=turn, inset=2mm)
+```
+
+Each row is built as if written with its own `offset=`, and the build's line says where each landed.
+Refused by name: `at=` other than `turn`; `at=turn` with `offset=`; `inset=` without `at=turn`;
+`needles=` 2 or more without `gauge=`; `gauge=` with one needle; an edge with no turn; an inset as deep
+as the turn; and a needle that would sew past the edge.
+
 ### A hem turned as real cloth: `ply` on an edge
 
 *Added 15 Nov 2026; parsed; builds as the relief of two layers until the edge slices land.* A turned edge
@@ -375,9 +396,9 @@ A crease down a trouser leg or a sleeve is the same word with no width: `CreaseR
 
 ## The switches
 
-Four console variables change how the build treats an edge or a cut. Set one before a build; where it
-says something, the build prints a line saying what it did. The last two ship **on** (19 Nov) and need nothing
-written; the switch is there for comparing.
+Seven console variables change how the build treats an edge, a cut or a part. Set one before a build; where it
+says something, the build prints a line saying what it did. All but `TurnedPliesCarry` and `RemeshTurnsBack` ship
+**on** (19, 22 and 23 Nov) and need nothing written; the switch is there for comparing.
 
 | Switch | Values | What it does |
 |---|---|---|
@@ -385,6 +406,9 @@ written; the switch is there for comparing.
 | `gc.Garment.RemeshTurnsBack` | `1` (default), `0`, `2` | Only in an editor built with the automation tests, and only for comparing. `1`: the remesh keeps split-only the two tips of a closed slit whose lips lie on each other (a cut across as laid). `0`: that rule off, as before 15 Nov. `2`: every point where an open edge turns back on itself, the 15 Nov form of the rule. In any other build the rule is always `1`. *Coded 16 Nov 2026, not yet run* |
 | `gc.Garment.BandWindLevel0` | `1` (default), `0` | `1`: the nose band of a fold (the faces that join its two layers round a grown round, as at a cuff or collar) is wound as the skin face it joins, so it shows as cloth and not as a dark ring. `0`: wound as builds before 19 Nov did. Level 2 of `gc.Garment.OneFold` and up always use the new rule. *Default on 19 Nov* |
 | `gc.Garment.CutLips` | `1` (default), `0` | `1`: the two lips of a `cut()` (the sides that stand a hairline apart) are the same cloth's neighbours when the hang starts, and are not pushed apart again. `0`: every such pair is laid apart, as before. The LinenTunic's 30 pairs became 0. *Default on 19 Nov* |
+| `gc.Garment.OverLipUnder` | `1` (default), `0` | Reaches only `extend(..., over)`. `1`: the cut's other lip, under the over-front's root, is set in under it by the over-front's laid distance (never nearer the skin than the hang's pair contact), as an under front's edge lies a stack under the front laid on it; the build's note gives the count. `0`: that lip stays on the cut's line, as before. On the double-breasted coat probe the laid crossings fell from 81 to 26. *Default on 22 Nov* |
+| `gc.Garment.HoldNotThrough` | `1` (default since 23 Nov), `0` | `1`: a part's hold never presses a piece sewn on the cloth (a lap, a placket) through the cloth it lies on; a point whose press would reach that cloth stays where the hang left it, and the build says how many and by how much. On the long coat its outer button column had pressed the lap 0.34-0.47 cm through the front - 55 crossings and a sunk button; with it the coat is clean. `0`: unchecked, as before. |
+| `gc.Garment.PartsFollowHang` | `1` (default since 23 Nov), `0` | `1`: a part placed by a ring in space (`add($Kit.BeltLoop, at=$LoopRow@0.125)`) is placed where the hang carried the cloth laid at its place, so it stays on the cloth it was sewn to: belt loops end at the band's top edge instead of standing up to 1 cm above it, a back label stays inside the band. Parts placed on a cloth edge, a part's point or over the cloth were already on the hung cloth and are unchanged. `0`: cast from the place as laid, as before. |
 
 ## Experimental, unrendered: woven fabric looks
 

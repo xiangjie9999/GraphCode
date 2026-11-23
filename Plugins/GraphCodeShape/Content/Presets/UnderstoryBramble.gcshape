@@ -1,0 +1,11 @@
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/UnderstoryKit  smooth:0.25  shade:60
+
+# UnderstoryBramble: one shrub per file (a shrub's nested twigs, branches and shoots all stay resident: two shrubs pass the 8M
+# triangle ceiling of one build).
+
+build {
+  SM_Und_Shrub_Bramble = $DemoShrubBramble [pivot=(0, 0, 0)]
+}
+
+DemoShrubBramble = mesh() { add($U.KitShrub, species=2, size=120, density=1.5, noise=15, budget=0, join=none)  uv(keep) }
+U = shape('/GraphCodeShape/Presets/UnderstoryKit')

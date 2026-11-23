@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-19T13:14:37.977Z",
+  "generatedAt": "2026-11-21T15:29:05.976Z",
   "source": {
     "url": "http://localhost:3000",
     "projectName": "OraStudio",
@@ -928,7 +928,14 @@
     {
       "name": "capture_viewport",
       "description": "Capture a screenshot of the active viewport.\n\nCaptures the current view from either Play-In-Editor (if running) or the active editor viewport. Useful for visual verification of scene changes.\n\nOutput: 1024x576 JPEG image encoded as base64 string.\n\nUse cases:\n- Verify actor placement after spawning/moving\n- Check lighting changes\n- Document scene state\n- Debug visual issues\n\nReturns: Base64-encoded JPEG image data.",
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "camera",
+          "type": "object",
+          "description": "Optional, editor viewport only: {location:[x,y,z], look_at:[x,y,z]} or {location, rotation:[pitch,yaw,roll]} in world cm. The level viewport is aimed there for this one picture and put back where the user left it. This is the way to photograph what the editor actually draws (PCG output, foliage, instanced meshes) from a chosen place. Refused while Play or Simulate is running.",
+          "required": false
+        }
+      ],
       "annotations": {
         "readOnlyHint": true,
         "destructiveHint": false,
@@ -2006,7 +2013,7 @@
     },
     {
       "name": "gc_market",
-      "description": "The GraphCode Market: signed packs of GraphCode text (shape presets, Move pose libraries, guides,\nagent skills) to\nfind, install into this project and use. Free; no purchase, no entitlement check.\n\n  mode:\"search\", target:\"chip\"                      -> packs whose title, entries, tags or summary match\n  mode:\"search\", kind:\"shape\", state:\"installed\"     -> filters, no words needed\n  mode:\"describe\", pack:\"GraphCode/Damage\"          -> form, library, entries with every setting, choices,\n                                                     needs, used by, requires, description\n  mode:\"install\", pack:\"GraphCode/Damage\", dry_run:true -> what would be written, nothing written\n  mode:\"install\", pack:\"GraphCode/Damage\"           -> installs it and every pack it needs, first\n  mode:\"list\" | mode:\"update\" [pack] | mode:\"remove\", pack\n\nEVERY PACK ANSWER CARRIES EACH ENTRY'S IMPORT LINE AND CALL EXAMPLE, ready to paste into a file.\nA pack installs to /Game/GraphCodeMarket/<Publisher>/<Name>/ and is recorded in\nContent/GraphCodeMarket/market.lock.json; gc_search kind:\"preset\" then finds its entries with\nsource:\"market\". A skill pack is also copied to .claude/skills/<Name>/, and the answer says so.\n\nNOTHING IS WRITTEN UNLESS EVERYTHING CHECKS: the catalog's signature, then every file's SHA-256,\nthen the dependencies (each a minimum version within its major) and the products each pack\nrequires. A pack is written as one swap: a failure leaves the old version whole. Each refusal\nnames its code, the pack, the file and the reason: bad_signature, bad_catalog, hash_mismatch,\nbad_id, path_escape, dependency_cycle, version_conflict, missing_product, missing_pack,\nedited_files, needed_by, no_content_folder, not_installed, bad_lock, skill_exists, bad_query,\nunreachable, write_failed, cancelled, outside_pack (a file writes or reads outside its pack).\n\nupdate never writes over a file you edited (edited_files names them); remove moves the pack's\ntext to the trash (Content/__MCPTrash, never emptied for you), refuses while another installed pack\nneeds it, and leaves assets you built. Building a pack's assets is NOT this verb: gc_apply its main\nfile, an authoring write that needs a GraphCode authoring licence. `main` in the install and describe\nanswers is the main file's asset path WITHOUT its extension (/Game/GraphCodeMarket/GraphCode/Damage/Damage):\npass it to gc_apply as asset_path. A pack's `form` says what it is (Operation, Mesh, Mesh + Operation,\nPoses, Guide, Skill). A LIBRARY (library:true: every file builds nothing, e.g. the Move pose libraries)\nhas no build: use it from your own file (a Move library's `use` line goes in your clip file's header).",
+      "description": "The GraphCode Market: signed packs of GraphCode text (shape presets, Move pose libraries, guides,\nagent skills) to\nfind, install into this project and use. Free; no purchase, no entitlement check.\n\n  mode:\"search\", target:\"chip\"                      -> packs whose title, entries, tags or summary match\n  mode:\"search\", kind:\"shape\", state:\"installed\"     -> filters, no words needed\n  mode:\"describe\", pack:\"GraphCode/Damage\"          -> form, library, entries with every setting, choices,\n                                                     needs, used by, requires, description\n  mode:\"install\", pack:\"GraphCode/Damage\", dry_run:true -> what would be written, nothing written\n  mode:\"install\", pack:\"GraphCode/Damage\"           -> installs it and every pack it needs, first\n  mode:\"list\" | mode:\"update\" [pack] | mode:\"remove\", pack\n\nEVERY PACK ANSWER CARRIES EACH ENTRY'S IMPORT LINE AND CALL EXAMPLE, ready to paste into a file.\nA pack installs to /Game/GraphCodeMarket/<Publisher>/<Name>/ and is recorded in\nContent/GraphCodeMarket/market.lock.json; gc_search kind:\"preset\" then finds its entries with\nsource:\"market\". A skill pack is also copied to .claude/skills/<Name>/, and the answer says so.\n\nNOTHING IS WRITTEN UNLESS EVERYTHING CHECKS: the catalog's signature, then every file's SHA-256,\nthen the dependencies (each a minimum version within its major) and the products each pack\nrequires. A pack is written as one swap: a failure leaves the old version whole. Each refusal\nnames its code, the pack, the file and the reason: bad_signature, bad_catalog, hash_mismatch,\nbad_id, path_escape, dependency_cycle, version_conflict, missing_product, missing_pack,\nedited_files, needed_by, no_content_folder, not_installed, bad_lock, skill_exists, bad_query,\nunreachable, write_failed, cancelled, outside_pack (a file writes or reads outside its pack).\n\nupdate never writes over a file you edited (edited_files names them); remove moves the pack's\ntext to the trash (Content/__MCPTrash, never emptied for you), refuses while another installed pack\nneeds it, and leaves assets you built. Building a pack's assets is NOT this verb: gc_apply its main\nfile, an authoring write that needs a GraphCode authoring licence. `main` in the install and describe\nanswers is the main file's asset path WITHOUT its extension (/Game/GraphCodeMarket/GraphCode/Damage/Damage):\npass it to gc_apply as asset_path. A pack's `form` says what it is (Operation, Mesh, Mesh + Operation,\nPoses, Guide, Skill). A LIBRARY (library:true: every file builds nothing, e.g. the Move pose libraries)\nhas no build: use it from your own file (a Move library's `use` line goes in your clip file's header).\n\nMATERIALS AND TEXTURES (R20): a pack may bring its own materials (describe says materials:true) and an\nOPTIONAL texture set (describe's textures: files and bytes). install downloads the textures only with\ntextures:true; installing again with it adds them to a pack installed without. Building the pack (gc_apply\nits main file, or the tab's Build) first makes its materials: with the textures, imported and bound; without,\nflat colours under the same names, upgraded in place once the textures are installed and it is built again.",
       "parameters": [
         {
           "name": "mode",
@@ -2068,6 +2075,13 @@
           "type": "string",
           "description": "install: an exact version. Omit for the newest. One version of a pack per project.",
           "required": false
+        },
+        {
+          "name": "textures",
+          "type": "boolean",
+          "description": "install: also download the pack's optional textures (describe says how many and how large). Without them its materials build as flat colours. Installing again with textures:true adds them to a pack installed without (refused, edited_files, when you changed its files). An update keeps textures you have. Default false.",
+          "required": false,
+          "default": "false"
         },
         {
           "name": "dry_run",
@@ -3627,6 +3641,13 @@
           "description": "Custom timeout in milliseconds, 1000 to 86400000 (one day); default 120000 = 2 minutes",
           "required": false,
           "default": "120000"
+        },
+        {
+          "name": "priority",
+          "type": "number",
+          "description": "Whole number 1 (background) to 5 (highest); default 2. Among queued tasks the highest starts first; it never interrupts a running task or reorders one client's own calls. A waiting task gains one level every 120 s, up to 4.",
+          "required": false,
+          "default": "2"
         }
       ],
       "annotations": {

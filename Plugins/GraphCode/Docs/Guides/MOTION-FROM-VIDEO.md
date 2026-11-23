@@ -103,8 +103,10 @@ model does to colour, which is what the reader is for. Read with both where the 
 
 ## The joint reader is a separate, optional download
 
-GraphCode does not include the joint reader or anything it runs on; nothing of it is packaged with the plugin. Install it only
-if you read videos with no bones drawn (or both), on a PC with an NVIDIA graphics card:
+The joint reader runs on its own Python with PyTorch, on a PC with an NVIDIA graphics card. It is not in the plugin package (it is
+several gigabytes); the Train window's **Set up...** downloads and installs it once per PC, after saying what it fetches and asking
+(`picture_route.py setup`: a virtual environment made by the editor's own Python in `%LOCALAPPDATA%/GraphCode/PictureRoute/venv`,
+the DINOv2 cache beside it in `torchhub`). It is needed only to read videos with no bones drawn (or both), and to read pictures:
 
 | What | Where it comes from | Size |
 |---|---|---|
@@ -150,7 +152,7 @@ own licence and a sign-up; DINOv2's Apache-2.0 needs only its notice kept.
 
 The still-picture route below is **not tied to the cat**. It reads the character's own GraphCode files, so a character with a
 `.gcrig` (its feet declared as `contacts`), an IK rig and a skeletal mesh runs it without editing a constant. One script,
-`Tools/VideoCapture/picture_route.py`, prints the next command after every step; the ones that need the editor or the graphics
+`picture_route.py` (GraphCode Move ships it in `Resources/PictureRoute`; a project's own `Tools/VideoCapture` wins), prints the next command after every step; the ones that need the editor or the graphics
 card run only with `--run`.
 
 ```
@@ -177,19 +179,27 @@ the `.gcmove` header from what you gave `init`; the reader's path (`models/<name
 random-camera framing from a render of the character's own bounds (`references`). A value the rig cannot give goes in an optional
 `characters/<name>.override.json` (the shipped cat's holds its reader's joint order and its tuning); a character without one is fully derived.
 
-**What is not shipped in the plugin package:** `picture_route.py` and the scripts it runs live in the project's `Tools/VideoCapture`,
-the joint reader (PyTorch, CUDA, DINOv2) is a separate download with its own Python environment, and its weights are taught per
-character. The cat is the only character measured end to end; the clothed MetaHuman is the next (derived, offline-checked,
+**Where things are:** `picture_route.py` and the scripts it runs ship with GraphCode Move (`Resources/PictureRoute`); run from a
+shell, give `--project <the folder of the .uproject>` (the editor always does). The joint reader's Python (PyTorch, CUDA, DINOv2) is
+installed per PC by `setup` (above); each character's taught reader is the project's own, `Saved/GraphCode/PictureRoute/models/<name>.pt`,
+and the characters added with `init` are in `Saved/Research/VideoCapture/characters`. The cat is the only character measured end to end; the clothed MetaHuman is the next (derived, offline-checked,
 not yet taught or run through the editor).
 
 ### In the editor: the Train window and the Pose tab
 
-The same route runs from the editor, as external processes in the reader's own Python (nothing runs inside the editor's Python).
-The reader's Python is `GRAPHCODE_PICTURE_PYTHON` as the editor started with it, else the Train window's **Python...** setting
-(it takes effect at the next run: each process is given it on its command line), else `D:/VideoCaptureML/venv/Scripts/python.exe`;
-when it is missing, both places say so and how to set it. Nothing is downloaded silently: when the DINOv2 backbone is not in the
-reader's torch hub cache (its code and `dinov2_vitb14_reg4_pretrain.pth`, 346 MB), the route stops and says what is missing and
-where it goes, and the Train window says so before Start.
+The same route runs from the editor, as external processes (nothing runs inside the editor). The steps that need only the
+standard library (`list`, `init`, `setup`) run on the editor's own Python (`Engine/Binaries/ThirdParty/Python3`), so the characters
+show and one can be added before anything is installed. The reader's steps run on the reader's Python: `GRAPHCODE_PICTURE_PYTHON` as
+the editor started with it, else the Train window's **Choose...** setting (it takes effect at the next run: each process is given it
+on its command line), else the one **Set up...** makes; when it is missing, both places say so and offer Set up.... Nothing is
+downloaded silently: Set up... says what it fetches and asks first, and when the DINOv2 backbone is not in the reader's torch hub
+cache (its code and `dinov2_vitb14_reg4_pretrain.pth`, 346 MB), the route stops and says so, and the Train window says so before Start.
+
+- **Add** (beside Refresh): the character selected in the Content Browser. Select its skeletal mesh and a few of its animations;
+  its IK rig and its control rig with a `.gcrig` are found in the mesh's folder when there is one of each, else select them too.
+  The IK rig needs its GraphCode text (`<IK rig>.gc`, from gc_sync). It runs `init` and lists the animations as the motions its
+  practice pictures are made from (`teach/<name>/assets.txt`); with only animations selected, they are added to the chosen character.
+  Its first **Start** reads its rig (`template`) and frames it (`references`) from its first motion before the pictures.
 
 - **GraphCode Train** (the Pose tab's **Train...**, or `GraphCode.Move.Train <character>`): the characters `picture_route.py list`
   finds, each taught or not (its reader on disk) with its last result; **Pictures** (an even spread of the rendered teach
@@ -209,8 +219,7 @@ where it goes, and the Train window says so before Start.
     first render listed, into a fresh `teach/<name>/data_<time>`, with cameras of a seed of their own, in the look the character's
     reader was taught on: its config's `"render_look"`, `"preview"` (the clip's preview body; the MetaHuman's, whose reader was taught
     on `data` and `data_v`) or `"stage"` (its stage Blueprint, `GC_STAGE`, as `data_stage` was). Nothing earlier is overwritten (an import over a clip
-    stops the editor on a modal question). A character never rendered needs its first render from the command line, which
-    names its authored clips (`teach <name> <clips> --steps render --run`).
+    stops the editor on a modal question). A character never rendered starts at 2,800 pictures, made from the motions Add listed.
 - **The Pose tab's row**: **Character** (whose reader reads the pictures), **Retarget...** (opens Unreal's IK Retargeter that
   GraphCode wrote for the file's IK rig, `ik_retargeter(onto=, map=)` in its `.gcrig`; nothing else), **Reference photo** (the
   character rendered for an image model: a person whose config says `"reference_views": "high_three_quarters"`, the MetaHuman,

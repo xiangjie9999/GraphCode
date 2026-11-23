@@ -1,0 +1,20 @@
+gcshape 1 into:/Game/AnimalStudies/Parts/StandingLimbs
+# Centrelines and half-sizes in fractions of the complete standing limb.
+# Axis is positive rostrally. The hock projects caudally and the stifle rostrally.
+build { }
+ElbowSet = .095
+HockSet = .18
+StifleSet = .13
+HindFootReach = .14
+ForeAxis = profile(0=.025,.12=.01,.27=0,.46=.012,.59=-.52*$ElbowSet,.76=.015,1=-.065)
+HindAxis = profile(0=-$HindFootReach,.12=-.5*($HindFootReach+$HockSet),.26=-$HockSet,.39=-.088,.57=.63*$StifleSet,.73=.015,.86=-.065,1=-.082)
+ForeDepth = profile(0=.042,.10=.039,.19=.047,.29=.038,.44=.052,.58=.085,.72=.115,.87=.14,1=.10)
+HindDepth = profile(0=.040,.10=.040,.22=.054,.34=.059,.45=.083,.55=.116,.68=.161,.80=.195,.9=.195,1=.105)
+ForeBreadth = profile(0=.041,.12=.035,.20=.042,.30=.032,.46=.046,.58=.077,.75=.103,.89=.10,1=.063)
+HindBreadth = profile(0=.043,.12=.036,.23=.042,.34=.040,.49=.057,.62=.081,.76=.11,.91=.12,1=.071)
+
+# Relative displacement from a circular lateral section, from the exposed
+# forelimb of Roberto Abella's dog Negra (CC BY 4.0). The local key runs
+# cranial to caudal. See Docs/Research/quadruped-torso-references.md.
+BrachialElbowSection = profile(0=0,.1=.103,.2=.047,.3=.002,.4=-.030,.5=-.060,.6=-.131,.7=-.243,.8=-.329,.9=-.339,1=0)
+BrachialUpperSection = profile(0=0,.1=-.351,.2=-.186,.3=-.065,.4=-.025,.5=0,.6=-.018,.7=-.081,.8=-.180,.9=-.242,1=0)

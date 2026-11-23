@@ -28,7 +28,7 @@ Keys = pose(steps) { $Stance0K, $Windup1K, $Contact2K, $Follow3K, $Stance4K }
 # and its range (20 to 200) makes it a slider in the pose tab. point= is the bone whose path is timed, strike= the key the
 # fist passes through fastest. The feet stay on the floor.
 Hook = clip(frames=300, effort=60, effort_min=20, effort_max=200) {
-  $Keys [accel=(30%, $effort%, $effort%, 30%), point=$MFist, strike=$Contact2K]
+  $Keys [accel=(30%, $effort%, $effort%, 30%), point=$MFist, strike=$Contact2K, stops=($Windup1K, $Follow3K)]
   plant(leg_l, on=$Floor)
   plant(leg_r, on=$Floor)
 }

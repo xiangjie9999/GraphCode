@@ -71,7 +71,25 @@ The bar applies to **each part when it is built**, not to a polish pass at the e
 postponed rarely arrives.
 
 If time is short, make fewer assets. Never lower the bar to make more of them.
+### Use an independent visual critic on every revision
 
+Owner, 22 November 2026, after rejecting an untextured broken stump: **"Always have a critic"**.
+Have an independent critic inspect the actual built result before presenting or publishing each revision.
+Give the critic the owner's brief, relevant references and current engine views, including close and
+opposite views of the repaired areas. A successful build, texture file or numerical check cannot replace
+this review. Resolve the critic's material and geometry findings, render again, and return the revised
+result to the critic. The owner remains the final judge; the author cannot approve their own appearance.
+
+### Validate the controls, not just the default
+
+Owner,22 November2026: **"No brute forcing (everything should be parametric and with a reason)"** and
+**"I don't want something that looked okay on a single parameter value and failed when change any other 9 parameters."**
+For a parameterized asset, inspect relevant working precedents before designing its construction. State
+what each control means, its valid domain and the relationships that keep dimensions, attachments,
+materials and detail valid when controls change. Derive dependent features from those relationships;
+do not search arbitrary variants for a lucky default. Verify limits, interacting controls and multiple
+seeds, with actual views of representative combinations. An attractive default or one successful build
+cannot establish that the asset's controls work. Give the independent critic those varied results.
 ### Make the detail belong to the theme
 
 Inspect the project's accepted assets, environment, palette and references before designing the
@@ -470,9 +488,11 @@ In practice:
 
 Look in this order, and use the first that fits:
 
-1. **This project's own recipe families.** A part the project already built is the house style. Find
+1. **GraphCode Marketplace.** Find the closest precedent, inspect its construction, and adapt
+   the recipe or assets where the design needs a change. [Market guide](MARKET.md).
+2. **This project's own recipe families.** A part the project already built is the house style. Find
    them with `gc_search`.
-2. **The shipped preset library.** Search it with `gc_search kind:"preset" target:"<word>"`. It
+3. **The shipped preset library.** Search it with `gc_search kind:"preset" target:"<word>"`. It
    returns each entry's parameters, import line and call line. It holds more than 500 entries,
    including:
    - `Mechanical`: Rivet, Flange, Collar, Boss, Gusset, Bracket, PipeRun, PipeElbow, PipeTee,
@@ -482,7 +502,7 @@ Look in this order, and use the first that fits:
    - `Fixings`, `Profiles`, `Solids`;
    - `Wear`, `Surface` and `Damage`: erosion, chips, dents, grooves, cracks, spalls;
    - `Organic` and the anatomy presets.
-3. **A new shared family.** If nothing fits, write the part as its own parametric recipe with named
+4. **A new shared family.** If nothing fits, write the part as its own parametric recipe with named
    inputs and sockets, so the next part reuses it rather than redrawing it.
 
 An import line can override a preset's values, so one preset becomes a family of sizes:
@@ -689,6 +709,20 @@ follow [MATERIALS.md](MATERIALS.md).
 For landscapes and other large repeated surfaces, follow [TEXTURE-VARIATION.md](TEXTURE-VARIATION.md).
 Consider UV variation, reusable near/far material functions, camera-depth blending and macro masks;
 verify physical scale, normal direction, seams, motion and cost before expanding production.
+
+### Surfaces come from texture art, never from an algorithm
+
+Owner, 22 November 2026: **"Stop implementing algorithm based texture. Never do that."** A surface is
+real texture art: scanned or generated maps released for the project, in the material packs. Do not
+compute its look in a shader: no procedural growth rings, noise stains, cell patterns or Custom-node
+"wood" or "stone".
+
+- The shape author's part is geometry, material slots and UVs. Lay the UVs in the layout the material
+  was made for, such as a centred planar cap or a tile along the grain.
+- If a needed surface does not exist, or its material needs a projection Shape cannot write, ask the
+  texture lane for the art, or add the projection to the grammar. Do not stand in for the art with math.
+- Material parameters that tint, blend or mask released maps stay allowed. Use them for wear and age
+  where a mask needs them.
 
 ### Realistic surfaces carry believable imperfections
 

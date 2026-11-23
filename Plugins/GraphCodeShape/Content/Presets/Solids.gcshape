@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.2  shade:40
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Solids  smooth:0.2  shade:40
 
 # SOLIDS — L2 Primitives. One geometric act each, named, so that nothing above
 # this layer re-types `circle` then `extrude` to get a cylinder.

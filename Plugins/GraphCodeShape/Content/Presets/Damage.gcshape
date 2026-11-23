@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.2  shade:40
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Damage  smooth:0.2  shade:40
 
 # DAMAGE — L2 Primitives, the ways a solid loses material.
 # `Docs/GC-SHAPE-PRESET-LIBRARY.md` §3, L2.

@@ -46,6 +46,9 @@ namespace GcMarket
 		/** R3 (corrected 2026-11-19): a pack file writes outside the pack's own folder, or reads outside it, its
 		 *  dependencies' folders, /Engine and its products' content. Checked on the signed bytes, again at Build. */
 		OutsidePack,
+		/** MARKET2 §7.3: the signed head lists this version (a takedown): not installed, and an installed copy's Build is
+		 *  refused. The project's files are never deleted for the person. */
+		Blocked,
 	};
 
 	GRAPHCODE_API const TCHAR* RefusalCode(ERefusal Code);
@@ -122,6 +125,15 @@ namespace GcMarket
 		TArray<FString> Builds;
 	};
 
+	/** MARKET2 §7.3: one entry of the signed head's blocklist (a takedown). */
+	struct FBlocked
+	{
+		FString Id;
+		FString Version;
+		FString RecordSha256;
+		FString Reason;
+	};
+
 	/** One version of one pack, as the signed index lists it. */
 	struct GRAPHCODE_API FPack
 	{
@@ -148,8 +160,21 @@ namespace GcMarket
 		bool bLibrary = false;
 		/** R19: a Move library's header line ("presets:/Game/GraphCodeMarket/..."); empty otherwise. */
 		FString Use;
+		/** R20: the pack brings its own materials (`Materials/*.gc`), applied by Build before its recipe. */
+		bool bMaterials = false;
+		/**
+		 * R20: the optional texture set, pack-relative paths that are all in Files (signed like every file), fetched
+		 * only when the buyer ticks Textures. TexturesSize is their bytes together.
+		 */
+		TArray<FString> TextureFiles;
+		int64 TexturesSize = 0;
+		bool IsTexture(const FString& Path) const { return TextureFiles.Contains(Path); }
 		/** The exact object from the index; written beside the files as pack.json. */
 		TSharedPtr<FJsonObject> Json;
+		/** MARKET2: SHA-256 of the signed version record this pack was read from (empty for the legacy index). */
+		FString RecordSha256;
+		/** MARKET2: the verified manifest text; when set, pack.json is written as exactly these bytes. */
+		FString Manifest;
 
 		FString Publisher() const;
 		FString Name() const;
@@ -171,12 +196,27 @@ namespace GcMarket
 		TArray<FPack> Packs;
 		/** Packs the index lists that this client refuses (an id or path outside R2), each with its reason. */
 		TArray<FRefusal> Invalid;
+		/** MARKET2: read from the live per-version API (every record verified), not from a signed index. */
+		bool bLive = false;
+		/** MARKET2: the market serial this catalog was synced to, and the serial of the signed head it holds (0: none). */
+		int64 Serial = 0;
+		int64 HeadSerial = 0;
+		/** MARKET2 §7.3: the verified head's blocklist; it applies to installed packs whatever catalog is shown. */
+		TArray<FBlocked> Blocked;
+		/** MARKET2: every version the live market has said anything about, "<id>@<version>" -> listed | yanked | hidden | blocked. */
+		TMap<FString, FString> States;
+		/** Why this catalog and not the live one (the old index, or an offline copy); empty when it is the live market. */
+		FString Note;
 
 		/** The newest version of Id, or exactly Version when given. Null when absent. */
 		const FPack* Find(const FString& Id, const FString& Version = FString()) const;
 		/** Every id once, at its newest version. */
 		TArray<const FPack*> Latest() const;
 		const FRefusal* FindInvalid(const FString& Id) const;
+		/** §7.3: the head's entry blocking (Id, Version) or a version whose record hashes to RecordSha256; null when none. */
+		const FBlocked* FindBlocked(const FString& Id, const FString& Version, const FString& RecordSha256 = FString()) const;
+		/** listed | yanked | hidden | blocked, or "" when the live market has said nothing about it. */
+		FString StateOf(const FString& Id, const FString& Version) const;
 	};
 
 	/** One installed pack, as the lock records it (R10). */
@@ -192,6 +232,8 @@ namespace GcMarket
 		TArray<FFile> Files;
 		/** `.claude/skills/<Name>` relative to the project, for a skill pack (R12). */
 		FString SkillDir;
+		/** MARKET2: SHA-256 of the signed version record it was installed from (empty when from the legacy index). */
+		FString RecordSha256;
 	};
 
 	/**
@@ -236,6 +278,12 @@ namespace GcMarket
 
 	/** `<Root>/index.json` + `<Root>/index.sig.json` {kid, alg, sig}, checked as AcceptIndex checks. */
 	GRAPHCODE_API bool ReadLocalCatalog(const FString& Root, FCatalog& Out, FRefusal& OutRefusal);
+
+	/**
+	 * MARKET2: a pack from a verified version manifest (pack.json bytes as text) under the same rules as an index
+	 * entry. The caller has checked the manifest against its signed record (GraphCodeMarketLive.h) first.
+	 */
+	GRAPHCODE_API bool PackFromManifest(const FString& Manifest, FPack& Out, FRefusal& OutRefusal);
 
 	/** A `/v1/market/index` reply {result:{index, signature:{kid,alg,sig}}} to its verified catalog. */
 	GRAPHCODE_API bool AcceptIndexReply(const FString& ReplyJson, FCatalog& Out, FRefusal& OutRefusal);
@@ -377,14 +425,72 @@ namespace GcMarket
 	 */
 	GRAPHCODE_API TArray<FString> WhatYouGet(const FChoice& Choice);
 
+	/**
+	 * MARKET2 §7.3, in plain words, the one place: "GraphCode/X 1.0.0 was taken down by the GraphCode Market: <reason>.
+	 * Its Build is refused. Remove it from this project; nothing in your project is deleted for you."
+	 */
+	GRAPHCODE_API FString TakedownText(const FString& Id, const FString& Version, const FBlocked& Entry);
+
 	/** R19: whether the installed version is a library (its pack.json says so): Build refuses it. */
 	GRAPHCODE_API bool IsInstalledLibrary(const FPlace& Place, const FInstalled& Row);
 
 	/** The installed version's choices, read from its pack.json; empty when it has none or cannot be read. */
 	GRAPHCODE_API TArray<FChoice> InstalledChoices(const FPlace& Place, const FInstalled& Row);
 
+	/** The installed version's pack.json, read as an index entry is; false when it is missing or does not parse. */
+	GRAPHCODE_API bool ReadInstalledPack(const FPlace& Place, const FInstalled& Row, FPack& Out);
+
+	/** R20: every one of the pack's texture files is installed (in the lock and on disk). False for a pack with none. */
+	GRAPHCODE_API bool HasTextures(const FPlace& Place, const FInstalled& Row, const FPack& Pack);
+
+	/** R20: one step of a Build's material phase: import one texture, or apply one material document. */
+	struct FMaterialStep
+	{
+		/** "texture" | "material" */
+		FString Kind;
+		/** Pack-relative: `Textures/T_X.png`, `Materials/Parents/M_X.gc`, `Materials/Flat/MI_X.gc`, `Materials/Maps/MI_X.gc`. */
+		FString File;
+		/** The package it makes or changes: `<pack folder>/Textures/T_X`, `<pack folder>/Materials/<Name>`. */
+		FString PackagePath;
+	};
+
+	/**
+	 * R20: the material phase of a Build, in order: with every texture installed, each texture's import, then the
+	 * parents (`Materials/Parents/*.gc`), then the `Maps/` instances; without them the parents, then the `Flat/` instances.
+	 * Empty for a pack with no materials. False with the reason when the installed pack cannot be read.
+	 */
+	GRAPHCODE_API bool MaterialSteps(const FPlace& Place, const FInstalled& Row, TArray<FMaterialStep>& Out, FString& OutError);
+
+	/**
+	 * R20: run one step on the game thread through the ordinary write paths (R16: an authoring write): a texture through
+	 * gc_import's plan and apply, its settings{} from `Textures/textures.json` (a texture already there is kept); a
+	 * material with gc_apply's create, or, when the asset exists, applied over it with its header rebased on the live
+	 * projection (how Flat instances become Maps ones in place). OutMessage says what was done.
+	 */
+	GRAPHCODE_API bool RunMaterialStep(const FPlace& Place, const FInstalled& Row, const FMaterialStep& Step, FString& OutMessage,
+		FString& OutError);
+
+	/**
+	 * R20, gc_apply's door (the tab's Build runs the same steps): when ContentPath is a file of an installed pack that
+	 * brings materials and any of its texture or material assets does not exist yet, the whole material phase runs
+	 * now, synchronously, so the recipe's first build finds them. True with nothing said when there is nothing to do.
+	 */
+	GRAPHCODE_API bool PrepareMaterialsFor(const FString& ContentPath, FString& OutSaid, FString& OutError);
+
+	/**
+	 * R20 corrected: the installed MATERIAL PACKS a pack's build needs, dependencies first: every installed pack in Row's
+	 * dependency closure (Row included) whose pack.json says it brings materials. Rows is the lock.
+	 */
+	GRAPHCODE_API TArray<FInstalled> MaterialPacksFor(const FPlace& Place, const FInstalled& Row, const TArray<FInstalled>& Rows);
+
+	/** R20: Row's material steps when they must run now (never made, made in the other state, or an asset gone); else empty. */
+	GRAPHCODE_API bool MaterialStepsDue(const FPlace& Place, const FInstalled& Row, TArray<FMaterialStep>& Out, FString& OutError);
+
 	/** One Build of several choice files, built in turn (GraphCodeMarket.cpp). */
 	struct FBuildChain;
+
+	/** MARKET2: the session's copy of the live market (GraphCodeMarket.cpp). */
+	struct FLiveHolder;
 
 	struct GRAPHCODE_API FOutcome
 	{
@@ -398,6 +504,12 @@ namespace GcMarket
 		TArray<FString> Trashed;
 		/** Files written OUTSIDE the pack folder (R12's skill copy), said in every answer. */
 		TArray<FString> OutsidePackFolder;
+		/**
+		 * R20: the packs whose optional textures this operation fetches and writes: the one the buyer ticked Textures
+		 * for, and every installed pack that already has them (an update keeps them). Every other pack's texture
+		 * files are left out of the fetch, the write and the lock.
+		 */
+		TSet<FString> TexturesFor;
 		FString Message;
 
 		/** Every refusal's line, joined. */
@@ -419,7 +531,7 @@ namespace GcMarket
 
 	/** Resolve without fetching: the steps, and every refusal that needs no bytes. */
 	GRAPHCODE_API FOutcome PlanInstall(const FCatalog& Catalog, const FPlace& Place, const FProducts& Products,
-		const FString& Id, const FString& Version);
+		const FString& Id, const FString& Version, bool bTextures = false);
 	/** Pack empty: every installed pack that has a newer version. */
 	GRAPHCODE_API FOutcome PlanUpdate(const FCatalog& Catalog, const FPlace& Place, const FProducts& Products, const FString& Id);
 	GRAPHCODE_API FOutcome PlanRemove(const FPlace& Place, const FString& Id);
@@ -429,7 +541,8 @@ namespace GcMarket
 
 	/** Plan, fetch, verify every byte, then write. Nothing is written when any byte fails. Off-thread safe. */
 	GRAPHCODE_API FOutcome Install(const FCatalog& Catalog, const FPlace& Place, const FProducts& Products,
-		const FString& Id, const FString& Version, bool bDryRun, const FFetch& Fetch, const FCancelToken& Cancel = nullptr);
+		const FString& Id, const FString& Version, bool bDryRun, const FFetch& Fetch, const FCancelToken& Cancel = nullptr,
+		bool bTextures = false);
 	GRAPHCODE_API FOutcome Update(const FCatalog& Catalog, const FPlace& Place, const FProducts& Products,
 		const FString& Id, bool bDryRun, const FFetch& Fetch, const FCancelToken& Cancel = nullptr);
 	GRAPHCODE_API FOutcome Remove(const FPlace& Place, const FString& Id, bool bDryRun);
@@ -443,6 +556,12 @@ namespace GcMarket
 	GRAPHCODE_API TArray<FString> InstalledShapeRoots();
 	/** The installed pack a content path (`/Game/GraphCodeMarket/P/N/File`) belongs to. */
 	GRAPHCODE_API bool FindInstalledForContentPath(const FString& ContentPath, FString& OutId, FString& OutVersion);
+
+	/**
+	 * MARKET2 §7.3: why a build written to this content path is refused (it is a file of an installed pack the signed head
+	 * takes down: gc_apply's shape and move paths ask this, the tab's Build too), or empty. Game thread.
+	 */
+	GRAPHCODE_API FString TakedownForContentPath(const FString& ContentPath);
 
 	// ---- The session both faces share (game thread) ----
 
@@ -463,7 +582,7 @@ namespace GcMarket
 	public:
 		static FSession& Get();
 
-		/** The configured catalog: `CatalogRoot` when set (R8), else the hosted routes (R7). */
+		/** The configured catalog: `CatalogRoot` when set (R8), else the live market (MARKET2), else the old index. */
 		bool IsLocal() const;
 		FString CatalogRoot() const;
 
@@ -483,7 +602,9 @@ namespace GcMarket
 		FString LockError() const { return LockErrorText; }
 
 		/** Run on the current catalog. Local: the work runs off the game thread; Done on the game thread. */
-		void StartInstall(const FString& Id, const FString& Version, bool bDryRun, TFunction<void(const FOutcome&)> Done);
+		/** R20: bTextures also fetches the pack's optional textures (and adds them to a pack installed without them). */
+		void StartInstall(const FString& Id, const FString& Version, bool bDryRun, TFunction<void(const FOutcome&)> Done,
+			bool bTextures = false);
 		void StartUpdate(const FString& Id, bool bDryRun, TFunction<void(const FOutcome&)> Done);
 		void StartRemove(const FString& Id, bool bDryRun, TFunction<void(const FOutcome&)> Done);
 
@@ -503,6 +624,14 @@ namespace GcMarket
 		FActivity ActivityOf(const FString& Id) const;
 
 		/**
+		 * MARKET2 §7.3: the head's entry when this installed version is taken down, else null. Reads the highest verified
+		 * head this PC holds (per user), whether or not a catalog has been read in this session.
+		 */
+		TOptional<FBlocked> TakedownOf(const FInstalled& Row);
+		/** The highest head serial this PC has accepted (0: none yet). */
+		int64 HeadSerial();
+
+		/**
 		 * Whether moving an activity to NewState is a change the views rebuild for (OnChanged): a new state is; a
 		 * progress tick in the same state (fraction, the n/m text) is not, and is read by the widgets as they paint.
 		 */
@@ -511,6 +640,10 @@ namespace GcMarket
 
 		/** The thumbnail's cached PNG path (verified against the signed SHA-256), fetching it when needed. */
 		void Thumbnail(const FPack& Pack, TFunction<void(const FString& PngPath)> Done);
+
+		/** The live market's base URL (the release service); a spec may point it at a test server. */
+		FString LiveBase() const;
+		void SetLiveBaseOverride(const FString& Base) { LiveBaseOverride = Base; }
 
 		/** For specs and tools: a catalog root that wins over the setting while set. */
 		void SetCatalogRootOverride(const FString& Root) { RootOverride = Root; Current.Reset(); }
@@ -522,6 +655,14 @@ namespace GcMarket
 		void BuildNextOf(const TSharedRef<FBuildChain>& Chain);
 		void Run(const FString& Id, const FString& State, TFunction<FOutcome(const FCatalog&, const FFetch&, const FCancelToken&)> Work,
 			const FOutcome& Plan, TFunction<void(const FOutcome&)> Done);
+		/** MARKET2: head, then changes since the held serial; on an unreachable API the offline copy, else the old index. */
+		void RefreshLive(TFunction<void(bool bOk, const FString& Error)> Done);
+		/** The old signed index (MARKET1), with Note said beside it. */
+		void RefreshLegacy(const FString& Note, TFunction<void(bool bOk, const FString& Error)> Done);
+		void LoadLive();
+		void SetLiveCatalog(const FString& Note);
+		TSharedPtr<FLiveHolder> Live;
+		FString LiveBaseOverride;
 
 		TSharedPtr<FCatalog> Current;
 		FString LastErrorText;

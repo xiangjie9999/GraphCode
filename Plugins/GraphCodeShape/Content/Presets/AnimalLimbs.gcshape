@@ -1,0 +1,225 @@
+gcshape 1 into:/Game/AnimalStudies/Parts/Limbs smooth:.10 shade:75 uv:keep
+build { SM_Foreleg = $Foreleg }
+F = shape('/GraphCodeShape/Presets/AnimalFeatures')
+# Temporary material IDs preserve each part through the body remesh.
+Feline = 0
+TailRestAngle = -9
+TailCarryDegrees = 35
+TailCurlDegrees = 110
+Coat = material('/Game/AnimalStudies/Catalogue/Materials/MI_Coat')
+Clearance = 18
+ChestDepth = 18
+ChestWidth = 13
+HipWidth = 12
+PawWidth = 4
+PawLength = 5
+LegMass = 1
+ThighMass = 1.17
+ShankMass = 1
+ElbowSet = .10
+HockSet = .18
+StifleSet = .16
+ToeSpread = 1
+ToeLength = 1
+# Distal cannon blends through the sloping pastern into the dorsal paw.
+PasternReach = .26
+PasternWidth = .30
+PasternDepth = .32
+PasternLevel = .20
+SoleInset = .075
+DewDigitReach = .18
+DewDigitBreadth = .119
+DewDigitLength = .37
+DewPadStation = .135
+DewPadBreadth = .084
+DewPadLength = .090
+DewClawStation = .16
+CarpalPadBreadth = .172
+CarpalPadLength = .189
+CarpalPadInset = .45
+ForeProximalLevel = .83
+HindProximalLevel = .91
+ForePawSeatFraction = .09
+HindPawSeatFraction = .10
+StrideFadeLevel = .78
+DewclawMedialSet = lerp(.033,.031,$Feline)
+DewclawCarpusFraction = .79
+DewclawPitch = 56
+DewclawYaw = -37
+CarpalPadPitch = 88
+TailHeightOffset = profile(0=0,1=0)
+TailReachOffset = profile(0=0,1=0)
+ForeHeight = $Clearance+$ForeProximalLevel*$ChestDepth
+HindHeight = $Clearance+$HindProximalLevel*$ChestDepth
+# Profiles run from the metapodial pad to the shoulder or haunch. The hock
+# projects behind the stifle, while the carpus lies nearly under the elbow.
+ForeCarpusLevel = .175
+ElbowLevel = .59
+HockLevel = .26
+# Digit I follows the local limb axis at the same level as its attachment.
+DewclawAxialStation = $ForeCarpusLevel*$DewclawCarpusFraction
+HindDewclawHockFraction = .49
+HindDewclawStation = $HockLevel*$HindDewclawHockFraction
+StifleLevel = .57
+HindFootReach = .14
+RestLimb = shape('/GraphCodeShape/Presets/StandingLimbProfiles',ElbowSet=$ElbowSet,HockSet=$HockSet,StifleSet=$StifleSet,HindFootReach=$HindFootReach)
+ForeSweep = profile(0=0,1=0)
+HindSweep = profile(0=0,1=0)
+# Profiles run from paw to proximal attachment. Angles turn from cranial
+# toward lateral on the right limb. Positive relief is a local radius fraction.
+ForeInsertionDepth = .012
+HindInsertionDepth = .025
+InsertionStart = .70
+BrachialisLine = profile(0=0,.46=0,.56=.035,.64=.11,.74=.12,.85=.045,1=0)
+CarpalExtensorLine = profile(0=0,.13=0,.23=.022,.34=.07,.47=.13,.55=.082,.65=0,1=0)
+CarpalFlexorLine = profile(0=0,.16=0,.29=.018,.42=.077,.52=.102,.59=.036,.64=0,1=0)
+BrachioradialisLine = profile(0=0,.19=0,.33=.025,.45=.075,.53=.052,.62=0,1=0)
+QuadricepsLine = profile(0=0,.45=0,.55=.038,.64=.112,.74=.142,.84=.082,.95=0,1=0)
+LateralThighLine = profile(0=0,.39=0,.50=.030,.62=.090,.75=.140,.86=.116,.96=.022,1=0)
+GastrocnemiusLine = profile(0=0,.235=0,.29=.033,.37=.116,.45=.153,.51=.096,.59=0,1=0)
+CalcanealLine = profile(0=0,.19=0,.245=.085,.29=.126,.34=.098,.40=.040,.46=0,1=0)
+SoleusLine = profile(0=0,.27=0,.35=.058,.43=.090,.51=.055,.565=0,1=0)
+LimbCompartmentAngle = profile(0=34,.125=48,.25=-147,.375=12,.5=28,.625=113,.75=155,.875=180,1=103)
+LimbCompartmentFocus = profile(0=4,.125=6,.25=4,.375=8,.5=3,.625=3,.75=4,.875=12,1=6)
+SoleusShare = 0
+BrachioradialisShare = .20
+ForeDepthScale = profile(0=1,1=1)
+HindDepthScale = profile(0=1,1=1)
+ForeGirthScale = profile(0=1,1=1)
+HindGirthScale = profile(0=1,1=1)
+
+MuscleDefinition = 1
+Compartment = formula(h,w,key) { pow(max(0,$h*cos($LimbCompartmentAngle($key))+$w*sin($LimbCompartmentAngle($key))),$LimbCompartmentFocus($key)) }
+ForeSurface = formula(t,h,w) { $BrachialisLine($t)*$Compartment($h,$w,0)+$CarpalExtensorLine($t)*$Compartment($h,$w,.125)+$CarpalFlexorLine($t)*$Compartment($h,$w,.25)+$BrachioradialisShare*$BrachioradialisLine($t)*$Compartment($h,$w,.375) }
+HindSurface = formula(t,h,w) { $QuadricepsLine($t)*$Compartment($h,$w,.5)+$LateralThighLine($t)*$Compartment($h,$w,.625)+$GastrocnemiusLine($t)*$Compartment($h,$w,.75)+$CalcanealLine($t)*$Compartment($h,$w,.875)+$SoleusShare*$SoleusLine($t)*$Compartment($h,$w,1) }
+BrachialSectionFit = 0
+BrachialSectionOnset = .49
+BrachialElbowSample = .60
+BrachialUpperSample = .78
+BrachialSectionEnd = .95
+BrachialElbowOffset = profile(0=0,1=0)
+BrachialUpperOffset = profile(0=0,1=0)
+ForeUpperInset = .072*$ChestWidth
+HindUpperInset = .042*$HipWidth
+UpperInsetOnset = .47
+UpperInsetPeak = .90
+# At the lateral edge, add the measured deviation to the local cross-section
+# before the joint and stride deformations. The medial envelope stays in place.
+BrachialRamp = formula(t,lo,hi) { .5-.5*cos(180*clamp(($t-$lo)/max(.00001,$hi-$lo),0,1)) }
+BrachialSection = formula(t,h,w) { $BrachialSectionFit*$BrachialRamp($t,$BrachialSectionOnset,$BrachialElbowSample)*(1-$BrachialRamp($t,$BrachialUpperSample,$BrachialSectionEnd))*clamp(3*$w,0,1)*lerp($RestLimb.BrachialElbowSection(.5-.5*$h)+$BrachialElbowOffset(.5-.5*$h),$RestLimb.BrachialUpperSection(.5-.5*$h)+$BrachialUpperOffset(.5-.5*$h),$BrachialRamp($t,$BrachialElbowSample,$BrachialUpperSample)) }
+ReferenceCarpus = .175
+ReferenceElbow = .59
+ReferenceHock = .26
+ReferenceStifle = .57
+ThighBlendStart = $ReferenceHock
+ThighBlendEnd = $ReferenceStifle
+UpperGirthStart = .52
+UpperGirthEnd = .88
+ReferenceChestRatio = .73
+ReferenceHipRatio = .68
+LimbCapStart = .83
+SoleCapSpan = .027
+CarpusFalloff = .14
+ElbowFalloff = .22
+HockFalloff = .19
+StifleFalloff = .24
+TailTipRoundStart = .89
+TailRootRoundEnd = .06
+TailGirthScale = profile(0=1,1=1)
+LegSkin = mesh(hind=0,height=29) {
+  arc(radius=1,from=-90,to=90,segments=64)
+  revolve(segments=48)
+  warp(with=(T: point.t.z,R: max(.00001,sqrt(max(0,1-point.z*point.z))),H: point.x/$R,W: point.y/$R,Contour: 1+$MuscleDefinition*lerp($ForeSurface($T,$H,$W),$HindSurface($T,$H,$W),$hind),End: clamp(($T-$LimbCapStart)/max(.00001,1-$LimbCapStart),0,1),Sole: clamp(1-$T/max(.00001,$SoleCapSpan),0,1),Cap: sqrt(max(0,1-$End*$End-$Sole*$Sole)),Forward: lerp(($RestLimb.ForeAxis($T)+$ForeSweep($T)),($RestLimb.HindAxis($T)+$HindSweep($T)),$hind)*$height,Deep: lerp(($RestLimb.ForeDepth($T)*$ForeDepthScale($T)),($RestLimb.HindDepth($T)*$HindDepthScale($T))*lerp($ShankMass,$ThighMass,clamp(($T-$ThighBlendStart)/max(.00001,$ThighBlendEnd-$ThighBlendStart),0,1)),$hind)*$height,Wide: lerp(($RestLimb.ForeBreadth($T)*$ForeGirthScale($T)),($RestLimb.HindBreadth($T)*$HindGirthScale($T))*lerp($ShankMass,$ThighMass,clamp(($T-$ThighBlendStart)/max(.00001,$ThighBlendEnd-$ThighBlendStart),0,1)),$hind)*$height,FootBlend: clamp(1-$T/$PasternLevel,0,1)),to=($Forward+$PasternReach*$PawLength*$FootBlend*$FootBlend+$H*$Cap*$Contour*lerp($Deep*$LegMass,$PasternDepth*$PawLength,$FootBlend),($W+(1-$hind)*$BrachialSection($T,$H,$W))*$Cap*$Contour*lerp($Wide*$LegMass*lerp(1,lerp($ChestWidth/($ReferenceChestRatio*$ChestDepth),$HipWidth/($ReferenceHipRatio*$ChestDepth),$hind),clamp(($T-$UpperGirthStart)/max(.00001,$UpperGirthEnd-$UpperGirthStart),0,1)),$PasternWidth*$PawWidth,$FootBlend),lerp($SoleInset*$PawWidth,$height,$T)))
+  warp(with=(S: point.z/$height,Side: clamp(point.y*10,-1,1),U: (point.x-lerp(($RestLimb.ForeAxis($S)+$ForeSweep($S)),($RestLimb.HindAxis($S)+$HindSweep($S)),$hind)*$height)/$height,G: .5+.5*cos(180*clamp(($S-.43)/.15,-1,1)),Hock: .5+.5*cos(180*clamp(($S-.25)/.055,-1,1)),Ulna: .5+.5*cos(180*clamp(($S-.54)/.068,-1,1)),Carpus: .5+.5*cos(180*clamp(($S-.175)/.048,-1,1)),Extensor: .5+.5*cos(180*clamp(($S-.345)/.16,-1,1))),by=($height*(-.036*$Hock*$hind-.019*$Ulna*(1-$hind)-.024*$G*$hind)*clamp(-$U*18,0,1),$Side*$height*(.008*$G*$hind+.005*$Carpus*(1-$hind)+.007*$Extensor*(1-$hind)),0))
+  # Move a joint with the surrounding tendons and breadth profile. The
+  # paw and the proximal attachment stay fixed at the ends of the limb.
+  warp(with=(T: point.z/$height,Knee: .5+.5*cos(180*clamp(($T-$ReferenceStifle)/max(.00001,$StifleFalloff),-1,1)),Hock: .5+.5*cos(180*clamp(($T-$ReferenceHock)/max(.00001,$HockFalloff),-1,1)),Elbow: .5+.5*cos(180*clamp(($T-$ReferenceElbow)/max(.00001,$ElbowFalloff),-1,1)),Carpus: .5+.5*cos(180*clamp(($T-$ReferenceCarpus)/max(.00001,$CarpusFalloff),-1,1))),by=(0,0,$height*lerp(($ElbowLevel-$ReferenceElbow)*$Elbow+($ForeCarpusLevel-$ReferenceCarpus)*$Carpus,($StifleLevel-$ReferenceStifle)*$Knee+($HockLevel-$ReferenceHock)*$Hock,$hind)))
+  # Seat the shoulder and thigh inside the trunk without shifting the distal joints.
+  warp(with=(T: clamp((point.z/$height-$InsertionStart)/(1-$InsertionStart),0,1)),by=(0,0,-$height*lerp($ForeInsertionDepth,$HindInsertionDepth,$hind)*(.5-.5*cos(180*$T))))
+  # The upper humerus and femur enter the body medially while the planted distal limb stays on track.
+  warp(with=(U: clamp((point.z/$height-$UpperInsetOnset)/max(.00001,$UpperInsetPeak-$UpperInsetOnset),0,1)),by=(0,-lerp($ForeUpperInset,$HindUpperInset,$hind)*$U*$U*(3-2*$U),0))
+  material($Coat)
+}
+DigitArch = 1
+PadDepth = 1
+ClawLength = .13
+DigitReachOffset = profile(0=0,1=0)
+DigitLengthScale = profile(0=1,1=1)
+DigitBreadthScale = profile(0=1,1=1)
+DigitSpanOffset = profile(0=0,1=0)
+PawStandards = shape('/GraphCodeShape/Presets/AnimalPaws')
+HeelHeightScale = $PawStandards.HeelHeightScale
+HeelStart = $PawStandards.HeelStart
+HeelEnd = $PawStandards.HeelEnd
+ToeRootBreadth = $PawStandards.ToeRootBreadth
+ToeTipTaper = $PawStandards.ToeTipTaper
+ToeSplayRoot = $PawStandards.ToeSplayRoot
+KnuckleStation = $PawStandards.KnuckleStation
+KnuckleSpan = $PawStandards.KnuckleSpan
+ToeCentreHeight = $PawStandards.ToeCentreHeight
+ToeAxialArch = $PawStandards.ToeAxialArch
+KnuckleLift = $PawStandards.KnuckleLift
+ToeCrossDepth = $PawStandards.ToeCrossDepth
+KnuckleDepth = $PawStandards.KnuckleDepth
+PadLobes = $PawStandards.PadLobes
+PadLobeDepth = $PawStandards.PadLobeDepth
+PadToeTaper = $PawStandards.PadToeTaper
+PadCentreHeight = $PawStandards.PadCentreHeight
+PadCrossDepth = $PawStandards.PadCrossDepth
+ClawRootLength = $PawStandards.ClawRootLength
+ClawRootRoundness = $PawStandards.ClawRootRoundness
+ClawBurial = $PawStandards.ClawBurial
+ClawBreadth = $PawStandards.ClawBreadth
+ClawBaseHeight = $PawStandards.ClawBaseHeight
+ClawDescent = $PawStandards.ClawDescent
+ClawHook = $PawStandards.ClawHook
+ClawCrossDepth = $PawStandards.ClawCrossDepth
+DigitalPadStation = $PawStandards.DigitalPadStation
+ClawReferenceBreadth = $PawStandards.ClawReferenceBreadth
+PalmSilhouetteFit = $PawStandards.PalmSilhouetteFit
+PalmContactRoundness = $PawStandards.PalmContactRoundness
+PalmAsymmetry = $PawStandards.PalmAsymmetry
+PalmContourOffset = profile(0=0,1=0)
+PalmPadBreadth = $PawStandards.PalmPadBreadth
+PalmPadLength = $PawStandards.PalmPadLength
+PalmPadStation = $PawStandards.PalmPadStation
+DigitalPadWidth = $PawStandards.DigitalPadWidth
+DigitalPadLength = $PawStandards.DigitalPadLength
+ClawSetback = $PawStandards.ClawSetback
+HeelBreadthOffset = profile(0=0,1=0)
+HeelRoofOffset = profile(0=0,1=0)
+HeelFloorOffset = profile(0=0,1=0)
+Foot = shape('/GraphCodeShape/Presets/AnimalPaws',HeelHeightScale=$HeelHeightScale,HeelStart=$HeelStart,HeelEnd=$HeelEnd,ToeRootBreadth=$ToeRootBreadth,ToeTipTaper=$ToeTipTaper,ToeSplayRoot=$ToeSplayRoot,KnuckleStation=$KnuckleStation,KnuckleSpan=$KnuckleSpan,ToeCentreHeight=$ToeCentreHeight,ToeAxialArch=$ToeAxialArch,KnuckleLift=$KnuckleLift,ToeCrossDepth=$ToeCrossDepth,KnuckleDepth=$KnuckleDepth,PadLobes=$PadLobes,PadLobeDepth=$PadLobeDepth,PadToeTaper=$PadToeTaper,PadCentreHeight=$PadCentreHeight,PadCrossDepth=$PadCrossDepth,ClawRootLength=$ClawRootLength,ClawRootRoundness=$ClawRootRoundness,ClawBurial=$ClawBurial,ClawBreadth=$ClawBreadth,ClawBaseHeight=$ClawBaseHeight,ClawDescent=$ClawDescent,ClawHook=$ClawHook,ClawCrossDepth=$ClawCrossDepth,DigitalPadStation=$DigitalPadStation,ClawReferenceBreadth=$ClawReferenceBreadth,PalmSilhouetteFit=$PalmSilhouetteFit,PalmContactRoundness=$PalmContactRoundness,PalmAsymmetry=$PalmAsymmetry,PalmContourOffset=$PalmContourOffset,PalmPadBreadth=$PalmPadBreadth,PalmPadLength=$PalmPadLength,PalmPadStation=$PalmPadStation,DigitalPadWidth=$DigitalPadWidth,DigitalPadLength=$DigitalPadLength,ClawSetback=$ClawSetback,HeelBreadthOffset=$HeelBreadthOffset,HeelRoofOffset=$HeelRoofOffset,HeelFloorOffset=$HeelFloorOffset,DewDigitReach=$DewDigitReach,DewDigitBreadth=$DewDigitBreadth,DewDigitLength=$DewDigitLength,DewPadStation=$DewPadStation,DewPadBreadth=$DewPadBreadth,DewPadLength=$DewPadLength,DewClawStation=$DewClawStation,CarpalPadBreadth=$CarpalPadBreadth,CarpalPadLength=$CarpalPadLength,DigitReachOffset=$DigitReachOffset,DigitLengthScale=$DigitLengthScale,DigitBreadthScale=$DigitBreadthScale,DigitSpanOffset=$DigitSpanOffset,Width=$PawWidth,Length=$PawLength,Spread=$ToeSpread,ToeLength=$ToeLength,DigitArch=$DigitArch,PadDepth=$PadDepth,ClawLength=$ClawLength,Coat=$Coat)
+# The carpal pad is on the caudal foreleg. The first digit sits on its
+# medial side above the four weight-bearing digits.
+ForeDewclaw = 1
+HindDewclaw = 0
+CarpalPadScale = 1
+Accessory = mesh(height=29,hind=0,stride=0) {
+  if (lerp($ForeDewclaw,$HindDewclaw,$hind) > 0) {
+    add($Foot.Dewclaw,scale=lerp($ForeDewclaw,$HindDewclaw,$hind),at=(lerp($RestLimb.ForeAxis($DewclawAxialStation)+$ForeSweep($DewclawAxialStation),$RestLimb.HindAxis($HindDewclawStation)+$HindSweep($HindDewclawStation),$hind)*$height,-$DewclawMedialSet*$height,lerp($DewclawAxialStation,$HindDewclawStation,$hind)*$height),rotate=(0,$DewclawPitch,$DewclawYaw))
+  }
+  if ((1-$hind)*$CarpalPadScale > 0) {
+    add($Foot.CarpalPad,scale=$CarpalPadScale,at=(($RestLimb.ForeAxis($ForeCarpusLevel)+$ForeSweep($ForeCarpusLevel)-$CarpalPadInset*$RestLimb.ForeDepth($ForeCarpusLevel)*$ForeDepthScale($ForeCarpusLevel)*$LegMass)*$height,0,$ForeCarpusLevel*$height),rotate=(0,$CarpalPadPitch,0))
+  }
+  warp(with=(W: 1-clamp(point.z/max(.00001,$StrideFadeLevel*$height),0,1)),by=($stride*$W*$W*(3-2*$W),0,0))
+}
+ForePawSeat = ($RestLimb.ForeAxis(0)+$ForeSweep(0))*$ForeHeight+$ForePawSeatFraction*$PawLength
+HindPawSeat = ($RestLimb.HindAxis(0)+$HindSweep(0))*$HindHeight+$HindPawSeatFraction*$PawLength
+Paw = mesh() { add($Foot.Paw,join=none) }
+Foreleg = mesh() { add($LegSkin,hind=0,height=$ForeHeight) }
+Hindleg = mesh() { add($LegSkin,hind=1,height=$HindHeight) }
+# Local centreline in the tail's bending plane. Both the skin and pigment sample this arc.
+TailStart = formula(carry) { $TailRestAngle+$TailCarryDegrees*$carry }
+TailTurn = formula(curl) { $TailCurlDegrees*$curl }
+TailSinc = formula(half) { (sin(abs($half))+max(0,.00000001-abs($half)*.01745329252))/max(.00000001,abs($half)*.01745329252) }
+TailAngle = formula(t,carry,curl) { $TailStart($carry)+$t*$TailTurn($curl) }
+TailReach = formula(t,length,carry,curl) { -$length*$t*cos($TailStart($carry)+.5*$t*$TailTurn($curl))*$TailSinc(.5*$t*$TailTurn($curl))+$length*$TailReachOffset($t) }
+TailRise = formula(t,length,carry,curl,sag) { $length*$t*sin($TailStart($carry)+.5*$t*$TailTurn($curl))*$TailSinc(.5*$t*$TailTurn($curl))+$length*($TailHeightOffset($t)-$sag*sin(180*$t)) }
+Tail = mesh(length=26,root_thickness=1.9,carry=.25,curl=.2,tip_fraction=.36,sag=.085) {
+  arc(radius=1,from=-90,to=90,segments=68)
+  revolve(segments=40,rotate=(0,-90,0))
+  material($Coat)
+  warp(with=(T: point.t.x,R: max(.00001,sqrt(max(0,1-point.x*point.x))),End: clamp(($T-$TailTipRoundStart)/max(.00001,1-$TailTipRoundStart),0,1),Base: clamp(1-$T/max(.00001,$TailRootRoundEnd),0,1),Thick: $root_thickness*$TailGirthScale($T)*lerp(1,$tip_fraction,$T)*sqrt(max(0,1-$End*$End-$Base*$Base)),A: $TailAngle($T,$carry,$curl),DX: $TailReach($T,$length,$carry,$curl),DZ: $TailRise($T,$length,$carry,$curl,$sag)),to=($DX+sin($A)*point.z/$R*$Thick,-point.y/$R*$Thick,$DZ+cos($A)*point.z/$R*$Thick))
+
+}

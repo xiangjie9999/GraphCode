@@ -217,6 +217,8 @@ as the effort says. The older words (`accel=`, `strike=`, `Preset.Attack`, `Pres
 - **One effort across a move; different efforts only across a rest** (wind-up, hit, recovery). Neighbouring efforts read as
   "multiple speeds"; the strike pose and any `through=` pose are passed, so their two stretches make one stage (written with
   different efforts, the stage eases from one to the other: keep them close).
+- **A list flows by default (23 Nov 2026):** every in-between pose is passed, each joint stopping only where it turns back; write
+  `stops=($Pose)` only where the whole body truly stops (a hold, a reversal of the whole body, the jab's fist turning back).
 - **`fastest_at=` names the contact, `point=` the striking point.** The build shapes the stage so the point is fastest at the contact.
   `fastest_at=` splits the stage at the contact (each side its own length and curve, one top speed there); `peak_at=` and `strike=` name the contact on the one-bell law, as files before 19 Nov time. A pose is a value, so `fastest_at=$Contact1K` can be a
   clip value too (below).

@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
   "Version": 1,
-  "VersionName": "0.1.13",
+  "VersionName": "0.1.14",
   "FriendlyName": "GraphCode Garment",
   "Description": "Clothing made on a body — a .gcgarment declares rings on a mesh and the garments between them, and builds a mesh from that.",
   "Category": "Editor",

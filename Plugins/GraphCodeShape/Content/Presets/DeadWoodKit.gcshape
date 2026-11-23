@@ -1,0 +1,342 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.5  shade:40
+
+# DEAD WOOD KIT (21 Nov 2026; 1.1, 22 Nov): what Unreal's Procedural Vegetation Editor cannot author - stumps (sawn or
+# snapped), fallen logs, snags (standing dead trunks) and a trunk section carrying scars (branch stubs with collars, a
+# burl, a hollow) - all from TimberKit's `Member` (a round, unsawn pole aged by its OldWood: checks, erosion, slab loss,
+# rot holes). A round stem BREAKS with `Tear` (a stem failing in bending: a few fat splinters on the tension side, a
+# crushed compression side, bark ending raggedly below the break), not the Damage kit's beam `Snap`, whose staircase is
+# a sawn beam's. Its own file because it builds at `smooth:0.5`, TimberKit's (an import builds at the finer of the two,
+# so inside the leaf kit's 0.05 a stump ran to millions of triangles).
+#
+#   Dead  = shape('/GraphCodeShape/Presets/DeadWoodKit', BarkOak = $MyOak, EndGrain = $MyTorn, SawnCap = $MyCap)
+#   Stump = mesh() { add($Dead.KitStump, size=45, damage=1, age=1.5, noise=4) }
+#   Trunk = mesh() { add($Dead.KitTrunk, size=60, burl=0, hollow=1, hollowturn=90, stubs=4, sawn=0.25, species=1) }
+#
+# EVERY FEATURE IS A KNOB (owner, 22 Nov: "parametric and optionally select what to have in the tree trunk"): a count
+# of 0 or a 0 switch leaves the feature out; the demo meshes are just one setting of each subject. Angles are degrees
+# round the stem from +X, heights fractions of the subject's height; every knob is clamped to the range shown.
+#   KitStump(size 10-200, height 10-300, damage 0 sawn | 1 snapped, age 0-2 (bark on below 1.6), flare 0-1.5,
+#            roots 3-9, species 0 oak | 1 beech | 2 mossy oak, noise, budget)
+#   KitLog(size 10-200, length 30-2000, age 0-2, stubs 0-6, flare 0-1.2 (the root end), roots 3-9,
+#          crown 1 torn | 0 sawn, noise, budget)                 lying along +X, bowed and swept, mossy bark
+#   KitSnag(size 10-200, height 50-3000, age 0-2, stubs 0-6 (4), lean 0-0.2 (0.07), flare 0-1.2, roots 3-9, noise, budget)
+#                                                                 bark in patches, torn off high, stubs at mixed lengths
+#   KitTrunk(size 20-200, height 100-1000, age 0-2,
+#            burl 0/1, burlsize 0.3-2.5, burlturn, burlheight 0.1-0.9,
+#            hollow 0/1, hollowsize 0.4-2, hollowturn, hollowheight 0.08-0.8,
+#            stubs 0-6, sawn 0-1 (the share of stubs cut rather than snapped), flare 0-1, top 0 sawn | 1 torn,
+#            species 0 beech | 1 oak | 2 mossy oak, noise, budget)
+#   noise: the seed (stub places and sizes, the break, the knobs); budget 0 game / 1 high / 2 ultra (TimberKit's
+#   tiers). Frame: z up, base at the origin, cm.
+#
+# MATERIAL SLOTS (the material packs this kit depends on; bind your own at import, `shape(..., BarkOak = $Mine)`):
+#   BarkOak, BarkMossy, BarkBeech   tileable bark (BarkMaterials), laid by TimberKit along the grain
+#   WeatheredWood                   stripped grey wood (WoodMaterials)
+#   EndGrain                        torn wood (WoodMaterials MI_Wood_Torn: the tear art tiled 28 cm along the grain; the
+#                                   kit lays uv(box, scale=100) on it)
+#   SawnCap                         a sawn end (WoodMaterials MI_Wood_StumpCap: ONE whole weathered oak cross-section,
+#                                   laid centred on the pith and fitted to the stem by uv(plane, scale=1.2 x diameter))
+# SURFACES ARE TEXTURE ART, NEVER AN ALGORITHM (owner, 22 Nov): this file only binds slots and lays UVs.
+#
+# MADE FROM THE SCRATCH RECIPE `Content/__MCPTests/DeadWoodFix/DeadWoodFix.gcshape` (below, its materials made slots).
+
+build {
+  # six demos: every subject, and the trunk twice (its default and one other setting of its feature knobs). A seventh
+  # full-density subject passes the 8M triangles a build may hold resident (DemoTrunkMossy builds on its own).
+  SM_Dead_Stump_Sawn = $DemoStumpSawn
+  SM_Dead_Stump_Snapped = $DemoStumpSnapped
+  SM_Dead_Log = $DemoLog
+  SM_Dead_Snag = $DemoSnag
+  SM_Dead_Trunk = $DemoTrunk
+  SM_Dead_Trunk_Oak = $DemoTrunkOak
+}
+
+BarkOak = material('/Game/GraphCodeMarket/GraphCode/BarkMaterials/Materials/MI_Bark_Oak')
+BarkMossy = material('/Game/GraphCodeMarket/GraphCode/BarkMaterials/Materials/MI_Bark_OakMossy')
+BarkBeech = material('/Game/GraphCodeMarket/GraphCode/BarkMaterials/Materials/MI_Bark_Beech')
+WeatheredWood = material('/Game/GraphCodeMarket/GraphCode/WoodMaterials/Materials/MI_Wood_Weathered')
+EndGrain = material('/Game/GraphCodeMarket/GraphCode/WoodMaterials/Materials/MI_Wood_Torn')
+SawnCap = material('/Game/GraphCodeMarket/GraphCode/WoodMaterials/Materials/MI_Wood_StumpCap')
+
+KitBark = shape('/GraphCodeShape/Presets/TimberKit', Face = $BarkOak, Broken = $EndGrain)
+KitMossy = shape('/GraphCodeShape/Presets/TimberKit', Face = $BarkMossy, Broken = $EndGrain)
+KitBeech = shape('/GraphCodeShape/Presets/TimberKit', Face = $BarkBeech, Broken = $EndGrain)
+KitBare = shape('/GraphCodeShape/Presets/TimberKit', Face = $WeatheredWood, Broken = $EndGrain)
+Dmg = shape('/GraphCodeShape/Presets/Damage')
+
+# THE FLARE as a warp on whatever trunk the body has built: within `fh` of the base the section swells by `flare` (a
+# share of the radius), most at the ground, in `roots` lobes round the axis (each lobe its own size from the seed),
+# and the whole foot sinks `sink` cm into the ground.
+Flare = instruction(d=40, flare=0.6, roots=5, sink=6, noise=1) {
+  $fh = 0.9 * $d
+  $ph = 37 * $noise - 360 * floor(37 * $noise / 360)
+  warp(to=(point.x * (1 + $flare * pow(max(1 - point.z / $fh, 0), 2.2) * (0.2 + 0.8 * pow(0.5 + 0.5 * cos($roots * atan2(point.y, point.x) + $ph), 3))), point.y * (1 + $flare * pow(max(1 - point.z / $fh, 0), 2.2) * (0.2 + 0.8 * pow(0.5 + 0.5 * cos($roots * atan2(point.y, point.x) + $ph), 3))), point.z - $sink))
+}
+
+# A SNAPPED STEM (a storm break; photo Trees/17). A trunk fails in BENDING: on the TENSION side the fibres pull out
+# as long thin splinters - slabs that part along the growth rings, so each is long round the stem and thin across
+# it - and on the COMPRESSION side the wood crushes low; the break rises across the stem toward the tension side.
+# TornS is where a point sits across the stem from the compression side (-1) to the tension side (+1), the tension
+# side facing a direction drawn from the seed. TornZ is the break's height at (x, y): the tilt, then two sizes of
+# ring-long slabs (ridged noise: the slab edges are the noise's zero lines; the coordinates run round the stem at
+# a sixth of the rate they run across it; few and broad, then a finer set), tall on the tension side and none on
+# the compression side, which is CRUSHED instead (a short ragged relief, fibres folded over), and a little
+# roughness over all of it. TornL runs across the stem; the TONGUE is the tall middle of the tension side (where the
+# fibres held longest), a third of the diameter wide.
+TornS = formula(x, y, d, seed) { ($x * cos(37 * $seed) + $y * sin(37 * $seed)) / (0.5 * $d) }
+TornL = formula(x, y, d, seed) { (0 - $x * sin(37 * $seed) + $y * cos(37 * $seed)) / (0.5 * $d) }
+TornZ = formula(x, y, d, h, seed, tall=1) { $h + $d * (0.12 * $TornS($x, $y, $d, $seed) + $tall * 0.5 * pow(clamp(($TornS($x, $y, $d, $seed) + 0.1) / 1.0, 0, 1), 0.7) * (1 - pow(clamp((abs($TornL($x, $y, $d, $seed)) - 0.25) / 0.65, 0, 1), 1.5)) * (0.7 + 0.3 * noise($x / 7, $y / 7, 41 * $seed)) + $tall * clamp(($TornS($x, $y, $d, $seed) + 0.25) / 1.25, 0, 1) * 0.8 * pow(1 - abs(noise(sqrt($x * $x + $y * $y) / 8, $x / 11, $y / 11 + 37 * $seed)), 2) * clamp(0.45 + 1.3 * noise($x / 10, $y / 10, 53 * $seed), 0, 1) + clamp(0.3 - $TornS($x, $y, $d, $seed), 0, 1) * (0.1 * (1 - abs(noise($x / 5, $y / 5, 29 * $seed))) - 0.1 * (0.5 + 0.5 * noise($x / 6, $y / 6, 31 * $seed))) + 0.03 * noise($x / 2.2, $y / 2.2, 13 * $seed) - 0.06) }
+# The torn top on a stem `d` across whose sawn top is at `h`: give the cap and the band below it points (fibres a
+# centimetre or so wide), then pull every point above `zb` up the stem to the break, in proportion to its height
+# in the band: the cap lands on the break, the bark wall stretches up the outside of the splinters.
+Tear = instruction(d=40, h=60, seed=1, tall=1) {
+  $zb = $h - 0.55 * $d
+  warp(by=(0, 0, 0)) [top, smooth=1.2]
+  warp(by=(0, 0, 0)) [side, value=point.z, above=$zb, smooth=1.6]
+  warp(to=(point.x, point.y, point.z + clamp((point.z - $zb) / ($h - $zb), 0, 1) * ($TornZ(point.x, point.y, $d, $h, $seed, tall=$tall) - $h)))
+  # the splinters' outer faces above the old cut line: the bark has sloughed off them (photo Trees/17), torn wood shows
+  material($EndGrain) [side, value=point.z - $d * (0.04 + 0.14 * (0.5 + 0.5 * noise(point.x / 5, point.y / 5, 17 * $seed))), above=$h]
+}
+
+# A weathered saw cut: slight slope, shallow uneven erosion and localized rim losses.
+# The lower35% band boundary is pinned; existing splits and the supporting foot are preserved.
+SawnBand = formula(t) { pow(clamp(($t - 0.65) / 0.35, 0, 1), 2) }
+SawnCup = formula(x, y, d) { pow(max(1 - 4 * ($x * $x + $y * $y) / ($d * $d), 0), 2) }
+SawnRim = formula(x, y, d, seed) { clamp((2 * sqrt($x * $x + $y * $y) / $d - 0.72) / 0.28, 0, 1) * (clamp((cos(atan2($y, $x) - 37 * $seed) - 0.97) / 0.03, 0, 1) + 0.7 * clamp((cos(atan2($y, $x) - 37 * $seed - 121) - 0.96) / 0.04, 0, 1) + 0.45 * clamp((cos(atan2($y, $x) - 37 * $seed - 237) - 0.975) / 0.025, 0, 1)) }
+SawnHeight = formula(x, y, d, seed) { 0.10 * $x - 0.04 * $y - 0.022 * $d * $SawnCup($x, $y, $d) + 0.010 * $d * noise(7 * $x / $d, 7 * $y / $d, $seed) - 0.04 * $d * $SawnRim($x, $y, $d, $seed) }
+SawnCutWear = instruction(d=40, seed=1) {
+  warp(to=(point.x * (1 - 0.020 * $SawnRim(point.x, point.y, $d, $seed) * $SawnBand(point.t.z)), point.y * (1 - 0.020 * $SawnRim(point.x, point.y, $d, $seed) * $SawnBand(point.t.z)), point.z + $SawnHeight(point.x, point.y, $d, $seed) * $SawnBand(point.t.z))) [above=65%, smooth=1.5]
+}
+
+# A STUMP: `d` across, `h` tall, sawn flat (`broken` 0) or snapped (`broken` 1) at the top.
+Stump = mesh(d=40, h=45, broken=0, flare=0.95, roots=5, age=1.4, bark=1, species=0, noise=1, budget=1) {
+  # `species` 0 oak, 1 beech, 2 mossy oak (while the bark is on)
+  if ($bark > 0.5) {
+    if ($species < 0.5) {
+      add($KitBark.Member, profile=0, size=$d, length=$h, pole=1, top=0.95, age=$age, noise=$noise, budget=$budget, checks=1 + 2 * (1 - $broken), spiral=8, clen=3, share=0.5)
+    } else {
+      if ($species < 1.5) {
+        add($KitBeech.Member, profile=0, size=$d, length=$h, pole=1, top=0.95, age=$age, noise=$noise, budget=$budget, checks=1 + 2 * (1 - $broken), spiral=8, clen=3, share=0.5)
+      } else {
+        add($KitMossy.Member, profile=0, size=$d, length=$h, pole=1, top=0.95, age=$age, noise=$noise, budget=$budget, checks=1 + 2 * (1 - $broken), spiral=8, clen=3, share=0.5)
+      }
+    }
+  } else {
+    add($KitBare.Member, profile=0, size=$d, length=$h, pole=1, top=0.95, age=$age, noise=$noise, budget=$budget, spiral=8, clen=3, share=0.5)
+  }
+  if ($flare > 0.01) {
+    $Flare(d=$d, flare=$flare, roots=$roots, sink=0.12 * $d, noise=$noise)
+  }
+  if ($broken < 0.5) {
+    $SawnCutWear(d=$d, seed=$noise)
+    # A sawn cap already exists on the Member; it is [top], not a boolean's [cut].
+    material($SawnCap) [top]
+    uv(plane, facing=(0, 0, 1), up=(1, 0, 0), scale=1.2 * $d, offset=(0.5, 0.5)) [top]
+  }
+  if ($broken > 0.5) {
+    $Tear(d=$d, h=$h, seed=$noise)
+    material($EndGrain) [top]
+    uv(box, scale=100) [material=$EndGrain]
+  }
+}
+
+# A FALLEN LOG: `d` across, `len` long, lying along +X on the ground, its bark half gone, one end snapped.
+Log = mesh(d=35, len=300, age=1.7, noise=1, budget=1, stubs=3, flare=0.7, roots=4, crown=1) {
+  add($KitMossy.Member, profile=0, size=$d, length=$len, pole=1, top=0.55, age=$age, noise=$noise, budget=$budget, slabs=4, holes=3, spiral=8, clen=3, share=0.5, bow=0.004 * $len, crook=0.003 * $len)
+  # `stubs` branch stubs where crown branches broke off in the fall, short and blunt, mostly on the side that ends up
+  # uppermost (+X before the log is laid down), along the crown half
+  loop ($stubs) {
+    $k = $noise * 1009 + 53 * output.index
+    $k = $k - 99991 * floor($k / 99991)
+    $sf = 0.35 + 0.55 * (0.618 * output.index + 0.15 * random(seed=$k, min=0, max=1) - floor(0.618 * output.index + 0.15 * random(seed=$k, min=0, max=1)))
+    $sd = $d * (0.28 + 0.2 * random(seed=$k + 1, min=0, max=1))
+    add($Stub, budget=$budget, d=$sd, len=0.2 * $d + 4 + 0.15 * $d * random(seed=$k + 2, min=0, max=1), broken=1, age=$age, noise=$noise + 3 + 6 * output.index, at=(0, 0, $sf * $len), rotate=(0, -45 - 15 * random(seed=$k + 3, min=0, max=1), 140 * (random(seed=$k + 4, min=0, max=1) - 0.5)), join=fillet, radius=0.7 * $sd)
+  }
+  # the root end swells into the root flare it was torn from (`flare` 0: a plain cut end)
+  if ($flare > 0.01) {
+    $Flare(d=$d, flare=$flare, roots=$roots, sink=0, noise=$noise)
+  }
+  # a fallen stem is never straight: a bow and a sideways sweep, laid AFTER the stubs so they bend with it
+  warp(to=(point.x + 0.022 * $len * sin(180 * point.z / $len), point.y + 0.014 * $len * sin(360 * point.z / $len + 37 * $noise), point.z))
+  # its top end (the crown side) torn off as it fell (`crown` 1) or sawn (0); the stem tapers to 0.55 there
+  if ($crown > 0.5) {
+    $Tear(d=0.55 * $d, h=$len, seed=$noise, tall=1.2)
+    material($EndGrain) [top]
+  } else {
+    material($SawnCap) [top]
+    uv(plane, facing=(0, 0, 1), up=(1, 0, 0), scale=0.66 * $d, offset=(0.5, 0.5)) [top]
+  }
+  uv(box, scale=100) [material=$EndGrain]
+  # the root end: an old saw cut
+  material($SawnCap) [bottom]
+  # the cap art is one whole cross-section: centred on the pith and fitted to the stem (laid before the log is
+  # turned, so it turns with it)
+  uv(plane, facing=(0, 0, -1), up=(1, 0, 0), scale=1.2 * $d, offset=(0.5, 0.5)) [bottom]
+  keep(largest)
+  # lay it down (a rotation: z -> +X, x -> +Z, y -> -y; a bare swap mirrors it inside out), sunk a fifth of its diameter into the soil, the middle sagging onto the ground
+  warp(to=(point.z, -1 * point.y, point.x + 0.3 * $d - 0.06 * $d * sin(180 * point.z / $len)))
+  # where it lies it is pressed flat into the soil (critic r10: "no ground contact")
+  warp(to=(point.x, point.y, max(point.z, 0.08 * $d + 0.6 * min(point.z, 0.08 * $d) - 0.6 * 0.08 * $d)))
+}
+
+# A SNAG: a standing dead trunk `h` tall, stripped grey, snapped high, a flared foot.
+Snag = mesh(d=45, h=420, age=1.8, noise=1, budget=1, stubs=4, lean=0.07, flare=0.8, roots=4) {
+  add($KitBark.Member, profile=0, size=$d, length=$h, pole=1, top=0.48, age=$age, noise=$noise, budget=$budget, slabs=6, holes=4, bow=0.012 * $h, crook=0.01 * $h, spiral=8, clen=3, share=0.5)
+  if ($flare > 0.01) {
+    $Flare(d=$d, flare=$flare, roots=$roots, sink=0.1 * $d, noise=$noise)
+  }
+  $Tear(d=0.48 * $d, h=$h, seed=$noise, tall=2.2)
+  material($EndGrain) [top]
+  uv(box, scale=100) [material=$EndGrain]
+  keep(largest)
+  # `stubs` dead branches snapped off up the stem at different lengths (some long, most short), round it by the
+  # golden angle, their collars filleted in
+  loop ($stubs) {
+    $k = $noise * 1009 + 61 * output.index
+    $k = $k - 99991 * floor($k / 99991)
+    $sz = $h * (0.4 + 0.45 * (0.618 * output.index + 0.2 * random(seed=$k, min=0, max=1) - floor(0.618 * output.index + 0.2 * random(seed=$k, min=0, max=1))))
+    $sd = $d * (0.24 + 0.14 * random(seed=$k + 1, min=0, max=1))
+    $sl = 0.2 * $d + 8
+    if (random(seed=$k + 2, min=0, max=1) > 0.6) {
+      $sl = 0.35 * $d + 25 + 25 * random(seed=$k + 3, min=0, max=1)
+    }
+    add($Stub, budget=$budget, d=$sd, len=$sl, broken=1, age=$age, noise=$noise + 3 + 4 * output.index, at=(0, 0, $sz), rotate=(0, -55 - 15 * random(seed=$k + 4, min=0, max=1), 137.5 * output.index + 37 * $noise), join=fillet, radius=0.6 * $sd)
+  }
+  uv(box, scale=100) [material=$EndGrain]
+  # a standing dead stem leans: `lean` off the vertical (0.05 = 5 %), the foot where it stood
+  warp(to=(point.x + $lean * point.z, point.y + 0.3 * $lean * point.z, point.z))
+}
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# STUBS AND SCARS (vegetation L6): what a living or dead trunk carries. Photos Trees/09 (collar), 11 (burl), 12 (hollow).
+# A STUB: a branch `d` across left `len` long, snapped (`broken` 1) or sawn flush-ish (0); its base is BLENDED into the
+# trunk with a fillet (`join=fillet`), the branch collar's swelling; a blend would re-mesh the trunk and drop its bark UVs.
+Stub = mesh(d=12, len=30, broken=1, beech=0, age=1.0, noise=1, budget=1) {
+  if ($beech > 0.5) {
+    add($KitBeech.Member, profile=0, size=$d, length=$len, pole=1, top=0.7, age=$age, noise=$noise, budget=$budget, slabs=0, holes=0, bow=0.12 * $len, crook=0.05 * $len)
+  } else {
+    add($KitBark.Member, profile=0, size=$d, length=$len, pole=1, top=0.7, age=$age, noise=$noise, budget=$budget, slabs=0, holes=0, bow=0.12 * $len, crook=0.05 * $len)
+  }
+  if ($broken > 0.5) {
+    $Tear(d=0.85 * $d, h=$len, seed=$noise, tall=1.2)
+    material($EndGrain) [top]
+  }
+}
+# the HOLLOW's cutter: an ellipse `w` x `h` (half sizes) driven `depth` into the trunk from its +X face at height `z`
+HollowCut = mesh(w=9, h=25, depth=30, r=25, z=60) {
+  # a teardrop: wider and rounder at the foot, pointed at the top (photo 12)
+  loop (24) {
+    $a = 15 * (output.index - 1)
+    $rg = 1 + 0.12 * sin(3 * $a + 40) + 0.07 * sin(7 * $a + 10) + 0.05 * sin(11 * $a)
+    $pts[output.index - 1] = ($w * $rg * (1 + 0.25 * cos($a + 90)) * cos($a), $h * $rg * sin($a))
+  }
+  points($pts, loop=true)
+  extrude(height=$depth)
+  # local (x, y, z) -> world (z, x, y): a cyclic turn (no mirror), x into the trunk from 0.3 r inside
+  warp(to=(point.z + 0.3 * $r, point.x, point.y + $z))
+}
+# A LIVING TRUNK SECTION (owner 22 Nov: "parametric and optionally select what to have in the tree trunk"): `d`
+# across, `h` tall, and EVERY feature optional and placed by knobs. Angles are degrees round the stem (0 = +X),
+# heights are fractions of `h`.
+#   burl 0/1, burlsize x (photo Trees/11: a swelling ~33 cm across, 14 cm proud at size 1), burlturn, burlh
+#   hollow 0/1, hollowsize x (photo 12: a teardrop 18 x 50 cm with rolled lips of woundwood), hollowturn, hollowh
+#   stubs 0-6 branch stubs, spread round the stem by the golden angle from the seed, each its own size and height;
+#   sawn 0-1 the share of them cut off flush-ish (the rest snapped); collars filleted in (photo 9)
+#   flare 0-1 a root flare at the foot (0 = a cut section); top 0 a sawn cap, 1 torn off
+#   species 0 beech (smooth grey), 1 oak (furrowed), 2 mossy oak
+TrunkScars = mesh(d=50, h=260, age=0.8, noise=1, budget=1, burl=1, burlsize=1, burlturn=200, burlh=0.65, hollow=1, hollowsize=1, hollowturn=0, hollowh=0.23, stubs=2, sawn=0.5, flare=0, top=0, species=0) {
+  $r = 0.5 * $d
+  # a living trunk: no drying checks or erosion (those are dead wood's)
+  if ($species < 0.5) {
+    add($KitBeech.Member, profile=0, size=$d, length=$h, pole=1, top=0.85, age=$age, noise=$noise, budget=$budget, slabs=0, holes=0, checks=0, erosion=0, bow=0.015 * $h, crook=0.012 * $h)
+  } else {
+    if ($species < 1.5) {
+      add($KitBark.Member, profile=0, size=$d, length=$h, pole=1, top=0.85, age=$age, noise=$noise, budget=$budget, slabs=0, holes=0, checks=0, erosion=0, bow=0.015 * $h, crook=0.012 * $h)
+    } else {
+      add($KitMossy.Member, profile=0, size=$d, length=$h, pole=1, top=0.85, age=$age, noise=$noise, budget=$budget, slabs=0, holes=0, checks=0, erosion=0, bow=0.015 * $h, crook=0.012 * $h)
+    }
+  }
+  # no stem is a true cylinder: its section wanders a few per cent round and up
+  warp(to=(point.x * (1 + 0.05 * noise(point.x / 25, point.y / 25, point.z / 70 + 13 * $noise)), point.y * (1 + 0.05 * noise(point.x / 25, point.y / 25, point.z / 70 + 13 * $noise)), point.z))
+  if ($flare > 0.01) {
+    $Flare(d=$d, flare=0.9 * $flare, roots=5, sink=0, noise=$noise)
+  }
+  # THE BURL: a swelling that rises gradually out of the trunk (no rim: an edged dome read as an egg, critic r6), its
+  # surface a few broad rounded knobs at a scale the mesh resolves round the stem (finer knobs striped, critic r8)
+  if ($burl > 0.5) {
+    $bt = $burlturn
+    $bz = $burlh * $h
+    $bs = $burlsize
+    warp(by=(0, 0, 0)) [side, value=abs(point.z - $bz), below=45 * $bs, smooth=2]
+    warp(to=(point.x * (1 + 17 * $bs * pow(max(1 - (pow($r * 0.0174533 * acos(clamp(cos(atan2(point.y, point.x) - $bt), -1, 1)), 2) + pow(point.z - $bz, 2)) / (1000 * $bs * $bs), 0), 1.4) * (0.85 + 0.15 * noise(point.x / 10, point.y / 10, point.z / 10)) * (1 + 0.15 * noise(point.x / 9, point.y / 9, point.z / 9)) / max(sqrt(point.x * point.x + point.y * point.y), 1)), point.y * (1 + 17 * $bs * pow(max(1 - (pow($r * 0.0174533 * acos(clamp(cos(atan2(point.y, point.x) - $bt), -1, 1)), 2) + pow(point.z - $bz, 2)) / (1000 * $bs * $bs), 0), 1.4) * (0.85 + 0.15 * noise(point.x / 10, point.y / 10, point.z / 10)) * (1 + 0.15 * noise(point.x / 9, point.y / 9, point.z / 9)) / max(sqrt(point.x * point.x + point.y * point.y), 1)), point.z))
+  }
+  # THE HOLLOW: woundwood (callus) rolls up in a ring just outside the opening, as a living tree closes a wound from
+  # its edges; the opening a ragged teardrop driven into the stem
+  if ($hollow > 0.5) {
+    $ht = $hollowturn
+    $hz = $hollowh * $h
+    $hw = 9 * $hollowsize
+    $hh = 25 * $hollowsize
+    warp(by=(0, 0, 0)) [side, value=abs(point.z - $hz), below=2 * $hh, smooth=2]
+    warp(to=(point.x * (1 + 12 * $hollowsize * pow(max(1 - pow((sqrt(pow($r * 0.0174533 * atan2(sin(atan2(point.y, point.x) - $ht), cos(atan2(point.y, point.x) - $ht)) / $hw, 2) + pow((point.z - $hz) / $hh, 2)) - 1.15) / 0.45, 2), 0), 2) * clamp((point.x * cos($ht) + point.y * sin($ht)) / $r, 0, 1) / max(sqrt(point.x * point.x + point.y * point.y), 1)), point.y * (1 + 12 * $hollowsize * pow(max(1 - pow((sqrt(pow($r * 0.0174533 * atan2(sin(atan2(point.y, point.x) - $ht), cos(atan2(point.y, point.x) - $ht)) / $hw, 2) + pow((point.z - $hz) / $hh, 2)) - 1.15) / 0.45, 2), 0), 2) * clamp((point.x * cos($ht) + point.y * sin($ht)) / $r, 0, 1) / max(sqrt(point.x * point.x + point.y * point.y), 1)), point.z))
+    subtract($HollowCut, w=$hw, h=$hh, depth=40 * $hollowsize, r=$r, z=$hz, rotate=(0, 0, $ht))
+    material($EndGrain) [cut]
+  }
+  # THE STUBS: round the stem by the golden angle from the seed, between a third and nine tenths of the height, each
+  # 18-30 % of the stem across; the first `sawn` share cut, the rest snapped
+  loop ($stubs) {
+    $k = $noise * 1009 + 71 * output.index
+    $k = $k - 99991 * floor($k / 99991)
+    $st = 137.5 * output.index + 37 * $noise + 40 * (random(seed=$k, min=0, max=1) - 0.5)
+    $sz = $h * (0.33 + 0.55 * (0.618 * output.index + 0.2 * random(seed=$k + 1, min=0, max=1) - floor(0.618 * output.index + 0.2 * random(seed=$k + 1, min=0, max=1))))
+    $sd = $d * (0.22 + 0.14 * random(seed=$k + 2, min=0, max=1))
+    $cut = 0
+    if (output.index < $sawn * $stubs - 0.01) {
+      $cut = 1
+    }
+    $sl = $r + 0.6 * $sd + (1 - $cut) * 2.5 * $sd * random(seed=$k + 3, min=0.4, max=1)
+    add($Stub, budget=$budget, d=$sd, len=$sl, broken=1 - $cut, beech=1 - clamp($species, 0, 1), age=$age + 0.4, noise=$noise + 3 + 4 * output.index, at=(0, 0, $sz), rotate=(0, -50 - 20 * random(seed=$k + 4, min=0, max=1), $st), join=fillet, radius=1.0 * $sd)
+  }
+  if ($top < 0.5) {
+    material($SawnCap) [top]
+    uv(plane, facing=(0, 0, 1), up=(1, 0, 0), scale=1.2 * $d, offset=(0.5, 0.5)) [top]
+  } else {
+    $Tear(d=0.85 * $d, h=$h, seed=$noise, tall=1.4)
+    material($EndGrain) [top]
+  }
+  uv(box, scale=100) [material=$EndGrain]
+}
+
+# =====================================================================================================================
+# THE TOP-LEVEL SUBJECTS (kit §11a)
+# =====================================================================================================================
+KitStump = mesh(size=45, height=40, damage=0, age=1.3, noise=1, budget=1, flare=0.95, roots=5, species=0) {
+  $ag = clamp($age, 0, 2)
+  $bark = 1
+  if ($ag > 1.6) {
+    $bark = 0
+  }
+  $br = 0
+  if ($damage > 0.5) {
+    $br = 1
+  }
+  add($Stump, d=clamp($size, 10, 200), h=clamp($height, 10, 300), broken=$br, age=$ag, bark=$bark, species=clamp(floor($species + 0.5), 0, 2), flare=clamp($flare, 0, 1.5), roots=clamp(floor($roots + 0.5), 3, 9), noise=$noise, budget=clamp(floor($budget + 0.5), 0, 2), join=none)
+}
+KitLog = mesh(size=35, length=320, age=1.7, noise=1, budget=1, stubs=3, flare=0.7, roots=4, crown=1) {
+  add($Log, d=clamp($size, 10, 200), len=clamp($length, 30, 2000), age=clamp($age, 0, 2), noise=$noise, budget=clamp(floor($budget + 0.5), 0, 2), stubs=clamp(floor($stubs + 0.5), 0, 6), flare=clamp($flare, 0, 1.2), roots=clamp(floor($roots + 0.5), 3, 9), crown=clamp($crown, 0, 1), join=none)
+}
+KitSnag = mesh(size=45, height=420, age=1.8, noise=1, budget=1, stubs=4, lean=0.07, flare=0.8, roots=4) {
+  add($Snag, d=clamp($size, 10, 200), h=clamp($height, 50, 3000), age=clamp($age, 0, 2), noise=$noise, budget=clamp(floor($budget + 0.5), 0, 2), stubs=clamp(floor($stubs + 0.5), 0, 6), lean=clamp($lean, 0, 0.2), flare=clamp($flare, 0, 1.2), roots=clamp(floor($roots + 0.5), 3, 9), join=none)
+}
+KitTrunk = mesh(size=50, height=260, age=0.8, noise=1, budget=1, burl=1, burlsize=1, burlturn=200, burlheight=0.65, hollow=1, hollowsize=1, hollowturn=0, hollowheight=0.23, stubs=2, sawn=0.5, flare=0, top=0, species=0) {
+  add($TrunkScars, d=clamp($size, 20, 200), h=clamp($height, 100, 1000), age=clamp($age, 0, 2), noise=$noise, budget=clamp(floor($budget + 0.5), 0, 2), burl=clamp($burl, 0, 1), burlsize=clamp($burlsize, 0.3, 2.5), burlturn=$burlturn, burlh=clamp($burlheight, 0.1, 0.9), hollow=clamp($hollow, 0, 1), hollowsize=clamp($hollowsize, 0.4, 2), hollowturn=$hollowturn, hollowh=clamp($hollowheight, 0.08, 0.8), stubs=clamp(floor($stubs + 0.5), 0, 6), sawn=clamp($sawn, 0, 1), flare=clamp($flare, 0, 1), top=clamp($top, 0, 1), species=clamp(floor($species + 0.5), 0, 2), join=none)
+}
+DemoStumpSawn = mesh() { add($KitStump, size=45, height=40, damage=0, age=1.3, noise=3, join=none) }
+DemoStumpSnapped = mesh() { add($KitStump, size=38, height=70, damage=1, age=1.6, noise=5, join=none) }
+DemoLog = mesh() { add($KitLog, size=50, length=420, age=1.7, noise=7, join=none) }
+DemoSnag = mesh() { add($KitSnag, size=62, height=420, age=1.8, noise=9, join=none) }
+DemoTrunk = mesh() { add($KitTrunk, size=50, height=260, age=0.8, noise=11, join=none) }
+# two more settings of the same subject (owner: every feature optional)
+DemoTrunkOak = mesh() { add($KitTrunk, size=60, height=300, age=1.0, noise=21, budget=0, burl=0, hollow=0, stubs=4, sawn=0.25, flare=1, top=1, species=1, join=none) }
+DemoTrunkMossy = mesh() { add($KitTrunk, size=55, height=240, age=1.2, noise=31, burl=1, burlsize=1.5, burlturn=60, burlheight=0.45, hollow=1, hollowsize=1.3, hollowturn=210, hollowheight=0.3, stubs=0, flare=0.6, species=2, join=none) }

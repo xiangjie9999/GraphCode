@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.1  shade:40
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Debris  smooth:0.1  shade:40
 
 # DEBRIS — L3 Parts, the loose pieces broken wood leaves behind. Ready-made meshes, not modifiers.
 # `Docs/GC-SHAPE-PRESET-LIBRARY.md` §12.2; method in `Docs/GC-SHAPE-WOOD-DAMAGE.md` (v2).

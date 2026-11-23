@@ -76,6 +76,9 @@ struct FGcRigLinkedJoint
 	TOptional<double> Velocity;
 	TOptional<double> Accel;
 	TOptional<double> Ramp;
+	/** `twist_velocity=`, `twist_accel=` (FGcRigJoint): the twist's own reference, merged per key and copied to a mirror twin like `velocity=`. */
+	TOptional<double> TwistVelocity;
+	TOptional<double> TwistAccel;
 
 	/** `dynamic=`: how freely this bone's physics body moves, 0..1 (FGcRigJoint::Dynamic). Merged per key like `velocity=` and copied
 	 * whole to a mirror twin; unset is a joint that declares nothing, which the physics asset writer leaves exactly as it was. */

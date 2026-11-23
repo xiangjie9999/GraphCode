@@ -28,6 +28,12 @@ public:
 	~FGcBodyCollision();
 	FGcBodyCollision(const FGcBodyCollision&) = delete;
 	FGcBodyCollision& operator=(const FGcBodyCollision&) = delete;
+	/** This collision becomes a fresh copy of Prepared, for one more use of a collision prepared once (Convert to presets builds one key up to
+	 * five times, each preparing the same bodies, skin, pieces and surfaces again: about 2.4 s a build on a MetaHuman). The bodies, their pairs,
+	 * skin, pieces, worn pieces, twist rules and surfaces are copied, the shapes' geometry and solids shared (nothing changes them once made);
+	 * every per-use record starts empty, as on a collision just made: what was accepted, kept, refused, posed, measured, indexed and timed. Copy
+	 * Prepared before it is used (its enabled surfaces, anchors and excluded pairs are copied as they stand). */
+	void CopyPrepared(const FGcBodyCollision& Prepared);
 	void Initialize(USkeletalMesh* Mesh, TArray<FString>& Notes);
 	/** DeclaredRest (OBJ1t v004): the rig's declared rest (`rest=`, the pose every clip starts from since RIG-REST1), local, one transform per
 	 * bone of Mesh; empty = the reference pose only. A pair's allowed rest overlap is the deeper of its overlap at the reference pose and here:
@@ -265,6 +271,50 @@ public:
 	/** Form fitting stops at contact; the ordinary audit retains its numerical penetration tolerance. */
 	bool CheckMotionToContact(const TArray<TArray<FTransform>>& Poses, const FString& Clip, FString& Error,
 		double NumericalTolerance = 1.e-4) const;
+	/**
+	 * S5, A SWEEP MEASURES WHAT THE CANDIDATE CHANGES (Saved/Research/MOVE-PARAM1/BUILD-TIME.md, Docs/GC-COLLISION-SPEED.md; gc.Collision.ScopedSweep).
+	 * A fit judges each candidate on its way from the frame before, {Start, End}. Two such sweeps from the same Start, over the same number of
+	 * subdivisions, place every bone that no changed joint carries the same way at every step, so every pair reading only such bones has the same
+	 * depth at every step as it had on the way to Reference, which was judged clear. With a Reference given, only the pairs reading a bone carried by
+	 * a joint whose local differs between Reference and End are measured; they are measured beside the kept sample (LastGlobal and the depths stay
+	 * those of the last check), so the next check reads what it would have read. Where the subdivisions differ, the collision changed since Reference
+	 * (Epoch), a surface moves on its own clock, or the poses are not two, the sweep measures every pair as CheckMotionToContact does.
+	 */
+	struct FSweepScope
+	{
+		/** In: the end of a sweep from the same Start that was judged clear, the subdivisions it took and the Epoch it was judged in. Null: none yet. */
+		const TArray<FTransform>* Reference = nullptr;
+		int32 ReferenceSteps = 0;
+		uint64 ReferenceEpoch = 0;
+		/** Out: the subdivisions this sweep's interval took, the Epoch it was judged in, whether only the changed pairs were measured, and how many. */
+		int32 Steps = 0;
+		uint64 Epoch = 0;
+		bool bScoped = false;
+		int32 ScopedPairs = 0;
+	};
+	bool CheckMotionToContact(const TArray<TArray<FTransform>>& Poses, const FString& Clip, FString& Error,
+		double NumericalTolerance, FSweepScope& Scope) const;
+	/** Changes whenever what a check measures against may have changed (pairs, surfaces, accepted overlaps): a scope judged in another Epoch is not used. */
+	uint64 SweepEpoch() const;
+	/** A shape's name ($Sword for a surface, the body's for a body) and whether it is a held surface, for a caller reading FSeparation's shapes. */
+	FName ShapeName(int32 Shape) const;
+	bool IsSurfaceShape(int32 Shape) const;
+	/** THE CONTACT LOCK (BUILD-TIME fix 2): one held part and the bones locked to it (every hand riding it). */
+	struct FLockUnit { FName Surface; TArray<int32> Bones; };
+	/** Every pair both of whose sides are inside ONE unit (a body shape on one of its Bones, or its Surface) is left out of every check and query until
+	 * the next call; a pair between two units (a hand on one part and another part) is checked as before. Grounds are never left out. Returns how
+	 * many pairs are out. Empty: none. */
+	int32 SkipPairsWithin(TConstArrayView<FLockUnit> Units) const;
+	void ClearSkippedPairs() const;
+	/** THE HELD HAND RIDES ITS PART BETWEEN SAMPLES (BUILD-TIME fix 2, lead 21 Nov): over frames FromFrame..ToFrame, the swept poses between two
+	 * samples place Bone in the frame of the bone its Surface is anchored to (its relation to it blended between the two samples), not by blending
+	 * its own joint: two hands on one sword stay on the sword between frames, as each sample has them. The samples themselves are unchanged. A
+	 * surface anchored below Bone (a hand holding its own part) already rides it and is left out. Replaces the last call's rides; empty: none. */
+	struct FRide { int32 Bone = INDEX_NONE; FName Surface; int32 FromFrame = 0, ToFrame = 0; };
+	void SetRides(TConstArrayView<FRide> Rides) const;
+	/** Pairs the checks have handed on to be measured since this was made (the diagnostic's "pairs handed on"), and of those, measured by a scope. */
+	int64 PairsHandedOn() const;
+	int64 ScopedPairsHandedOn() const;
 	/** Acquisition spans a whole transition, not one baked frame. Keep geometric sampling without the frame-size guard. */
 	bool CheckTransitionToContact(const TArray<FTransform>& From, const TArray<FTransform>& To,
 		const FString& Name, FString& Error) const;
@@ -316,7 +366,7 @@ private:
 		FSeparation& Out, FString& Error) const;
 	bool CheckSamplesWithTolerance(int32 Count, TFunctionRef<void(int32,TArray<FTransform>&)> Sample,
 		const FString& Clip, FString& Error, double PenetrationTolerance, TArray<double>* FloorLift = nullptr,
-		bool bWholeTransition = false, double SampleRate = 0.0, FInventory* Inventory = nullptr) const;
+		bool bWholeTransition = false, double SampleRate = 0.0, FInventory* Inventory = nullptr, FSweepScope* Scope = nullptr) const;
 	struct FData;
 	TUniquePtr<FData> Data;
 };

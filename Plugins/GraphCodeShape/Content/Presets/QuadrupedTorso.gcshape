@@ -1,0 +1,121 @@
+gcshape 1 into:/Game/AnimalStudies/QuadrupedTorso smooth:.04 shade:80 uv:keep
+
+# Bare four-legged mammal trunk. Centimetres. +X towards the head, +Y right,
+# +Z up. Origin below the tail end, at the height of the deepest breast.
+build { SM_QuadrupedTorso = $Torso [pivot=(0,0,0)] }
+
+Length = 40
+LoinExtra = 0
+ChestWidth = 14
+ChestDepth = 17
+HipWidth = 12
+WaistWidth = 10
+Tuck = 4
+CroupRise = 0
+WitherRise = 1
+SpineOffset = profile(0=0,1=0)
+BellyOffset = profile(0=0,1=0)
+Feline = 0
+StandingFit = 0
+DogStandingBelly = profile(0=0,.17=0,.32=.30,.46=.08,.62=-.45,.76=-.28,.87=.42,1=0)
+CatStandingBelly = profile(0=0,.17=0,.32=-.22,.46=-.37,.62=-.36,.76=.12,.87=.70,1=0)
+StandingBelly = formula(s) { $StandingFit*lerp($DogStandingBelly($s),$CatStandingBelly($s),$Feline)+$BellyOffset($s) }
+TrunkGirthScale = profile(0=1,1=1)
+ShoulderStation = .83
+HipStation = .145
+ForeTrack = .315
+HindTrack = .285
+TailStation = .067
+TailRootLevel = .75
+# Authoritative attachment centres in local centimetres.
+ShoulderX = $ShoulderStation*$Length+$LoinExtra
+ShoulderY = $ForeTrack*$ChestWidth
+HipX = $HipStation*$Length
+HipY = $HindTrack*$HipWidth
+TailX = $TailStation*$Length
+TailCroupShare = .74
+TailZ = $TailRootLevel*$ChestDepth+$TailCroupShare*$CroupRise
+RumpCapSpan = .10
+BreastCapStart = .87
+BladeStationOffset = -.03
+BladeRake = .105
+BladeSpan = .145
+BladeRelief = .12
+HaunchStationOffset = .015
+HaunchRake = .055
+HaunchSpan = .145
+HaunchRelief = .085
+KeelTaper = .20
+CervicalSeatStation = .89
+CervicalSeatLevel = .82
+CervicalWithersShare = .65
+CervicalSeatPitch = 41.35
+CervicalSeatBand = .17
+ShoulderSeatLevel = .38
+HipSeatLevel = .59
+HipCroupShare = .82
+ShoulderSeatRake = .24
+HipSeatRake = .40
+TailSeatSlope = -.18
+NeckX = $CervicalSeatStation*$Length+$LoinExtra
+NeckZ = $CervicalSeatLevel*$ChestDepth+$CervicalWithersShare*$WitherRise
+Skin = material('/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial')
+
+# Axial station runs from the rump (0) to the breast (1). The loin length
+# control translates the entire thorax forward, leaving its own span intact.
+LoinTravel = profile(0=0, .23=0, .5=1, 1=1)
+HipShare = profile(0=1, .15=1, .29=.38, .38=0, 1=0)
+RibShare = profile(0=0, .29=0, .39=.08, .52=.72, .64=1, .76=.97, .9=.78, 1=.57)
+Pelvis = profile(0=.82, .13=1, .24=.8, .39=0, 1=0)
+Withers = profile(0=0, .55=0, .71=.32, .82=1, .93=.65, 1=0)
+Back = profile(0=.86, .13=.94, .26=.975, .51=.95, .64=.955, .79=.985, .88=.96, 1=.85)
+Under = profile(0=.12, .12=.105, .28=.085, .43=.05, .56=.015, .69=0, .79=.008, .89=.055, 1=.16)
+Flank = profile(0=.48, .14=.66, .28=.97, .35=.99, .47=.74, .57=.39, .68=.08, .76=0, 1=0)
+
+LoinTravelOffset = profile(0=0,1=0)
+LoinTravelAt = formula(s) { $LoinTravel($s)+$LoinTravelOffset($s) }
+HipShareOffset = profile(0=0,1=0)
+HipShareAt = formula(s) { $HipShare($s)+$HipShareOffset($s) }
+RibShareOffset = profile(0=0,1=0)
+RibShareAt = formula(s) { $RibShare($s)+$RibShareOffset($s) }
+PelvisOffset = profile(0=0,1=0)
+PelvisAt = formula(s) { $Pelvis($s)+$PelvisOffset($s) }
+WithersOffset = profile(0=0,1=0)
+WithersAt = formula(s) { $Withers($s)+$WithersOffset($s) }
+BackProfileOffset = profile(0=0,1=0)
+BackAt = formula(s) { $Back($s)+$BackProfileOffset($s) }
+UnderProfileOffsetScale = 1
+UnderProfileOffset = profile(0=0,1=0)
+UnderAt = formula(s) { $Under($s)+$UnderProfileOffsetScale*$UnderProfileOffset($s) }
+FlankOffset = profile(0=0,1=0)
+FlankAt = formula(s) { $Flank($s)+$FlankOffset($s) }
+Surface = mesh(stations=56,sides=48) {
+  # Fixed meridians and parallels carry one UV layout through every fit.
+  arc(radius=1, from=-90, to=90, segments=$stations)
+  revolve(segments=$sides, rotate=(0,-90,0))
+  # Reparameterize the meridian to a unit trunk: x is the longitudinal
+  # station, y and z run from -1 to +1 on the barrel. Full end sections
+  # round over a short axial span so the croup and breast retain volume.
+  warp(with=(Ring: max(.00001,sqrt(max(0,1-point.x*point.x))), Rear: clamp(1-point.t.x/max(.00001,$RumpCapSpan),0,1), Fore: clamp((point.t.x-$BreastCapStart)/max(.00001,1-$BreastCapStart),0,1), Cap: sqrt(max(0,1-$Rear*$Rear-$Fore*$Fore))),to=(point.t.x,point.y*$Cap/$Ring,point.z*$Cap/$Ring))
+  # The scapula slopes caudally as it rises across the ribs. A broader
+  # gluteal mass rises in the opposite direction. Raised-cosine shoulders
+  # let both muscle planes die away without drawing a ridge around a ring.
+  warp(with=(Blade: .5+.5*cos(180*clamp((point.x-$ShoulderStation-$BladeStationOffset+$BladeRake*point.z)/max(.00001,$BladeSpan),-1,1)), Haunch: .5+.5*cos(180*clamp((point.x-$HipStation-$HaunchStationOffset-$HaunchRake*point.z)/max(.00001,$HaunchSpan),-1,1)), Keel: max(0,-point.z)),by=(0,point.y*($BladeRelief*$Blade+$HaunchRelief*$Haunch-$KeelTaper*$Keel*$Keel),0))
+  # Scale the unit sections between the upper and lower silhouettes.
+  # LoinTravel moves the front half bodily; it never stretches the breast.
+  warp(with=(S: point.x, Roof: $ChestDepth*$BackAt($S)+$SpineOffset($S)+$CroupRise*$PelvisAt($S)+$WitherRise*$WithersAt($S), FloorZ: $ChestDepth*$UnderAt($S)+$StandingBelly($S)+$Tuck*$FlankAt($S), Breadth: $WaistWidth+($HipWidth-$WaistWidth)*$HipShareAt($S)+($ChestWidth-$WaistWidth)*$RibShareAt($S)),to=($Length*$S+$LoinExtra*$LoinTravelAt($S),.5*$Breadth*$TrunkGirthScale($S)*point.y,lerp($FloorZ,$Roof,.5+.5*point.z)))
+  material($Skin)
+}
+
+Torso = mesh(stations=56,sides=48) {
+  add($Surface,stations=$stations,sides=$sides,join=none)
+  # Interior fitting landmarks for downstream parts. The neck rises forward,
+  # the shoulder faces down and forward, the femur departs down and forward.
+  save($NeckBand) [value=cos($CervicalSeatPitch)*(point.x-$NeckX)+sin($CervicalSeatPitch)*(point.z-$NeckZ),above=-$CervicalSeatBand*$ChestDepth]
+  socket(Neck,at=($NeckX,0,$NeckZ),facing=(cos($CervicalSeatPitch),0,sin($CervicalSeatPitch)),up=(-sin($CervicalSeatPitch),0,cos($CervicalSeatPitch)),type='mammal/neck@1',transition=$NeckBand)
+  socket(Tail,at=($TailX,0,$TailZ),facing=(-1,0,$TailSeatSlope),up=($TailSeatSlope,0,1),type='mammal/tail@1')
+  socket(LeftShoulder,at=($ShoulderX,-$ShoulderY,$ShoulderSeatLevel*$ChestDepth),facing=($ShoulderSeatRake,0,-1),up=(1,0,$ShoulderSeatRake),type='mammal/shoulder@1')
+  socket(RightShoulder,at=($ShoulderX,$ShoulderY,$ShoulderSeatLevel*$ChestDepth),facing=($ShoulderSeatRake,0,-1),up=(1,0,$ShoulderSeatRake),type='mammal/shoulder@1')
+  socket(LeftHip,at=($HipX,-$HipY,$HipSeatLevel*$ChestDepth+$HipCroupShare*$CroupRise),facing=($HipSeatRake,0,-1),up=(1,0,$HipSeatRake),type='mammal/hip@1')
+  socket(RightHip,at=($HipX,$HipY,$HipSeatLevel*$ChestDepth+$HipCroupShare*$CroupRise),facing=($HipSeatRake,0,-1),up=(1,0,$HipSeatRake),type='mammal/hip@1')
+}

@@ -1,4 +1,4 @@
-gcshape 1 into:/GraphCodeShape/Presets smooth:0.004 shade:80
+gcshape 1 into:/Game/GraphCodeMarket/GraphCode/Organic smooth:0.004 shade:80
 
 # Organic parts, in centimetres. +Z is the growth axis, X is width and Y is
 # thickness. Mounting sections start at z=0. Proportions are adjustable design

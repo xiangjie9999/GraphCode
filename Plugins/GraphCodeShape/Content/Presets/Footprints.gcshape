@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.05  shade:42
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Footprints  smooth:0.05  shade:42
 
 # FOOTPRINTS — the outlines everything else is stamped, cut or grown from. Layer
 # L1 of the preset library (`Docs/GC-SHAPE-PRESET-LIBRARY.md` §1): values other

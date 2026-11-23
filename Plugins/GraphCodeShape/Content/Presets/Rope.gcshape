@@ -1,0 +1,534 @@
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Rope  smooth:0.5  shade:40
+
+# ROPE (TK15, 21 Nov 2026; rounds in `Docs/GC-SHAPE-DAMAGE-KIT-ROUNDS.md` "TK15", photos `Saved/Gate/Reference/Rope/`): a
+# laid rope and what rope does: a straight length, a span sagging between two points, a hanging end that lies on the
+# ground, a flat coil, turns round a member, a SQUARE lashing of two crossing members, a ROUND lashing of two side by
+# side, a hitch tied off on a post, an overhand knot. Each is one rope swept along a path worked out by formula (no
+# physics, no draping: nothing here rests on what is under it except by its own numbers). Any OTHER rope, resting on
+# what it meets, is a path you declare and drape: ANY ROPE, ITS PATH DECLARED, below.
+#
+#   Rp   = shape('/GraphCodeShape/Presets/Rope', Rope = $Hemp)
+#   Tie  = mesh() { add($Rp.Square, r=0.5, aw=6.0, ah=6.0, bw=10.0, bh=10.0, turns=4, frap=2, age=0.8) }
+#   Line = mesh() { add($Rp.Span, r=0.8, span=250.0, sag=40.0, age=1.2) }
+#
+# THE ROPE: every piece takes these, then its own (below). Lengths in cm. The slot `Rope` is pathless: bind it.
+#   r          0.6 cm     [0.1..5]    rope radius (a 12 mm rope is 0.6)
+#   strands      3 count  [0, 2..6]   strands laid round the axis; 0 one plain round cord
+#   lay        3.0 x d    [2..8]      lay length (one strand's full turn) in rope diameters; the photos read 3.3 at
+#                                     the crowns; 3.0 gives the strands their 30-45 degree look
+#   hand         1 +1/-1              +1 right-hand (Z) lay, -1 left-hand (S)
+#   budget       1 0-2                0 game: a plain tube of 6 sides, coarse on bends; 1 high: laid strands of 8 sides
+#                                     (a plain rope, strands=0, of 10); 2 ultra: strands of 10 sides, finer, loose fibres
+#   sides       -1 count  [3..16]     the round's sides (of each strand, or of a plain rope); -1 from the budget
+#   detail       1 x      [0.6..4]    stations along the rope, x the budget's (below 0.6 a bend turns to edges)
+#   age          0 0-2                0 new; 1 used: ends frayed 1.2 d, a few fibres up; 2 old: ends frayed 4.8 d, strands
+#                                     uneven, one strand broken, lashings, wraps and spans slacker
+#   fray        -1 x d    [0..10]     frayed length at a free end; -1 from age (1.2 x age squared)
+#   fuzz        -1 per 10 cm [0..20]  loose fibres (budget 2); -1 from age (0.6 + 1.2 x age)
+#   lost        -1 0/1                one strand broken part way; -1 from age (past 1.5)
+#   noise        1                    the seed; `index` this piece's number (two pieces of one seed differ by index)
+#
+# THE PIECES (their own knobs; every frame is the piece's own, place it with at=)
+#   Line(len=100, sp=0)                along +Y from the origin. `sp` > 0: the stations along it exactly `sp` cm apart
+#                                      (rounded to fit the length), for a Line `follow()` bends round a lashing; 0 (the
+#                                      default): as before, 8 along a plain rope, the lay's own along a laid one
+#   Span(span=200, rise=0, sag=20, length=0, slack=1)   a catenary from (0,0,0) to (0,span,rise): `sag` below the
+#                                      chord at mid span, or `length` (rope length, wins when > 0); `slack` x age adds sag
+#   Hang(len=200, drop=150, bend=-1, sway=0, wander=0)  down from the origin to the ground `drop` below, bending
+#                                      (radius `bend`, -1 = 8r or 0.08 drop) onto it along +Y; `sway` cm sideways on the
+#                                      drop, `wander` cm side to side on the ground
+#   Coil(turns=5, inner=0.8, gap=1, tail=40)  a flat (Flemish) coil on the ground round the origin, from the inside out:
+#                                      `inner` the centre hole in rope diameters, `gap` turn pitch in rope widths, `tail`
+#                                      the end leaving straight
+#   Wrap(w=6, h=6, corner=-1, turns=4, gap=1, slack=1, axis=0, tuck=1)  turns round a member of section w x h (corner,
+#                                      -1 = round) along Y, from y = 0, stepping `gap` rope widths a turn; `axis` 1 lays the
+#                                      member along X, 2 stands it along Z, 3 along -X; `tuck` 1 sinks both ends under
+#   Turn(w=6, h=6, corner=-1, slack=1, axis=0)  one closed ring round a member or a bundle
+#   Square(aw=8, ah=8, ac=-1, bw=8, bh=8, bc=-1, turns=4, frap=2, hitch=1, tail=6, slack=1, band=-1, aside=1, bside=-1,
+#          sink=0, press=-1)           a SQUARE LASHING: member A along X (aw across, ah tall, axis at the origin) on top of
+#                                      member B along Y (bw x bh) behind it, the two touching (`sink` cm when A sits into
+#                                      B). `turns` over A each side of B and behind B each side of A, each a rope width
+#                                      out; `frap` frapping turns between the members round the turns; `hitch` 1 a hitch
+#                                      on B (on the `bside` side, -1 = -Y) and one on A (`aside`, +1 = +X), their ends
+#                                      `tail` long; `band` 1 lays the turns as one flat band (it twists on the spans; 0 default); `press` >= 0
+#                                      flattens the rope where it passes over A's top `press` cm above it (a deck laid on;
+#                                      it stretches the texture there). Turns stand off a square arris to a bend of 3r
+#   Round(aw=8, bw=8, gap=-1, turns=6, frap=2, slack=1, band=-1)  a ROUND (shear) LASHING of two members along Y side by
+#                                      side, `gap` apart (-1 = 2.2r): turns round both from y = 0, frapping between them
+#   Hitch(w=6, h=6, corner=-1, stand=10, tail=6, axis=0)  two turns and a riding end round a member along Y; `stand` the
+#                                      standing part (along +X), `tail` the end
+#   PostHitch(post=12, stand=60, tail=8)  the hitch round an upright post of diameter `post`, its standing part level
+#   Overhand(tail=8, tail2=8)          an overhand knot, its two tails
+#
+# ANY ROPE, ITS PATH DECLARED (21 Nov 2026, `Docs/GC-SHAPE-DRAPE.md` "PATH WORDS"): the pieces above are worked out by
+# formula; any other rope is a PATH you write in a `plane()`, word by word or point by point, that `drape` pulls onto
+# what it rests on and a `Line` then follows. No tie is a preset: a tie is its path. The words append guide points in
+# the order written and mix with raw points: around, over, under, at, between, tuck, to, and a 3D points() after a word
+# (ask each: `gc_describe kind:"shape" block:"around"`). Every point on a member is read from its REAL section (crooked,
+# tapered, oval, square) and stands `off` rope radii out; `t=` (0..1) or `at=$Other` (+ `beside=`, `ring=`) says where;
+# `over` is the side seen from `up=` (default +Z), `under` the side away; `hold` holds a word's points. Short examples:
+#
+#   SQUARE (A over B, crossing)  Lash = plane(r=0.5) {
+#                                  at($B, at=$A, beside=-1, ring=7, angle=60, r=$r, off=0.5, hold)
+#                                  at($B, at=$A, beside=-1, ring=1.5, angle=60, off=0.5, hold)
+#                                  loop (repeat=4) {
+#                                    over($A, at=$B, beside=1, ring=output.index)  under($B, at=$A, beside=1, ring=output.index)
+#                                    over($A, at=$B, beside=-1, ring=output.index)  under($B, at=$A, beside=-1, ring=output.index)
+#                                  }
+#                                  between($A, $B, turns=2)  tuck(len=4)
+#                                  drape(onto=($A, $B), r=$r, taut, self)
+#                                }
+#                                Tie = mesh() { add($Rp.Line, r=0.5, len=520, sp=1.2, join=none) follow(along=$Lash) }
+#   WRAP (turns round one pole)  around($Pole, t=0.5, turns=8, side=-1, r=0.4) after a start laid along it
+#                                (`at($Pole, t=0.62, angle=150, off=0.5, hold)` twice), then tuck(len=5), drape(onto=$Pole, taut, self)
+#   ROUND (two poles touching)   around($P1, $P2, t=0.43, turns=7) between two `at(..., hold)`s, tuck(len=6)
+#   SHEAR (two poles apart)      around($P1, $P2, turns=6)  between($P1, $P2, turns=2)  tuck(len=5)
+#   BIND (a bundle of sticks)    around($S1, $S2, $S3, turns=5)  tuck(len=4)
+#   OVER A BEAM (thrown over)    to((-30, 0, 60), r=0.8)  over($Beam)  to((30, 0, 40))
+#                                drape(onto=$Beam, r=0.8, length=260, pin=(), friction=0.8)
+#   HANG (raw points only)       points((0, 0, 200), (300, 0, 180))  drape(r=0.6, slack=1.12)
+#   THE LOWEST LEVEL             a loop writes `$g[i] = (x, y, z)`, then `points($g)`; words may follow it
+#
+#
+# BUILT ON: `Core` (the rope along +Y, s = 0..len), `Strand`, `Seg`, `Whisker`; formulas Q* (a rounded rectangle's
+# half loop by length), F* (the full loop), W* (wrap), S*/V*/L* (square lashing), FW*/G* (frapping), K* (hitch), O*
+# (overhand), Cat* (catenary), Co* (coil), H* (a strand's helix, its frame turned so it does not twist), Fw (fray).
+# A formula is written out where it is read: lengths that do not change along the rope are worked out once in the
+# entry and passed in (a first square lashing that recomputed them read 3.4 million characters a point and stalled
+# the editor).
+
+build {
+  SM_Rope_Line_Game       = $SampleLineGame     [pivot=(0, 0, 0), triangles=400]
+  SM_Rope_Line_High       = $SampleLineHigh     [pivot=(0, 0, 0)]
+  SM_Rope_Span_High       = $SampleSpanHigh     [pivot=(0, 0, 0)]
+  SM_Rope_Coil_High       = $SampleCoilHigh     [pivot=(0, 0, 0)]
+  SM_Rope_Square_Game     = $SampleSquareGame   [pivot=(0, 0, 0), triangles=2000]
+  SM_Rope_Square_High     = $SampleSquareHigh   [pivot=(0, 0, 0)]
+  SM_Rope_Overhand_High   = $SampleKnotHigh     [pivot=(0, 0, 0)]
+}
+
+Rope = material()
+
+Hash = formula(s, c) { sin($s * 12.9898 + $c) * 43758.5453 - floor(sin($s * 12.9898 + $c) * 43758.5453) }
+Ln = formula(v) { 1000000 * (pow(max($v, 0.000000001), 0.000001) - 1) }
+Asinh = formula(u) { clamp($u * 1000000000, -1, 1) * $Ln(abs($u) + sqrt($u * $u + 1)) }
+Sinh = formula(u) { 0.5 * (pow(2.718281828459045, $u) - pow(2.718281828459045, -$u)) }
+Cosh = formula(u) { 0.5 * (pow(2.718281828459045, $u) + pow(2.718281828459045, -$u)) }
+
+R4 = plane() { points((0, 0, 0), (0, 25, 0), (0, 50, 0), (0, 75, 0), (0, 100, 0)) }
+R8 = plane() { points((0, 0, 0), (0, 12.5, 0), (0, 25, 0), (0, 37.5, 0), (0, 50, 0), (0, 62.5, 0), (0, 75, 0), (0, 87.5, 0), (0, 100, 0)) }
+R16 = plane() { points((0, 0, 0), (0, 6.25, 0), (0, 12.5, 0), (0, 18.75, 0), (0, 25, 0), (0, 31.25, 0), (0, 37.5, 0), (0, 43.75, 0), (0, 50, 0), (0, 56.25, 0), (0, 62.5, 0), (0, 68.75, 0), (0, 75, 0), (0, 81.25, 0), (0, 87.5, 0), (0, 93.75, 0), (0, 100, 0)) }
+R32 = plane() { points((0, 0, 0), (0, 3.125, 0), (0, 6.25, 0), (0, 9.375, 0), (0, 12.5, 0), (0, 15.625, 0), (0, 18.75, 0), (0, 21.875, 0), (0, 25, 0), (0, 28.125, 0), (0, 31.25, 0), (0, 34.375, 0), (0, 37.5, 0), (0, 40.625, 0), (0, 43.75, 0), (0, 46.875, 0), (0, 50, 0), (0, 53.125, 0), (0, 56.25, 0), (0, 59.375, 0), (0, 62.5, 0), (0, 65.625, 0), (0, 68.75, 0), (0, 71.875, 0), (0, 75, 0), (0, 78.125, 0), (0, 81.25, 0), (0, 84.375, 0), (0, 87.5, 0), (0, 90.625, 0), (0, 93.75, 0), (0, 96.875, 0), (0, 100, 0)) }
+R64 = plane() { points((0, 0, 0), (0, 1.5625, 0), (0, 3.125, 0), (0, 4.6875, 0), (0, 6.25, 0), (0, 7.8125, 0), (0, 9.375, 0), (0, 10.9375, 0), (0, 12.5, 0), (0, 14.0625, 0), (0, 15.625, 0), (0, 17.1875, 0), (0, 18.75, 0), (0, 20.3125, 0), (0, 21.875, 0), (0, 23.4375, 0), (0, 25, 0), (0, 26.5625, 0), (0, 28.125, 0), (0, 29.6875, 0), (0, 31.25, 0), (0, 32.8125, 0), (0, 34.375, 0), (0, 35.9375, 0), (0, 37.5, 0), (0, 39.0625, 0), (0, 40.625, 0), (0, 42.1875, 0), (0, 43.75, 0), (0, 45.3125, 0), (0, 46.875, 0), (0, 48.4375, 0), (0, 50, 0), (0, 51.5625, 0), (0, 53.125, 0), (0, 54.6875, 0), (0, 56.25, 0), (0, 57.8125, 0), (0, 59.375, 0), (0, 60.9375, 0), (0, 62.5, 0), (0, 64.0625, 0), (0, 65.625, 0), (0, 67.1875, 0), (0, 68.75, 0), (0, 70.3125, 0), (0, 71.875, 0), (0, 73.4375, 0), (0, 75, 0), (0, 76.5625, 0), (0, 78.125, 0), (0, 79.6875, 0), (0, 81.25, 0), (0, 82.8125, 0), (0, 84.375, 0), (0, 85.9375, 0), (0, 87.5, 0), (0, 89.0625, 0), (0, 90.625, 0), (0, 92.1875, 0), (0, 93.75, 0), (0, 95.3125, 0), (0, 96.875, 0), (0, 98.4375, 0), (0, 100, 0)) }
+R128 = plane() { points((0, 0, 0), (0, 0.78125, 0), (0, 1.5625, 0), (0, 2.34375, 0), (0, 3.125, 0), (0, 3.90625, 0), (0, 4.6875, 0), (0, 5.46875, 0), (0, 6.25, 0), (0, 7.03125, 0), (0, 7.8125, 0), (0, 8.59375, 0), (0, 9.375, 0), (0, 10.1562, 0), (0, 10.9375, 0), (0, 11.7188, 0), (0, 12.5, 0), (0, 13.2812, 0), (0, 14.0625, 0), (0, 14.8438, 0), (0, 15.625, 0), (0, 16.4062, 0), (0, 17.1875, 0), (0, 17.9688, 0), (0, 18.75, 0), (0, 19.5312, 0), (0, 20.3125, 0), (0, 21.0938, 0), (0, 21.875, 0), (0, 22.6562, 0), (0, 23.4375, 0), (0, 24.2188, 0), (0, 25, 0), (0, 25.7812, 0), (0, 26.5625, 0), (0, 27.3438, 0), (0, 28.125, 0), (0, 28.9062, 0), (0, 29.6875, 0), (0, 30.4688, 0), (0, 31.25, 0), (0, 32.0312, 0), (0, 32.8125, 0), (0, 33.5938, 0), (0, 34.375, 0), (0, 35.1562, 0), (0, 35.9375, 0), (0, 36.7188, 0), (0, 37.5, 0), (0, 38.2812, 0), (0, 39.0625, 0), (0, 39.8438, 0), (0, 40.625, 0), (0, 41.4062, 0), (0, 42.1875, 0), (0, 42.9688, 0), (0, 43.75, 0), (0, 44.5312, 0), (0, 45.3125, 0), (0, 46.0938, 0), (0, 46.875, 0), (0, 47.6562, 0), (0, 48.4375, 0), (0, 49.2188, 0), (0, 50, 0), (0, 50.7812, 0), (0, 51.5625, 0), (0, 52.3438, 0), (0, 53.125, 0), (0, 53.9062, 0), (0, 54.6875, 0), (0, 55.4688, 0), (0, 56.25, 0), (0, 57.0312, 0), (0, 57.8125, 0), (0, 58.5938, 0), (0, 59.375, 0), (0, 60.1562, 0), (0, 60.9375, 0), (0, 61.7188, 0), (0, 62.5, 0), (0, 63.2812, 0), (0, 64.0625, 0), (0, 64.8438, 0), (0, 65.625, 0), (0, 66.4062, 0), (0, 67.1875, 0), (0, 67.9688, 0), (0, 68.75, 0), (0, 69.5312, 0), (0, 70.3125, 0), (0, 71.0938, 0), (0, 71.875, 0), (0, 72.6562, 0), (0, 73.4375, 0), (0, 74.2188, 0), (0, 75, 0), (0, 75.7812, 0), (0, 76.5625, 0), (0, 77.3438, 0), (0, 78.125, 0), (0, 78.9062, 0), (0, 79.6875, 0), (0, 80.4688, 0), (0, 81.25, 0), (0, 82.0312, 0), (0, 82.8125, 0), (0, 83.5938, 0), (0, 84.375, 0), (0, 85.1562, 0), (0, 85.9375, 0), (0, 86.7188, 0), (0, 87.5, 0), (0, 88.2812, 0), (0, 89.0625, 0), (0, 89.8438, 0), (0, 90.625, 0), (0, 91.4062, 0), (0, 92.1875, 0), (0, 92.9688, 0), (0, 93.75, 0), (0, 94.5312, 0), (0, 95.3125, 0), (0, 96.0938, 0), (0, 96.875, 0), (0, 97.6562, 0), (0, 98.4375, 0), (0, 99.2188, 0), (0, 100, 0)) }
+R256 = plane() { points((0, 0, 0), (0, 0.390625, 0), (0, 0.78125, 0), (0, 1.17188, 0), (0, 1.5625, 0), (0, 1.95312, 0), (0, 2.34375, 0), (0, 2.73438, 0), (0, 3.125, 0), (0, 3.51562, 0), (0, 3.90625, 0), (0, 4.29688, 0), (0, 4.6875, 0), (0, 5.07812, 0), (0, 5.46875, 0), (0, 5.85938, 0), (0, 6.25, 0), (0, 6.64062, 0), (0, 7.03125, 0), (0, 7.42188, 0), (0, 7.8125, 0), (0, 8.20312, 0), (0, 8.59375, 0), (0, 8.98438, 0), (0, 9.375, 0), (0, 9.76562, 0), (0, 10.1562, 0), (0, 10.5469, 0), (0, 10.9375, 0), (0, 11.3281, 0), (0, 11.7188, 0), (0, 12.1094, 0), (0, 12.5, 0), (0, 12.8906, 0), (0, 13.2812, 0), (0, 13.6719, 0), (0, 14.0625, 0), (0, 14.4531, 0), (0, 14.8438, 0), (0, 15.2344, 0), (0, 15.625, 0), (0, 16.0156, 0), (0, 16.4062, 0), (0, 16.7969, 0), (0, 17.1875, 0), (0, 17.5781, 0), (0, 17.9688, 0), (0, 18.3594, 0), (0, 18.75, 0), (0, 19.1406, 0), (0, 19.5312, 0), (0, 19.9219, 0), (0, 20.3125, 0), (0, 20.7031, 0), (0, 21.0938, 0), (0, 21.4844, 0), (0, 21.875, 0), (0, 22.2656, 0), (0, 22.6562, 0), (0, 23.0469, 0), (0, 23.4375, 0), (0, 23.8281, 0), (0, 24.2188, 0), (0, 24.6094, 0), (0, 25, 0), (0, 25.3906, 0), (0, 25.7812, 0), (0, 26.1719, 0), (0, 26.5625, 0), (0, 26.9531, 0), (0, 27.3438, 0), (0, 27.7344, 0), (0, 28.125, 0), (0, 28.5156, 0), (0, 28.9062, 0), (0, 29.2969, 0), (0, 29.6875, 0), (0, 30.0781, 0), (0, 30.4688, 0), (0, 30.8594, 0), (0, 31.25, 0), (0, 31.6406, 0), (0, 32.0312, 0), (0, 32.4219, 0), (0, 32.8125, 0), (0, 33.2031, 0), (0, 33.5938, 0), (0, 33.9844, 0), (0, 34.375, 0), (0, 34.7656, 0), (0, 35.1562, 0), (0, 35.5469, 0), (0, 35.9375, 0), (0, 36.3281, 0), (0, 36.7188, 0), (0, 37.1094, 0), (0, 37.5, 0), (0, 37.8906, 0), (0, 38.2812, 0), (0, 38.6719, 0), (0, 39.0625, 0), (0, 39.4531, 0), (0, 39.8438, 0), (0, 40.2344, 0), (0, 40.625, 0), (0, 41.0156, 0), (0, 41.4062, 0), (0, 41.7969, 0), (0, 42.1875, 0), (0, 42.5781, 0), (0, 42.9688, 0), (0, 43.3594, 0), (0, 43.75, 0), (0, 44.1406, 0), (0, 44.5312, 0), (0, 44.9219, 0), (0, 45.3125, 0), (0, 45.7031, 0), (0, 46.0938, 0), (0, 46.4844, 0), (0, 46.875, 0), (0, 47.2656, 0), (0, 47.6562, 0), (0, 48.0469, 0), (0, 48.4375, 0), (0, 48.8281, 0), (0, 49.2188, 0), (0, 49.6094, 0), (0, 50, 0), (0, 50.3906, 0), (0, 50.7812, 0), (0, 51.1719, 0), (0, 51.5625, 0), (0, 51.9531, 0), (0, 52.3438, 0), (0, 52.7344, 0), (0, 53.125, 0), (0, 53.5156, 0), (0, 53.9062, 0), (0, 54.2969, 0), (0, 54.6875, 0), (0, 55.0781, 0), (0, 55.4688, 0), (0, 55.8594, 0), (0, 56.25, 0), (0, 56.6406, 0), (0, 57.0312, 0), (0, 57.4219, 0), (0, 57.8125, 0), (0, 58.2031, 0), (0, 58.5938, 0), (0, 58.9844, 0), (0, 59.375, 0), (0, 59.7656, 0), (0, 60.1562, 0), (0, 60.5469, 0), (0, 60.9375, 0), (0, 61.3281, 0), (0, 61.7188, 0), (0, 62.1094, 0), (0, 62.5, 0), (0, 62.8906, 0), (0, 63.2812, 0), (0, 63.6719, 0), (0, 64.0625, 0), (0, 64.4531, 0), (0, 64.8438, 0), (0, 65.2344, 0), (0, 65.625, 0), (0, 66.0156, 0), (0, 66.4062, 0), (0, 66.7969, 0), (0, 67.1875, 0), (0, 67.5781, 0), (0, 67.9688, 0), (0, 68.3594, 0), (0, 68.75, 0), (0, 69.1406, 0), (0, 69.5312, 0), (0, 69.9219, 0), (0, 70.3125, 0), (0, 70.7031, 0), (0, 71.0938, 0), (0, 71.4844, 0), (0, 71.875, 0), (0, 72.2656, 0), (0, 72.6562, 0), (0, 73.0469, 0), (0, 73.4375, 0), (0, 73.8281, 0), (0, 74.2188, 0), (0, 74.6094, 0), (0, 75, 0), (0, 75.3906, 0), (0, 75.7812, 0), (0, 76.1719, 0), (0, 76.5625, 0), (0, 76.9531, 0), (0, 77.3438, 0), (0, 77.7344, 0), (0, 78.125, 0), (0, 78.5156, 0), (0, 78.9062, 0), (0, 79.2969, 0), (0, 79.6875, 0), (0, 80.0781, 0), (0, 80.4688, 0), (0, 80.8594, 0), (0, 81.25, 0), (0, 81.6406, 0), (0, 82.0312, 0), (0, 82.4219, 0), (0, 82.8125, 0), (0, 83.2031, 0), (0, 83.5938, 0), (0, 83.9844, 0), (0, 84.375, 0), (0, 84.7656, 0), (0, 85.1562, 0), (0, 85.5469, 0), (0, 85.9375, 0), (0, 86.3281, 0), (0, 86.7188, 0), (0, 87.1094, 0), (0, 87.5, 0), (0, 87.8906, 0), (0, 88.2812, 0), (0, 88.6719, 0), (0, 89.0625, 0), (0, 89.4531, 0), (0, 89.8438, 0), (0, 90.2344, 0), (0, 90.625, 0), (0, 91.0156, 0), (0, 91.4062, 0), (0, 91.7969, 0), (0, 92.1875, 0), (0, 92.5781, 0), (0, 92.9688, 0), (0, 93.3594, 0), (0, 93.75, 0), (0, 94.1406, 0), (0, 94.5312, 0), (0, 94.9219, 0), (0, 95.3125, 0), (0, 95.7031, 0), (0, 96.0938, 0), (0, 96.4844, 0), (0, 96.875, 0), (0, 97.2656, 0), (0, 97.6562, 0), (0, 98.0469, 0), (0, 98.4375, 0), (0, 98.8281, 0), (0, 99.2188, 0), (0, 99.6094, 0), (0, 100, 0)) }
+
+Seg = mesh(rs=0.5, seg=8, a=0.0, b=100.0, n=16, tile=4.0, uo=0.0, vo=0.0, bx=1.0) {
+  circle(radius=$rs, segments=$seg)
+  $ri = clamp(ceil(($n - 8) / 1000), 0, 1) + clamp(ceil(($n - 16) / 1000), 0, 1) + clamp(ceil(($n - 32) / 1000), 0, 1) + clamp(ceil(($n - 64) / 1000), 0, 1) + clamp(ceil(($n - 128) / 1000), 0, 1)
+  if (abs($ri - 0) < 0.5) { sweep(along=$R8) }
+  if (abs($ri - 1) < 0.5) { sweep(along=$R16) }
+  if (abs($ri - 2) < 0.5) { sweep(along=$R32) }
+  if (abs($ri - 3) < 0.5) { sweep(along=$R64) }
+  if (abs($ri - 4) < 0.5) { sweep(along=$R128) }
+  if (abs($ri - 5) < 0.5) { sweep(along=$R256) }
+  warp(to=(point.x * $bx, $a + point.y * ($b - $a) / 100, point.z))
+  uv(cylinder, at=(0, 0, 0), facing=(0, 1, 0), up=(1, 0, 0), scale=($tile * (1 + 0.64 * ($bx - 1)), $tile), offset=($uo, $vo))
+  uv(plane, at=(0, 0, 0), facing=(0, 1, 0), up=(1, 0, 0), scale=($tile, $tile), offset=($uo, $vo)) [facing=+Y]
+  uv(plane, at=(0, 0, 0), facing=(0, -1, 0), up=(1, 0, 0), scale=($tile, $tile), offset=($uo, $vo)) [facing=-Y]
+  material($Rope)
+}
+
+# exact stations (Line's `sp`): n rounded up to 8, laid as pieces of 256, 128, 64, 32, 16 and 8 stations end to end (an R*
+# run is a power of two); the UV is taken from y after each piece's warp, so it runs on across the joins
+SegX = mesh(rs=0.5, seg=8, a=0.0, b=100.0, n=16, tile=4.0, uo=0.0, vo=0.0, bx=1.0, ex=0) {
+  if ($ex < 0.5) {
+    add($Seg, rs=$rs, seg=$seg, a=$a, b=$b, n=$n, tile=$tile, uo=$uo, vo=$vo, bx=$bx, join=none)
+  }
+  if ($ex > 0.5) {
+    $m = clamp(ceil($n / 8 - 0.000001), 1, 63)
+    $u = ($b - $a) / (8 * $m)
+    $q5 = floor($m / 32)
+    $q4 = floor(($m - 32 * $q5) / 16)
+    $q3 = floor(($m - 32 * $q5 - 16 * $q4) / 8)
+    $q2 = floor(($m - 32 * $q5 - 16 * $q4 - 8 * $q3) / 4)
+    $q1 = floor(($m - 32 * $q5 - 16 * $q4 - 8 * $q3 - 4 * $q2) / 2)
+    $q0 = $m - 32 * $q5 - 16 * $q4 - 8 * $q3 - 4 * $q2 - 2 * $q1
+    $c4 = $a + 256 * $u * $q5
+    $c3 = $c4 + 128 * $u * $q4
+    $c2 = $c3 + 64 * $u * $q3
+    $c1 = $c2 + 32 * $u * $q2
+    $c0 = $c1 + 16 * $u * $q1
+    if ($q5 > 0.5) { add($Seg, rs=$rs, seg=$seg, a=$a, b=$c4, n=256, tile=$tile, uo=$uo, vo=$vo, bx=$bx, join=none) }
+    if ($q4 > 0.5) { add($Seg, rs=$rs, seg=$seg, a=$c4, b=$c3, n=128, tile=$tile, uo=$uo, vo=$vo, bx=$bx, join=none) }
+    if ($q3 > 0.5) { add($Seg, rs=$rs, seg=$seg, a=$c3, b=$c2, n=64, tile=$tile, uo=$uo, vo=$vo, bx=$bx, join=none) }
+    if ($q2 > 0.5) { add($Seg, rs=$rs, seg=$seg, a=$c2, b=$c1, n=32, tile=$tile, uo=$uo, vo=$vo, bx=$bx, join=none) }
+    if ($q1 > 0.5) { add($Seg, rs=$rs, seg=$seg, a=$c1, b=$c0, n=16, tile=$tile, uo=$uo, vo=$vo, bx=$bx, join=none) }
+    if ($q0 > 0.5) { add($Seg, rs=$rs, seg=$seg, a=$c0, b=$b, n=8, tile=$tile, uo=$uo, vo=$vo, bx=$bx, join=none) }
+  }
+}
+
+HB = formula(d, P) { atan(6.283185 * $d / $P) }
+HT = formula(s, d, P, h, ph) { $ph - $h * 360 * $s * cos($HB($d, $P)) / $P }
+HP = formula(s, d, P, h) { $h * 57.29578 * $s * (0.159155 * $P) / ($d * $d + 0.025330 * $P * $P) }
+HXs = formula(s, x, z, d, P, h) { $x * cos($HP($s, $d, $P, $h)) - $z * sin($HP($s, $d, $P, $h)) }
+HZs = formula(s, x, z, d, P, h) { $x * sin($HP($s, $d, $P, $h)) + $z * cos($HP($s, $d, $P, $h)) }
+HX = formula(s, x, z, d, P, h, ph) { ($d + $HXs($s, $x, $z, $d, $P, $h)) * cos($HT($s, $d, $P, $h, $ph)) - $HZs($s, $x, $z, $d, $P, $h) * cos($HB($d, $P)) * sin($HT($s, $d, $P, $h, $ph)) }
+HY = formula(s, x, z, d, P, h) { $s * cos($HB($d, $P)) + $h * $HZs($s, $x, $z, $d, $P, $h) * sin($HB($d, $P)) }
+HZ = formula(s, x, z, d, P, h, ph) { ($d + $HXs($s, $x, $z, $d, $P, $h)) * sin($HT($s, $d, $P, $h, $ph)) + $HZs($s, $x, $z, $d, $P, $h) * cos($HB($d, $P)) * cos($HT($s, $d, $P, $h, $ph)) }
+
+HX2 = formula(s, t, x, z, d, dd, P, h, ph) { ($d + $dd + $HXs($t, $x, $z, $d, $P, $h)) * cos($HT($t, $d, $P, $h, $ph)) - $HZs($t, $x, $z, $d, $P, $h) * cos($HB($d, $P)) * sin($HT($t, $d, $P, $h, $ph)) }
+HY2 = formula(s, t, x, z, d, P, h) { $s * cos($HB($d, $P)) + $h * $HZs($t, $x, $z, $d, $P, $h) * sin($HB($d, $P)) }
+HZ2 = formula(s, t, x, z, d, dd, P, h, ph) { ($d + $dd + $HXs($t, $x, $z, $d, $P, $h)) * sin($HT($t, $d, $P, $h, $ph)) + $HZs($t, $x, $z, $d, $P, $h) * cos($HB($d, $P)) * cos($HT($t, $d, $P, $h, $ph)) }
+Tw = formula(s, Ls, f0, f1) { $s + clamp(ceil($f0 * 100), 0, 1) * clamp($f0 - $s, 0, $f0) * clamp($f0 - $s, 0, $f0) / (2 * max($f0, 0.0001)) - clamp(ceil($f1 * 100), 0, 1) * clamp($s - $Ls + $f1, 0, $f1) * clamp($s - $Ls + $f1, 0, $f1) / (2 * max($f1, 0.0001)) }
+Fw = formula(s, Ls, f0, f1, g0, g1, fg) { max(max(clamp(($f0 - $s) / max($f0, 0.0001), 0, 1) * clamp(ceil($f0 * 100), 0, 1), clamp(($s - $Ls + $f1) / max($f1, 0.0001), 0, 1) * clamp(ceil($f1 * 100), 0, 1)), 0.55 * max(clamp(($s - $g0 + $fg) / $fg, 0, 1) * clamp(ceil(($g0 + 0.001 - $s) * 1000), 0, 1), clamp(($g1 + $fg - $s) / $fg, 0, 1) * clamp(ceil(($s - $g1 + 0.001) * 1000), 0, 1))) }
+
+Strand = mesh(rs=0.5, seg=8, Ls=100.0, sp=1.0, d=0.5, P=7.0, h=1, ph=0.0, tile=4.0, uo=0.0, vo=0.0, f0=0.0, f1=0.0, g0=-1000000.0, g1=-2000000.0, spl=1.5, irr=0.0, bx=1.0, ex=0) {
+  $gp = clamp(ceil($g1 - $g0), 0, 1)
+  $fg = 0.8 * $P
+  $LA = $Ls - ($Ls - $g0) * $gp
+  $np = ceil($LA / (256 * $sp))
+  $pl = $LA / $np
+  loop (repeat=$np) {
+    add($SegX, rs=$rs, seg=$seg, a=(output.index - 1) * $pl, b=output.index * $pl, n=ceil($pl / $sp), tile=$tile, uo=$uo, vo=$vo, bx=$bx, ex=$ex, join=none)
+  }
+  if ($gp > 0.5) {
+    $LB = $Ls - $g1
+    $nq = ceil($LB / (256 * $sp))
+    $ql = $LB / $nq
+    loop (repeat=$nq) {
+      add($SegX, rs=$rs, seg=$seg, a=$g1 + (output.index - 1) * $ql, b=$g1 + output.index * $ql, n=ceil($ql / $sp), tile=$tile, uo=$uo, vo=$vo, bx=$bx, ex=$ex, join=none)
+    }
+  }
+  warp(to=(point.x * (0.6 + 0.4 * sqrt(max(1 - (1 - clamp(min(point.y + 1000 * clamp(ceil($f0 * 100), 0, 1), $Ls - point.y + 1000 * clamp(ceil($f1 * 100), 0, 1)) / (0.35 * $rs), 0, 1)) * (1 - clamp(min(point.y + 1000 * clamp(ceil($f0 * 100), 0, 1), $Ls - point.y + 1000 * clamp(ceil($f1 * 100), 0, 1)) / (0.35 * $rs), 0, 1)), 0))), point.y, point.z * (0.6 + 0.4 * sqrt(max(1 - (1 - clamp(min(point.y + 1000 * clamp(ceil($f0 * 100), 0, 1), $Ls - point.y + 1000 * clamp(ceil($f1 * 100), 0, 1)) / (0.35 * $rs), 0, 1)) * (1 - clamp(min(point.y + 1000 * clamp(ceil($f0 * 100), 0, 1), $Ls - point.y + 1000 * clamp(ceil($f1 * 100), 0, 1)) / (0.35 * $rs), 0, 1)), 0)))))
+  if ($d > 0.0001) {
+    warp(to=($HX2(point.y, $Tw(point.y, $Ls, $f0, $f1), point.x, point.z, $d, $d * ($spl * $Fw(point.y, $Ls, $f0, $f1, $g0, $g1, $fg) * $Fw(point.y, $Ls, $f0, $f1, $g0, $g1, $fg) + $irr * sin(360 * point.y / (7.3 * $P) + 3 * $ph)), $P, $h, $ph), $HY2(point.y, $Tw(point.y, $Ls, $f0, $f1), point.x, point.z, $d, $P, $h), $HZ2(point.y, $Tw(point.y, $Ls, $f0, $f1), point.x, point.z, $d, $d * ($spl * $Fw(point.y, $Ls, $f0, $f1, $g0, $g1, $fg) * $Fw(point.y, $Ls, $f0, $f1, $g0, $g1, $fg) + $irr * sin(360 * point.y / (7.3 * $P) + 3 * $ph)), $P, $h, $ph)))
+  }
+}
+
+Whisker = mesh(a=0.0, s0=0.0, rr=0.6, l=1.0, lean=30.0, rw=0.03, cu=0.3) {
+  circle(radius=$rw, segments=3)
+  sweep(along=$R8)
+  uv(cylinder, at=(0, 0, 0), facing=(0, 1, 0), up=(1, 0, 0), scale=(6.283185 * $rw, 628.3185 * $rw / max($l, 0.01)))
+  warp(to=(0.9 * $rr * cos($a) - $cu * $l * (point.y / 100) * (point.y / 100) * sin($a) + point.y / 100 * $l * cos($a) * cos($lean) + (1 - 0.15 * point.y / 100) * (-point.x * sin($a) - point.z * cos($a) * sin($lean)), $s0 + point.y / 100 * $l * sin($lean) + (1 - 0.15 * point.y / 100) * point.z * cos($lean), 0.9 * $rr * sin($a) + $cu * $l * (point.y / 100) * (point.y / 100) * cos($a) + point.y / 100 * $l * sin($a) * cos($lean) + (1 - 0.15 * point.y / 100) * (point.x * cos($a) - point.z * sin($a) * sin($lean))))
+  material($Rope)
+}
+
+Core = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, len=100.0, ends=3, sp=0.0, bx=1.0, ex=0) {
+  $K = $noise * 977 + $index
+  $BG = clamp(floor($budget + 0.5), 0, 2)
+  $A = clamp($age, 0, 2)
+  $n = clamp(floor($strands + 0.5), 0, 6) * clamp($BG, 0, 1)
+  $seg = max(floor($sides + 0.5), 0) + clamp(ceil(-$sides), 0, 1) * (8 + 2 * floor($BG / 2))
+  $segp = max(floor($sides + 0.5), 0) + clamp(ceil(-$sides), 0, 1) * (6 + 4 * min($BG, 1))
+  $q = (6 + 4 * floor($BG / 2)) * clamp($detail, 0.6, 4)
+  $sig = sin(180 / max($n, 2))
+  $d = $r / (1 + 1.06 * $sig)
+  $rs = 1.06 * $d * $sig * (1 - 0.04 * $A)
+  $P = 2 * clamp($lay, 2, 8) * $r
+  $cb = cos($HB($d, $P))
+  $spq = $P / ($cb * $q)
+  $spu = (max($sp, 0.0001) + 1000 * clamp(1 - ceil($sp), 0, 1)) / clamp($detail, 0.6, 4)
+  $frv = max($fray, 0) + clamp(ceil(-$fray), 0, 1) * 1.2 * $A * $A
+  $fl = min($frv * 2 * $r, 0.45 * $len)
+  $e0 = $ends - 2 * floor($ends / 2)
+  $e1 = floor($ends / 2)
+  $fzv = max($fuzz, 0) + clamp(ceil(-$fuzz), 0, 1) * (0.6 + 1.2 * $A) * floor($BG / 2)
+  $nw = min(floor($fzv * $len / 10), 240)
+  $lsv = max($lost, 0) + clamp(ceil(-$lost), 0, 1) * clamp(ceil($A - 1.5), 0, 1)
+  $jb = 1 + floor($n * $Hash($K, 71.9))
+  $gq = $len / $cb * (0.25 + 0.5 * $Hash($K, 83.3))
+  if ($n >= 2) {
+    loop (repeat=$n) {
+      $gb = clamp(floor($lsv + 0.5), 0, 1) * clamp(1 - abs(output.index - $jb), 0, 1)
+      add($Strand, rs=$rs, seg=$seg, Ls=$len / $cb, sp=min($spq, $spu), d=$d, P=$P, h=$hand, ph=360 * (output.index - 1) / $n + 360 * $Hash($K, 11.3), tile=6.283185 * $rs, uo=$Hash($K + output.index, 23.7), vo=$Hash($K + output.index, 41.1), f0=$e0 * $fl / $cb, f1=$e1 * $fl / $cb, g0=$gq * $gb - 1000000 * (1 - $gb), g1=($gq + 1.6 * $P) * $gb - 2000000 * (1 - $gb), spl=1.6 + 0.8 * $Hash($K + output.index, 5.1), irr=0.05 * $A, bx=$bx, ex=$ex, join=none)
+    }
+  }
+  if ($n < 2) {
+    add($Strand, rs=$r * (1 - 0.03 * $A), seg=$segp, Ls=$len, sp=min($spu, $len / 8), d=0.0, tile=6.283185 * $r, uo=$Hash($K, 23.7), vo=$Hash($K, 41.1), f0=$e0 * $fl, f1=$e1 * $fl, spl=0.0, bx=$bx, ex=$ex, join=none)
+  }
+  if ($nw > 0.5) {
+    loop (repeat=$nw) {
+      add($Whisker, a=360 * $Hash($K + output.index, 3.1), s0=$len * $Hash($K + output.index, 5.7), rr=$r, l=2 * $r * (0.3 + 0.8 * $Hash($K + output.index, 9.3)), lean=100 * $Hash($K + output.index, 13.9) - 50, cu=1.2 * $Hash($K + output.index, 15.1) - 0.6, rw=0.012 + 0.02 * $r, join=none)
+    }
+  }
+  if ($fl * min($BG, 1) > 0.05) {
+    loop (repeat=6 * ($e0 + $e1)) {
+      $wt = floor((output.index - 1) / 6) * clamp($e0 + $e1 - 1, 0, 1) + (1 - $e0) * clamp(2 - $e0 - $e1, 0, 1)
+      add($Whisker, a=360 * $Hash($K + output.index, 17.3), s0=$wt * $len + (1 - 2 * $wt) * 0.3 * $fl * $Hash($K + output.index, 19.1), rr=0.8 * $r, l=2 * $r * (0.6 + 0.8 * $Hash($K + output.index, 29.9)) * (1 + 0.4 * $A), lean=(1 - 2 * $wt) * (-40 - 40 * $Hash($K + output.index, 31.7)), cu=1.2 * $Hash($K + output.index, 33.9) - 0.6, rw=0.02 + 0.04 * $r, join=none)
+    }
+  }
+}
+
+Line = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, len=100.0, ends=3, sp=0.0) {
+  add($Core, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, len=$len, ends=$ends, sp=$sp, ex=clamp(ceil($sp * 1000), 0, 1), join=none)
+}
+
+CatX = formula(s, x, z, a, xv, sA) { $xv + $a * $Asinh(($sA + $s) / $a) - $z * (($sA + $s) / $a) / sqrt(1 + (($sA + $s) / $a) * (($sA + $s) / $a)) }
+CatZ = formula(s, x, z, a, sA) { $a * sqrt(1 + (($sA + $s) / $a) * (($sA + $s) / $a)) - $a * sqrt(1 + ($sA / $a) * ($sA / $a)) + $z / sqrt(1 + (($sA + $s) / $a) * (($sA + $s) / $a)) }
+Span = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, span=200.0, rise=0.0, sag=20.0, length=0.0, slack=1.0, ends=0) {
+  $BG = clamp(floor($budget + 0.5), 0, 2)
+  $S = max($span, 1.0)
+  $q0 = max(2 * $sag * (1 + 0.2 * clamp($slack, 0, 3) * clamp($age, 0, 2)) / $S, 0.0005)
+  $b = 2 * $q0
+  $b = $b - ($Cosh($b) - 1 - $q0 * $b) / ($Sinh($b) - $q0)
+  $b = $b - ($Cosh($b) - 1 - $q0 * $b) / ($Sinh($b) - $q0)
+  $b = $b - ($Cosh($b) - 1 - $q0 * $b) / ($Sinh($b) - $q0)
+  $b = $b - ($Cosh($b) - 1 - $q0 * $b) / ($Sinh($b) - $q0)
+  $b = $b - ($Cosh($b) - 1 - $q0 * $b) / ($Sinh($b) - $q0)
+  $b = $b - ($Cosh($b) - 1 - $q0 * $b) / ($Sinh($b) - $q0)
+  $b = $b - ($Cosh($b) - 1 - $q0 * $b) / ($Sinh($b) - $q0)
+  $b = $b - ($Cosh($b) - 1 - $q0 * $b) / ($Sinh($b) - $q0)
+  $b = $b - ($Cosh($b) - 1 - $q0 * $b) / ($Sinh($b) - $q0)
+  $b = $b - ($Cosh($b) - 1 - $q0 * $b) / ($Sinh($b) - $q0)
+  $Ls = $S * $Sinh($b) / $b
+  $L = max(sqrt($Ls * $Ls + $rise * $rise), max($length, sqrt($S * $S + $rise * $rise) * 1.0005) * clamp(ceil($length), 0, 1))
+  $rr = sqrt($L * $L - $rise * $rise) / $S
+  $c = sqrt(6 * ($rr - 1))
+  $c = $c - ($Sinh($c) - $rr * $c) / ($Cosh($c) - $rr)
+  $c = $c - ($Sinh($c) - $rr * $c) / ($Cosh($c) - $rr)
+  $c = $c - ($Sinh($c) - $rr * $c) / ($Cosh($c) - $rr)
+  $c = $c - ($Sinh($c) - $rr * $c) / ($Cosh($c) - $rr)
+  $c = $c - ($Sinh($c) - $rr * $c) / ($Cosh($c) - $rr)
+  $c = $c - ($Sinh($c) - $rr * $c) / ($Cosh($c) - $rr)
+  $c = $c - ($Sinh($c) - $rr * $c) / ($Cosh($c) - $rr)
+  $c = $c - ($Sinh($c) - $rr * $c) / ($Cosh($c) - $rr)
+  $c = $c - ($Sinh($c) - $rr * $c) / ($Cosh($c) - $rr)
+  $c = $c - ($Sinh($c) - $rr * $c) / ($Cosh($c) - $rr)
+  $c = $c - ($Sinh($c) - $rr * $c) / ($Cosh($c) - $rr)
+  $c = $c - ($Sinh($c) - $rr * $c) / ($Cosh($c) - $rr)
+  $a = $S / (2 * $c)
+  $th = $rise / $L
+  $xv = 0.5 * $S - $a * 0.5 * $Ln((1 + $th) / (1 - $th))
+  $sA = -$a * $Sinh($xv / $a)
+  add($Core, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, len=$L, ends=$ends, sp=min($a * (0.52 - 0.17 * min($BG, 1) - 0.13 * floor($BG / 2)), $L / 12), join=none)
+  warp(to=(point.x, $CatX(point.y, point.x, point.z, $a, $xv, $sA), $CatZ(point.y, point.x, point.z, $a, $sA)))
+}
+
+HgU = formula(s, s1, Rb) { clamp(($s - $s1) / (1.570796 * $Rb), 0, 1) }
+Hang = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, len=200.0, drop=150.0, bend=-1.0, sway=0.0, wander=0.0, ends=2) {
+  $BG = clamp(floor($budget + 0.5), 0, 2)
+  $Rb = max($bend, 0) + clamp(ceil(-$bend), 0, 1) * max(8 * $r, 0.08 * $drop)
+  $s1 = max($drop - $Rb - $r, 0.1)
+  add($Core, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, len=$len, ends=$ends, sp=min($Rb * (0.52 - 0.17 * min($BG, 1) - 0.13 * floor($BG / 2)), $len / 12), join=none)
+  warp(to=(point.x + $sway * sin(180 * clamp(point.y / $s1, 0, 1)) + $wander * sin(180 * max(point.y - $s1 - 1.570796 * $Rb, 0) / max(40 * $r, 1)) * clamp(max(point.y - $s1 - 1.570796 * $Rb, 0) / (20 * $r), 0, 1), $Rb * (1 - cos(90 * $HgU(point.y, $s1, $Rb))) + max(point.y - $s1 - 1.570796 * $Rb, 0) + point.z * cos(90 * $HgU(point.y, $s1, $Rb)), -$s1 * clamp(point.y / $s1, 0, 1) - $Rb * sin(90 * $HgU(point.y, $s1, $Rb)) + point.z * sin(90 * $HgU(point.y, $s1, $Rb))))
+}
+
+CoT = formula(s, R0, k) { ((sqrt($R0 * $R0 + 2 * $k * $s) - $R0) / $k) }
+CoR = formula(s, R0, k) { $R0 + $k * $CoT($s, $R0, $k) }
+CoTx = formula(s, R0, k) { ($k * cos(57.29578 * $CoT($s, $R0, $k)) - $CoR($s, $R0, $k) * sin(57.29578 * $CoT($s, $R0, $k))) / sqrt($k * $k + $CoR($s, $R0, $k) * $CoR($s, $R0, $k)) }
+CoTy = formula(s, R0, k) { ($k * sin(57.29578 * $CoT($s, $R0, $k)) + $CoR($s, $R0, $k) * cos(57.29578 * $CoT($s, $R0, $k))) / sqrt($k * $k + $CoR($s, $R0, $k) * $CoR($s, $R0, $k)) }
+CoX = formula(s, x, R0, k, Lc) { $CoR(min($s, $Lc), $R0, $k) * cos(57.29578 * $CoT(min($s, $Lc), $R0, $k)) + max($s - $Lc, 0) * $CoTx($Lc, $R0, $k) + $x * $CoTy(min($s, $Lc), $R0, $k) }
+CoY = formula(s, x, R0, k, Lc) { $CoR(min($s, $Lc), $R0, $k) * sin(57.29578 * $CoT(min($s, $Lc), $R0, $k)) + max($s - $Lc, 0) * $CoTy($Lc, $R0, $k) - $x * $CoTx(min($s, $Lc), $R0, $k) }
+Coil = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, turns=5.0, inner=0.8, gap=1.0, tail=40.0, ends=2) {
+  $BG = clamp(floor($budget + 0.5), 0, 2)
+  $R0 = (max($inner, 0.3) + 1) * $r
+  $k = 2 * $r * max($gap, 1.0) * (1 + 0.04 * clamp($age, 0, 2)) / 6.283185
+  $th = 6.283185 * max($turns, 0.25)
+  $Lc = $R0 * $th + 0.5 * $k * $th * $th
+  add($Core, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, len=$Lc + max($tail, 0.0), ends=$ends, sp=$R0 * (0.52 - 0.17 * min($BG, 1) - 0.13 * floor($BG / 2)), join=none)
+  warp(to=($CoX(point.y, point.x, $R0, $k, $Lc), $CoY(point.y, point.x, $R0, $k, $Lc), $r + point.z))
+}
+
+Q1 = formula(s, b, c) { clamp($s / max($b - $c, 0.0001), 0, 1) }
+Q2 = formula(s, b, c) { clamp(($s - max($b - $c, 0)) / max(1.570796 * $c, 0.0001), 0, 1) }
+Q3 = formula(s, a, b, c) { clamp(($s - max($b - $c, 0) - 1.570796 * $c) / max(2 * ($a - $c), 0.0001), 0, 1) }
+Q4 = formula(s, a, b, c) { clamp(($s - max($b - $c, 0) - 1.570796 * $c - 2 * max($a - $c, 0)) / max(1.570796 * $c, 0.0001), 0, 1) }
+Q5 = formula(s, a, b, c) { clamp(($s - max($b - $c, 0) - 3.141593 * $c - 2 * max($a - $c, 0)) / max($b - $c, 0.0001), 0, 1) }
+QU = formula(s, a, b, c) { -$a + $c * (1 - cos(90 * $Q2($s, $b, $c))) + 2 * max($a - $c, 0) * $Q3($s, $a, $b, $c) + $c * sin(90 * $Q4($s, $a, $b, $c)) }
+QV = formula(s, a, b, c) { max($b - $c, 0) * ($Q1($s, $b, $c) - $Q5($s, $a, $b, $c)) + $c * sin(90 * $Q2($s, $b, $c)) + $c * (cos(90 * $Q4($s, $a, $b, $c)) - 1) }
+QD = formula(s, a, b, c) { 90 - 90 * $Q2($s, $b, $c) - 90 * $Q4($s, $a, $b, $c) }
+QL = formula(a, b, c) { 2 * max($b - $c, 0) + 2 * max($a - $c, 0) + 3.141593 * $c }
+FS = formula(s, L) { clamp(floor(($s - 2 * $L * floor($s / (2 * $L))) / $L), 0, 1) }
+FH = formula(s, L) { $s - 2 * $L * floor($s / (2 * $L)) - $L * $FS($s, $L) }
+FU = formula(s, a, b, c, L) { (1 - 2 * $FS($s, $L)) * $QU($FH($s, $L), $a, $b, $c) }
+FV = formula(s, a, b, c, L) { (1 - 2 * $FS($s, $L)) * $QV($FH($s, $L), $a, $b, $c) }
+FD = formula(s, a, b, c, L) { $QD($FH($s, $L), $a, $b, $c) + 180 * $FS($s, $L) }
+WX = formula(s, x, z, a, b, c, L, k) { $FU($s, $a, $b, $c, $L) + $x * $k * cos($FD($s, $a, $b, $c, $L)) / sqrt(1 + $k * $k) - $z * sin($FD($s, $a, $b, $c, $L)) }
+WY = formula(s, x, k) { $k * $s - $x / sqrt(1 + $k * $k) }
+WZ = formula(s, x, z, a, b, c, L, k) { $FV($s, $a, $b, $c, $L) + $x * $k * sin($FD($s, $a, $b, $c, $L)) / sqrt(1 + $k * $k) + $z * cos($FD($s, $a, $b, $c, $L)) }
+Hm = formula(u, p0, p1, m0, m1) { (2 * $u * $u * $u - 3 * $u * $u + 1) * $p0 + ($u * $u * $u - 2 * $u * $u + $u) * $m0 + (3 * $u * $u - 2 * $u * $u * $u) * $p1 + ($u * $u * $u - $u * $u) * $m1 }
+In = formula(t, a, b) { clamp(ceil(($t - $a) * 1000000), 0, 1) - clamp(ceil(($t - $b) * 1000000), 0, 1) }
+Sm = formula(u) { clamp($u, 0, 1) * clamp($u, 0, 1) * (3 - 2 * clamp($u, 0, 1)) }
+Sd = formula(u) { 6 * clamp($u, 0, 1) * (1 - clamp($u, 0, 1)) }
+Bn = formula(w) { sqrt((1 - $w) * (1 - $w) + $w * $w) }
+Skk = formula(s, C0, gL) { max(floor((sqrt((2 * $C0 - 2 * $gL) * (2 * $C0 - 2 * $gL) + 8 * max($gL, 0.000001) * max($s, 0)) - (2 * $C0 - 2 * $gL)) / (4 * max($gL, 0.000001))), 0) }
+STk = formula(k, C0, gL) { 2 * $k * $C0 + 2 * $gL * $k * ($k - 1) }
+Ssd = formula(s, k, C0, gL) { clamp(floor(($s - $STk($k, $C0, $gL)) / ($C0 + 2 * $gL * $k)), 0, 1) }
+Stt = formula(s, k, C0, gL) { $s - $STk($k, $C0, $gL) - $Ssd($s, $k, $C0, $gL) * ($C0 + 2 * $gL * $k) }
+SPx = formula(t, sd, k, C0, LA, LB, aA, bA, cA, aB, bB, cB, zB, dk, off, lH0, gL) { $In($t, -1, $LA) * ($aB + $off + $dk * $k) + $In($t, $LA, $LA + ($lH0 + $gL * $k)) * (($aB + $off + $dk * $k) + ($aB - ($aB + $off + $dk * $k)) * ($t - $LA) / ($lH0 + $gL * $k)) - $In($t, $LA + ($lH0 + $gL * $k), $LA + ($lH0 + $gL * $k) + $LB) * $QU(($t - $LA - ($lH0 + $gL * $k)), $aB, $bB, $cB) + $In($t, $LA + ($lH0 + $gL * $k) + $LB, $LA + 2 * ($lH0 + $gL * $k) + $LB + 1) * (-$aB + ($aB - (($aB + $off + $dk * $k) + $dk * $sd)) * ($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k)) }
+SPy = formula(t, sd, k, C0, LA, LB, aA, bA, cA, aB, bB, cB, zB, dk, off, lH0, gL) { $In($t, -1, $LA) * $QU($t, $aA, $bA, $cA) + $In($t, $LA, $LA + ($lH0 + $gL * $k)) * ($aA + (($aA + $off + $dk * $k) - $aA) * ($t - $LA) / ($lH0 + $gL * $k)) + $In($t, $LA + ($lH0 + $gL * $k), $LA + ($lH0 + $gL * $k) + $LB) * ($aA + $off + $dk * $k) + $In($t, $LA + ($lH0 + $gL * $k) + $LB, $LA + 2 * ($lH0 + $gL * $k) + $LB + 1) * (($aA + $off + $dk * $k) + ($aA - ($aA + $off + $dk * $k)) * ($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k)) }
+SPz = formula(t, sd, k, C0, LA, LB, aA, bA, cA, aB, bB, cB, zB, dk, off, lH0, gL) { $In($t, -1, $LA) * $QV($t, $aA, $bA, $cA) + $In($t, $LA, $LA + ($lH0 + $gL * $k)) * $Hm(($t - $LA) / ($lH0 + $gL * $k), 0, $zB, $zB, $zB) + $In($t, $LA + ($lH0 + $gL * $k), $LA + ($lH0 + $gL * $k) + $LB) * ($zB - $QV(($t - $LA - ($lH0 + $gL * $k)), $aB, $bB, $cB)) + $In($t, $LA + ($lH0 + $gL * $k) + $LB, $LA + 2 * ($lH0 + $gL * $k) + $LB + 1) * $Hm(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), $zB, 0, -$zB, -$zB) }
+Gd = formula(gx, gy, gz, mx, my) { ($mx * $gx + $my * $gy) / sqrt($gx * $gx + $gy * $gy + $gz * $gz) }
+Gq = formula(gx, gy, gz, mx, my) { sqrt(1 - 0.5 * ($gx * $gx + $gy * $gy) / ($gx * $gx + $gy * $gy + $gz * $gz)) }
+GMx = formula(gx, gy, gz, mx, my) { ($mx - $Gd($gx, $gy, $gz, $mx, $my) * $gx / sqrt($gx * $gx + $gy * $gy + $gz * $gz)) / $Gq($gx, $gy, $gz, $mx, $my) }
+GMy = formula(gx, gy, gz, mx, my) { ($my - $Gd($gx, $gy, $gz, $mx, $my) * $gy / sqrt($gx * $gx + $gy * $gy + $gz * $gz)) / $Gq($gx, $gy, $gz, $mx, $my) }
+GMz = formula(gx, gy, gz, mx, my) { -$Gd($gx, $gy, $gz, $mx, $my) * $gz / (sqrt($gx * $gx + $gy * $gy + $gz * $gz) * $Gq($gx, $gy, $gz, $mx, $my)) }
+GNx = formula(gx, gy, gz, mx, my) { -$gz * $my / (sqrt($gx * $gx + $gy * $gy + $gz * $gz) * $Gq($gx, $gy, $gz, $mx, $my)) }
+GNy = formula(gx, gy, gz, mx, my) { $gz * $mx / (sqrt($gx * $gx + $gy * $gy + $gz * $gz) * $Gq($gx, $gy, $gz, $mx, $my)) }
+GNz = formula(gx, gy, gz, mx, my) { ($gx * $my - $gy * $mx) / (sqrt($gx * $gx + $gy * $gy + $gz * $gz) * $Gq($gx, $gy, $gz, $mx, $my)) }
+SNx = formula(t, sd, k, C0, LA, LB, aA, bA, cA, aB, bB, cB, zB, dk, off, lH0, gL) { $In($t, -1, $LA) + $In($t, $LA, $LA + ($lH0 + $gL * $k)) * $GNx(-($off + $dk * $k), $off + $dk * $k, $zB, sin(90 * clamp(($t - $LA) / ($lH0 + $gL * $k), 0, 1)), cos(90 * clamp(($t - $LA) / ($lH0 + $gL * $k), 0, 1))) + $In($t, $LA + ($lH0 + $gL * $k) + $LB, $LA + 2 * ($lH0 + $gL * $k) + $LB + 1) * $GNx(-($off + $dk * $k + $dk * $sd), -($off + $dk * $k), -$zB, -cos(90 * clamp(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), 0, 1)), sin(90 * clamp(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), 0, 1))) }
+SNy = formula(t, sd, k, C0, LA, LB, aA, bA, cA, aB, bB, cB, zB, dk, off, lH0, gL) { $In($t, $LA, $LA + ($lH0 + $gL * $k)) * $GNy(-($off + $dk * $k), $off + $dk * $k, $zB, sin(90 * clamp(($t - $LA) / ($lH0 + $gL * $k), 0, 1)), cos(90 * clamp(($t - $LA) / ($lH0 + $gL * $k), 0, 1))) - $In($t, $LA + ($lH0 + $gL * $k), $LA + ($lH0 + $gL * $k) + $LB) + $In($t, $LA + ($lH0 + $gL * $k) + $LB, $LA + 2 * ($lH0 + $gL * $k) + $LB + 1) * $GNy(-($off + $dk * $k + $dk * $sd), -($off + $dk * $k), -$zB, -cos(90 * clamp(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), 0, 1)), sin(90 * clamp(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), 0, 1))) }
+SNz = formula(t, sd, k, C0, LA, LB, aA, bA, cA, aB, bB, cB, zB, dk, off, lH0, gL) { $In($t, $LA, $LA + ($lH0 + $gL * $k)) * $GNz(-($off + $dk * $k), $off + $dk * $k, $zB, sin(90 * clamp(($t - $LA) / ($lH0 + $gL * $k), 0, 1)), cos(90 * clamp(($t - $LA) / ($lH0 + $gL * $k), 0, 1))) + $In($t, $LA + ($lH0 + $gL * $k) + $LB, $LA + 2 * ($lH0 + $gL * $k) + $LB + 1) * $GNz(-($off + $dk * $k + $dk * $sd), -($off + $dk * $k), -$zB, -cos(90 * clamp(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), 0, 1)), sin(90 * clamp(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), 0, 1))) }
+SMx = formula(t, sd, k, C0, LA, LB, aA, bA, cA, aB, bB, cB, zB, dk, off, lH0, gL) { $In($t, $LA, $LA + ($lH0 + $gL * $k)) * $GMx(-($off + $dk * $k), $off + $dk * $k, $zB, sin(90 * clamp(($t - $LA) / ($lH0 + $gL * $k), 0, 1)), cos(90 * clamp(($t - $LA) / ($lH0 + $gL * $k), 0, 1))) + $In($t, $LA + ($lH0 + $gL * $k), $LA + ($lH0 + $gL * $k) + $LB) * sin($QD(($t - $LA - ($lH0 + $gL * $k)), $aB, $bB, $cB)) + $In($t, $LA + ($lH0 + $gL * $k) + $LB, $LA + 2 * ($lH0 + $gL * $k) + $LB + 1) * $GMx(-($off + $dk * $k + $dk * $sd), -($off + $dk * $k), -$zB, -cos(90 * clamp(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), 0, 1)), sin(90 * clamp(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), 0, 1))) }
+SMy = formula(t, sd, k, C0, LA, LB, aA, bA, cA, aB, bB, cB, zB, dk, off, lH0, gL) { $In($t, $LA, $LA + ($lH0 + $gL * $k)) * $GMy(-($off + $dk * $k), $off + $dk * $k, $zB, sin(90 * clamp(($t - $LA) / ($lH0 + $gL * $k), 0, 1)), cos(90 * clamp(($t - $LA) / ($lH0 + $gL * $k), 0, 1))) + $In($t, $LA + ($lH0 + $gL * $k) + $LB, $LA + 2 * ($lH0 + $gL * $k) + $LB + 1) * $GMy(-($off + $dk * $k + $dk * $sd), -($off + $dk * $k), -$zB, -cos(90 * clamp(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), 0, 1)), sin(90 * clamp(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), 0, 1))) - $In($t, -1, $LA) * sin($QD($t, $aA, $bA, $cA)) }
+SMz = formula(t, sd, k, C0, LA, LB, aA, bA, cA, aB, bB, cB, zB, dk, off, lH0, gL) { $In($t, -1, $LA) * cos($QD($t, $aA, $bA, $cA)) + $In($t, $LA, $LA + ($lH0 + $gL * $k)) * $GMz(-($off + $dk * $k), $off + $dk * $k, $zB, sin(90 * clamp(($t - $LA) / ($lH0 + $gL * $k), 0, 1)), cos(90 * clamp(($t - $LA) / ($lH0 + $gL * $k), 0, 1))) - $In($t, $LA + ($lH0 + $gL * $k), $LA + ($lH0 + $gL * $k) + $LB) * cos($QD(($t - $LA - ($lH0 + $gL * $k)), $aB, $bB, $cB)) + $In($t, $LA + ($lH0 + $gL * $k) + $LB, $LA + 2 * ($lH0 + $gL * $k) + $LB + 1) * $GMz(-($off + $dk * $k + $dk * $sd), -($off + $dk * $k), -$zB, -cos(90 * clamp(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), 0, 1)), sin(90 * clamp(($t - $LA - ($lH0 + $gL * $k) - $LB) / ($lH0 + $gL * $k), 0, 1))) }
+LX = formula(t, sd, k, C0, LA, LB, aA, bA, cA, aB, bB, cB, zB, dk, off, lH0, gL, x, z) { (1 - 2 * $sd) * ($SPx($t, $sd, $k, $C0, $LA, $LB, $aA, $bA, $cA, $aB, $bB, $cB, $zB, $dk, $off, $lH0, $gL) + $x * $SNx($t, $sd, $k, $C0, $LA, $LB, $aA, $bA, $cA, $aB, $bB, $cB, $zB, $dk, $off, $lH0, $gL) + $z * $SMx($t, $sd, $k, $C0, $LA, $LB, $aA, $bA, $cA, $aB, $bB, $cB, $zB, $dk, $off, $lH0, $gL)) }
+LY = formula(t, sd, k, C0, LA, LB, aA, bA, cA, aB, bB, cB, zB, dk, off, lH0, gL, x, z) { (1 - 2 * $sd) * ($SPy($t, $sd, $k, $C0, $LA, $LB, $aA, $bA, $cA, $aB, $bB, $cB, $zB, $dk, $off, $lH0, $gL) + $x * $SNy($t, $sd, $k, $C0, $LA, $LB, $aA, $bA, $cA, $aB, $bB, $cB, $zB, $dk, $off, $lH0, $gL) + $z * $SMy($t, $sd, $k, $C0, $LA, $LB, $aA, $bA, $cA, $aB, $bB, $cB, $zB, $dk, $off, $lH0, $gL)) }
+LZ = formula(t, sd, k, C0, LA, LB, aA, bA, cA, aB, bB, cB, zB, dk, off, lH0, gL, x, z) { $SPz($t, $sd, $k, $C0, $LA, $LB, $aA, $bA, $cA, $aB, $bB, $cB, $zB, $dk, $off, $lH0, $gL) + $x * $SNz($t, $sd, $k, $C0, $LA, $LB, $aA, $bA, $cA, $aB, $bB, $cB, $zB, $dk, $off, $lH0, $gL) + $z * $SMz($t, $sd, $k, $C0, $LA, $LB, $aA, $bA, $cA, $aB, $bB, $cB, $zB, $dk, $off, $lH0, $gL) }
+FDd = formula(s, X0, Y0, cf, L) { $FD($s, $X0, $Y0, $cf, $L) }
+GX = formula(s, x, z, X0, Y0, cf, L, zc, r) { $FU($s, $X0, $Y0, $cf, $L) - $z * sin($FDd($s, $X0, $Y0, $cf, $L)) }
+GY = formula(s, x, z, X0, Y0, cf, L, zc, r) { $FV($s, $X0, $Y0, $cf, $L) + $z * cos($FDd($s, $X0, $Y0, $cf, $L)) }
+GZ = formula(s, x, z, X0, Y0, cf, L, zc, r) { $zc - $r * cos(2 * atan2($FV($s, $X0, $Y0, $cf, $L), $FU($s, $X0, $Y0, $cf, $L))) + $x }
+Kq = formula(s, t1, KL, KD, F, L) { clamp($s - $t1, -0.5 * $L, $KL - $KD) + clamp($s - $t1 - $KL + $KD, 0, $KD * $F) / $F }
+Kout = formula(s, t1, KL, KD, F) { max($s - $t1 - $KL + $KD - $KD * $F, 0) }
+Kyy = formula(q, KL, KD, r, L) { 2.4 * $r * min($q, 0) / $L + 4 * $r * clamp($q, 0, $KL - $KD) / $KL - (2 * $r + 4 * $r * ($KL - $KD) / $KL) * clamp(($q - $KL + $KD) / $KD, 0, 1) }
+Kk = formula(q, KL, KD, r) { 4 * $r / $KL * (1 - clamp(ceil($q - $KL + $KD), 0, 1)) - (2 * $r + 4 * $r * ($KL - $KD) / $KL) / $KD * clamp(ceil($q - $KL + $KD), 0, 1) * clamp(ceil($KL - $q - 0.0001), 0, 1) }
+Klift = formula(q, so, KL, KD, r) { 2.3 * $r * $Sm(($q - $KL + $KD + 6 * $r) / (6 * $r)) * (1 - $Sm($so / (12 * $r))) }
+KX = formula(s, x, z, a, b, c, L, KL, KD, F, r, t1) { $FU(0.5 * $L + $Kq($s, $t1, $KL, $KD, $F, $L), $a, $b, $c, $L) + $Kout($s, $t1, $KL, $KD, $F) + $x * $Kk($Kq($s, $t1, $KL, $KD, $F, $L), $KL, $KD, $r) * cos($FD(0.5 * $L + $Kq($s, $t1, $KL, $KD, $F, $L), $a, $b, $c, $L)) / sqrt(1 + $Kk($Kq($s, $t1, $KL, $KD, $F, $L), $KL, $KD, $r) * $Kk($Kq($s, $t1, $KL, $KD, $F, $L), $KL, $KD, $r)) - ($z + $Klift($Kq($s, $t1, $KL, $KD, $F, $L), $Kout($s, $t1, $KL, $KD, $F), $KL, $KD, $r)) * sin($FD(0.5 * $L + $Kq($s, $t1, $KL, $KD, $F, $L), $a, $b, $c, $L)) }
+KY = formula(s, x, z, a, b, c, L, KL, KD, F, r, t1) { $Kyy($Kq($s, $t1, $KL, $KD, $F, $L), $KL, $KD, $r, $L) - $x / sqrt(1 + $Kk($Kq($s, $t1, $KL, $KD, $F, $L), $KL, $KD, $r) * $Kk($Kq($s, $t1, $KL, $KD, $F, $L), $KL, $KD, $r)) }
+KZ = formula(s, x, z, a, b, c, L, KL, KD, F, r, t1) { $FV(0.5 * $L + $Kq($s, $t1, $KL, $KD, $F, $L), $a, $b, $c, $L) + min($s - $t1 + 0.5 * $L, 0) + $x * $Kk($Kq($s, $t1, $KL, $KD, $F, $L), $KL, $KD, $r) * sin($FD(0.5 * $L + $Kq($s, $t1, $KL, $KD, $F, $L), $a, $b, $c, $L)) / sqrt(1 + $Kk($Kq($s, $t1, $KL, $KD, $F, $L), $KL, $KD, $r) * $Kk($Kq($s, $t1, $KL, $KD, $F, $L), $KL, $KD, $r)) + ($z + $Klift($Kq($s, $t1, $KL, $KD, $F, $L), $Kout($s, $t1, $KL, $KD, $F), $KL, $KD, $r)) * cos($FD(0.5 * $L + $Kq($s, $t1, $KL, $KD, $F, $L), $a, $b, $c, $L)) }
+Ou = formula(s, sc, L0) { clamp(($s - $L0) / (26.676 * $sc), 0, 1) }
+OT = formula(s, sc, L0) { 131.4592 + 337.0817 * $Ou($s, $sc, $L0) + 1.793 * sin(360 * $Ou($s, $sc, $L0)) + 1.518 * sin(720 * $Ou($s, $sc, $L0)) - 2.253 * sin(1080 * $Ou($s, $sc, $L0)) - 0.097 * sin(1440 * $Ou($s, $sc, $L0)) + 0.337 * sin(1800 * $Ou($s, $sc, $L0)) - 0.533 * sin(2160 * $Ou($s, $sc, $L0)) - 0.203 * sin(2520 * $Ou($s, $sc, $L0)) - 0.296 * sin(2880 * $Ou($s, $sc, $L0)) }
+OE = formula(s, sc, L0) { min($s - $L0, 0) + max($s - $L0 - 26.676 * $sc, 0) }
+Odx = formula(t) { cos($t) + 4 * cos(2 * $t) }
+Ody = formula(t) { 4 * sin(2 * $t) - sin($t) }
+Odz = formula(t) { 0.2 - 3 * cos(3 * $t) }
+On = formula(t) { sqrt($Odx($t) * $Odx($t) + $Ody($t) * $Ody($t) + $Odz($t) * $Odz($t)) }
+Oh = formula(t) { sqrt($Odx($t) * $Odx($t) + $Ody($t) * $Ody($t)) }
+OX = formula(s, t, x, z, sc, L0) { $sc * (sin($t) + 2 * sin(2 * $t)) + $OE($s, $sc, $L0) * $Odx($t) / $On($t) + $x * $Ody($t) / $Oh($t) - $z * $Odz($t) * $Odx($t) / ($On($t) * $Oh($t)) }
+OY = formula(s, t, x, z, sc, L0) { $sc * (cos($t) - 2 * cos(2 * $t) + 0.46875) + $OE($s, $sc, $L0) * $Ody($t) / $On($t) - $x * $Odx($t) / $Oh($t) - $z * $Odz($t) * $Ody($t) / ($On($t) * $Oh($t)) }
+OZ = formula(s, t, x, z, sc, L0) { $sc * (0.2 * 0.0174533 * $t - sin(3 * $t) - 1.0472) + $OE($s, $sc, $L0) * $Odz($t) / $On($t) + $z * $Oh($t) / $On($t) }
+
+Wrap = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, w=6.0, h=6.0, corner=-1.0, turns=4.0, gap=1.0, slack=1.0, axis=0, ends=0, bx=1.0, tuck=1) {
+  $BG = clamp(floor($budget + 0.5), 0, 2)
+  $sl = 0.15 * $r * clamp($age, 0, 2) * clamp($slack, 0, 3)
+  $a = 0.5 * $w + $r + $sl
+  $b = 0.5 * $h + $r + $sl
+  $c = min(max(max($corner, 0) + clamp(ceil(-$corner), 0, 1) * 0.5 * min($w, $h) + $r + $sl, 3 * $r), min($a, $b))
+  $Lq = $QL($a, $b, $c)
+  $L = max($turns, 0.05) * 2 * $Lq
+  $k = 2 * $r * max($gap, 0) / (2 * $Lq)
+  add($Core, r=$r, strands=$strands * floor(clamp(floor($budget + 0.5), 0, 2) / 2), lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, len=$L, ends=$ends, sp=max($c * (0.52 - 0.17 * min($BG, 1) - 0.13 * floor($BG / 2)), 0.3 * $r), bx=$bx, join=none)
+  $tk = clamp(floor($tuck + 0.5), 0, 1) * clamp(ceil($turns - 1.01), 0, 1)
+  warp(to=($WX(point.y, point.x, point.z - 1.6 * $r * $tk * ((1 - $Sm(point.y / (0.6 * $Lq))) + (1 - $Sm(($L - point.y) / (0.6 * $Lq)))), $a, $b, $c, $Lq, $k), $WY(point.y, point.x, $k), $WZ(point.y, point.x, point.z - 1.6 * $r * $tk * ((1 - $Sm(point.y / (0.6 * $Lq))) + (1 - $Sm(($L - point.y) / (0.6 * $Lq)))), $a, $b, $c, $Lq, $k)))
+  warp(to=(point.x * (1 - clamp(1 - abs($axis - 1), 0, 1) - clamp(1 - abs($axis - 3), 0, 1)) - point.y * clamp(1 - abs($axis - 1), 0, 1) + point.y * clamp(1 - abs($axis - 3), 0, 1), point.y * clamp(1 - abs($axis), 0, 1) + point.x * clamp(1 - abs($axis - 1), 0, 1) - point.x * clamp(1 - abs($axis - 3), 0, 1) - point.z * clamp(1 - abs($axis - 2), 0, 1), point.z * (1 - clamp(1 - abs($axis - 2), 0, 1)) + point.y * clamp(1 - abs($axis - 2), 0, 1)))
+}
+
+Turn = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, w=6.0, h=6.0, corner=-1.0, slack=1.0, axis=0) {
+  add($Wrap, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, w=$w, h=$h, corner=$corner, turns=0.998, gap=0.0, slack=$slack, axis=$axis, join=none)
+}
+
+Hitch = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, w=6.0, h=6.0, corner=-1.0, stand=10.0, tail=6.0, axis=0, ends=2, laid=0) {
+  $BG = clamp(floor($budget + 0.5), 0, 2)
+  $a = 0.5 * $w + $r
+  $b = 0.5 * $h + $r
+  $c = min(max(max($corner, 0) + clamp(ceil(-$corner), 0, 1) * 0.5 * min($w, $h) + $r, 3 * $r), min($a, $b))
+  $Lq = $QL($a, $b, $c)
+  $KL = 4 * $Lq
+  $KD = min(2.0 * min($a, $b), 0.6 * $Lq)
+  $KF = sqrt((1 + 1.15 * $r / $c) * (1 + 1.15 * $r / $c) + ((2 * $r + 4 * $r * ($KL - $KD) / $KL) / $KD) * ((2 * $r + 4 * $r * ($KL - $KD) / $KL) / $KD))
+  add($Core, r=$r, strands=$strands * max(floor(clamp(floor($budget + 0.5), 0, 2) / 2), clamp($laid, 0, 1)), lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, len=$stand + $KL - $KD + $KD * $KF + $tail, ends=$ends, sp=max($c * (0.52 - 0.17 * min($BG, 1) - 0.13 * floor($BG / 2)), 0.3 * $r), join=none)
+  warp(to=($KX(point.y, point.x, point.z, $a, $b, $c, $Lq, $KL, $KD, $KF, $r, $stand), $KY(point.y, point.x, point.z, $a, $b, $c, $Lq, $KL, $KD, $KF, $r, $stand), $KZ(point.y, point.x, point.z, $a, $b, $c, $Lq, $KL, $KD, $KF, $r, $stand)))
+  warp(to=(point.x * (1 - clamp(1 - abs($axis - 1), 0, 1) - clamp(1 - abs($axis - 3), 0, 1)) - point.y * clamp(1 - abs($axis - 1), 0, 1) + point.y * clamp(1 - abs($axis - 3), 0, 1), point.y * clamp(1 - abs($axis), 0, 1) + point.x * clamp(1 - abs($axis - 1), 0, 1) - point.x * clamp(1 - abs($axis - 3), 0, 1) - point.z * clamp(1 - abs($axis - 2), 0, 1), point.z * (1 - clamp(1 - abs($axis - 2), 0, 1)) + point.y * clamp(1 - abs($axis - 2), 0, 1)))
+}
+
+PostHitch = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, post=12.0, stand=60.0, tail=8.0) {
+  add($Hitch, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, w=$post, h=$post, stand=$stand, tail=$tail, axis=2, laid=1, join=none)
+}
+
+OverTail = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, px=0.0, py=0.0, pz=0.0, tx=1.0, ty=0.0, tz=0.0, len=8.0, back=0.0, ends=1) {
+  $BG = clamp(floor($budget + 0.5), 0, 2)
+  $th = sqrt($tx * $tx + $ty * $ty)
+  add($Core, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, len=$len, ends=$ends, sp=$len / 4, join=none)
+  warp(to=($px + (point.y - $back) * $tx + point.x * $ty / $th - point.z * $tz * $tx / $th, $py + (point.y - $back) * $ty - point.x * $tx / $th - point.z * $tz * $ty / $th, $pz + (point.y - $back) * $tz + point.z * $th))
+}
+
+Overhand = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, tail=8.0, tail2=8.0, ends=3) {
+  $BG = clamp(floor($budget + 0.5), 0, 2)
+  $S = 3.2 * $r
+  add($Core, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, len=26.676 * $S, ends=0, sp=$S * 1.5 * (0.52 - 0.17 * min($BG, 1) - 0.13 * floor($BG / 2)), join=none)
+  warp(to=(point.x, $OT(point.y, $S, 0), point.z))
+  warp(to=($OX(0.5, point.y, point.x, point.z, $S, 0), $OY(0.5, point.y, point.x, point.z, $S, 0), $OZ(0.5, point.y, point.x, point.z, $S, 0)))
+  $e0 = $ends - 2 * floor($ends / 2)
+  $e1 = floor($ends / 2)
+  add($OverTail, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, px=-1.23532 * $S, py=0.05323 * $S, pz=-1.15297 * $S, tx=-0.21533, ty=-0.87958, tz=-0.42423, len=$tail, back=$tail, ends=$e0, index=$index + 1, join=none)
+  add($OverTail, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, px=-0.25781 * $S, py=1.74632 * $S, pz=1.15296 * $S, tx=-0.65407, ty=-0.62627, tz=-0.42424, len=$tail2, back=0.0, ends=2 * $e1, index=$index + 2, join=none)
+}
+
+SqTurns = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, aA=4.5, bA=4.5, cA=4.5, aB=4.5, bB=4.5, cB=4.5, zB=-8.0, nt=4, band=0) {
+  $BG = clamp(floor($budget + 0.5), 0, 2)
+  $dk = 2 * $r * (1 - $band)
+  $off = $r * ($nt - 1) * $band
+  $ne = $nt * (1 - $band) + $band
+  $lH0 = 1.02 * abs($zB)
+  $gL = (1.02 * sqrt($zB * $zB + 2 * $dk * $dk * ($ne - 1) * ($ne - 1)) - $lH0) / max($ne - 1, 1)
+  $LA = $QL($aA, $bA, $cA)
+  $LB = $QL($aB, $bB, $cB)
+  $C0 = $LA + $LB + 2 * $lH0
+  add($Core, r=$r, strands=$strands * floor(clamp(floor($budget + 0.5), 0, 2) / 2), lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, len=2 * $ne * $C0 + 2 * $gL * $ne * ($ne - 1) - 0.92 * ($lH0 + $gL * ($ne - 1)), ends=0, sp=max(min($cA, $cB) * (0.52 - 0.17 * min($BG, 1) - 0.13 * floor($BG / 2)), 0.3 * $r), bx=1 + ($nt - 1) * $band, join=none)
+  $Ltot = 2 * $ne * $C0 + 2 * $gL * $ne * ($ne - 1) - 0.92 * ($lH0 + $gL * ($ne - 1))
+  $tkl = max(0.25 * $LA, 3 * max(min($cA, $cB) * (0.52 - 0.17 * min($BG, 1) - 0.13 * floor($BG / 2)), 0.3 * $r))
+  warp(to=(point.x, point.y, point.z - 1.6 * $r * ((1 - $Sm(point.y / $tkl)) + (1 - $Sm(($Ltot - point.y) / $tkl)))))
+  warp(to=(point.x, $Stt(point.y, $Skk(point.y, $C0, $gL), $C0, $gL) + 1000 * $Ssd(point.y, $Skk(point.y, $C0, $gL), $C0, $gL) + 10000 * $Skk(point.y, $C0, $gL), point.z))
+  warp(to=($LX(point.y - 1000 * floor(point.y / 1000), floor(point.y / 1000) - 10 * floor(point.y / 10000), floor(point.y / 10000), $C0, $LA, $LB, $aA, $bA, $cA, $aB, $bB, $cB, $zB, $dk, $off, $lH0, $gL, point.x, point.z), $LY(point.y - 1000 * floor(point.y / 1000), floor(point.y / 1000) - 10 * floor(point.y / 10000), floor(point.y / 10000), $C0, $LA, $LB, $aA, $bA, $cA, $aB, $bB, $cB, $zB, $dk, $off, $lH0, $gL, point.x, point.z), $LZ(point.y - 1000 * floor(point.y / 1000), floor(point.y / 1000) - 10 * floor(point.y / 10000), floor(point.y / 10000), $C0, $LA, $LB, $aA, $bA, $cA, $aB, $bB, $cB, $zB, $dk, $off, $lH0, $gL, point.x, point.z)))
+}
+
+FrapRing = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, X0=8.0, Y0=8.0, zc=-4.0, bx=1.0) {
+  $BG = clamp(floor($budget + 0.5), 0, 2)
+  $cf = min(4 * $r, min($X0, $Y0))
+  $Lh = $QL($X0, $Y0, $cf)
+  add($Core, r=$r, strands=$strands * floor(clamp(floor($budget + 0.5), 0, 2) / 2), lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, len=1.997 * $Lh, ends=0, sp=max($cf * (0.52 - 0.17 * min($BG, 1) - 0.13 * floor($BG / 2)), 0.3 * $r), bx=$bx, join=none)
+  warp(to=($GX(point.y, point.x, point.z, $X0, $Y0, $cf, $Lh, $zc, $r), $GY(point.y, point.x, point.z, $X0, $Y0, $cf, $Lh, $zc, $r), $GZ(point.y, point.x, point.z, $X0, $Y0, $cf, $Lh, $zc, $r)))
+}
+
+SqFrap = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, X0=8.0, Y0=8.0, zc=-4.0, nf=2, band=0) {
+  loop (repeat=$nf * (1 - $band) + $band) {
+    add($FrapRing, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, X0=$X0 + 2 * $r * (output.index - 1), Y0=$Y0 + 2 * $r * (output.index - 1), zc=$zc, bx=1 + ($nf - 1) * $band, index=$index + 7 * output.index, join=none)
+  }
+}
+
+Square = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, aw=8.0, ah=8.0, ac=-1.0, bw=8.0, bh=8.0, bc=-1.0, turns=4, frap=2, hitch=0, tail=6.0, slack=1.0, band=0, aside=1, bside=-1, sink=0.0, press=-1.0) {
+  $BG = clamp(floor($budget + 0.5), 0, 2)
+  $bd = clamp(floor($band + 0.5), 0, 1)
+  $sl = 0.12 * $r * clamp($age, 0, 2) * clamp($slack, 0, 3)
+  $nt = max(floor($turns + 0.5), 1)
+  $aA = 0.5 * $aw + $r + $sl
+  $bA = 0.5 * $ah + $r + $sl
+  $cA = min(max(max($ac, 0) + clamp(ceil(-$ac), 0, 1) * 0.5 * min($aw, $ah) + $r + $sl, 3 * $r), min($aA, $bA))
+  $aB = 0.5 * $bw + $r + $sl
+  $bB = 0.5 * $bh + $r + $sl
+  $cB = min(max(max($bc, 0) + clamp(ceil(-$bc), 0, 1) * 0.5 * min($bw, $bh) + $r + $sl, 3 * $r), min($aB, $bB))
+  $zB = -0.5 * ($ah + $bh) + max($sink, 0)
+  add($SqTurns, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, aA=$aA, bA=$bA, cA=$cA, aB=$aB, bB=$bB, cB=$cB, zB=$zB, nt=$nt, band=$bd, join=none)
+  if ($frap > 0.5) {
+    add($SqFrap, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, X0=$aB + 2 * $r * ($nt - 1) + 2.6 * $r + $r * (floor($frap + 0.5) - 1) * $bd, Y0=$aA + 2 * $r * ($nt - 1) + 2.6 * $r + $r * (floor($frap + 0.5) - 1) * $bd, zc=-0.5 * $ah + 0.5 * max($sink, 0), nf=floor($frap + 0.5), band=$bd, index=$index + 1, join=none)
+  }
+  if ($hitch > 0.5) {
+    add($Hitch, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, w=$bw, h=$bh, corner=$bc, stand=3 * $r, tail=$tail, axis=0, ends=2, index=$index + 2, at=(0, $bside * ($aA + 2 * $r * $nt + 4 * $r) - (1 + $bside) * $r, $zB), join=none)
+    add($Hitch, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, w=$aw, h=$ah, corner=$ac, stand=3 * $r, tail=$tail, axis=2 - $aside, ends=2, index=$index + 3, at=($aside * ($aB + 2 * $r * $nt + 4 * $r), 0, 0), join=none)
+  }
+  if ($press > -0.5) {
+    warp(to=(point.x, point.y, point.z - 0.85 * max(point.z - 0.5 * $ah - $press, 0)))
+  }
+}
+
+Round = mesh(r=0.6, strands=3, lay=3.0, hand=1, budget=1, age=0.0, fray=-1.0, fuzz=-1.0, lost=-1, sides=-1, detail=1.0, noise=1, index=0, aw=8.0, bw=8.0, gap=-1.0, turns=6, frap=2, slack=1.0, band=-1) {
+  $BG = clamp(floor($budget + 0.5), 0, 2)
+  $bd = max($band, 0) + clamp(ceil(-$band), 0, 1) * (1 - min($BG, 1))
+  $g = max($gap, 0) + clamp(ceil(-$gap), 0, 1) * 2.2 * $r
+  $nt = max(floor($turns + 0.5), 1)
+  $H = max($aw, $bw)
+  add($Wrap, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, w=$aw + $bw + $g, h=$H, corner=0.5 * $H, turns=$nt * (1 - $bd) + $bd, gap=1 - $bd, slack=$slack, bx=1 + ($nt - 1) * $bd, at=(0.5 * ($bw - $aw), $r * ($nt - 1) * $bd, 0), join=none)
+  if ($frap > 0.5) {
+    add($Wrap, r=$r, strands=$strands, lay=$lay, hand=$hand, budget=$budget, age=$age, fray=$fray, fuzz=$fuzz, lost=$lost, sides=$sides, detail=$detail, noise=$noise, index=$index, w=2 * $r * $nt + 2 * $r, h=$H + 4 * $r, corner=-1.0, turns=floor($frap + 0.5) * (1 - $bd) + $bd, gap=1 - $bd, slack=$slack, axis=1, bx=1 + (floor($frap + 0.5) - 1) * $bd, index=$index + 1, at=($r * (floor($frap + 0.5) - 1) * (1 - $bd), $r * ($nt - 1), 0), join=none)
+  }
+}
+
+SampleLineGame   = mesh() { add($Line, r=0.6, len=200.0, budget=0, age=0.8, join=none) }
+SampleLineHigh   = mesh() { add($Line, r=0.6, len=200.0, budget=1, age=0.8, join=none) }
+SampleSpanHigh   = mesh() { add($Span, r=0.8, span=300.0, sag=40.0, budget=1, age=1.0, join=none) }
+SampleCoilHigh   = mesh() { add($Coil, r=0.6, turns=6.0, tail=60.0, budget=1, age=0.6, join=none) }
+SampleSquareGame = mesh() { add($Square, r=0.5, aw=8.0, ah=8.0, bw=8.0, bh=8.0, turns=2, frap=1, sides=5, budget=0, age=0.8, join=none) }
+SampleSquareHigh = mesh() { add($Square, r=0.5, aw=8.0, ah=8.0, bw=8.0, bh=8.0, turns=4, frap=2, budget=1, age=0.8, join=none) }
+SampleKnotHigh   = mesh() { add($Overhand, r=0.8, tail=15.0, tail2=15.0, budget=1, age=1.0, join=none) }

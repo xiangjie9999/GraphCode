@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.1  shade:40
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Rubble  smooth:0.1  shade:40
 
 # RUBBLE — the debris lane's pile composer (L4: imports the L2 pieces and the L3 assemblies; Docs/GC-SHAPE-DEBRIS-LANE.md
 # §3 and its lead rulings; judged on "Addendum: debris piles and pieces" of GC-SHAPE-CONCRETE-DAMAGE-CRITIC.md, numbers

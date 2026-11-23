@@ -386,9 +386,13 @@ What does not build (the build's sentences below still say `accel=` in their adv
 
 - **One value per stretch.** The values are all shares (`60%`) or all absolute (`8000deg/s2`). A list of one value on two poses
   is the same as the single `effort=40%` (both took 0.120 s).
-- **Every in-between pose is a REST.** The body arrives there and leaves from zero speed.
+- ~~**Every in-between pose is a REST.**~~ *Superseded 23 Nov 2026: every in-between pose is passed unless `stops=` names it (FLOW BY DEFAULT, below).* A rest: the body arrives there and leaves from zero speed.
 - **Two poses are not rests:** the fastest pose (it is passed at speed by its meaning), written `fastest_at=` (the split strike law below) or `peak_at=` / `strike=` (the one-bell law, as every file before 19 Nov times), and any pose named in `through=($Pose)`. `through=` names an in-between pose, once,
   not the fastest one.
+- **FLOW BY DEFAULT (23 Nov 2026, superseding the two bullets above):** every in-between pose is PASSED; the body rests only at the first
+  and last pose, each joint still stopping where it turns back. `stops=($Load, $Land)` names the poses where the whole body rests;
+  `through=` and `through=all` still read and change nothing. Files from before had `stops=` added so they play as before (the owner's
+  high kick froze the whole body at its three rests: "transition pose should interpolate between all the motion").
 - **A stage** is the run of stretches between two rests. A stage with a passed pose holds more than one stretch.
 - **Stretches that share a stage may differ in effort**: the stage eases from one to the next. Measured 18 Nov on the claw's version 4
   keys, `effort=(60%, 150%, 100%)` with `fastest_at=$Contact2K` built `$Windup1K to $Follow3K at 150% easing to 100% 0.390 s`. (Until

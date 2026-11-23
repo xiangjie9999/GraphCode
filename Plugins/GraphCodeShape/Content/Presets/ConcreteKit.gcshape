@@ -1,0 +1,392 @@
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/ConcreteKit  smooth:0.2  shade:40
+
+# CONCRETE KIT — intact cast concrete, new to aged on one `age` slider (design: Docs/GC-SHAPE-CONCRETE-KIT.md; research:
+# Docs/Research/concrete-kit.md; photos: Saved/Gate/Reference/Concrete/). A RECIPE, hand-written. Debris stays in
+# ConcreteParts, BrokenConcrete, Rebar, Damage.
+#
+#   CK   = shape('/GraphCodeShape/Presets/ConcreteKit', Face = $Cast)
+#   Wall = mesh() { add($CK.Wall, size_x=300, height=300, thick=20, form=2, age=0, noise=4) }
+#   Nib  = mesh() { add($CK.Ledge, size_x=150, depth=25, height=22, at=(0, 0, 218), join=none) }
+#
+# EVERY PIECE LEADS WITH THE SAME KNOBS (kit 11a): its size, `age` (0 new cast, 1 weathered, 2 spalled; one scale for the
+# whole kit), `damage` (0-1; reserved: the broken states hand over to BrokenConcrete/Damage/Rebar in slice S4), `softness`
+# (0-1; reserved), `noise` (the seed: every draw is keyed noise * 1009 + index, so age 0/1/2 of one noise are ONE wall
+# getting older: same boards, same ties, same lift lines), `budget` (0 Game, 1 High). Then the advanced knobs. Every knob is
+# clamped to the range in its table; -1 = AUTO (chosen from `form` and `age`).
+# SLOTS (pathless, bind them when you import, or the engine draws its grid): `Face` the cast skin.
+# FRAME of every piece: x along its length from 0, y through its thickness from 0 (the FRONT face, cast against the form, is
+# y = 0 and faces -Y), z up from 0. Pivot (0, 0, 0). `ox` shifts the pattern frame along x so modules placed side by side
+# continue the same boards and tie grid (a module at x = 300 takes ox=300).
+#
+# HOW THE FORM MARKS ARE MADE (S0 probe, 2026-11-21): a lift is its PLAN OUTLINE extruded up: every board's face is its own
+# few points (its step off the line, its tilt, its cup), the joints are V notches between them. No boolean and no raise, so
+# the joints are dead straight and cost ~200 triangles a face; `raise [in=box]` per panel cost 109,000 triangles and left
+# jagged borders and 2 folds. Tie holes are cone cuts, snapped off the joints. Lifts are separate pours stacked
+# (join=none), each with its own boards and its own small step.
+#
+# TIERS: `_High` every mark as geometry; `_Game` the same recipe under [triangles=], the joints baked into normal/AO/
+# curvature maps on UV1 (UV0 keeps the 100 cm box map for a tiling concrete material). Measured counts on the build lines.
+
+build {
+  SM_ConcreteWall_Board_New_High = $WallBoardNewHigh [pivot=(0, 0, 0), bounds=(300, *, 300)]
+  SM_ConcreteWall_Board_New_Game = $WallBoardNewGame [pivot=(0, 0, 0), bounds=(300.5, *, 300.5), triangles=4000, maps=(normal, ao, curvature), from=$WallBoardNewHigh, resolution=1024, uv_channel=1]
+  SM_ConcreteLedge_New_High      = $LedgeNewHigh     [pivot=(0, 0, 0)]
+}
+
+Face = material()
+
+# ==== the tiers: one wrapper each (a build line cannot pass knob values) =======================================
+WallBoardNewHigh = mesh(noise=4) { add($Wall, form=2, age=0, noise=$noise, budget=1) }
+WallBoardNewGame = mesh(noise=4) { add($Wall, form=2, age=0, noise=$noise, budget=0) }
+LedgeNewHigh     = mesh(noise=4) { add($Ledge, age=0, noise=$noise, budget=1) }
+
+# ==== SHARED CONCRETE TREATMENTS ===================================================================================
+# a corner where the reading leaves its held end: a warp that reads it cuts that line into the mesh (a chamfer's edge)
+Hinge = profile(0 = 0@sharp, 1 = 1) [linear]
+
+# The pour's vertical stations, 0..100 cm (a lift scales it to its height): two, a plain sweep
+Up1 = plane() { points((0, 0, 0), (0, 0, 100)) }
+
+# A tie hole's cutter, turned about +Z (a recipe turns +Z into the face): 0.6 cm of lead-in outside the face, then the
+# plastic cone's DISH at the face (radius r x (1 + dish), 0.5 cm deep, its walls sloping in, the photos' pale rim), then the
+# hole itself, r at the dish floor narrowing to 70 % at the rod end, d deep in all. An OPEN profile: revolve closes it
+# against the axis (a closed one drawn through the axis left 8 non-manifold edges and 365 seams, S1 build 4).
+TieCone = mesh(r=1.4, d=3.0, dish=0.6, seg=10) {
+  points(($r * (1 + $dish), 0), ($r * (1 + $dish), 0.6), ($r, 1.1), (0.7 * $r, 0.6 + $d))
+  revolve(segments=$seg)
+}
+
+# ---- LIFT: ONE POUR of a wall, len x h x thick, both faces cast against their own forms ---------------------------------
+#   form     0 smooth (steel or a lined form: no joints), 1 plywood sheets (panel_w wide, a fin at each seam), 2 vertical
+#            boards (widths 0.65-1.35 x `board`, each board stepped, tilted and cupped, a V joint between)        [0, 2]   2
+#   board    cm, the mean board width (form 2)                                                                   [5, 25]  12
+#   panel_w  cm, the sheet width (form 1)                                                                        [30, 400] 122
+#   face_step cm, how far a board or sheet face stands off its neighbour (-1: form 2 0.12, form 1 0.15, form 0 0)  [0, 1]  -1
+#   groove   cm, the joint: + a V notch that deep (boards, 0.5 cm wide), - a fin that proud (sheets) (-1: 0.15 boards, -0.12 sheets)  [-0.5, 1] -1
+#   ties     1 cut the tie holes (both faces, the same places), 0 none                                           [0, 1]   1
+#   tie_dx, tie_dy  cm, the tie grid across and up (the rows centred in the pour; the columns on the global x grid)  [20, 150] 61, 61
+#   tie_d, tie_depth  cm, the hole's mouth and depth                                                              [1.5, 5], [1.2, 8]  2.8, 3
+#   tie_dish   the dish round the mouth, x the hole's radius (0 none; 0.6: a 2.8 cm hole in a 4.5 cm dish)            [0, 1.5] 0.6
+#   tie_inset  cm, no hole nearer a pour's edge or a wall end than this                                          [5, 60]  15
+#   snap     cm, no hole's centre nearer a joint or seam (of either face) than this (the hole sits on one board's face)              [1, 10]  3.5
+#   ox       cm, the pattern frame's x offset (modules continue each other)                                        any      0
+#   noise, budget   the seed; 0 Game (6-sided holes, mask columns every 6 cm), 1 High (12-sided, 4 cm)
+Lift = mesh(len=300.0, h=240.0, thick=20.0, form=2, board=12.0, panel_w=122.0, face_step=-1.0, groove=-1.0, ties=1, tie_dx=61.0, tie_dy=61.0, tie_d=2.8, tie_depth=3.0, tie_dish=0.6, tie_inset=15.0, snap=3.5, ox=0.0, noise=1, budget=1) {
+  $S = clamp($len, 20, 1200)
+  $T = clamp($thick, 8, 100)
+  $F = clamp(floor($form + 0.5), 0, 2)
+  $bg = clamp(floor($budget + 0.5), 0, 1)
+  $col = 6 - 2 * $bg
+  $sg = 6 + 6 * $bg
+  $nz = clamp(floor($noise), 1, 99999)
+  $k = $nz * 1009
+  # auto step, groove, joint half-width and board width by form
+  $stp = 0
+  $gd = 0
+  $g = 0
+  $bw = clamp($board, 5, 25)
+  if ($F > 1.5) {
+    $stp = 0.12
+    $gd = 0.15
+    $g = 0.25
+  } else {
+    if ($F > 0.5) {
+      $stp = 0.15
+      $gd = -0.12
+      $g = 0.1
+      $bw = clamp($panel_w, 30, 400)
+    } else {
+      $bw = 4 * $col
+    }
+  }
+  if ($face_step > -0.5) {
+    $stp = clamp($face_step, 0, 1)
+  }
+  if ($groove > -0.95) {
+    $gd = clamp($groove, -0.5, 1)
+  }
+  # ---- the FRONT face (y = 0 side), left to right; joints (both faces') kept in $jx for the tie snap ----
+  $q = 0
+  $nj = 0
+  $gx = 0
+  loop (300) {
+    if ($gx < $ox + $S - 0.01) {
+      $i = output.index
+      $w = $bw
+      $yo = 0
+      $tl = 0
+      $cu = 0
+      if ($F > 1.5) {
+        $w = $bw * (0.65 + 0.7 * random(seed=$k + 7 * $i, min=0, max=1))
+      }
+      if ($F > 0.5) {
+        $yo = $stp * (2 * random(seed=$k + 7 * $i + 1, min=0, max=1) - 1)
+        $tl = 0.6 * $stp * (2 * random(seed=$k + 7 * $i + 2, min=0, max=1) - 1)
+        $cu = (2 - $F) * 0 + ($F - 1) * 0.5 * $stp * random(seed=$k + 7 * $i + 3, min=0, max=1)
+      }
+      $a = $gx - $ox
+      $b = $a + $w
+      if ($b > 2) {
+        $xa = max($a, 0)
+        if ($a < 2) {
+          $xa = 0
+        }
+        $xe = min($b, $S)
+        if ($b > $S - 2) {
+          $xe = $S
+        }
+        if ($xa < 0.01) {
+          $u = clamp((0 - $a) / $w, 0, 1)
+          $pts[$q] = (0, $yo + $tl * (1 - 2 * $u) - $cu * 4 * $u * (1 - $u))
+        } else {
+          $u = clamp(($xa + $g - $a) / $w, 0, 1)
+          $pts[$q] = ($xa + $g, $yo + $tl * (1 - 2 * $u) - $cu * 4 * $u * (1 - $u))
+        }
+        $q = $q + 1
+        $nm = max(1, floor(($xe - $xa) / $col))
+        loop ($nm) {
+          $xm = $xa + ($xe - $xa) * output.index / ($nm + 1)
+          $u = clamp(($xm - $a) / $w, 0, 1)
+          $pts[$q] = ($xm, $yo + $tl * (1 - 2 * $u) - $cu * 4 * $u * (1 - $u))
+          $q = $q + 1
+        }
+        if ($xe > $S - 0.01) {
+          $u = clamp(($S - $a) / $w, 0, 1)
+          $pts[$q] = ($S, $yo + $tl * (1 - 2 * $u) - $cu * 4 * $u * (1 - $u))
+          $q = $q + 1
+          $gx = $ox + $S
+        } else {
+          $u = clamp(($xe - $g - $a) / $w, 0, 1)
+          if ($F > 0.5) {
+            $pts[$q] = ($xe - $g, $yo + $tl * (1 - 2 * $u) - $cu * 4 * $u * (1 - $u))
+            $q = $q + 1
+            $pts[$q] = ($xe, $gd)
+            $q = $q + 1
+            $jx[$nj] = $xe
+            $nj = $nj + 1
+          } else {
+            $pts[$q] = ($xe, 0)
+            $q = $q + 1
+          }
+        }
+      }
+      if ($gx < $ox + $S - 0.01) {
+        $gx = $gx + $w
+      }
+    }
+  }
+  # ---- the BACK face (y = thick side), its own boards, built left to right into $bk, then appended right to left ----
+  $kb = $k + 500009
+  $nb = 0
+  $gx = 0
+  loop (300) {
+    if ($gx < $ox + $S - 0.01) {
+      $i = output.index
+      $w = $bw
+      $yo = 0
+      $tl = 0
+      $cu = 0
+      if ($F > 1.5) {
+        $w = $bw * (0.65 + 0.7 * random(seed=$kb + 7 * $i, min=0, max=1))
+      }
+      if ($F > 0.5) {
+        $yo = $stp * (2 * random(seed=$kb + 7 * $i + 1, min=0, max=1) - 1)
+        $tl = 0.6 * $stp * (2 * random(seed=$kb + 7 * $i + 2, min=0, max=1) - 1)
+        $cu = ($F - 1) * 0.5 * $stp * random(seed=$kb + 7 * $i + 3, min=0, max=1)
+      }
+      $a = $gx - $ox
+      $b = $a + $w
+      if ($b > 2) {
+        $xa = max($a, 0)
+        if ($a < 2) {
+          $xa = 0
+        }
+        $xe = min($b, $S)
+        if ($b > $S - 2) {
+          $xe = $S
+        }
+        if ($xa < 0.01) {
+          $u = clamp((0 - $a) / $w, 0, 1)
+          $bk[$nb] = (0, $T - $yo - $tl * (1 - 2 * $u) + $cu * 4 * $u * (1 - $u))
+        } else {
+          $u = clamp(($xa + $g - $a) / $w, 0, 1)
+          $bk[$nb] = ($xa + $g, $T - $yo - $tl * (1 - 2 * $u) + $cu * 4 * $u * (1 - $u))
+        }
+        $nb = $nb + 1
+        $nm = max(1, floor(($xe - $xa) / $col))
+        loop ($nm) {
+          $xm = $xa + ($xe - $xa) * output.index / ($nm + 1)
+          $u = clamp(($xm - $a) / $w, 0, 1)
+          $bk[$nb] = ($xm, $T - $yo - $tl * (1 - 2 * $u) + $cu * 4 * $u * (1 - $u))
+          $nb = $nb + 1
+        }
+        if ($xe > $S - 0.01) {
+          $u = clamp(($S - $a) / $w, 0, 1)
+          $bk[$nb] = ($S, $T - $yo - $tl * (1 - 2 * $u) + $cu * 4 * $u * (1 - $u))
+          $nb = $nb + 1
+          $gx = $ox + $S
+        } else {
+          $u = clamp(($xe - $g - $a) / $w, 0, 1)
+          if ($F > 0.5) {
+            $bk[$nb] = ($xe - $g, $T - $yo - $tl * (1 - 2 * $u) + $cu * 4 * $u * (1 - $u))
+            $nb = $nb + 1
+            $bk[$nb] = ($xe, $T - $gd)
+            $nb = $nb + 1
+            $jx[$nj] = $xe
+            $nj = $nj + 1
+          } else {
+            $bk[$nb] = ($xe, $T)
+            $nb = $nb + 1
+          }
+        }
+      }
+      if ($gx < $ox + $S - 0.01) {
+        $gx = $gx + $w
+      }
+    }
+  }
+  loop ($nb) {
+    $j = $nb - output.index
+    $pts[$q] = ($bk[$j].x, $bk[$j].y)
+    $q = $q + 1
+  }
+  # swept up a path of its own stations, not extruded: extrude adds a ring every ~2 mean outline edges (S0 probe 5), which
+  # on a board face is a ring every 6-12 cm, 20,000-40,000 triangles of nothing
+  points($pts, loop=true)
+  sweep(along=$Up1)
+  warp(to=(point.x, point.y, point.z * $h / 100))
+  # ---- TIE HOLES: one grid per pour, rows centred in its height, columns on the global x grid, each snapped off the
+  # front's joints, cut through both faces at the same x and z ----
+  if ($ties > 0.5) {
+    $dx = clamp($tie_dx, 20, 150)
+    $dy = clamp($tie_dy, 20, 150)
+    $ins = clamp($tie_inset, 5, 60)
+    $sn = clamp($snap, 1, 10)
+    $r = 0.5 * clamp($tie_d, 1.5, 5)
+    $dd = clamp($tie_depth, 1.2, 8)
+    $dsh = clamp($tie_dish, 0, 1.5)
+    $nr = max(1, floor(($h - 2 * $ins) / $dy) + 1)
+    $z0 = 0.5 * ($h - ($nr - 1) * $dy)
+    $c0 = floor($ox / $dx)
+    loop (60) {
+      $xc = ($c0 + output.index - 0.5) * $dx - $ox
+      if ($xc > $ins) {
+        if ($xc < $S - $ins) {
+          if ($nj > 0) {
+            loop ($nj) {
+              $jj = $jx[output.index - 1]
+              if (abs($xc - $jj) < $sn) {
+                $xc = $jj + $sn * (2 * clamp(ceil($xc - $jj), 0, 1) - 1)
+              }
+            }
+          }
+          loop ($nr) {
+            $zr = $z0 + (output.index - 1) * $dy
+            subtract($TieCone, r=$r, d=$dd, dish=$dsh, seg=$sg, at=($xc, -0.6, $zr), rotate=(90, 0, 0))
+            subtract($TieCone, r=$r, d=$dd, dish=$dsh, seg=$sg, at=($xc, $T + 0.6, $zr), rotate=(-90, 0, 0))
+          }
+        }
+      }
+    }
+  }
+}
+
+# ==== WALL: a cast wall panel, one or more pours (lifts) stacked =====================================================
+#   size_x   cm, length                                                                   [60, 1200] 300
+#   height   cm                                                                           [60, 1200] 300
+#   thick    cm (shear walls 15-50)                                                       [10, 60]   20
+#   age      0 new cast (the Dingleton photo: joints, ties open, a lift step, crisp arrises)   [0, 2]  1
+#   damage, softness   reserved (S4)                                                       [0, 1]    0
+#   noise, budget      the seed; 0 Game, 1 High                                                     1, 1
+#   form, board, panel_w, face_step, groove   as LIFT's                                                  2, 12, 122, -1, -1
+#   panel_h  cm, the sheet height (form 1: a pour per sheet row when `lift` is auto)       [60, 400]  244
+#   ties     -1 auto (1: a poured wall has ties), 0 none, 1 cut; tie_dx, tie_dy, tie_d, tie_depth, tie_dish as LIFT's   -1, 61, 61, 2.8, 3, 0.6
+#   lifts    -1 auto (1), 0 one pour, 1 pour lines every `lift` cm                          [-1, 1]   -1
+#   lift     cm, the pour height (-1: form 1 panel_h, otherwise 240: a storey, two sheet heights; a proposal, R s1)  [60, 600] -1
+#   lift_step  cm, how far a pour stands off the one below, drawn 0.5-1 x this, either way  [0, 4]    0.5
+#   chamfer  cm, the 45 degree chamfer on the top arrises and on the free ends' arrises (3/4 in spec), 0 sharp   [0, 4]  1.9
+#   ends     which ends are free (chamfered): 0 none (a module between modules), 1 the x = 0 end, 2 the far end, 3 both   [0, 3]  3
+#   ox       cm, the pattern frame's x offset                                                             0
+#   tile     cm per UV tile (UV0, box)                                                     [1, 1000]  100
+Wall = mesh(size_x=300.0, height=300.0, thick=20.0, age=1.0, damage=0.0, softness=0.0, noise=1, budget=1, form=2, board=12.0, panel_w=122.0, panel_h=244.0, face_step=-1.0, groove=-1.0, ties=-1, tie_dx=61.0, tie_dy=61.0, tie_d=2.8, tie_depth=3.0, tie_dish=0.6, lifts=-1, lift=-1.0, lift_step=0.5, chamfer=1.9, ends=3, ox=0.0, tile=100.0) {
+  $S = clamp($size_x, 60, 1200)
+  $H = clamp($height, 60, 1200)
+  $T = clamp($thick, 10, 60)
+  $F = clamp(floor($form + 0.5), 0, 2)
+  $nz = clamp(floor($noise), 1, 99999)
+  $k = $nz * 1009
+  $L = 240
+  if ($F > 0.5) {
+    if ($F < 1.5) {
+      $L = clamp($panel_h, 60, 400)
+    }
+  }
+  if ($lift > 0) {
+    $L = clamp($lift, 60, 600)
+  }
+  if ($lifts > -0.5) {
+    if ($lifts < 0.5) {
+      $L = $H
+    }
+  }
+  $ti = 1
+  if ($ties > -0.5) {
+    $ti = clamp(floor($ties + 0.5), 0, 1)
+  }
+  $nl = max(1, ceil($H / $L - 0.02))
+  $st = 0
+  loop ($nl) {
+    $i = output.index - 1
+    $z0 = $i * $L
+    $hh = min($L, $H - $z0)
+    $st = 0
+    if ($i > 0) {
+      $st = clamp($lift_step, 0, 4) * (0.5 + 0.5 * random(seed=$k + 301 + 3 * $i, min=0, max=1)) * (2 * floor(2 * random(seed=$k + 302 + 3 * $i, min=0, max=1)) - 1)
+    }
+    add($Lift, len=$S, h=$hh, thick=$T, form=$F, board=$board, panel_w=$panel_w, face_step=$face_step, groove=$groove, ties=$ti, tie_dx=$tie_dx, tie_dy=$tie_dy, tie_d=$tie_d, tie_depth=$tie_depth, tie_dish=$tie_dish, ox=$ox, noise=$nz * 31 + $i, budget=$budget, at=(0, 0 - $st, $z0), join=none)
+  }
+  # the arrises: 45 degree chamfers on the top and on the free ends, as ONE warp: each arris's faces are moved in by the
+  # distance past its chamfer line (the top by z, the ends by x), toward the wall's middle plane; the @sharp hinge cuts the
+  # chamfer line into the faces first, so each chamfer is one flat face with crisp edges. (A `cut` plane across the
+  # board notches left 173 folds along the top, S1 build 1.)
+  $c = clamp($chamfer, 0, 4)
+  if ($c > 0.05) {
+    $en = clamp(floor($ends + 0.5), 0, 3)
+    $eL = $en - 2 * floor($en / 2)
+    $eR = floor($en / 2)
+    warp(to=(point.x, point.y + (1 - 2 * clamp(ceil(point.y - 0.5 * $T), 0, 1)) * $c * max($Hinge(clamp((point.z - ($H - $c)) / $c, 0, 1)), max($eL * $Hinge(clamp(($c - point.x) / $c, 0, 1)), $eR * $Hinge(clamp((point.x - ($S - $c)) / $c, 0, 1)))), point.z))
+  }
+  imprint(below=0.5)
+  material($Face)
+  uv(box, scale=clamp($tile, 1, 1000))
+}
+
+# ==== LEDGE: a cast nib, sill, coping or lintel projecting from a wall face ==========================================
+# Its own frame: x 0..size_x along the wall, the FRONT (outer) face at y = -depth, the back at y = +embed (into the wall
+# whose face is y = 0), z 0..height (the soffit at 0).
+#   size_x   cm, length                                                     [20, 1200] 150
+#   depth    cm, how far it projects                                        [5, 80]    25
+#   height   cm                                                             [5, 80]    22
+#   age, damage, softness, noise, budget   as WALL's
+#   chamfer  cm, 45 degree chamfer on the two outer arrises                 [0, 4]     1.9
+#   slope    1: the far end (x = size_x) cut back at 45 degrees, its soffit longer than its top (the Dingleton nib); 0 square   [0, 1]  1
+#   embed    cm, how far its back runs into the wall                        [0, 20]    2
+#   tile     cm per UV tile                                                           100
+Ledge = mesh(size_x=150.0, depth=25.0, height=22.0, age=1.0, damage=0.0, softness=0.0, noise=1, budget=1, chamfer=1.9, slope=1, embed=2.0, tile=100.0) {
+  $S = clamp($size_x, 20, 1200)
+  $P = clamp($depth, 5, 80)
+  $Hh = clamp($height, 5, 80)
+  $E = clamp($embed, 0, 20)
+  points((0, 0 - $P), ($S, 0 - $P), ($S, $E), (0, $E), loop=true)
+  extrude(height=$Hh)
+  $c = clamp($chamfer, 0, 4)
+  if ($c > 0.05) {
+    cut(plane=(0, -1, 1), at=(0, 0 - $P, $Hh - $c))
+    cut(plane=(0, -1, -1), at=(0, 0 - $P, $c))
+  }
+  if ($slope > 0.5) {
+    cut(plane=(1, 0, 1), at=($S, 0, 0))
+  }
+  material($Face)
+  uv(box, scale=clamp($tile, 1, 1000))
+}

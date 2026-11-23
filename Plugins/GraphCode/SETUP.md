@@ -559,7 +559,9 @@ half — and hooks for anything that must happen every time rather than when you
 Add a pointer where the next agent will find it — the project's root agent file (`CLAUDE.md`,
 `AGENTS.md`, or its equivalent) should say GraphCode is installed and route to the project's own
 docs, and carry the line [GRAPHCODE.md](GRAPHCODE.md) §6 gives, so every session reads GraphCode's
-own entry file before relying on memory. Read and preserve the existing file first. If the owner limited setup to new files, record
+own entry file and searches the Marketplace for precedent before authoring. The pointer also
+tells agents to adapt a useful pack as needed for the project. Read and preserve the existing
+file first. If the owner limited setup to new files, record
 the pointer as an open setup item instead of silently changing an existing policy file.
 
 ## Step 8 — Build one thing, look at it, play it, show it

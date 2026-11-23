@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.01  shade:42
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Fixings  smooth:0.01  shade:42
 
 # FIXINGS — ISO metric M8 hardware, and the first resident of the Presets
 # folder. `GC-SHAPE-GRAMMAR.md` §3.1.

@@ -398,6 +398,22 @@ in `all(...)`. A mixed numeric and region test inside `any(...)` or `not(...)` i
 instances and the tool's installed help rather than assuming a terrain filter and a foliage
 filter read the same surface.
 
+**Spread plants (ivy on a wall, leaf litter, ground cover) are PARTS plus a PCG graph, never one
+baked mesh** (owner, 22 Nov 2026). Build each part with GC Shape: one leaf, a short stem piece, or a
+small clump settled with `collide=settle`. Place the parts with a `kind:pcg_graph` written through
+`gc_apply`, and raise it with a `pcg(...)` line in the level's `.gcw`. A `trigger=load` volume is
+generated as soon as the write configures it in the editor. Four things measured on the ivy wall:
+
+- `SpatialNoise` multiplies `Transform.Scale3D` by 0.0001, so features about L cm across need a scale
+  of 1/(L x 0.0001). For example, 140 gives features about 70 cm across. To lay the noise on a wall,
+  pitch its frame 90 degrees.
+- Climbing runners are the contour lines of a stretched noise field: keep a narrow `DensityFilter`
+  band around 0.5. Leaves go in a wider band around the same lines.
+- Thin with height using `AttributeNoise`, then `MetadataMaths` with `Operation=Divide` by
+  `$Position.Z`, then a small lower bound. Wire both of the maths node's inputs, `InA` and `InB`.
+- Photograph PCG output with `gc_render source:"viewport"` plus `camera`, which aims the editor's own
+  viewport. A `source:"asset"` render of a level has drawn no PCG instances.
+
 Run a small population first and examine its ground contact. Then increase density in measured
 steps. Keep the seed and configuration with the evidence. Repeat unchanged input, change one
 setting, save and reopen; check that instances neither duplicate nor drift. Verify the actual

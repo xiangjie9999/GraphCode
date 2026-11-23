@@ -1,0 +1,657 @@
+gcshape 1 into:/Game/AnimalStudies/Parts/Head smooth:.07 shade:78 uv:keep
+
+build { SM_AnimalHead = $Head }
+Feline = 0
+PinnaPigmentMix = $Feline
+PlanumPalette = $Feline
+IrisPalette = $Feline
+WhiskerPalette = $Feline
+HoundFraction = 0
+RadialSurfaceFit = lerp(.90,.97,$Feline)
+EyeAperture = .64
+HeadLength = 12
+HeadWidth = 8
+HeadHeight = 7
+MuzzleShare = .4
+MuzzleWidth = .47
+NoseSize = 1.22
+EyeSize = 1
+EyeSet = .44
+EyeAngle = 46
+CornealExposure = lerp(.79,.80,$Feline)
+OccipitalSpan = lerp(.31,.25,$Feline)
+OccipitalBreadth = lerp(.445,.44,$Feline)
+OccipitalDepth = lerp(.50,.47,$Feline)
+PollLevel = lerp(.055,.095,$Feline)
+UpperLipReach = lerp(.009,0,$Feline)
+UpperLipContour = profile(0=0,.16=.02,.34=.41,.51=.95,.67=1,.84=.59,1=.08)
+UpperLipDepth = .22*$HeadLength
+ClosedLipFit = 1-$Feline
+LabialLobeDrop = lerp(.032,0,$Feline)*$HeadLength
+LabialLobeOffset = .083*$HeadLength
+LabialLobeSpan = .096*$HeadLength
+PupilMaterial = material('/Game/AnimalStudies/Catalogue/Materials/MI_CornealPupil')
+FelineWhisker = material('/Game/AnimalStudies/Catalogue/Materials/MI_CatVibrissa')
+CanthusRise = lerp(.08,.22,$Feline)
+LidOverlap = lerp(.050,.078,$Feline)
+LidTurnWidth = lerp(.18,.21,$Feline)
+LowerLidRise = lerp(.035,.068,$Feline)
+SocketDepth = .74
+CorneaRelief = lerp(-.045,-.115,$Feline)
+# Hairless pigmented tissue at the two edges of the palpebral fissure.
+UpperLidMarginWidth = .088
+LowerLidMarginWidth = .125
+LidMarginPlaneDepth = .93
+LidMargin = material('/Game/AnimalStudies/Catalogue/Materials/MI_LidMargin')
+# Where and how far the concealed globe turns away beneath the eyelids.
+# Dilation scales both pupil axes. Gaze angles rotate the optical markings inside the fixed eyelids.
+PupilDilation = 1
+GazeYaw = 0
+# Positive convergence turns both pupils toward the midline.
+GazeConvergence = 0
+GazePitch = 0
+GlobeRimWidthInset = .04
+GlobeRimHeightInset = .19
+GlobeReturnOnset = .99
+GlobeReturnSpan = .31
+GlobeReturnDepth = .87
+GlobeDepth = .32
+EarYaw = 18
+WhiskerSweep = .25
+WhiskerSag = .14
+# EyeSet is longitudinal fraction. Separation and lift are additive cm.
+OrbitBreadth = lerp(.94,.67,$Feline)
+CaninePlanum = material('/Game/AnimalStudies/Catalogue/Materials/M_NasalLeather')
+FelinePlanum = material('/Game/AnimalStudies/Catalogue/Materials/MI_RosePlanum')
+MandibleBreadth = lerp(.82,.64,$Feline)
+LabialProjection = lerp(.006,.007,$Feline)
+OpticalOrbitLift = lerp(.038,-.053,$Feline)*$HeadLength
+OpticalOrbitLateral = lerp(-.035,.004,$Feline)*$HeadLength
+# Relax span, strength and falloff are fractions of pinna breadth at the ear root.
+PinnaSeamRelax = .038
+PinnaSeamExtent = .48
+PinnaSeamFalloff = .20
+# Lateral temporal fullness carries the skin and the attached ear, while
+# the ocular centres retain their independent registration.
+TemporalExpansion = 0
+TemporalAxialProfile = profile(0=0,.08=.23,.19=.80,.34=1,.43=.92,.54=.53,.63=.10,.70=0,1=0)
+TemporalHeightProfile = profile(0=.02,.12=.20,.35=.80,.55=1,.80=.89,.96=.50,1=.18)
+TemporalLateralSpan = .35
+PinnaRootLateral = lerp(.057,.060,$Feline)*$HeadLength
+PinnaRootLift = lerp(.027,-.038,$Feline)*$HeadLength
+EyeSeparation = 0
+EyeLift = 0
+EyeLatitude = lerp(58,61,$Feline)
+EarSet = .235
+EarLatitude = 49
+PigmentReferenceEyeSet = lerp(.53835,.7469,$Feline)
+PigmentReferenceOrbitBreadth = lerp(.94,.67,$Feline)
+PigmentReferenceNoseLevel = lerp(.047,.067,$Feline)
+NoseLevel = lerp(.047,.108,$Feline)
+LipFullness = 1
+ChinSetback = lerp(.011,.010,$Feline)
+PhiltrumDepth = lerp(.030,.025,$Feline)
+EarHeight = 5
+EarWidth = 3.7
+EarFold = .05
+EarPoint = .8
+EarSpread = 18
+JawDepth = .20
+CheekFullness = .15
+Brow = .10
+WhiskerLength = 4.8
+WhiskerRadius = .032
+WhiskerPad = 1
+Whisker = material('/Game/AnimalStudies/Catalogue/Materials/MI_Whisker')
+ErectWidth = profile(0=.79,.10=.98,.25=1,.39=.88,.54=.72,.70=.53,.84=.33,.95=.14,1=.035)
+LobeWidth = profile(0=.82,.11=.95,.24=1,.43=.91,.62=.76,.77=.60,.87=.46,.94=.30,1=.065)
+PinnaBendLength = .28
+PinnaBendAngle = 190
+PinnaBaseYaw = 64
+PinnaBurial = .18
+PinnaRake = .17
+LobeFlare = .16
+LobeFlareCurve = profile(0=0,.16=.17,.34=.78,.48=1,.61=.84,.79=.31,.92=.05,1=0)
+NasalStandards = shape('/GraphCodeShape/Presets/AnimalNoses',Feline=$Feline)
+MedialAlarOffset = $NasalStandards.MedialAlarOffset
+MedialAlarBreadth = $NasalStandards.MedialAlarBreadth
+MedialAlarHeight = $NasalStandards.MedialAlarHeight
+MedialAlarLevel = $NasalStandards.MedialAlarLevel
+MedialAlarProjection = $NasalStandards.MedialAlarProjection
+AlarCleftReach = $NasalStandards.AlarCleftReach
+AlarCleftDrop = $NasalStandards.AlarCleftDrop
+AlarLobuleRelief = $NasalStandards.AlarLobuleRelief
+AlarLobuleBreadth = $NasalStandards.AlarLobuleBreadth
+AlarLobuleHeight = $NasalStandards.AlarLobuleHeight
+AlarLobuleOffset = $NasalStandards.AlarLobuleOffset
+MedianGrooveHalfWidth = $NasalStandards.MedianGrooveHalfWidth
+MedianGrooveDrop = $NasalStandards.MedianGrooveDrop
+CleftUpperLevel = $NasalStandards.CleftUpperLevel
+CleftBlendHeight = $NasalStandards.CleftBlendHeight
+PlanumDome = $NasalStandards.PlanumDome
+PlanumHeightRatio = $NasalStandards.PlanumHeightRatio
+AlarWingHeight = $NasalStandards.AlarWingHeight
+AlarCreaseDepth = $NasalStandards.AlarCreaseDepth
+AlarCreaseHalfHeight = $NasalStandards.AlarCreaseHalfHeight
+AlarCreaseBow = $NasalStandards.AlarCreaseBow
+MoistMarginLevel = $NasalStandards.MoistMarginLevel
+MoistMarginStart = $NasalStandards.MoistMarginStart
+MoistMarginBlend = $NasalStandards.MoistMarginBlend
+VestibuleMaterial = material('/Game/AnimalStudies/Catalogue/Materials/M_NasalVestibule')
+EntranceFront = $NasalStandards.EntranceFront
+TurnStart = $NasalStandards.TurnStart
+ChamberRear = $NasalStandards.ChamberRear
+TurnRun = $NasalStandards.TurnRun
+SlitTerminalAspect = $NasalStandards.SlitTerminalAspect
+F = shape('/GraphCodeShape/Presets/AnimalFeatures',MedialAlarOffset=$MedialAlarOffset,MedialAlarBreadth=$MedialAlarBreadth,MedialAlarHeight=$MedialAlarHeight,MedialAlarLevel=$MedialAlarLevel,MedialAlarProjection=$MedialAlarProjection,AlarCleftReach=$AlarCleftReach,AlarCleftDrop=$AlarCleftDrop,AlarLobuleRelief=$AlarLobuleRelief,AlarLobuleBreadth=$AlarLobuleBreadth,AlarLobuleHeight=$AlarLobuleHeight,AlarLobuleOffset=$AlarLobuleOffset,MedianGrooveHalfWidth=$MedianGrooveHalfWidth,MedianGrooveDrop=$MedianGrooveDrop,CleftUpperLevel=$CleftUpperLevel,CleftBlendHeight=$CleftBlendHeight,PlanumDome=$PlanumDome,PlanumHeightRatio=$PlanumHeightRatio,AlarWingHeight=$AlarWingHeight,AlarCreaseDepth=$AlarCreaseDepth,AlarCreaseHalfHeight=$AlarCreaseHalfHeight,AlarCreaseBow=$AlarCreaseBow,MoistMarginLevel=$MoistMarginLevel,MoistMarginStart=$MoistMarginStart,MoistMarginBlend=$MoistMarginBlend,VestibuleMaterial=$VestibuleMaterial,EntranceFront=$EntranceFront,TurnStart=$TurnStart,ChamberRear=$ChamberRear,TurnRun=$TurnRun,SlitTerminalAspect=$SlitTerminalAspect,PupilDilation=$PupilDilation,GlobeReturnOnset=$GlobeReturnOnset,PinnaPigmentMix=$PinnaPigmentMix,PlanumPalette=$PlanumPalette,Feline=$Feline,CanthusRise=$CanthusRise,ErectWidth=$ErectWidth,LobeWidth=$LobeWidth,PinnaBendLength=$PinnaBendLength,PinnaBendAngle=$PinnaBendAngle,PinnaBaseYaw=$PinnaBaseYaw,PinnaBurial=$PinnaBurial,PinnaRake=$PinnaRake,LobeFlare=$LobeFlare,LobeFlareCurve=$LobeFlareCurve)
+Coat = material('/Game/AnimalStudies/Catalogue/Materials/MI_Coat')
+Trim = material('/Game/AnimalStudies/Catalogue/Materials/M_NasalLeather')
+Pupil = lerp(.9,.22,$Feline)
+IrisFraction = .83
+CanineIris = material('/Game/AnimalStudies/Catalogue/Materials/MI_AmberEye')
+FelineIris = material('/Game/AnimalStudies/Catalogue/Materials/MI_OliveEye')
+CanineEye = shape('/GraphCodeShape/Presets/AnimalEyes',PupilDilation=$PupilDilation,CanthusRise=$CanthusRise,PupilMaterial=$PupilMaterial,IrisMaterial=$CanineIris,PupilWidth=$Pupil,IrisFraction=$IrisFraction,GlobeRimWidthInset=$GlobeRimWidthInset,GlobeRimHeightInset=$GlobeRimHeightInset,GlobeReturnOnset=$GlobeReturnOnset,GlobeReturnSpan=$GlobeReturnSpan,GlobeReturnDepth=$GlobeReturnDepth,GlobeDepth=$GlobeDepth,LidOpening=$EyeAperture)
+FelineEye = shape('/GraphCodeShape/Presets/AnimalEyes',PupilDilation=$PupilDilation,CanthusRise=$CanthusRise,PupilMaterial=$PupilMaterial,IrisMaterial=$FelineIris,PupilWidth=$Pupil,IrisFraction=$IrisFraction,GlobeRimWidthInset=$GlobeRimWidthInset,GlobeRimHeightInset=$GlobeRimHeightInset,GlobeReturnOnset=$GlobeReturnOnset,GlobeReturnSpan=$GlobeReturnSpan,GlobeReturnDepth=$GlobeReturnDepth,GlobeDepth=$GlobeDepth,LidOpening=$EyeAperture)
+EyePart = mesh() {
+  if ($IrisPalette < .5) { add($CanineEye.Eye,join=none) }
+  if ($IrisPalette >= .5) { add($FelineEye.Eye,join=none) }
+}
+EarPart = mesh() { add($F.Ear,height=$EarHeight,width=$EarWidth,fold=$EarFold,pointed=$EarPoint,join=none) }
+NosePart = mesh() {
+  add($F.Nose,join=none)
+  save($RootBand) [$output.RootBand]
+}
+Labrador = shape('/GraphCodeShape/Presets/LabradorCranium',OrbitStation=$EyeStation,OrbitLatitude=$EyeLatitude,PinnaStation=$EarSet,PinnaLatitude=$EarLatitude)
+Dachshund = shape('/GraphCodeShape/Presets/DachshundCranium',OrbitStation=$EyeStation,OrbitLatitude=$EyeLatitude,PinnaStation=$EarSet,PinnaLatitude=$EarLatitude)
+Shorthair = shape('/GraphCodeShape/Presets/ShorthairCranium',OrbitStation=$EyeStation,OrbitLatitude=$EyeLatitude,PinnaStation=$EarSet,PinnaLatitude=$EarLatitude)
+LabradorY = formula(s,a) { $Labrador.Y1($s)*sin(1*$a)+$Labrador.Y2($s)*sin(2*$a)+$Labrador.Y3($s)*sin(3*$a)+$Labrador.Y4($s)*sin(4*$a)+$Labrador.Y5($s)*sin(5*$a)+$Labrador.Y6($s)*sin(6*$a)+$Labrador.Y7($s)*sin(7*$a) }
+DachshundY = formula(s,a) { $Dachshund.Y1($s)*sin(1*$a)+$Dachshund.Y2($s)*sin(2*$a)+$Dachshund.Y3($s)*sin(3*$a)+$Dachshund.Y4($s)*sin(4*$a)+$Dachshund.Y5($s)*sin(5*$a)+$Dachshund.Y6($s)*sin(6*$a)+$Dachshund.Y7($s)*sin(7*$a) }
+ShorthairY = formula(s,a) { $Shorthair.Y1($s)*sin(1*$a)+$Shorthair.Y2($s)*sin(2*$a)+$Shorthair.Y3($s)*sin(3*$a)+$Shorthair.Y4($s)*sin(4*$a)+$Shorthair.Y5($s)*sin(5*$a)+$Shorthair.Y6($s)*sin(6*$a)+$Shorthair.Y7($s)*sin(7*$a) }
+BoneY = formula(s,a) { lerp(lerp($LabradorY($s,$a),$DachshundY($s,$a),$HoundFraction),$ShorthairY($s,$a),$Feline) }
+LabradorZ = formula(s,a) { $Labrador.Z0($s)+$Labrador.Z1($s)*cos(1*$a)+$Labrador.Z2($s)*cos(2*$a)+$Labrador.Z3($s)*cos(3*$a)+$Labrador.Z4($s)*cos(4*$a)+$Labrador.Z5($s)*cos(5*$a)+$Labrador.Z6($s)*cos(6*$a)+$Labrador.Z7($s)*cos(7*$a) }
+DachshundZ = formula(s,a) { $Dachshund.Z0($s)+$Dachshund.Z1($s)*cos(1*$a)+$Dachshund.Z2($s)*cos(2*$a)+$Dachshund.Z3($s)*cos(3*$a)+$Dachshund.Z4($s)*cos(4*$a)+$Dachshund.Z5($s)*cos(5*$a)+$Dachshund.Z6($s)*cos(6*$a)+$Dachshund.Z7($s)*cos(7*$a) }
+ShorthairZ = formula(s,a) { $Shorthair.Z0($s)+$Shorthair.Z1($s)*cos(1*$a)+$Shorthair.Z2($s)*cos(2*$a)+$Shorthair.Z3($s)*cos(3*$a)+$Shorthair.Z4($s)*cos(4*$a)+$Shorthair.Z5($s)*cos(5*$a)+$Shorthair.Z6($s)*cos(6*$a)+$Shorthair.Z7($s)*cos(7*$a) }
+BoneZ = formula(s,a) { lerp(lerp($LabradorZ($s,$a),$DachshundZ($s,$a),$HoundFraction),$ShorthairZ($s,$a),$Feline) }
+# Each ring follows the CT bone envelope, lifted by regional soft tissues.
+# The mandibular border, zygomatic arch and nasal bridge share one surface.
+Break = 1-$MuzzleShare
+NoseStation = .936
+LengthAtNose = $NoseStation*$HeadLength
+NoseZ = $NoseLevel*$HeadHeight
+Ease = formula(q) { .5-.5*cos(180*clamp($q,0,1)) }
+Bell = formula(x,width) { .5+.5*cos(180*clamp($x/$width,-1,1)) }
+XAt = formula(s) { $HeadLength*(min($s/.55,1)*$Break+max(0,($s-.55)/.45)*($NoseStation-$Break)) }
+EyeStation = clamp(min($EyeSet/$Break,1)*.55+max(0,($EyeSet-$Break)/($NoseStation-$Break))*.45,0,1)
+EyeX = $EyeSet*$HeadLength
+EyeY = $OrbitBreadth*$HeadWidth*(lerp(lerp($Labrador.OrbitY,$Dachshund.OrbitY,$HoundFraction),$Shorthair.OrbitY,$Feline)+.015)+$RadialSurfaceFit*$OpticalOrbitLateral+$EyeSeparation
+EyeZ = $HeadHeight*lerp(lerp($Labrador.OrbitZ,$Dachshund.OrbitZ,$HoundFraction),$Shorthair.OrbitZ,$Feline)+$RadialSurfaceFit*$OpticalOrbitLift+$EyeLift
+EarBaseY = $HeadWidth*(lerp(lerp($Labrador.PinnaY,$Dachshund.PinnaY,$HoundFraction),$Shorthair.PinnaY,$Feline)+.020+.036*$EarFold)+$PinnaRootLateral
+EarRootZ = $HeadHeight*(lerp(lerp($Labrador.PinnaZ,$Dachshund.PinnaZ,$HoundFraction),$Shorthair.PinnaZ,$Feline)+.105*$EarFold)+$PinnaRootLift
+TemporalOffset = formula(x,y,z) { $TemporalExpansion*$TemporalAxialProfile(clamp($x/$HeadLength,0,1))*$TemporalHeightProfile(clamp(.5+($z-$NoseZ)/$HeadHeight,0,1))*$Ease(abs($y)/max(.00001,$TemporalLateralSpan*$HeadWidth)) }
+EarRootY = $EarBaseY+$TemporalExpansion*$TemporalAxialProfile(clamp($EarSet,0,1))*$TemporalHeightProfile(clamp(.5+($EarRootZ-$NoseZ)/$HeadHeight,0,1))*(.5-.5*cos(180*clamp(abs($EarBaseY)/max(.00001,$TemporalLateralSpan*$HeadWidth),0,1)))
+# The commissure follows the side of the maxilla before the line turns
+# under the incisor arcade to meet the opposite lip in the median plane.
+LipCorner = lerp(.56,.64,$Feline)
+LipFrontStation = .929
+LipDepth = .012
+LipThickness = lerp(.52,.20,$Feline)
+LipGrooveWidth = 8
+LipTurnProjection = .17
+BrowToGlobe = .045
+FaceSections = 160
+FaceSides = 96
+FissureStations = .20*$FaceSections
+FissureSides = $FaceSides*5/6
+LipPath = profile(0=132,.17=138,.42=144,.64=147,.75=150,.84=158,.92=170,1=180)
+LipT = formula(s) { clamp(($s-$LipCorner)/max(.001,$LipFrontStation-$LipCorner),0,1) }
+LipAngle = formula(s) { $LipPath($LipT($s)) }
+# Lip roll stations are fractions of head length. Angles and spans use degrees.
+LipCornerBlend = .065
+LipRostralBlend = .017
+UpperRollAngle = 8
+LowerRollAngle = 8
+UpperRollSpan = 10
+LowerRollSpan = 8
+UpperRollRelief = .012
+LowerRollRelief = .008
+OrbitalPigmentRadius = .96
+OrbitalPigmentWidth = .20
+OrbitalPigmentFade = .32
+OrbitalPigmentReach = 1.20
+# The lower jaw rests beneath the nasal collar. Distances on the border
+# profiles are head-length fractions, sampled from occiput to muzzle.
+EyeToPlanumFit = 0
+EyeToPlanumRatio = .72
+PalpebralTurnInset = .10
+SupraorbitalRimRadius = .99
+SupraorbitalRimSpan = .19
+BrowRadius = 1.32
+BrowSpan = .22
+BrowVentralFade = .5
+LabialWidthExponent = .87
+LabialHeightExponent = .91
+LabialFloorWidth = .81
+LabialTaperLevel = -.84
+LabialTaperSpan = .67
+LabialFullnessGain = .16
+LabialPadStrength = .13
+LabialPadLatitude = 106
+LabialPadArc = 33
+LabialPadStation = .78
+LabialPadSpan = .21
+LipSulcusRelief = .072
+LipSulcusArc = 7
+CheekLatitude = 97
+CheekArc = 42
+CheekStation = .51
+CheekSpan = .30
+RostralWidthOnset = .49
+RostralWidthSpan = .25
+PadLatitude = 110
+PadArc = 34
+PadStation = .77
+PadSpan = .21
+PadWidthGain = .11
+LipRollLatitude = 115
+LipRollArc = 45
+LipRollGain = .11
+LipForwardStation = .67
+LipForwardSpan = .21
+LipForwardLevel = -.208
+LipForwardHeight = .19
+LipForwardInset = .68
+LipForwardFalloff = .073
+LipLobeCentre = .142
+LipLobeWidth = .139
+PhiltrumWidth = .055
+PhiltrumReliefGain = .20
+DrapeStart = .66
+DrapeSpan = .17
+DrapeRimInset = .69
+DrapeRimFalloff = .50
+RostrumLengthScale = 1
+RostrumOrbitalClearance = 1.12
+RostrumCollarClearance = .30
+RhinolabialAdvance = 0
+RhinolabialFit = 0
+RhinolabialPosteriorRun = 2.4
+RhinolabialAnteriorRun = 1.7
+RhinolabialDepth = 2.5
+RhinolabialHalfWidth = 1.9
+RhinolabialOnset = .12
+RhinolabialBlend = .24
+RhinolabialRelease = .80
+RhinolabialDatum = profile(0=0,1=0)
+RhinolabialTarget = profile(0=0,1=0)
+MandibularContourFit = 0
+MandibularDatum = profile(0=.25,1=.25)
+MandibularTarget = profile(0=.25,1=.25)
+MandibularTipThickness = .16
+MandibularAnchorDepth = $PlanumHeightRatio+$MedianGrooveDrop
+ClosedLipOnset = .53
+ClosedLipRun = .20
+ClosedLipLatitude = 51
+ClosedLipArc = 48
+MandibularBorderFit = 0
+MandibularLevelOnset = .55
+MandibularLevelBlend = .45
+MandibularRimStart = .905
+MandibularRimEnd = .936
+MandibularAdvance = profile(0=0,1=0)
+MandibularElevation = profile(0=0,1=0)
+OralFissureDepth = 0
+OralFissureWidth = .020
+OralFissureCorner = .56
+OralFissureBlend = .10
+OralFissureLevel = profile(0=-.30,1=-.22)
+OralFissureForwardShare = .75
+OralFissureLateralShare = .48
+LipSpan = formula(s) { $Ease(($s-$LipCorner)/max(.00001,$LipCornerBlend))*(1-$Ease(($s-$LipFrontStation)/max(.00001,$LipRostralBlend))) }
+LipRoll = formula(s,a) { $LipSpan($s)*($LipThickness*($UpperRollRelief*$Bell($a-$LipAngle($s)+$UpperRollAngle,$UpperRollSpan)+$LowerRollRelief*$Bell($a-$LipAngle($s)-$LowerRollAngle,$LowerRollSpan))-$LipDepth*$Bell($a-$LipAngle($s),$LipGrooveWidth)) }
+# Living muzzle sections relative to the nasal datum. The CT defines the
+# maxilla and mandibular ramus behind these stations. At the incisor arcade
+# lips and chin determine the visible section, and the leather is set above it.
+CheekToLip = profile(0=.42,.56=.38,.65=.345,.73=.31,.80=.286,.855=.277,.89=.255,.918=.227,.943=.184,.962=.145,1=.138)
+BridgeRoof = profile(0=.30,.56=.232,.68=.162,.76=.127,.84=.099,.915=.090,.960=.095,1=.10)
+ChinFloor = profile(0=-.63,.56=-.56,.68=-.451,.75=-.396,.81=-.355,.85=-.331,.89=-.315,.917=-.282,.943=-.203,.964=-.129,1=-.11)
+JawCaptureBand = .19
+WhiskerPadStation = lerp(0,.032,$Feline)
+WhiskerPadLatitude = lerp(0,13,$Feline)
+WhiskerStationOffset = profile(0=0,1=0)
+WhiskerLatitudeOffset = profile(0=0,1=0)
+MuzzleGirthScale = profile(0=1,.51=1,.64=1+.045*(1-$Feline),.75=1+.115*(1-$Feline),.84=1+.20*(1-$Feline),.92=1+.16*(1-$Feline),.971=1+.045*(1-$Feline),1=1)
+MuzzleBridgeOffset = profile(0=0,1=0)
+ChinFloorOffset = profile(0=0,.49=0,.62=-.05*(1-$Feline),.74=-.13*(1-$Feline),.83=-.18*(1-$Feline),.90=-.175*(1-$Feline),.945=-.10*(1-$Feline),.98=0,1=0)
+FelineChinLift = profile(0=0,.48=0,.68=.075,.80=.19,.91=.21,1=.12)
+ChinOffset = formula(s) { $ChinFloorOffset($s)+$Feline*$FelineChinLift($s) }
+LipWidth = formula(s,a,h) { $MuzzleGirthScale($s)*$CheekToLip($s)*$MuzzleWidth/lerp(.63,.72,$Feline)*pow(max(0,sin($a)),$LabialWidthExponent)*lerp($LabialFloorWidth,1,$Ease(($h-$LabialTaperLevel)/max(.00001,$LabialTaperSpan)))*(1+$LabialFullnessGain*($LipFullness-1)+$LabialPadStrength*$WhiskerPad*$Bell($a-$LabialPadLatitude,$LabialPadArc)*$Bell($s-$LabialPadStation,$LabialPadSpan)-$LipSulcusRelief*$LipSpan($s)*$Bell($a-$LipAngle($s),$LipSulcusArc)) }
+LipHeight = formula(s,h) { $NoseZ+.5*$HeadHeight*($MuzzleBridgeOffset($s)+$BridgeRoof($s)+($ChinOffset($s)+$ChinFloor($s))+($MuzzleBridgeOffset($s)+$BridgeRoof($s)-($ChinOffset($s)+$ChinFloor($s)))*clamp($h*100000,-1,1)*pow(abs($h),$LabialHeightExponent)) }
+# Soft tissue sections from the two optical captures. The head, muzzle and
+# chin controls operate on those fitted sections before the nasal collar.
+DogSurface = shape('/GraphCodeShape/Presets/RetrieverFaceSurface')
+CatSurface = shape('/GraphCodeShape/Presets/DomesticCatFaceSurface')
+FrontalSurfaceFit = lerp(.40,.90,$Feline)
+MuzzleDatum = lerp(1,.9875,$Feline)
+RostralTravelLimit = lerp(.115,.052,$Feline)
+SurfaceFit = .95
+ChinTravel = .11*$Feline
+ChinTravelStart = .125
+ChinTravelSpan = .055
+# Depth of the subnasal lip and mandibular skin below the nasal collar.
+SubnasalDepthScale = 1
+SubnasalOnset = .68
+SubnasalTransition = .60
+LowerJawScale = lerp(1.12,.61,$Feline)
+ChinHalfWidth = lerp(.29,.27,$Feline)*$HeadWidth
+ChinCornerLift = lerp(.020,.082,$Feline)*$HeadLength
+ChinCornerSetback = lerp(.012,.047,$Feline)*$HeadLength
+CentralLipNotch = lerp(.034,0,$Feline)*$HeadLength
+LowerJawOnset = .065*$HeadLength
+LowerJawTransition = .093*$HeadLength
+JawFrontStation = .62
+JawFrontBlend = .18
+PadOffset = lerp(.17,.19,$Feline)*$HeadWidth
+PadHalfWidth = lerp(.19,.18,$Feline)*$HeadWidth
+PadBelowNose = lerp(.105,.083,$Feline)*$HeadLength
+PerioralRelax = lerp(.019,.052,$Feline)*$HeadWidth
+PadForwardShare = lerp(.40,.18,$Feline)
+PadLateralShare = lerp(.46,.72,$Feline)
+PadProjection = lerp(.027,.041,$Feline)*$HeadLength
+WhiskerPadHeight = lerp(.090,.084,$Feline)*$HeadLength
+CheekTaper = lerp(.015,.125,$Feline)
+CheekTaperStart = .21*$HeadWidth
+CheekTransition = .21*$HeadWidth
+# Fraction of cheek shaping applied from the nape to the nasal collar.
+JowlEnvelopeFit = 0
+JowlEnvelopeWidth = profile(0=.32,1=.32)
+JowlEnvelopeHeight = profile(0=0,.07=1,.43=1,.62=0,1=0)
+JowlEnvelopeTransition = .065
+CheekAxialFit = profile(0=1,1=1)
+LowerCheekProfile = profile(0=.4,.20=1,.36=1,.50=.72,.60=.34,.69=0,1=0)
+ChinProjection = .14
+ReferenceStop = lerp(.555,.77,$Feline)
+OpticalStop = lerp(.555,.86735,$Feline)
+ReferenceStation = formula(s) { min($s/.55,1)*$ReferenceStop+max(0,($s-.55)/.45)*($NoseStation-$ReferenceStop) }
+CaptureWeight = formula(s) { clamp($SurfaceFit,0,1)*(1-.24*$HoundFraction)*$Ease(($s-.14)/.25)*(1-$Ease(($s-lerp(.858,.902,$Feline))/lerp(.068,.052,$Feline))) }
+RingBasis = formula(q) { (pow(max(0,2-abs($q)),3)-4*pow(max(0,1-abs($q)),3))/6 }
+DogContour = formula(s,a) { $DogSurface.Lateral1($s)*($RingBasis($a/15-1)-$RingBasis($a/15+1))+$DogSurface.Lateral2($s)*($RingBasis($a/15-2))+$DogSurface.Lateral3($s)*($RingBasis($a/15-3))+$DogSurface.Lateral4($s)*($RingBasis($a/15-4))+$DogSurface.Lateral5($s)*($RingBasis($a/15-5))+$DogSurface.Lateral6($s)*($RingBasis($a/15-6))+$DogSurface.Lateral7($s)*($RingBasis($a/15-7))+$DogSurface.Lateral8($s)*($RingBasis($a/15-8))+$DogSurface.Lateral9($s)*($RingBasis($a/15-9))+$DogSurface.Lateral10($s)*($RingBasis($a/15-10))+$DogSurface.Lateral11($s)*($RingBasis($a/15-11)-$RingBasis($a/15-13)) }
+CatContour = formula(s,a) { $CatSurface.Lateral1($s)*($RingBasis($a/15-1)-$RingBasis($a/15+1))+$CatSurface.Lateral2($s)*($RingBasis($a/15-2))+$CatSurface.Lateral3($s)*($RingBasis($a/15-3))+$CatSurface.Lateral4($s)*($RingBasis($a/15-4))+$CatSurface.Lateral5($s)*($RingBasis($a/15-5))+$CatSurface.Lateral6($s)*($RingBasis($a/15-6))+$CatSurface.Lateral7($s)*($RingBasis($a/15-7))+$CatSurface.Lateral8($s)*($RingBasis($a/15-8))+$CatSurface.Lateral9($s)*($RingBasis($a/15-9))+$CatSurface.Lateral10($s)*($RingBasis($a/15-10))+$CatSurface.Lateral11($s)*($RingBasis($a/15-11)-$RingBasis($a/15-13)) }
+SurfaceWidth = formula(s,a,h) { lerp(1,$MandibleBreadth,$Ease((-.21-$h)/.65))*$MuzzleGirthScale($s)*lerp($DogContour($ReferenceStation($s),$a),$CatContour($ReferenceStation($s),$a),$Feline)*lerp(1,$MuzzleWidth/lerp(.725,.86,$Feline),$Ease(($s-$RostralWidthOnset)/max(.00001,$RostralWidthSpan)))*(1+$LipRollGain*($LipFullness-1)*$Bell($a-$LipRollLatitude,$LipRollArc)+$PadWidthGain*($WhiskerPad-1)*$Bell($a-$PadLatitude,$PadArc)*$Bell($s-$PadStation,$PadSpan)) }
+SurfaceRoof = formula(s) { lerp($DogSurface.Dorsum($ReferenceStation($s)),$CatSurface.Dorsum($ReferenceStation($s)),$Feline)+$MuzzleBridgeOffset($s) }
+SurfaceFloor = formula(s) { lerp($DogSurface.Chin($ReferenceStation($s)),$CatSurface.Chin($ReferenceStation($s)),$Feline)+$ChinOffset($s)-.28*($JawDepth-.20) }
+SurfaceHeight = formula(s,h) { $NoseZ+$HeadHeight*lerp($SurfaceFloor($s),$SurfaceRoof($s),.5+.5*$h) }
+JawAdvance = formula(s,h) { ($XAt(.925)-$XAt(.65))*.30*$ChinProjection/(1+abs($ChinProjection))*pow(sin(180*clamp(($s-.65)/.275,0,1)),2)*$Ease((.10-$h)/.71) }
+# The measured ray chart can turn under the nasal planum to form the
+# upper lips. Each ray starts inside the skull. The angular ends
+# reflect smoothly over the midline; the nose has its own open rim.
+RayOriginX = lerp($DogSurface.RayOriginX,$CatSurface.RayOriginX,$Feline)
+RayOriginZ = lerp($DogSurface.RayOriginZ,$CatSurface.RayOriginZ,$Feline)
+RayAxisX = lerp($DogSurface.RayAxisX,$CatSurface.RayAxisX,$Feline)
+RayAxisZ = lerp($DogSurface.RayAxisZ,$CatSurface.RayAxisZ,$Feline)
+RayDorsalX = lerp($DogSurface.RayDorsalX,$CatSurface.RayDorsalX,$Feline)
+RayDorsalZ = lerp($DogSurface.RayDorsalZ,$CatSurface.RayDorsalZ,$Feline)
+RayWidth = lerp($DogSurface.RayWidth,$CatSurface.RayWidth,$Feline)
+RayHeight = lerp($DogSurface.RayHeight,$CatSurface.RayHeight,$Feline)
+ScanAxis = formula(s) { min($s/.55,1)*$OpticalStop+max(0,($s-.55)/.45)*(1-$OpticalStop) }
+RayStation = formula(s) { clamp(.5+.5*($ScanAxis($s)-$RayOriginX)/$RayAxisX,.025,.997) }
+RayCircle = formula(u) { sqrt(max(0,1-pow(2*$u-1,2))) }
+ScanRadius = formula(u,a) { ($RingBasis($a/15-0))*lerp($DogSurface.Radius0($u),$CatSurface.Radius0($u),$Feline)+($RingBasis($a/15-1)+$RingBasis($a/15+1))*lerp($DogSurface.Radius1($u),$CatSurface.Radius1($u),$Feline)+($RingBasis($a/15-2))*lerp($DogSurface.Radius2($u),$CatSurface.Radius2($u),$Feline)+($RingBasis($a/15-3))*lerp($DogSurface.Radius3($u),$CatSurface.Radius3($u),$Feline)+($RingBasis($a/15-4))*lerp($DogSurface.Radius4($u),$CatSurface.Radius4($u),$Feline)+($RingBasis($a/15-5))*lerp($DogSurface.Radius5($u),$CatSurface.Radius5($u),$Feline)+($RingBasis($a/15-6))*lerp($DogSurface.Radius6($u),$CatSurface.Radius6($u),$Feline)+($RingBasis($a/15-7))*lerp($DogSurface.Radius7($u),$CatSurface.Radius7($u),$Feline)+($RingBasis($a/15-8))*lerp($DogSurface.Radius8($u),$CatSurface.Radius8($u),$Feline)+($RingBasis($a/15-9))*lerp($DogSurface.Radius9($u),$CatSurface.Radius9($u),$Feline)+($RingBasis($a/15-10))*lerp($DogSurface.Radius10($u),$CatSurface.Radius10($u),$Feline)+($RingBasis($a/15-11)+$RingBasis($a/15-13))*lerp($DogSurface.Radius11($u),$CatSurface.Radius11($u),$Feline)+($RingBasis($a/15-12))*lerp($DogSurface.Radius12($u),$CatSurface.Radius12($u),$Feline) }
+ScanSupport = formula(u,a) { ($RingBasis($a/15-0))*lerp($DogSurface.Support0($u),$CatSurface.Support0($u),$Feline)+($RingBasis($a/15-1)+$RingBasis($a/15+1))*lerp($DogSurface.Support1($u),$CatSurface.Support1($u),$Feline)+($RingBasis($a/15-2))*lerp($DogSurface.Support2($u),$CatSurface.Support2($u),$Feline)+($RingBasis($a/15-3))*lerp($DogSurface.Support3($u),$CatSurface.Support3($u),$Feline)+($RingBasis($a/15-4))*lerp($DogSurface.Support4($u),$CatSurface.Support4($u),$Feline)+($RingBasis($a/15-5))*lerp($DogSurface.Support5($u),$CatSurface.Support5($u),$Feline)+($RingBasis($a/15-6))*lerp($DogSurface.Support6($u),$CatSurface.Support6($u),$Feline)+($RingBasis($a/15-7))*lerp($DogSurface.Support7($u),$CatSurface.Support7($u),$Feline)+($RingBasis($a/15-8))*lerp($DogSurface.Support8($u),$CatSurface.Support8($u),$Feline)+($RingBasis($a/15-9))*lerp($DogSurface.Support9($u),$CatSurface.Support9($u),$Feline)+($RingBasis($a/15-10))*lerp($DogSurface.Support10($u),$CatSurface.Support10($u),$Feline)+($RingBasis($a/15-11)+$RingBasis($a/15-13))*lerp($DogSurface.Support11($u),$CatSurface.Support11($u),$Feline)+($RingBasis($a/15-12))*lerp($DogSurface.Support12($u),$CatSurface.Support12($u),$Feline) }
+RayWeight = formula(s,a,support) { clamp($RadialSurfaceFit,0,1)*$support*$Ease(($s-.26)/.24)*(1-$Ease(($s-.921)/.040))*lerp(1-$Ease(($a-91)/24),1,$Feline)*(1-$Ease(($a-130)/35)*(1-$Ease(($s-.46)/.20))) }
+AxialMap = formula(ref) { $HeadLength*(min($ref/$OpticalStop,1)*$Break+max(0,($ref-$OpticalStop)/(1-$OpticalStop))*(1-$Break)) }
+RayX = formula(u,a,rad) { $AxialMap($RayOriginX+$rad*((2*$u-1)*$RayAxisX+$RayCircle($u)*cos($a)*$RayHeight*$RayDorsalX)) }
+RayY = formula(s,u,a,rad) { $HeadWidth*$rad*$RayCircle($u)*sin($a)*$RayWidth/lerp(.526,.715,$Feline)*$MuzzleGirthScale($s)*(1+($CheekFullness-lerp(.14,.25,$Feline))*$Bell($a-$CheekLatitude,$CheekArc)*$Bell($s-$CheekStation,$CheekSpan))*lerp(1,$MuzzleWidth/lerp(.725,.86,$Feline),$Ease(($s-$RostralWidthOnset)/max(.00001,$RostralWidthSpan)))*(1+$PadWidthGain*($WhiskerPad-1)*$Bell($a-$PadLatitude,$PadArc)*$Bell($s-$PadStation,$PadSpan))*lerp(1,$MandibleBreadth,$Ease((-cos($a)-.14)/.58)) }
+RayZ = formula(s,u,a,rad) { $NoseZ+$HeadHeight*(($RayOriginZ+$rad*((2*$u-1)*$RayAxisZ+$RayCircle($u)*cos($a)*$RayHeight*$RayDorsalZ))/lerp(.49,.541,$Feline)+lerp($ChinFloorOffset($s)-.28*($JawDepth-.20),$MuzzleBridgeOffset($s),.5+.5*cos($a))) }
+UnitNose = mesh() {
+  add($NosePart,scale=$NoseSize,join=none)
+  save($RootBand) [$output.RootBand]
+}
+# A downward ray may leave the neck instead of the mandibular border.
+# The fitted chin separates visible jaw tissue from the underlying throat.
+NasalClearance = formula(s,u,a,rad) { 1-$Ease(($s-.815)/.085)*(1-$Ease((sqrt(pow($RayY($s,$u,$a,$rad)/$NoseSize,2)+pow(($RayZ($s,$u,$a,$rad)-$NoseZ)/(.70*$NoseSize),2))-1.10)/.65)) }
+VentralSupport = formula(s,a,u,rad) { lerp(1,$Ease((($RayZ($s,$u,$a,$rad)-$NoseZ)/$HeadHeight-$SurfaceFloor($s)-.045)/max(.001,$JawCaptureBand))*(.16+.84*$Ease(($s-.71)/.20)), $Ease(($a-94)/42)) }
+RestStation = formula(x) { clamp(min($x/($HeadLength*$Break),1)*.55+max(0,($x/$HeadLength-$Break)/($NoseStation-$Break))*.45,0,1) }
+RestRadius = formula(s) { $NoseSize*sqrt(max(.000000001,1-pow(clamp(1-$s/.095,0,1),2))) }
+NasalCarrier = mesh() {
+  arc(radius=1,from=-90,to=90,segments=$FaceSections)
+  revolve(segments=$FaceSides,rotate=(0,-90,0))
+  cut(plane=(1,0,0),at=(.707106781186548,0,0),fill=false)
+  save($NasalBand) [value=point.x,above=.664]
+  # Paint the moist lip edge in intrinsic coordinates before the skin is
+  # fitted. It follows the actual groove through length and jaw changes.
+  colour(.32+.25*$Feline,channel=a)
+  colour(lerp(.275,.551,$Feline),channel=a) [value=abs(acos(clamp(point.z/max(.00001,sqrt(max(0,1-point.x*point.x))),-1,1))-$LipAngle(clamp((point.x+1)/1.707106781186548,0,1)))+60*(1-$LipSpan(clamp((point.x+1)/1.707106781186548,0,1))),below=3.1,fade=4.2]
+  # Solve the organic connection in this analytic rest frame. Its axial and
+  # angular coordinates can be recovered exactly after the nose is welded.
+  warp(with=(S: clamp((point.x+1)/1.707106781186548,0,1),R: max(.00001,sqrt(max(0,1-point.x*point.x)))),to=($XAt($S),$RestRadius($S)*point.y/$R,$NoseZ+.70*$RestRadius($S)*point.z/$R))
+  material($Coat)
+  uv(box,scale=$HeadWidth)
+  socket(Nose,at=($LengthAtNose,0,$NoseZ),facing=+X,up=+Z,type='mammal/nose@1',transition=$NasalBand)
+}
+WeldedNose = mesh() {
+  base = add($NasalCarrier)
+  nose = add($UnitNose,into=$base.Nose,using=Root,fit=frame,join=organic,material=$Trim)
+  if ($PlanumPalette < .5) { material($CaninePlanum) [material=$Trim] }
+  if ($PlanumPalette >= .5) { material($FelinePlanum) [material=$Trim] }
+}
+# The occipital skin rounds off around the nape. A measured rear skull
+# section can contain disconnected occipital processes and the foramen;
+# the living skin spans them before it reaches the neck.
+OccipitalCap = formula(s) { sqrt(max(0,1-pow(clamp(1-$s/$OccipitalSpan,0,1),2))) }
+OccipitalBlend = formula(s) { $Ease(($s-.36*$OccipitalSpan)/(.64*$OccipitalSpan)) }
+CaudalY = formula(s,a,original) { lerp($OccipitalBreadth*sin($a)*$OccipitalCap($s),$original,$OccipitalBlend($s)) }
+CaudalZ = formula(s,a,original) { lerp($PollLevel+$OccipitalDepth*cos($a)*$OccipitalCap($s),$original,$OccipitalBlend($s)) }
+# In the retriever capture the lower jaw is open. Reconstruct the closed
+# skin from the closed portrait and smoothly join the measured nasal dorsum.
+ClosedWeight = formula(s,a) { $ClosedLipFit*$Ease(($s-$ClosedLipOnset)/max(.00001,$ClosedLipRun))*$Ease(($a-$ClosedLipLatitude)/max(.00001,$ClosedLipArc)) }
+ClosedY = formula(s,a,h,collar) { lerp($HeadWidth*$LipWidth($s,$a,$h),$NoseSize*sin($a),$collar) }
+ClosedZ = formula(s,a,h,collar) { lerp($LipHeight($s,$h),$NoseZ+.70*$NoseSize*$h,$collar) }
+ClosedLobe = formula(x,y,z) { $LabialLobeDrop*$Bell(abs($y)-$LabialLobeOffset,$LabialLobeSpan)*$Ease(($x/$HeadLength-.64)/.16)*$Ease(($NoseZ-.70*$NoseSize-$z)/(.095*$HeadHeight))*$Bell(($z-$NoseZ)/$HeadLength+.155,.11) }
+FittedFace = mesh(nasal=1) {
+  if ($nasal > 0) { add($WeldedNose,join=none) }
+  if ($nasal == 0) { add($NasalCarrier,join=none) }
+  # Form the interlabial cleft continuously within the measured skin.
+  warp(with=(S: $RestStation(point.x),R: $RestRadius($S),H: clamp((point.z-$NoseZ)/(.70*$R),-1,1),A: acos($H),Temple: $Bell($A-48,45)*$Bell($S-.28,.29),Masseter: $Bell($A-101,41)*$Bell($S-.42,.26),Rear: sqrt(max(0,1-pow(clamp(1-$S/.084,0,1),2))),Flesh: $Ease(($S-.54)/.20),Collar: $Ease(($S-.932)/.030),U: $RayStation($S),Rad: $ScanRadius($U,$A),Measured: $RayWeight($S,$A,$ScanSupport($U,$A))*$VentralSupport($S,$A,$U,$Rad)*$NasalClearance($S,$U,$A,$Rad),W: $BoneY($S,$A)+sin($A)*(.018+.060*$Temple+(.035+.14*$CheekFullness)*$Masseter),Z: $BoneZ($S,$A)+.032*cos($A)+.035*$Temple+.10*($JawDepth-.20)*min(0,$H),Yskin: $HeadWidth*lerp(lerp($CaudalY($S,$A,$W*$Rear),$LipWidth($S,$A,$H),$Flesh),$SurfaceWidth($S,$A,$H),$CaptureWeight($S)),Zskin: lerp(lerp($CaudalZ($S,$A,$Z*$Rear+.02*(1-$Rear))*$HeadHeight,$LipHeight($S,$H),$Flesh),$SurfaceHeight($S,$H),$CaptureWeight($S))),to=(lerp($XAt($S),$RayX($U,$A,$Rad),$Measured*(1-$ClosedWeight($S,$A)))+$JawAdvance($S,$H)+$LipTurnProjection*$HeadLength*$LipRoll($S,$A)*$Ease(($S-.80)/.12)*(1-$Collar),clamp(point.y*1000000,-1,1)*(lerp(lerp(lerp($Yskin,$RayY($S,$U,$A,$Rad),$Measured),$NoseSize*sin($A),$Collar),$ClosedY($S,$A,$H,$Collar),$ClosedWeight($S,$A))+$HeadWidth*sin($A)*$LipRoll($S,$A)*(1-$Collar)),lerp(lerp(lerp($Zskin,$RayZ($S,$U,$A,$Rad),$Measured),$NoseZ+.70*$NoseSize*$H,$Collar),$ClosedZ($S,$A,$H,$Collar),$ClosedWeight($S,$A))+$HeadHeight*$H*$LipRoll($S,$A)*(1-$Collar))) [material=$Coat,value=point.x,below=$XAt(.966)]
+  # The closed mouth turns under the paired upper lips. Shallow median
+  # philtrum and a recessed chin end below the nasal planum.
+  warp(with=(S: point.x/$HeadLength,Y: abs(point.y)/$HeadWidth,Z: (point.z-$NoseZ)/$HeadHeight,Front: $Ease(($S-.72)/.12)*(1-$Ease(($S-.88)/.021)),Philtrum: $Bell($Y,.055)*$Bell($Z+.15,.104),Chin: $Bell($Y,.195)*$Bell($Z+.275,.082),Edge: $Bell($Z+.224-.028*$Bell($Y,.07),.022)),by=(-$HeadLength*$Front*(.42*$PhiltrumDepth*$Philtrum+$ChinSetback*$Chin+.012*$Edge),0,0))
+  uv(box,scale=$HeadWidth)
+}
+Muzzle = mesh() { add($FittedFace,nasal=1,join=none) }
+Face = mesh() {
+  add($FittedFace,nasal=0,join=none)
+  save($NasalBand) [value=point.x,above=$XAt(.978)]
+  socket(Nose,at=($LengthAtNose,0,$NoseZ),facing=+X,up=+Z,type='mammal/nose@1',transition=$NasalBand)
+}
+# Register the pigment to the two orbits and planum. The photographic coordinates
+# remain attached when an individual changes the eye set, breadth or nose height.
+PigmentAxialSpan = clamp(($NoseStation-$EyeSet)/max(.04,$NoseStation-$PigmentReferenceEyeSet),.2,4)
+PigmentAxialOrigin = $LengthAtNose*(1-$PigmentAxialSpan)
+PigmentReferenceEyeY = ($EyeY-$EyeSeparation-$RadialSurfaceFit*$OpticalOrbitLateral)*$PigmentReferenceOrbitBreadth/max(.03,$OrbitBreadth)+$RadialSurfaceFit*$OpticalOrbitLateral
+PigmentLateralSpan = clamp($EyeY/max(.03,$PigmentReferenceEyeY),.2,4)
+PigmentReferenceEyeZ = $EyeZ-$EyeLift
+PigmentHeightSpan = clamp(($EyeZ-$NoseZ)/max(.04*$HeadHeight,$PigmentReferenceEyeZ-$PigmentReferenceNoseLevel*$HeadHeight),.2,4)
+PigmentHeightOrigin = $NoseZ-$PigmentReferenceNoseLevel*$HeadHeight*$PigmentHeightSpan
+FaceX = weightage() { rule(condition=x,min=$PigmentAxialOrigin,max=$PigmentAxialOrigin+$HeadLength*$PigmentAxialSpan,profile=(0=0%,1=100%)) }
+FaceY = weightage() { rule(condition=y,min=-.70*$HeadWidth*$PigmentLateralSpan,max=.70*$HeadWidth*$PigmentLateralSpan,profile=(0=0%,1=100%)) }
+FaceZ = weightage() { rule(condition=z,min=$PigmentHeightOrigin-.70*$HeadHeight*$PigmentHeightSpan,max=$PigmentHeightOrigin+.80*$HeadHeight*$PigmentHeightSpan,profile=(0=0%,1=100%)) }
+OrbitU = formula(x,y) { (-($x-$EyeX)*sin($EyeAngle)+(abs($y)-$EyeY)*cos($EyeAngle))/$EyeSize }
+OrbitV = formula(u,z) { (($z-$EyeZ)/$EyeSize-$F.CanthusRise*$u-$LowerLidRise*(1-$u*$u))/($EyeAperture*$F.Canthus(clamp(abs($u),0,1))) }
+# The skin outside the fissure lies over the anterior globe. The same
+# curved depth and lower-lid rise are used by the cutter and tarsal fold.
+LidDepth = formula(u,v,q) { $CorneaRelief+$GlobeDepth*sqrt(max(0,1-$u*$u-$v*$v))-$LidTurnWidth+($LidTurnWidth+$LidOverlap)*$Ease(($q-$CornealExposure+$PalpebralTurnInset)/$LidTurnWidth)+$BrowToGlobe*$Bell($q-$SupraorbitalRimRadius,$SupraorbitalRimSpan)+$Brow*$Bell($q-$BrowRadius,$BrowSpan)*clamp($v/max(.00001,$BrowVentralFade),0,1) }
+OrbitRadius = formula(u,z) { sqrt($u*$u+pow($OrbitV($u,$z),2)) }
+LidMarginWidth = formula(u,z) { lerp($LowerLidMarginWidth,$UpperLidMarginWidth,$Ease(.5+.5*$OrbitV($u,$z))) }
+LidMarginBand = formula(x,y,z) { max(abs($OrbitRadius($OrbitU($x,$y),$z)-$CornealExposure)/max(.001,$LidMarginWidth($OrbitU($x,$y),$z)),abs((($x-$EyeX)*cos($EyeAngle)+(abs($y)-$EyeY)*sin($EyeAngle))/$EyeSize-$CorneaRelief)/max(.001,$LidMarginPlaneDepth)) }
+# A real palpebral fissure opens the skin onto the separate ocular insert.
+# Its local coordinates are the same as the eyelids and globe. Replacement
+# inserts face +X, centre at the origin and span one unit on either side.
+ApertureTool = mesh() {
+  arc(radius=1,from=-90,to=90,segments=$FissureStations)
+  revolve(segments=$FissureSides,rotate=(0,-90,0))
+  warp(with=(T: point.t.x,R: max(.00001,sqrt(max(0,1-point.x*point.x))),Cap: sqrt(max(0,1-pow(clamp(1-$T/.16,0,1),2)-pow(clamp(($T-.86)/.14,0,1),2))),U: $CornealExposure*$Cap*point.y/$R,V: $CornealExposure*$Cap*point.z/$R*$EyeAperture*$F.Canthus(abs($U))),to=(lerp(-$SocketDepth,2.4,$T),$U,$V+$F.CanthusRise*$U+$LowerLidRise*(1-$U*$U)))
+  material($Coat)
+}
+NearFissure = mesh() { add($ApertureTool,scale=$EyeSize,rotate=(0,0,$EyeAngle),at=($EyeX,$EyeY,$EyeZ),join=none) }
+# The paired upper lips project beneath the nasal leather. Their medial
+# borders leave the philtrum. The distance below the open collar protects
+# the welded margin, independently of the nose's size or head proportions.
+LipField = formula(x,y,z) { $Ease(($x/$HeadLength-$LipForwardStation)/max(.00001,$LipForwardSpan))*$Ease(($NoseZ-$LipForwardInset*$NoseSize-$z)/max(.00001,$LipForwardFalloff*$HeadHeight))*$Bell(($z-$NoseZ)/$HeadHeight-$LipForwardLevel,$LipForwardHeight) }
+# Depth of the living muzzle below the nose from frontal scan sections.
+# Width/height are expressed in specimen head lengths. An open canine
+# jaw supplies only the upper lip. The closed cat supplies its chin too.
+DogFront = formula(u,v) { $DogSurface.Front0($u)+($DogSurface.Front1($u)-$DogSurface.Front0($u))*clamp($v-0,0,1)+($DogSurface.Front2($u)-$DogSurface.Front1($u))*clamp($v-1,0,1)+($DogSurface.Front3($u)-$DogSurface.Front2($u))*clamp($v-2,0,1)+($DogSurface.Front4($u)-$DogSurface.Front3($u))*clamp($v-3,0,1)+($DogSurface.Front5($u)-$DogSurface.Front4($u))*clamp($v-4,0,1)+($DogSurface.Front6($u)-$DogSurface.Front5($u))*clamp($v-5,0,1) }
+CatFront = formula(u,v) { $CatSurface.Front0($u)+($CatSurface.Front1($u)-$CatSurface.Front0($u))*clamp($v-0,0,1)+($CatSurface.Front2($u)-$CatSurface.Front1($u))*clamp($v-1,0,1)+($CatSurface.Front3($u)-$CatSurface.Front2($u))*clamp($v-2,0,1)+($CatSurface.Front4($u)-$CatSurface.Front3($u))*clamp($v-3,0,1)+($CatSurface.Front5($u)-$CatSurface.Front4($u))*clamp($v-4,0,1)+($CatSurface.Front6($u)-$CatSurface.Front5($u))*clamp($v-5,0,1) }
+ReferenceHeight = formula(z) { ($z-$NoseZ)/$HeadHeight*lerp(.49,.541,$Feline) }
+FrontTarget = formula(u,v) { $MuzzleDatum+(lerp($DogFront($u,$v),$CatFront($u,$v),$Feline)-1)*(1-$Break)/max(.01,1-$ReferenceStop) }
+FrontMask = formula(x,y,z,h) { $Ease(($x/$HeadLength-.54)/.23)*(1-$Ease((abs($y)/$HeadWidth-.33)/.13))*$Ease(($NoseZ-.72*$NoseSize-$z)/(.072*$HeadHeight))*(1-$Ease((-$h-lerp(.083,.225,$Feline))/lerp(.038,.065,$Feline))) }
+# The recorded feline chin returns beneath the pad. Extra travel for those
+# lower samples does not move the upper lip or nasal rim.
+# Beneath the paired whisker pads the lower jaw narrows and turns up at
+# its lateral corners. The centre of a canine lower lip rises between
+# the two dependent lobes visible in the closed-mouth frontal photograph.
+# A cubic smoothstep reaches a slope of 1.5. Keep the skin height monotone even when the chin is lifted strongly.
+JawFalloff = max($LowerJawTransition,1.65*(abs($ChinCornerLift)+abs($CentralLipNotch)))
+JawZone = formula(x,z) { $Ease(($x/$HeadLength-$JawFrontStation)/$JawFrontBlend)*$Ease(($NoseZ-$z-$LowerJawOnset)/$JawFalloff) }
+ChinAcross = formula(y) { $Ease(abs($y)/$ChinHalfWidth) }
+JawWidthShift = formula(x,y,z) { $y*($LowerJawScale-1)*$JawZone($x,$z)+clamp($y*10000,-1,1)*$PadLateralShare*$PadBulge($x,$y,$z) }
+JawLift = formula(x,y,z) { $JawZone($x,$z)*($ChinCornerLift*$ChinAcross($y)+$CentralLipNotch*$Bell($y,$LabialLobeOffset)) }
+PadBulge = formula(x,y,z) { $WhiskerPad*$PadProjection*$Ease(($x/$HeadLength-$JawFrontStation)/$JawFrontBlend)*$Bell(abs($y)-$PadOffset,$PadHalfWidth)*$Bell($NoseZ-$z-$PadBelowNose,$WhiskerPadHeight) }
+LipTravel = formula(y,z) { $RostralTravelLimit+$ChinTravel*(1-$ChinAcross($y))*$Ease((-$ReferenceHeight($z)-$ChinTravelStart)/$ChinTravelSpan) }
+JawSideInset = formula(x,y,z) { $CheekAxialFit(clamp($x/$HeadLength,0,1))*$HeadWidth*$CheekTaper*$Ease((abs($y)-$CheekTaperStart)/$CheekTransition)*$LowerCheekProfile(clamp(.5+($z-$NoseZ)/$HeadHeight,0,1)) }
+FrontOffset = formula(x,y,z) { lerp(1-clamp($RadialSurfaceFit,0,1),1,$Feline)*$HeadLength*$FrontalSurfaceFit*$FrontMask($x,$y,$z,$ReferenceHeight($z))*clamp($FrontTarget(clamp(abs($y)/$HeadWidth*lerp(.526,.715,$Feline)/.42,0,1),clamp(($ReferenceHeight($z)+.24)/.04,0,6))-$x/$HeadLength,-$LipTravel($y,$z),$LipTravel($y,$z)) }
+UpperLipDrape = formula(x,y,z) { $HeadLength*$UpperLipReach*$UpperLipContour(clamp(1-($NoseZ-$z)/$UpperLipDepth,0,1))*$Ease(($x/$HeadLength-$DrapeStart)/max(.00001,$DrapeSpan))*$Ease(($NoseZ-$DrapeRimInset*$NoseSize-$z)/max(.00001,$DrapeRimFalloff*$NoseSize)) }
+LabialForward = formula(x,y,z) { $PadForwardShare*$PadBulge($x,$y,$z)-$ChinCornerSetback*$JawZone($x,$z)*$ChinAcross($y)+$UpperLipDrape($x,$y,$z)+$FrontOffset($x,$y,$z)+$HeadLength*$LipField($x,$y,$z)*($LabialProjection*$WhiskerPad*$Bell(abs($y)/$HeadWidth-$LipLobeCentre,$LipLobeWidth)-$PhiltrumReliefGain*$PhiltrumDepth*$Bell($y/$HeadWidth,$PhiltrumWidth)) }
+# Fit the outer lip envelope after descent and jaw lift. The rational
+# shoulder is monotone and approaches the measured half-width smoothly.
+JowlHeight = formula(z) { clamp(.5+($z-$NoseZ)/$HeadHeight,0,1) }
+JowlExcess = formula(y,z) { max(0,abs($y)/$HeadWidth-$JowlEnvelopeWidth($JowlHeight($z))+$JowlEnvelopeTransition) }
+JowlReturn = formula(d) { $d*$d/max(.00001,$d+$JowlEnvelopeTransition) }
+JowlCorrection = formula(x,y,z) { $HeadWidth*$JowlEnvelopeFit*$CheekAxialFit(clamp($x/$HeadLength,0,1))*$JowlEnvelopeHeight($JowlHeight($z))*$JowlReturn($JowlExcess($y,$z)) }
+SubnasalLevel = formula(z) { max(0,$NoseZ-$SubnasalOnset*$NoseSize-$z) }
+SubnasalDrop = formula(x,z) { (1-max(.00001,$SubnasalDepthScale))*pow($SubnasalLevel($z),2)/max(.00001,$SubnasalLevel($z)+$SubnasalTransition*$NoseSize)*$Ease(($x/$HeadLength-$JawFrontStation)/$JawFrontBlend) }
+# Scale the bridge from just ahead of the orbit to the nasal collar. The
+# complete planum translates intact. The eyes and occiput keep their positions.
+RostrumStart = max($Break*$HeadLength,$EyeX+$RostrumOrbitalClearance*$EyeSize)
+RostrumRun = max(0,$LengthAtNose-$RostrumCollarClearance*$NoseSize-$RostrumStart)
+# Fit the vertical eye-to-planum distance in units of eye-centre spacing.
+# The nasal end translates intact, while the orbital boundary stays fixed.
+PlanumVerticalTravel = $EyeToPlanumFit*($EyeZ-$NoseZ-2*abs($EyeY)*$EyeToPlanumRatio)
+FitRostrum = instruction() {
+  if ($EyeToPlanumFit != 0) { warp(by=(0,0,$PlanumVerticalTravel*$Ease((point.x-$RostrumStart)/max(.00001,$RostrumRun)))) }
+  if ($RostrumLengthScale != 1) { warp(by=((max(.001,$RostrumLengthScale)-1)*clamp(point.x-$RostrumStart,0,$RostrumRun),0,0)) }
+}
+# The two profiles are depths below the planum centre, in head lengths.
+# Map the measured rest depth D to the target depth T at each axial station.
+# The rational compression and expansion each have positive derivative for
+# all depths and unit derivative at the protected upper attachment.
+MandibularContour = instruction() {
+  if ($MandibularContourFit != 0) {
+    warp(with=(S: clamp(point.x/$HeadLength,0,1),Anchor: $MandibularAnchorDepth*$NoseSize,D: max(.00001,$HeadLength*$MandibularDatum($S)-$Anchor),T: max(max(.00001,$MandibularTipThickness*$NoseSize),$HeadLength*$MandibularTarget($S)-$Anchor),Ratio: lerp(1,$T/$D,clamp($MandibularContourFit,0,1)),Depth: max(0,$NoseZ-$Anchor-point.z),Mapped: $Depth/(1+max(0,1/$Ratio-1)*$Depth/$D)+2*max(0,$Ratio-1)*$Depth*$Depth/($Depth+$D)),by=(0,0,$Depth-$Mapped))
+  }
+}
+# Register the rostral envelope in horizontal sections, relative to the
+# fitted planum. Source and target are distances ahead of the nasal seat in
+# collar radii. The fractional map is strictly increasing in X, fixes both
+# ends, and carries the nasal skin and its support through the same field.
+RhinolabialWidth = $RhinolabialPosteriorRun+$RhinolabialAnteriorRun
+RhinolabialStation = formula(x) { clamp(($x+$RhinolabialPosteriorRun)/max(.00001,$RhinolabialWidth),.00001,.99999) }
+RhinolabialBias = formula(a,b) { $a*(1-$b)/max(.00001,$b*(1-$a)) }
+SupportPlanum = instruction() {
+  if ($RhinolabialFit != 0) {
+    warp(with=(Depth: ($NoseZ-point.z)/max(.00001,$NoseSize),T: clamp($Depth/max(.00001,$RhinolabialDepth),0,1),U: clamp(((point.x-$LengthAtNose)/$NoseSize+$RhinolabialPosteriorRun)/max(.00001,$RhinolabialWidth),0,1),Source: $RhinolabialStation($RhinolabialDatum($T)),Target: $RhinolabialStation($RhinolabialAdvance+$RhinolabialTarget($T)),Width: point.y/max(.00001,$RhinolabialHalfWidth*$NoseSize),Weight: clamp($RhinolabialFit,0,1)*$Ease(($Depth-$RhinolabialOnset)/max(.00001,$RhinolabialBlend))*(1-$Ease(($T-$RhinolabialRelease)/max(.00001,1-$RhinolabialRelease)))*$Bell($Width,1),Bias: pow($RhinolabialBias($Source,$Target),$Weight),Mapped: $U/($Bias+(1-$Bias)*$U)),by=(($Mapped-$U)*$RhinolabialWidth*$NoseSize,0,0))
+  }
+}
+FaceSkin = mesh() {
+  add($Muzzle,join=none)
+  if ($TemporalExpansion != 0) {
+    warp(by=(0,clamp(point.y*10000,-1,1)*$TemporalOffset(point.x,point.y,point.z),0)) [material=$Coat]
+  }
+  # Sculpt the eyelid margin and the tarsal fold in the optical frame. Both
+  # lids close onto the globe at the same radius even if eye angle changes.
+  warp(with=(Side: clamp(point.y*100000,-1,1),Dx: point.x-$EyeX,Dy: abs(point.y)-$EyeY,U: (-$Dx*sin($EyeAngle)+$Dy*cos($EyeAngle))/$EyeSize,V: (point.z-$EyeZ)/$EyeSize,Q: sqrt($U*$U+pow(($V-$F.CanthusRise*$U-$LowerLidRise*(1-$U*$U))/($EyeAperture*$F.Canthus(clamp(abs($U),0,1))),2)),D: $Dx*cos($EyeAngle)+$Dy*sin($EyeAngle),Mask: (1-$Ease((point.x-$XAt(.843))/max(.01,$XAt(.916)-$XAt(.843))))*(1-$Ease(($Q-1.15)/.52))*$Ease(($D/$EyeSize+.68)/.34)*(1-$Ease(($D/$EyeSize-.75)/.65)),Lid: $LidDepth($U,$V,$Q),Shift: ($EyeSize*$Lid-$D)*$Mask),by=(cos($EyeAngle)*$Shift,$Side*sin($EyeAngle)*$Shift,0)) [material=$Coat,value=max((abs(point.x-$EyeX)+abs(abs(point.y)-$EyeY)+abs(point.z-$EyeZ))/(3.4*$EyeSize),point.x/$XAt(.925)),below=1,smooth=.19*$EyeSize]
+  warp(by=($LabialForward(point.x,point.y,point.z),$JawWidthShift(point.x,point.y,point.z)-clamp(point.y*10000,-1,1)*$JawSideInset(point.x,point.y,point.z),$JawLift(point.x,point.y,point.z)-$ClosedLobe(point.x,point.y,point.z))) [material=$Coat]
+  if ($JowlEnvelopeFit > 0) {
+    warp(by=(0,-clamp(point.y*10000,-1,1)*$JowlCorrection(point.x,point.y,point.z),0)) [material=$Coat]
+  }
+  # Redistribute local strain where the closed lip curls under the whisker pad.
+  # Restrict the pass to facial skin so the nasal insert keeps its own rim.
+  relax($PerioralRelax) [material=$Coat,value=min((point.x/$HeadLength-$LipCorner)/.09,($NoseZ+.25*$NoseSize-point.z)/(.17*$HeadHeight)),above=0,fade=.22]
+  uv(box,scale=$HeadWidth)
+  save($SkinArea) [material=$Coat]
+  $Along = select($SkinArea,weight=$FaceX)
+  $Lateral = select($SkinArea,weight=$FaceY)
+  $Height = select($SkinArea,weight=$FaceZ)
+  colour(0,channel=rgb) [$SkinArea]
+  colour(1,channel=r) [$Along]
+  colour(1,channel=g) [$Lateral]
+  colour(1,channel=b) [$Height]
+  # Orbital pigment follows the canthi when the skull or eye moves.
+  colour(.253+.25*$Feline,channel=a) [value=abs($OrbitRadius($OrbitU(point.x,point.y),point.z)-$OrbitalPigmentRadius)+max(0,abs(point.x-$EyeX)/$EyeSize-$OrbitalPigmentReach),below=$OrbitalPigmentWidth,fade=$OrbitalPigmentFade]
+  material($LidMargin) [material=$Coat,value=$LidMarginBand(point.x,point.y,point.z),below=1]
+  subtract($NearFissure)
+  material($LidMargin) [cut,value=abs(point.x-$EyeX)+abs(point.y-$EyeY)+abs(point.z-$EyeZ),below=3.1*$EyeSize]
+  subtract($NearFissure,mirror=Y)
+  material($LidMargin) [cut,value=abs(point.x-$EyeX)+abs(point.y+$EyeY)+abs(point.z-$EyeZ),below=3.1*$EyeSize]
+  if ($SubnasalDepthScale != 1) { warp(by=(0,0,$SubnasalDrop(point.x,point.z))) [material=$Coat] }
+  # Reshape the underside in its own sagittal plane. The upper boundary
+  # follows the nasal rim; lateral surfaces share the same smooth change.
+  if ($MandibularBorderFit != 0) {
+    # A cubic smoothstep peaks at slope 1.5. Blending over at least twice
+    # the upward displacement keeps the lower cheek ordered through the lift.
+    warp(with=(S: point.x/$HeadLength,Rise: $HeadLength*$MandibularBorderFit*$MandibularElevation($S),Blend: max($MandibularLevelBlend*$NoseSize,2*max(0,$Rise)),Ventral: $Ease(($NoseZ-point.z-$MandibularLevelOnset*$NoseSize)/max(.00001,$Blend)),Collar: 1-$Ease(($S-$MandibularRimStart)/max(.00001,$MandibularRimEnd-$MandibularRimStart)),Fit: $HeadLength*$MandibularBorderFit*$Ventral*$Collar),by=($Fit*$MandibularAdvance($S),0,$Fit*$MandibularElevation($S))) [material=$Coat]
+  }
+  # The interlabial fissure follows the lip margin around the rostral jaw.
+  if ($OralFissureDepth > 0) {
+    warp(with=(S: point.x/$HeadLength,Level: point.z/$HeadHeight,Field: $HeadLength*$OralFissureDepth*$Ease(($S-$OralFissureCorner)/max(.00001,$OralFissureBlend))*$Bell($Level-$OralFissureLevel($S),$OralFissureWidth)),by=(-$OralFissureForwardShare*$Field,-$OralFissureLateralShare*$Field*clamp(point.y/$HeadWidth*1000,-1,1),0)) [material=$Coat]
+  }
+  $MandibularContour() [material=$Coat]
+  $SupportPlanum()
+  add($NearEar,join=hard)
+  add($NearEar,mirror=Y,join=hard)
+  relax($PinnaSeamRelax*$EarWidth) [value=abs(point.x-$EarSet*$HeadLength)+abs(abs(point.y)-$EarRootY)+abs(point.z-$EarRootZ),below=$PinnaSeamExtent*$EarWidth,fade=$PinnaSeamFalloff*$EarWidth]
+  uv(box,scale=$HeadWidth)
+  $FitRostrum()
+}
+# Each mystacial follicle is sampled on its own muzzle section. Changing
+# muzzle length, breadth, lip fullness or nose height carries the roots.
+WhiskerCount = 6
+WhiskerStations = profile(0=.790,.2=.764,.4=.744,.6=.815,.8=.792,1=.770)
+WhiskerLatitudes = profile(0=93,.2=96,.4=99,.6=103,.8=106,1=110)
+WhiskerAzimuth = profile(0=.03,.2=-.12,.4=-.27,.6=.07,.8=-.13,1=-.23)
+WhiskerElevation = profile(0=.25,.2=.17,.4=.11,.6=.025,.8=-.035,1=-.09)
+WhiskerLengths = profile(0=.82,.2=1,.4=.97,.6=.89,.8=.79,1=.7)
+Fibre = mesh(side=1,row=0) {
+  arc(radius=1,from=-90,to=90,segments=18)
+  revolve(segments=8,rotate=(0,-90,0))
+  warp(with=(T: point.t.x,R: max(.00001,sqrt(max(0,1-point.x*point.x))),S: clamp($WhiskerStations($row)+$WhiskerStationOffset($row)+$WhiskerPadStation,0,1),A: $WhiskerLatitudes($row)+$WhiskerLatitudeOffset($row)+$WhiskerPadLatitude,Width: $WhiskerRadius*(1-.88*$T)*sqrt(max(0,1-pow(clamp(1-$T/.07,0,1),2)-pow(clamp(($T-.91)/.09,0,1),2))),Span: $WhiskerLength*$WhiskerLengths($row),U: $RayStation($S),Rad: $ScanRadius($U,$A),Measured: $RayWeight($S,$A,$ScanSupport($U,$A))*$VentralSupport($S,$A,$U,$Rad)*$NasalClearance($S,$U,$A,$Rad),RootX: lerp($XAt($S),$RayX($U,$A,$Rad),$Measured*(1-$ClosedWeight($S,$A)))+$JawAdvance($S,cos($A)),RootY: lerp(lerp($HeadWidth*lerp($LipWidth($S,$A,cos($A)),$SurfaceWidth($S,$A,cos($A)),$CaptureWeight($S)),$RayY($S,$U,$A,$Rad),$Measured),$ClosedY($S,$A,cos($A),0),$ClosedWeight($S,$A))-$WhiskerRadius,RootZ: lerp(lerp(lerp($LipHeight($S,cos($A)),$SurfaceHeight($S,cos($A)),$CaptureWeight($S)),$RayZ($S,$U,$A,$Rad),$Measured),$ClosedZ($S,$A,cos($A),0),$ClosedWeight($S,$A)),BorneX: $RootX+$LabialForward($RootX,$RootY,$RootZ),BorneY: $RootY+$JawWidthShift($RootX,$RootY,$RootZ)-$JawSideInset($RootX,$RootY,$RootZ),BorneZ: $RootZ+$JawLift($RootX,$RootY,$RootZ)-$ClosedLobe($RootX,$RootY,$RootZ)),to=($BorneX+$Span*($WhiskerAzimuth($row)*$T-$WhiskerSweep*$T*$T)-$side*point.y/$R*$Width,$side*($BorneY-$JowlCorrection($BorneX,$BorneY,$BorneZ)+$Span*$T),$BorneZ+$SubnasalDrop($BorneX,$BorneZ)+$Span*($WhiskerElevation($row)*$T-$WhiskerSag*$T*$T)+point.z/$R*$Width))
+  material($Whisker)
+  if ($WhiskerPalette >= .5) { material($FelineWhisker) }
+}
+Whiskers = mesh(side=1) {
+  loop (repeat=$WhiskerCount) {
+    add($Fibre,side=$side,row=(output.index-1)/max(1,$WhiskerCount-1),join=none)
+  }
+}
+AimedEye = mesh(side=1) {
+  add($EyePart,join=none)
+  $F.AimOptics(yaw=$side*$GazeYaw-$GazeConvergence,pitch=$GazePitch,aperture=$EyeAperture,depth=$GlobeDepth,iris_fraction=$IrisFraction)
+}
+NearEye = mesh(side=1) { add($AimedEye,side=$side,at=($EyeX+$CorneaRelief*$EyeSize*cos($EyeAngle),$EyeY+$CorneaRelief*$EyeSize*sin($EyeAngle),$EyeZ),rotate=(0,0,$EyeAngle),scale=$EyeSize,join=none) }
+NearEar = mesh() { add($EarPart,at=($EarSet*$HeadLength,$EarRootY,$EarRootZ),rotate=($EarSpread,0,$EarYaw),join=none) }
+Details = mesh() {
+  if ($WhiskerLength*$WhiskerCount > 0) {
+    add($Whiskers,side=1,join=none)
+    add($Whiskers,side=-1,join=none)
+  }
+  $MandibularContour()
+  $SupportPlanum()
+  $FitRostrum()
+  add($NearEye,join=none)
+  add($NearEye,side=-1,mirror=Y,join=none)
+}
+Head = mesh() {
+  add($FaceSkin,join=none)
+  add($Details,join=none)
+  socket(Root,at=(.28*$HeadLength,0,-.10*$HeadHeight),facing=-X,up=+Z,type='mammal/skull@1')
+}

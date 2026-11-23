@@ -1,0 +1,28 @@
+gcshape 1 into:/Game/AnimalStudies/Parts/Eyes smooth:.04 shade:75 uv:keep
+# Canonical eye faces +X. Import parameters set its appearance before the
+# parent places this mesh on either orbit. The head controls the overall size.
+build { SM_Eye = $Eye }
+CanthusRise = .15
+PupilWidth = .84
+RoundPupilWidth = .91
+SlitPupilWidth = .22
+LidOpening = .72
+IrisFraction = .83
+# Where and how far the concealed globe turns away beneath the eyelids.
+# Dilation scales both pupil axes. Gaze angles rotate the optical markings inside the fixed eyelids.
+PupilDilation = 1
+GazeYaw = 0
+GazePitch = 0
+GlobeRimWidthInset = .04
+GlobeRimHeightInset = .19
+GlobeReturnOnset = .99
+GlobeReturnSpan = .31
+GlobeReturnDepth = .87
+GlobeDepth = .32
+IrisMaterial = material('/Game/AnimalStudies/Catalogue/Materials/MI_AmberEye')
+LidMaterial = material('/Game/AnimalStudies/Catalogue/Materials/MI_Coat')
+PupilMaterial = material('/Game/AnimalStudies/Catalogue/Materials/MI_CornealPupil')
+Parts = shape('/GraphCodeShape/Presets/AnimalFeatures',PupilDilation=$PupilDilation,GazeYaw=$GazeYaw,GazePitch=$GazePitch,GlobeRimWidthInset=$GlobeRimWidthInset,GlobeRimHeightInset=$GlobeRimHeightInset,GlobeReturnOnset=$GlobeReturnOnset,GlobeReturnSpan=$GlobeReturnSpan,GlobeReturnDepth=$GlobeReturnDepth,CanthusRise=$CanthusRise,Iris=$IrisMaterial,Coat=$LidMaterial,Dark=$PupilMaterial)
+Eye = mesh() { add($Parts.Eye,pupil=$PupilWidth,aperture=$LidOpening,iris_fraction=$IrisFraction,depth=$GlobeDepth,join=none) }
+Round = mesh() { add($Parts.Eye,pupil=$RoundPupilWidth,aperture=$LidOpening,iris_fraction=$IrisFraction,depth=$GlobeDepth,join=none) }
+Slit = mesh() { add($Parts.Eye,pupil=$SlitPupilWidth,aperture=$LidOpening,iris_fraction=$IrisFraction,depth=$GlobeDepth,join=none) }

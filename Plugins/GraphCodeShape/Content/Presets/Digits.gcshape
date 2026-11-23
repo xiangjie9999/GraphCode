@@ -1,4 +1,4 @@
-gcshape 1 into:/GraphCodeShape/Presets smooth:0.004 shade:80
+gcshape 1 into:/Game/GraphCodeMarket/GraphCode/Digits smooth:0.004 shade:80
 
 # Digit building blocks. +Z grows from the mounting section, -Y is the palm
 # side. All dimensions are centimetres. Use the recipe when changing shape;

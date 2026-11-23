@@ -1,0 +1,931 @@
+gcshape 1 into:/Game/AnimalStudies/Parts/QuadrupedAnimal smooth:.16 shade:75 uv:keep
+# Feline=0 selects the medium dog proportions. Feline=1 selects the shorthair.
+# Every default below can be overridden on a shape import independently.
+build { SM_QuadrupedAnimal = $Animal [pivot=(0,0,0)] }
+# Each caller supplies a concrete torso at its requested tessellation.
+# A landmark-bearing replacement preserves the named cervical transition band.
+TorsoPart = mesh(source=$RequiredSurface,landmarks=1) {
+  add($source,join=none)
+  if ($landmarks > 0) { save($NeckBand) [$output.NeckBand] }
+}
+CervicalForm = instruction(baseline=$RequiredCervicalForm) { $baseline() }
+HeadStandards = shape('/GraphCodeShape/Presets/AnimalHead',Feline=$Feline)
+# The lower jaw rests beneath the nasal collar. Distances on the border
+# profiles are head-length fractions, sampled from occiput to muzzle.
+EyeToPlanumFit = $HeadStandards.EyeToPlanumFit
+EyeToPlanumRatio = $HeadStandards.EyeToPlanumRatio
+PalpebralTurnInset = $HeadStandards.PalpebralTurnInset
+SupraorbitalRimRadius = $HeadStandards.SupraorbitalRimRadius
+SupraorbitalRimSpan = $HeadStandards.SupraorbitalRimSpan
+BrowRadius = $HeadStandards.BrowRadius
+BrowSpan = $HeadStandards.BrowSpan
+BrowVentralFade = $HeadStandards.BrowVentralFade
+LabialWidthExponent = $HeadStandards.LabialWidthExponent
+LabialHeightExponent = $HeadStandards.LabialHeightExponent
+LabialFloorWidth = $HeadStandards.LabialFloorWidth
+LabialTaperLevel = $HeadStandards.LabialTaperLevel
+LabialTaperSpan = $HeadStandards.LabialTaperSpan
+LabialFullnessGain = $HeadStandards.LabialFullnessGain
+LabialPadStrength = $HeadStandards.LabialPadStrength
+LabialPadLatitude = $HeadStandards.LabialPadLatitude
+LabialPadArc = $HeadStandards.LabialPadArc
+LabialPadStation = $HeadStandards.LabialPadStation
+LabialPadSpan = $HeadStandards.LabialPadSpan
+LipSulcusRelief = $HeadStandards.LipSulcusRelief
+LipSulcusArc = $HeadStandards.LipSulcusArc
+CheekLatitude = $HeadStandards.CheekLatitude
+CheekArc = $HeadStandards.CheekArc
+CheekStation = $HeadStandards.CheekStation
+CheekSpan = $HeadStandards.CheekSpan
+RostralWidthOnset = $HeadStandards.RostralWidthOnset
+RostralWidthSpan = $HeadStandards.RostralWidthSpan
+PadLatitude = $HeadStandards.PadLatitude
+PadArc = $HeadStandards.PadArc
+PadStation = $HeadStandards.PadStation
+PadSpan = $HeadStandards.PadSpan
+PadWidthGain = $HeadStandards.PadWidthGain
+LipRollLatitude = $HeadStandards.LipRollLatitude
+LipRollArc = $HeadStandards.LipRollArc
+LipRollGain = $HeadStandards.LipRollGain
+LipForwardStation = $HeadStandards.LipForwardStation
+LipForwardSpan = $HeadStandards.LipForwardSpan
+LipForwardLevel = $HeadStandards.LipForwardLevel
+LipForwardHeight = $HeadStandards.LipForwardHeight
+LipForwardInset = $HeadStandards.LipForwardInset
+LipForwardFalloff = $HeadStandards.LipForwardFalloff
+LipLobeCentre = $HeadStandards.LipLobeCentre
+LipLobeWidth = $HeadStandards.LipLobeWidth
+PhiltrumWidth = $HeadStandards.PhiltrumWidth
+PhiltrumReliefGain = $HeadStandards.PhiltrumReliefGain
+DrapeStart = $HeadStandards.DrapeStart
+DrapeSpan = $HeadStandards.DrapeSpan
+DrapeRimInset = $HeadStandards.DrapeRimInset
+DrapeRimFalloff = $HeadStandards.DrapeRimFalloff
+RostrumLengthScale = $HeadStandards.RostrumLengthScale
+RostrumOrbitalClearance = $HeadStandards.RostrumOrbitalClearance
+RostrumCollarClearance = $HeadStandards.RostrumCollarClearance
+RhinolabialAdvance = $HeadStandards.RhinolabialAdvance
+RhinolabialFit = $HeadStandards.RhinolabialFit
+RhinolabialPosteriorRun = $HeadStandards.RhinolabialPosteriorRun
+RhinolabialAnteriorRun = $HeadStandards.RhinolabialAnteriorRun
+RhinolabialDepth = $HeadStandards.RhinolabialDepth
+RhinolabialHalfWidth = $HeadStandards.RhinolabialHalfWidth
+RhinolabialOnset = $HeadStandards.RhinolabialOnset
+RhinolabialBlend = $HeadStandards.RhinolabialBlend
+RhinolabialRelease = $HeadStandards.RhinolabialRelease
+RhinolabialDatum = profile(0=$HeadStandards.RhinolabialDatum(0),1=$HeadStandards.RhinolabialDatum(1))
+RhinolabialTarget = profile(0=$HeadStandards.RhinolabialTarget(0),1=$HeadStandards.RhinolabialTarget(1))
+MandibularContourFit = $HeadStandards.MandibularContourFit
+MandibularDatum = profile(0=$HeadStandards.MandibularDatum(0),1=$HeadStandards.MandibularDatum(1))
+MandibularTarget = profile(0=$HeadStandards.MandibularTarget(0),1=$HeadStandards.MandibularTarget(1))
+MandibularTipThickness = $HeadStandards.MandibularTipThickness
+MandibularAnchorDepth = $HeadStandards.MandibularAnchorDepth
+ClosedLipOnset = $HeadStandards.ClosedLipOnset
+ClosedLipRun = $HeadStandards.ClosedLipRun
+ClosedLipLatitude = $HeadStandards.ClosedLipLatitude
+ClosedLipArc = $HeadStandards.ClosedLipArc
+MandibularBorderFit = $HeadStandards.MandibularBorderFit
+MandibularLevelOnset = $HeadStandards.MandibularLevelOnset
+MandibularLevelBlend = $HeadStandards.MandibularLevelBlend
+MandibularRimStart = $HeadStandards.MandibularRimStart
+MandibularRimEnd = $HeadStandards.MandibularRimEnd
+MandibularAdvance = profile(0=0,1=0)
+MandibularElevation = profile(0=0,1=0)
+OralFissureDepth = $HeadStandards.OralFissureDepth
+OralFissureWidth = $HeadStandards.OralFissureWidth
+OralFissureCorner = $HeadStandards.OralFissureCorner
+OralFissureBlend = $HeadStandards.OralFissureBlend
+OralFissureLevel = profile(0=-.30,1=-.22)
+OralFissureForwardShare = $HeadStandards.OralFissureForwardShare
+OralFissureLateralShare = $HeadStandards.OralFissureLateralShare
+LipCornerBlend = $HeadStandards.LipCornerBlend
+LipRostralBlend = $HeadStandards.LipRostralBlend
+UpperRollAngle = $HeadStandards.UpperRollAngle
+LowerRollAngle = $HeadStandards.LowerRollAngle
+UpperRollSpan = $HeadStandards.UpperRollSpan
+LowerRollSpan = $HeadStandards.LowerRollSpan
+UpperRollRelief = $HeadStandards.UpperRollRelief
+LowerRollRelief = $HeadStandards.LowerRollRelief
+OrbitalPigmentRadius = $HeadStandards.OrbitalPigmentRadius
+OrbitalPigmentWidth = $HeadStandards.OrbitalPigmentWidth
+OrbitalPigmentFade = $HeadStandards.OrbitalPigmentFade
+OrbitalPigmentReach = $HeadStandards.OrbitalPigmentReach
+# Additive axial profiles in normalized rump-to-breast coordinates.
+LoinTravelOffset = profile(0=0,1=0)
+HipShareOffset = profile(0=0,1=0)
+RibShareOffset = profile(0=0,1=0)
+PelvisOffset = profile(0=0,1=0)
+WithersOffset = profile(0=0,1=0)
+BackProfileOffset = profile(0=0,1=0)
+UnderProfileOffsetScale = 1
+UnderProfileOffset = profile(0=0,1=0)
+FlankOffset = profile(0=0,1=0)
+NasalStandards = shape('/GraphCodeShape/Presets/AnimalNoses',Feline=$Feline)
+MedialAlarOffset = $NasalStandards.MedialAlarOffset
+MedialAlarBreadth = $NasalStandards.MedialAlarBreadth
+MedialAlarHeight = $NasalStandards.MedialAlarHeight
+MedialAlarLevel = $NasalStandards.MedialAlarLevel
+MedialAlarProjection = $NasalStandards.MedialAlarProjection
+AlarCleftReach = $NasalStandards.AlarCleftReach
+AlarCleftDrop = $NasalStandards.AlarCleftDrop
+AlarLobuleRelief = $NasalStandards.AlarLobuleRelief
+AlarLobuleBreadth = $NasalStandards.AlarLobuleBreadth
+AlarLobuleHeight = $NasalStandards.AlarLobuleHeight
+AlarLobuleOffset = $NasalStandards.AlarLobuleOffset
+MedianGrooveHalfWidth = $NasalStandards.MedianGrooveHalfWidth
+MedianGrooveDrop = $NasalStandards.MedianGrooveDrop
+CleftUpperLevel = $NasalStandards.CleftUpperLevel
+CleftBlendHeight = $NasalStandards.CleftBlendHeight
+PlanumDome = $NasalStandards.PlanumDome
+PlanumHeightRatio = $NasalStandards.PlanumHeightRatio
+AlarWingHeight = $NasalStandards.AlarWingHeight
+AlarCreaseDepth = $NasalStandards.AlarCreaseDepth
+AlarCreaseHalfHeight = $NasalStandards.AlarCreaseHalfHeight
+AlarCreaseBow = $NasalStandards.AlarCreaseBow
+MoistMarginLevel = $NasalStandards.MoistMarginLevel
+MoistMarginStart = $NasalStandards.MoistMarginStart
+MoistMarginBlend = $NasalStandards.MoistMarginBlend
+VestibuleMaterial = material('/Game/AnimalStudies/Catalogue/Materials/M_NasalVestibule')
+EntranceFront = $NasalStandards.EntranceFront
+TurnStart = $NasalStandards.TurnStart
+ChamberRear = $NasalStandards.ChamberRear
+TurnRun = $NasalStandards.TurnRun
+SlitTerminalAspect = $NasalStandards.SlitTerminalAspect
+Feline = 0
+PinnaPigmentMix = $Feline
+PlanumPalette = $Feline
+IrisPalette = $Feline
+WhiskerPalette = $Feline
+CoatPalette = $Feline
+UseSpeciesCoat = 1
+CanineCoat = material('/Game/AnimalStudies/Catalogue/Materials/MI_FieldCoat')
+FelineCoat = material('/Game/AnimalStudies/Catalogue/Materials/MI_Tabby')
+HoundFraction = 0
+Length = lerp(39,31,$Feline)
+LoinExtra = 0
+ChestWidth = lerp(13.4,10.1,$Feline)
+ChestDepth = lerp(17.8,12.6,$Feline)
+HipWidth = lerp(11.8,9.8,$Feline)
+WaistWidth = lerp(9.7,8.25,$Feline)
+Tuck = lerp(3.9,1.65,$Feline)
+CroupRise = lerp(-.3,.6,$Feline)
+WitherRise = lerp(1.15,.25,$Feline)
+NeckReach = $Length*lerp(.233,.221,$Feline)
+NeckRise = $ChestDepth*lerp(.585,.25,$Feline)
+NeckRootWidth = $ChestWidth*lerp(.85,.88,$Feline)
+SkullWidth = $ChestWidth*lerp(.515,.64,$Feline)
+SkullDepth = $ChestDepth*lerp(.438,.45,$Feline)
+SkullPitch = lerp(45,22,$Feline)
+ThroatFullness = $ChestDepth*lerp(.067,.12,$Feline)
+BreastProjection = $ChestDepth*lerp(.083,.061,$Feline)
+JawInset = $ChestDepth*lerp(.045,.037,$Feline)
+MuscleRelief = lerp(.08,.055,$Feline)
+ShoulderRelief = lerp(.135,.09,$Feline)
+Clearance = $ChestDepth*lerp(1.07,.695,$Feline)
+LegMass = lerp(.88,.92,$Feline)
+PawWidth = $ChestWidth*lerp(.34,.35,$Feline)
+PawLength = $PawWidth*lerp(1.22,1.04,$Feline)
+DigitArch = lerp(.93,1.12,$Feline)
+PadDepth = 1
+ClawLength = lerp(.126,0,$Feline)
+ToeSpread = 1
+ToeLength = 1
+ElbowSet = .095
+HockSet = lerp(.15,.17,$Feline)
+ShoulderStation = .83
+HipStation = .145
+ForeTrack = .315
+HindTrack = .285
+TailStation = .067
+# Orient the tail�s bending plane at its sacral attachment, in degrees.
+TailYaw = 0
+TailRoll = 0
+TailRootLevel = .75
+ForeCarpusLevel = .175
+ElbowLevel = .59
+HockLevel = .26
+StifleLevel = .57
+HindFootReach = lerp(.080,.13,$Feline)
+ForePawScale = 1
+HindPawScale = lerp(.94,.97,$Feline)
+PasternReach = .26
+PasternWidth = .30
+PasternDepth = .32
+PasternLevel = .20
+SoleInset = .075
+DewDigitReach = .18
+DewDigitBreadth = .119
+DewDigitLength = .37
+DewPadStation = .135
+DewPadBreadth = .084
+DewPadLength = .090
+DewClawStation = .16
+CarpalPadBreadth = .172
+CarpalPadLength = .189
+CarpalPadInset = .45
+ForeDewclaw = 1
+HindDewclaw = 0
+CarpalPadScale = 1
+SkinFoldDepth = lerp(.026,.033,$Feline)
+StifleSet = lerp(.13,.095,$Feline)
+ForeSweep = profile(0=0,1=0)
+HindSweep = profile(0=0,1=0)
+# Profiles run from paw to proximal attachment. Angles turn from cranial
+# toward lateral on the right limb. Positive relief is a local radius fraction.
+BrachialSectionFit = 0
+BrachialSectionOnset = .49
+BrachialElbowSample = .60
+BrachialUpperSample = .78
+BrachialSectionEnd = .95
+BrachialElbowOffset = profile(0=0,1=0)
+BrachialUpperOffset = profile(0=0,1=0)
+ForeUpperInset = .072*$ChestWidth
+HindUpperInset = .042*$HipWidth
+UpperInsetOnset = .47
+UpperInsetPeak = .90
+AxillaryBlendRadius = .042*$ChestWidth
+AxillaryLevel = .40
+AxillaryLength = .18*$Length
+AxillaryDepth = .46*$ChestDepth
+ForeInsertionDepth = .012
+HindInsertionDepth = .025
+InsertionStart = .70
+DermalChart = 0
+BrachialisLine = profile(0=0,.46=0,.56=.035,.64=.11,.74=.12,.85=.045,1=0)
+CarpalExtensorLine = profile(0=0,.13=0,.23=.022,.34=.07,.47=.13,.55=.082,.65=0,1=0)
+CarpalFlexorLine = profile(0=0,.16=0,.29=.018,.42=.077,.52=.102,.59=.036,.64=0,1=0)
+BrachioradialisLine = profile(0=0,.19=0,.33=.025,.45=.075,.53=.052,.62=0,1=0)
+QuadricepsLine = profile(0=0,.45=0,.55=.038,.64=.112,.74=.142,.84=.082,.95=0,1=0)
+LateralThighLine = profile(0=0,.39=0,.50=.030,.62=.090,.75=.140,.86=.116,.96=.022,1=0)
+GastrocnemiusLine = profile(0=0,.235=0,.29=.033,.37=.116,.45=.153,.51=.096,.59=0,1=0)
+CalcanealLine = profile(0=0,.19=0,.245=.085,.29=.126,.34=.098,.40=.040,.46=0,1=0)
+SoleusLine = profile(0=0,.27=0,.35=.058,.43=.090,.51=.055,.565=0,1=0)
+LimbCompartmentAngle = profile(0=34,.125=48,.25=-147,.375=12,.5=28,.625=113,.75=155,.875=180,1=103)
+LimbCompartmentFocus = profile(0=4,.125=6,.25=4,.375=8,.5=3,.625=3,.75=4,.875=12,1=6)
+SoleusShare = $Feline
+BrachioradialisShare = lerp(.20,.86,$Feline)
+ForeDepthScale = profile(0=1,.20=1,.34=1+.07*$Feline,.50=1+.18*$Feline,.62=1+.26*$Feline,.76=1+.15*$Feline,.91=1,1=1)
+HindDepthScale = profile(0=1,.23=1,.40=.95,.54=.86,.65=.91,.78=.97,1=1)
+ForeGirthScale = profile(0=1,.21=1+.05*$Feline,.38=1+.20*$Feline,.58=1+.24*$Feline,.72=1+.14*$Feline,.88=1,1=1)
+HindGirthScale = profile(0=1,1=1)
+TailLength = $Length*lerp(.77,.85,$Feline)
+TailRadius = $ChestWidth*lerp(.135,.124,$Feline)
+TailCarry = lerp(-.40,.34,$Feline)
+TailCurl = lerp(.23,.75,$Feline)
+HeadLength = $Length*lerp(.475,.381,$Feline)
+HeadWidth = $HeadLength*lerp(.526,.715,$Feline)
+HeadHeight = $HeadLength*lerp(.490,.541,$Feline)
+HeadCarry = lerp(-4,-8,$Feline)
+MuzzleShare = lerp(.445,.23,$Feline)
+MuzzleWidth = lerp(.725,.86,$Feline)
+NoseSize = $HeadWidth*lerp(lerp(.166,.138,$HoundFraction),.096,$Feline)
+EyeSize = $HeadWidth*lerp(.134,.108,$Feline)
+SpineOffset = profile(0=0,.12=1.45*$Feline,.27=2.02*$Feline,.40=1.70*$Feline,.55=.54*$Feline,.68=-.24*$Feline,.80=-.32*$Feline,1=0)
+BellyOffset = profile(0=0,.14=-.42*$Feline,.26=-1.03*$Feline,.38=-.30*$Feline,.53=.32*$Feline,.69=-.38*$Feline,.79=-.52*$Feline,.90=.42*$Feline,1=0)
+TrunkGirthScale = profile(0=1,1=1)
+LipCorner = lerp(.56,.64,$Feline)
+LipFrontStation = .929
+LipDepth = .012
+LipThickness = lerp(.52,.20,$Feline)
+SkullSeatStation = lerp(.365,.32,$Feline)
+SkullSeatDepth = .10
+# Sternal and shoulder coordinates are normalized to the trunk. Neck folds
+# follow the oblique field between the foreleg and the base of the skull.
+SternalStation = .73
+SternalSpan = .26
+SternalLevel = .035
+SternalDepthSpan = .25
+SternalHalfWidth = .52
+ScapularMedialFalloff = .32
+AxillaryBoundary = .80
+AxillaryFalloff = .50
+CervicalFoldStation = .53
+CervicalFoldSpan = .56
+CervicalFoldLevel = .69
+CervicalFoldSlope = .46
+CervicalFoldDepthSpan = .38
+CervicalFoldOffset = .29
+CervicalFoldHalfWidth = .23
+CervicalFoldAxialCycles = 2.8
+CervicalFoldVerticalCycles = -1.6
+CervicalFoldLateralCycles = .53
+CervicalFoldSharpness = 4
+TrunkSections = 92
+TrunkSides = 64
+UnitedSkinSpacing = .027
+SternalDrop = lerp(0,.018,$Feline)
+DigitReachOffset = profile(0=0,1=0)
+DigitLengthScale = profile(0=1,1=1)
+DigitBreadthScale = profile(0=1,1=1)
+DigitSpanOffset = profile(0=0,1=0)
+JawCaptureBand = .19
+WhiskerPadStation = lerp(0,.032,$Feline)
+WhiskerPadLatitude = lerp(0,13,$Feline)
+FaceSections = 160
+FaceSides = 96
+FissureStations = .20*$FaceSections
+FissureSides = $FaceSides*5/6
+CheekToLip = profile(0=.42,.56=.38,.65=.345,.73=.31,.80=.286,.855=.277,.89=.255,.918=.227,.943=.184,.962=.145,1=.138)
+BridgeRoof = profile(0=.30,.56=.232,.68=.162,.76=.127,.84=.099,.915=.090,.960=.095,1=.10)
+ChinFloor = profile(0=-.63,.56=-.56,.68=-.451,.75=-.396,.81=-.355,.85=-.331,.89=-.315,.917=-.282,.943=-.203,.964=-.129,1=-.11)
+WhiskerCount = 6
+WhiskerStations = profile(0=.790,.2=.764,.4=.744,.6=.815,.8=.792,1=.770)
+WhiskerLatitudes = profile(0=93,.2=96,.4=99,.6=103,.8=106,1=110)
+WhiskerStationOffset = profile(0=0,1=0)
+WhiskerLatitudeOffset = profile(0=0,1=0)
+MuzzleGirthScale = profile(0=1,.51=1,.64=1+.045*(1-$Feline),.75=1+.115*(1-$Feline),.84=1+.20*(1-$Feline),.92=1+.16*(1-$Feline),.971=1+.045*(1-$Feline),1=1)
+MuzzleBridgeOffset = profile(0=0,1=0)
+ChinFloorOffset = profile(0=0,.49=0,.62=-.05*(1-$Feline),.74=-.13*(1-$Feline),.83=-.18*(1-$Feline),.90=-.175*(1-$Feline),.945=-.10*(1-$Feline),.98=0,1=0)
+RadialSurfaceFit = lerp(.90,.97,$Feline)
+FrontalSurfaceFit = lerp(.40,.90,$Feline)
+MuzzleDatum = lerp(1,.9875,$Feline)
+RostralTravelLimit = lerp(.115,.052,$Feline)
+SurfaceFit = lerp(.95,.94,$Feline)
+ChinTravel = .11*$Feline
+ChinTravelStart = .125
+ChinTravelSpan = .055
+# Depth of the subnasal lip and mandibular skin below the nasal collar.
+SubnasalDepthScale = 1
+SubnasalOnset = .68
+SubnasalTransition = .60
+LowerJawScale = lerp(1.12,.61,$Feline)
+ChinHalfWidth = lerp(.29,.27,$Feline)*$HeadWidth
+ChinCornerLift = lerp(.020,.082,$Feline)*$HeadLength
+ChinCornerSetback = lerp(.012,.047,$Feline)*$HeadLength
+CentralLipNotch = lerp(.034,0,$Feline)*$HeadLength
+LowerJawOnset = .065*$HeadLength
+LowerJawTransition = .093*$HeadLength
+JawFrontStation = .62
+JawFrontBlend = .18
+PadOffset = lerp(.17,.19,$Feline)*$HeadWidth
+PadHalfWidth = lerp(.19,.18,$Feline)*$HeadWidth
+PadBelowNose = lerp(.105,.083,$Feline)*$HeadLength
+PerioralRelax = lerp(.019,.052,$Feline)*$HeadWidth
+PadForwardShare = lerp(.40,.18,$Feline)
+PadLateralShare = lerp(.46,.72,$Feline)
+PadProjection = lerp(.027,.041,$Feline)*$HeadLength
+WhiskerPadHeight = lerp(.090,.084,$Feline)*$HeadLength
+CheekTaper = lerp(.015,.125,$Feline)
+CheekTaperStart = .21*$HeadWidth
+CheekTransition = .21*$HeadWidth
+# Fraction of cheek shaping applied from the nape to the nasal collar.
+JowlEnvelopeFit = 0
+JowlEnvelopeWidth = profile(0=.32,1=.32)
+JowlEnvelopeHeight = profile(0=0,.07=1,.43=1,.62=0,1=0)
+JowlEnvelopeTransition = .065
+CheekAxialFit = profile(0=1,1=1)
+LowerCheekProfile = profile(0=.4,.20=1,.36=1,.50=.72,.60=.34,.69=0,1=0)
+ChinProjection = lerp(.14,.08,$Feline)
+PinnaStandOff = .155
+PinnaForward = .12
+LipGrooveWidth = 8
+LipTurnProjection = .17
+BrowToGlobe = .045
+CanineIris = material('/Game/AnimalStudies/Catalogue/Materials/MI_AmberEye')
+ErectWidth = profile(0=.79,.10=.98,.25=1,.39=.88,.54=.72,.70=.53,.84=.33,.95=.14,1=.035)
+LobeWidth = profile(0=.82,.11=.95,.24=1,.43=.91,.62=.76,.77=.60,.87=.46,.94=.30,1=.065)
+PinnaBendLength = .28
+PinnaBendAngle = 190
+PinnaBaseYaw = 64
+PinnaBurial = .18
+PinnaRake = .17
+LobeFlare = .16
+LobeFlareCurve = profile(0=0,.16=.17,.34=.78,.48=1,.61=.84,.79=.31,.92=.05,1=0)
+LobeTwist = -12
+LobeCup = .14
+NostrilLevel = lerp(-.16,-.045,$Feline)
+PlanumCrownFlatten = lerp(.075,.29,$Feline)
+PlanumTipDrop = lerp(.035,.15,$Feline)
+AlarLipLift = lerp(.035,.17,$Feline)
+NostrilSpacing = lerp(.54,.78,$Feline)
+NostrilWidth = lerp(.175,.14,$Feline)
+NostrilHeight = lerp(.115,.085,$Feline)
+NarisArea = 3.141592653589793*$NostrilWidth*$NostrilHeight/4
+NarisAspect = $NostrilHeight/$NostrilWidth
+NarisCant = 16
+NarisHook = .38
+VestibuleExpansion = .14
+AlarSlitShare = .38
+AlarSlitLift = .12
+AlarSlitReach = 1.08
+NasalWingWidth = 1-.11*$Feline
+NasalProjection = 1-.23*$Feline
+NasalCleft = .10+.08*$Feline
+IrisFraction = lerp(.91,.95,$Feline)
+CornealExposure = lerp(.79,.80,$Feline)
+OccipitalSpan = lerp(.31,.25,$Feline)
+OccipitalBreadth = lerp(.445,.44,$Feline)
+OccipitalDepth = lerp(.50,.47,$Feline)
+PollLevel = lerp(.055,.095,$Feline)
+UpperLipReach = lerp(.009,0,$Feline)
+UpperLipContour = profile(0=0,.16=.02,.34=.41,.51=.95,.67=1,.84=.59,1=.08)
+UpperLipDepth = .22*$HeadLength
+ClosedLipFit = 1-$Feline
+LabialLobeDrop = lerp(.032,0,$Feline)*$HeadLength
+LabialLobeOffset = .083*$HeadLength
+LabialLobeSpan = .096*$HeadLength
+PupilMaterial = material('/Game/AnimalStudies/Catalogue/Materials/MI_CornealPupil')
+FelineWhisker = material('/Game/AnimalStudies/Catalogue/Materials/MI_CatVibrissa')
+Whisker = material('/Game/AnimalStudies/Catalogue/Materials/MI_Whisker')
+CanthusRise = lerp(.08,.22,$Feline)
+LidOverlap = lerp(.050,.078,$Feline)
+LidTurnWidth = lerp(.18,.21,$Feline)
+LowerLidRise = lerp(.035,.068,$Feline)
+SocketDepth = .74
+CorneaRelief = lerp(-.045,-.115,$Feline)
+# Hairless pigmented tissue at the two edges of the palpebral fissure.
+UpperLidMarginWidth = .088
+LowerLidMarginWidth = .125
+LidMarginPlaneDepth = .93
+LidMargin = material('/Game/AnimalStudies/Catalogue/Materials/MI_LidMargin')
+# Where and how far the concealed globe turns away beneath the eyelids.
+# Dilation scales both pupil axes. Gaze angles rotate the optical markings inside the fixed eyelids.
+PupilDilation = 1
+GazeYaw = 0
+# Positive convergence turns both pupils toward the midline.
+GazeConvergence = 0
+GazePitch = 0
+GlobeRimWidthInset = .04
+GlobeRimHeightInset = .19
+GlobeReturnOnset = .99
+GlobeReturnSpan = .31
+GlobeReturnDepth = .87
+GlobeDepth = lerp(.29,.21,$Feline)
+EarYaw = 18
+EarThickness = 1
+ConchaDepth = 1
+WhiskerSweep = .25
+WhiskerSag = .14
+TailTipFraction = lerp(.36,.39,$Feline)
+TailSag = .085
+OrbitBreadth = lerp(.94,.67,$Feline)
+CaninePlanum = material('/Game/AnimalStudies/Catalogue/Materials/MI_AfraPlanum')
+FelinePlanum = material('/Game/AnimalStudies/Catalogue/Materials/MI_RosePlanum')
+PlanumTaper = lerp(.91,1.90,$Feline)
+MandibleBreadth = lerp(.82,.64,$Feline)
+LabialProjection = lerp(.006,.007,$Feline)
+OpticalOrbitLift = lerp(.038,-.053,$Feline)*$HeadLength
+OpticalOrbitLateral = lerp(-.035,.004,$Feline)*$HeadLength
+# Relax span, strength and falloff are fractions of pinna breadth at the ear root.
+PinnaSeamRelax = .038
+PinnaSeamExtent = .48
+PinnaSeamFalloff = .20
+# Growth-region distances follow the actual ear roots, lobe and lid opening.
+PinnaHairMedialAllowance = .16
+PinnaHairAxialSpan = .53
+PinnaHairRootDepth = .10
+LidHairClearance = 1.01
+LidHairDepth = .85
+# Lateral temporal fullness carries the skin and the attached ear, while
+# the ocular centres retain their independent registration.
+TemporalExpansion = 0
+TemporalAxialProfile = profile(0=0,.08=.23,.19=.80,.34=1,.43=.92,.54=.53,.63=.10,.70=0,1=0)
+TemporalHeightProfile = profile(0=.02,.12=.20,.35=.80,.55=1,.80=.89,.96=.50,1=.18)
+TemporalLateralSpan = .35
+PinnaRootLateral = lerp(.057,.060,$Feline)*$HeadLength
+PinnaRootLift = lerp(.027,-.038,$Feline)*$HeadLength
+EyeSeparation = 0
+EyeLift = 0
+EyeLatitude = lerp(58,61,$Feline)
+EarSet = lerp(.26,.235,$Feline)
+EarLatitude = lerp(44,49,$Feline)
+PigmentReferenceEyeSet = lerp(.53835,.7469,$Feline)
+PigmentReferenceOrbitBreadth = lerp(.94,.67,$Feline)
+PigmentReferenceNoseLevel = lerp(.047,.067,$Feline)
+NoseLevel = lerp(.047,.067,$Feline)
+LipFullness = 1
+ChinSetback = lerp(.011,.010,$Feline)
+PhiltrumDepth = lerp(.030,.025,$Feline)
+EyeSet = (1-$MuzzleShare)*.97
+EyeAngle = lerp(42,18,$Feline)
+Pupil = lerp(.86,.26,$Feline)
+EyeAperture = lerp(.49,.53,$Feline)
+EarHeight = $HeadHeight*lerp(1.21,.81,$Feline)
+EarWidth = $HeadWidth*lerp(.68,.49,$Feline)
+EarFold = lerp(.822,.035,$Feline)
+EarPoint = lerp(.70,1.10,$Feline)
+EarSpread = lerp(18,35,$Feline)
+JawDepth = lerp(.22,.20,$Feline)
+CheekFullness = lerp(.14,.25,$Feline)
+Brow = lerp(.11,.14,$Feline)
+WhiskerLength = $HeadWidth*lerp(.32,.91,$Feline)
+WhiskerRadius = $HeadWidth*lerp(.0022,.0016,$Feline)
+WhiskerPad = lerp(.83,1.52,$Feline)
+# Muscle profile keys: scapular spine 0, adjacent groove .125, triceps .25,
+# gluteals .375, thigh .5, hamstrings .625, femoral fossa .75, flank 1.
+MuscleStation = profile(.0=-.024,.125=-.075,.25=-.053,.375=.025,.50=.032,.625=-.113,.75=-.04,1=.37)
+MuscleSlope = profile(.0=-.235,.125=-.235,.25=.135,.375=-.10,.50=-.23,.625=-.12,.75=-.17,1=.12)
+MuscleSpan = profile(.0=.075,.125=.036,.25=.085,.375=.13,.50=.095,.625=.085,.75=.055,1=.19)
+MuscleLevel = profile(.0=.64,.125=.59,.25=.20,.375=.67,.50=.16,.625=.23,.75=.19,1=.40)
+MuscleHeight = profile(.0=.43,.125=.35,.25=.37,.375=.34,.50=.45,.625=.43,.75=.37,1=.38)
+MuscleAmplitude = profile(.0=.039,.125=-.018,.25=.033,.375=.036,.50=.045,.625=.033,.75=-.025,1=.039)
+LipPath = profile(0=132,.17=138,.42=144,.64=147,.75=150,.84=158,.92=170,1=180)
+WhiskerAzimuth = profile(0=.03,.2=-.12,.4=-.27,.6=.07,.8=-.13,1=-.23)
+WhiskerElevation = profile(0=.25,.2=.17,.4=.11,.6=.025,.8=-.035,1=-.09)
+WhiskerLengths = profile(0=.82,.2=1,.4=.97,.6=.89,.8=.79,1=.7)
+MuscleDefinition = 1
+Condition = 1
+ThighMass = lerp(1.04,1.11,$Feline)
+ShankMass = lerp(1,1.10,$Feline)
+StandingLift = -lerp(.197,.107,$Feline)*$ChestDepth
+StanceWidth = 1
+StanceOffset = lerp(.085,.095,$Feline)
+RightForeStride = .38*$StanceOffset*$Length
+LeftForeStride = -.62*$StanceOffset*$Length
+RightHindStride = -.88*$StanceOffset*$Length
+LeftHindStride = .46*$StanceOffset*$Length
+RegionalMarkings = 0
+# Temporary material IDs preserve each part through the body remesh.
+ForePigmentChart = material()
+HindPigmentChart = material()
+TailPigmentChart = material()
+TailPigmentReachOffset = profile(0=0,1=0)
+TailPigmentHeightOffset = profile(0=0,1=0)
+TailRestAngle = -9
+TailCarryDegrees = 35
+TailCurlDegrees = 110
+Coat = material('/Game/AnimalStudies/Catalogue/Materials/MI_Coat')
+Features = shape('/GraphCodeShape/Presets/AnimalFeatures',PupilDilation=$PupilDilation,PinnaPigmentMix=$PinnaPigmentMix,PlanumPalette=$PlanumPalette,Feline=$Feline,CanthusRise=$CanthusRise,PinnaStandOff=$PinnaStandOff,PinnaForward=$PinnaForward,Coat=$Coat,ErectWidth=$ErectWidth,LobeWidth=$LobeWidth,PinnaBendLength=$PinnaBendLength,PinnaBendAngle=$PinnaBendAngle,PinnaBaseYaw=$PinnaBaseYaw,PinnaBurial=$PinnaBurial,PinnaRake=$PinnaRake,LobeFlare=$LobeFlare,LobeFlareCurve=$LobeFlareCurve,LobeTwist=$LobeTwist,LobeCup=$LobeCup,EarThickness=$EarThickness,ConchaDepth=$ConchaDepth)
+ForeProximalLevel = .83
+HindProximalLevel = .91
+ForePawSeatFraction = .09
+HindPawSeatFraction = .10
+StrideFadeLevel = .78
+DewclawMedialSet = lerp(.033,.031,$Feline)
+DewclawCarpusFraction = .79
+# Digit I follows the local limb axis at the same level as its attachment.
+DewclawAxialStation = $ForeCarpusLevel*$DewclawCarpusFraction
+HindDewclawHockFraction = .49
+HindDewclawStation = $HockLevel*$HindDewclawHockFraction
+DewclawPitch = 56
+DewclawYaw = -37
+CarpalPadPitch = 88
+TailHeightOffset = profile(0=0,1=0)
+TailReachOffset = profile(0=0,1=0)
+LimbStandards = shape('/GraphCodeShape/Presets/AnimalLimbs')
+HeelHeightScale = $LimbStandards.HeelHeightScale
+HeelStart = $LimbStandards.HeelStart
+HeelEnd = $LimbStandards.HeelEnd
+ToeRootBreadth = $LimbStandards.ToeRootBreadth
+ToeTipTaper = $LimbStandards.ToeTipTaper
+ToeSplayRoot = $LimbStandards.ToeSplayRoot
+KnuckleStation = $LimbStandards.KnuckleStation
+KnuckleSpan = $LimbStandards.KnuckleSpan
+ToeCentreHeight = $LimbStandards.ToeCentreHeight
+ToeAxialArch = $LimbStandards.ToeAxialArch
+KnuckleLift = $LimbStandards.KnuckleLift
+ToeCrossDepth = $LimbStandards.ToeCrossDepth
+KnuckleDepth = $LimbStandards.KnuckleDepth
+PadLobes = $LimbStandards.PadLobes
+PadLobeDepth = $LimbStandards.PadLobeDepth
+PadToeTaper = $LimbStandards.PadToeTaper
+PadCentreHeight = $LimbStandards.PadCentreHeight
+PadCrossDepth = $LimbStandards.PadCrossDepth
+ClawRootLength = $LimbStandards.ClawRootLength
+ClawRootRoundness = $LimbStandards.ClawRootRoundness
+ClawBurial = $LimbStandards.ClawBurial
+ClawBreadth = $LimbStandards.ClawBreadth
+ClawBaseHeight = $LimbStandards.ClawBaseHeight
+ClawDescent = $LimbStandards.ClawDescent
+ClawHook = $LimbStandards.ClawHook
+ClawCrossDepth = $LimbStandards.ClawCrossDepth
+DigitalPadStation = $LimbStandards.DigitalPadStation
+ClawReferenceBreadth = $LimbStandards.ClawReferenceBreadth
+PalmSilhouetteFit = 1-$Feline
+PalmContactRoundness = $LimbStandards.PalmContactRoundness
+PalmAsymmetry = $LimbStandards.PalmAsymmetry
+PalmContourOffset = profile(0=0,1=0)
+PalmPadBreadth = $LimbStandards.PalmPadBreadth
+PalmPadLength = $LimbStandards.PalmPadLength
+PalmPadStation = $LimbStandards.PalmPadStation
+DigitalPadWidth = $LimbStandards.DigitalPadWidth
+DigitalPadLength = $LimbStandards.DigitalPadLength
+ClawSetback = $LimbStandards.ClawSetback
+HeelBreadthOffset = profile(0=0,1=0)
+HeelRoofOffset = profile(0=0,1=0)
+HeelFloorOffset = profile(0=0,1=0)
+ReferenceCarpus = $LimbStandards.ReferenceCarpus
+ReferenceElbow = $LimbStandards.ReferenceElbow
+ReferenceHock = $LimbStandards.ReferenceHock
+ReferenceStifle = $LimbStandards.ReferenceStifle
+ThighBlendStart = $ReferenceHock
+ThighBlendEnd = $ReferenceStifle
+UpperGirthStart = $LimbStandards.UpperGirthStart
+UpperGirthEnd = $LimbStandards.UpperGirthEnd
+ReferenceChestRatio = $LimbStandards.ReferenceChestRatio
+ReferenceHipRatio = $LimbStandards.ReferenceHipRatio
+LimbCapStart = $LimbStandards.LimbCapStart
+SoleCapSpan = $LimbStandards.SoleCapSpan
+CarpusFalloff = $LimbStandards.CarpusFalloff
+ElbowFalloff = $LimbStandards.ElbowFalloff
+HockFalloff = $LimbStandards.HockFalloff
+StifleFalloff = $LimbStandards.StifleFalloff
+TailTipRoundStart = $LimbStandards.TailTipRoundStart
+TailRootRoundEnd = $LimbStandards.TailRootRoundEnd
+TailGirthScale = profile(0=1,1=1)
+Limbs = shape('/GraphCodeShape/Presets/AnimalLimbs',HeelHeightScale=$HeelHeightScale,HeelStart=$HeelStart,HeelEnd=$HeelEnd,ToeRootBreadth=$ToeRootBreadth,ToeTipTaper=$ToeTipTaper,ToeSplayRoot=$ToeSplayRoot,KnuckleStation=$KnuckleStation,KnuckleSpan=$KnuckleSpan,ToeCentreHeight=$ToeCentreHeight,ToeAxialArch=$ToeAxialArch,KnuckleLift=$KnuckleLift,ToeCrossDepth=$ToeCrossDepth,KnuckleDepth=$KnuckleDepth,PadLobes=$PadLobes,PadLobeDepth=$PadLobeDepth,PadToeTaper=$PadToeTaper,PadCentreHeight=$PadCentreHeight,PadCrossDepth=$PadCrossDepth,ClawRootLength=$ClawRootLength,ClawRootRoundness=$ClawRootRoundness,ClawBurial=$ClawBurial,ClawBreadth=$ClawBreadth,ClawBaseHeight=$ClawBaseHeight,ClawDescent=$ClawDescent,ClawHook=$ClawHook,ClawCrossDepth=$ClawCrossDepth,DigitalPadStation=$DigitalPadStation,ClawReferenceBreadth=$ClawReferenceBreadth,PalmSilhouetteFit=$PalmSilhouetteFit,PalmContactRoundness=$PalmContactRoundness,PalmAsymmetry=$PalmAsymmetry,PalmContourOffset=$PalmContourOffset,PalmPadBreadth=$PalmPadBreadth,PalmPadLength=$PalmPadLength,PalmPadStation=$PalmPadStation,DigitalPadWidth=$DigitalPadWidth,DigitalPadLength=$DigitalPadLength,ClawSetback=$ClawSetback,HeelBreadthOffset=$HeelBreadthOffset,HeelRoofOffset=$HeelRoofOffset,HeelFloorOffset=$HeelFloorOffset,ReferenceCarpus=$ReferenceCarpus,ReferenceElbow=$ReferenceElbow,ReferenceHock=$ReferenceHock,ReferenceStifle=$ReferenceStifle,ThighBlendStart=$ThighBlendStart,ThighBlendEnd=$ThighBlendEnd,UpperGirthStart=$UpperGirthStart,UpperGirthEnd=$UpperGirthEnd,ReferenceChestRatio=$ReferenceChestRatio,ReferenceHipRatio=$ReferenceHipRatio,LimbCapStart=$LimbCapStart,SoleCapSpan=$SoleCapSpan,CarpusFalloff=$CarpusFalloff,ElbowFalloff=$ElbowFalloff,HockFalloff=$HockFalloff,StifleFalloff=$StifleFalloff,TailTipRoundStart=$TailTipRoundStart,TailRootRoundEnd=$TailRootRoundEnd,TailGirthScale=$TailGirthScale,TailRestAngle=$TailRestAngle,TailCarryDegrees=$TailCarryDegrees,TailCurlDegrees=$TailCurlDegrees,BrachialSectionFit=$BrachialSectionFit,BrachialSectionOnset=$BrachialSectionOnset,BrachialElbowSample=$BrachialElbowSample,BrachialUpperSample=$BrachialUpperSample,BrachialSectionEnd=$BrachialSectionEnd,BrachialElbowOffset=$BrachialElbowOffset,BrachialUpperOffset=$BrachialUpperOffset,HindDewclawHockFraction=$HindDewclawHockFraction,HindDewclawStation=$HindDewclawStation,ForeUpperInset=$ForeUpperInset,HindUpperInset=$HindUpperInset,UpperInsetOnset=$UpperInsetOnset,UpperInsetPeak=$UpperInsetPeak,ForeProximalLevel=$ForeProximalLevel,HindProximalLevel=$HindProximalLevel,ForePawSeatFraction=$ForePawSeatFraction,HindPawSeatFraction=$HindPawSeatFraction,StrideFadeLevel=$StrideFadeLevel,DewclawAxialStation=$DewclawAxialStation,DewclawMedialSet=$DewclawMedialSet,DewclawCarpusFraction=$DewclawCarpusFraction,DewclawPitch=$DewclawPitch,DewclawYaw=$DewclawYaw,CarpalPadPitch=$CarpalPadPitch,TailHeightOffset=$TailHeightOffset,TailReachOffset=$TailReachOffset,Feline=$Feline,ForeInsertionDepth=$ForeInsertionDepth,HindInsertionDepth=$HindInsertionDepth,InsertionStart=$InsertionStart,BrachialisLine=$BrachialisLine,CarpalExtensorLine=$CarpalExtensorLine,CarpalFlexorLine=$CarpalFlexorLine,BrachioradialisLine=$BrachioradialisLine,QuadricepsLine=$QuadricepsLine,LateralThighLine=$LateralThighLine,GastrocnemiusLine=$GastrocnemiusLine,CalcanealLine=$CalcanealLine,SoleusLine=$SoleusLine,LimbCompartmentAngle=$LimbCompartmentAngle,LimbCompartmentFocus=$LimbCompartmentFocus,SoleusShare=$SoleusShare,BrachioradialisShare=$BrachioradialisShare,MuscleDefinition=$MuscleDefinition,DigitReachOffset=$DigitReachOffset,DigitLengthScale=$DigitLengthScale,DigitBreadthScale=$DigitBreadthScale,DigitSpanOffset=$DigitSpanOffset,PasternReach=$PasternReach,PasternWidth=$PasternWidth,PasternDepth=$PasternDepth,PasternLevel=$PasternLevel,SoleInset=$SoleInset,DewDigitReach=$DewDigitReach,DewDigitBreadth=$DewDigitBreadth,DewDigitLength=$DewDigitLength,DewPadStation=$DewPadStation,DewPadBreadth=$DewPadBreadth,DewPadLength=$DewPadLength,DewClawStation=$DewClawStation,CarpalPadBreadth=$CarpalPadBreadth,CarpalPadLength=$CarpalPadLength,CarpalPadInset=$CarpalPadInset,ForeDewclaw=$ForeDewclaw,HindDewclaw=$HindDewclaw,CarpalPadScale=$CarpalPadScale,Coat=$Coat,Clearance=$Clearance,ChestDepth=$ChestDepth,ChestWidth=$ChestWidth,HipWidth=$HipWidth,PawWidth=$PawWidth,PawLength=$PawLength,LegMass=$LegMass,ThighMass=$ThighMass,ShankMass=$ShankMass,ElbowSet=$ElbowSet,HockSet=$HockSet,StifleSet=$StifleSet,ForeCarpusLevel=$ForeCarpusLevel,ElbowLevel=$ElbowLevel,HockLevel=$HockLevel,StifleLevel=$StifleLevel,HindFootReach=$HindFootReach,ForeSweep=$ForeSweep,HindSweep=$HindSweep,ForeDepthScale=$ForeDepthScale,HindDepthScale=$HindDepthScale,ForeGirthScale=$ForeGirthScale,HindGirthScale=$HindGirthScale,ToeSpread=$ToeSpread,DigitArch=$DigitArch,PadDepth=$PadDepth,ClawLength=$ClawLength,ToeLength=$ToeLength)
+EyeLibrary = shape('/GraphCodeShape/Presets/AnimalEyes',PupilDilation=$PupilDilation,PupilMaterial=$PupilMaterial,CanthusRise=$CanthusRise,IrisMaterial=$CanineIris,PupilWidth=$Pupil,IrisFraction=$IrisFraction,GlobeRimWidthInset=$GlobeRimWidthInset,GlobeRimHeightInset=$GlobeRimHeightInset,GlobeReturnOnset=$GlobeReturnOnset,GlobeReturnSpan=$GlobeReturnSpan,GlobeReturnDepth=$GlobeReturnDepth,GlobeDepth=$GlobeDepth,LidOpening=$EyeAperture,LidMaterial=$Coat)
+NoseLibrary = shape('/GraphCodeShape/Presets/AnimalNoses',MedialAlarOffset=$MedialAlarOffset,MedialAlarBreadth=$MedialAlarBreadth,MedialAlarHeight=$MedialAlarHeight,MedialAlarLevel=$MedialAlarLevel,MedialAlarProjection=$MedialAlarProjection,AlarCleftReach=$AlarCleftReach,AlarCleftDrop=$AlarCleftDrop,AlarLobuleRelief=$AlarLobuleRelief,AlarLobuleBreadth=$AlarLobuleBreadth,AlarLobuleHeight=$AlarLobuleHeight,AlarLobuleOffset=$AlarLobuleOffset,MedianGrooveHalfWidth=$MedianGrooveHalfWidth,MedianGrooveDrop=$MedianGrooveDrop,CleftUpperLevel=$CleftUpperLevel,CleftBlendHeight=$CleftBlendHeight,PlanumDome=$PlanumDome,PlanumHeightRatio=$PlanumHeightRatio,AlarWingHeight=$AlarWingHeight,AlarCreaseDepth=$AlarCreaseDepth,AlarCreaseHalfHeight=$AlarCreaseHalfHeight,AlarCreaseBow=$AlarCreaseBow,MoistMarginLevel=$MoistMarginLevel,MoistMarginStart=$MoistMarginStart,MoistMarginBlend=$MoistMarginBlend,Interior=$VestibuleMaterial,EntranceFront=$EntranceFront,TurnStart=$TurnStart,ChamberRear=$ChamberRear,TurnRun=$TurnRun,SlitTerminalAspect=$SlitTerminalAspect,PlanumPalette=$PlanumPalette,NarisArea=$NarisArea,NarisAspect=$NarisAspect,NarisCant=$NarisCant,NarisHook=$NarisHook,VestibuleExpansion=$VestibuleExpansion,AlarSlitShare=$AlarSlitShare,AlarSlitLift=$AlarSlitLift,AlarSlitReach=$AlarSlitReach,NostrilLevel=$NostrilLevel,PlanumCrownFlatten=$PlanumCrownFlatten,PlanumTipDrop=$PlanumTipDrop,AlarLipLift=$AlarLipLift,Feline=$Feline,Leather=$CaninePlanum,FelineLeather=$FelinePlanum,PlanumTaper=$PlanumTaper,WingWidth=$NasalWingWidth,Projection=$NasalProjection,CleftDepth=$NasalCleft,NostrilSpacing=$NostrilSpacing,NostrilWidth=$NostrilWidth,NostrilHeight=$NostrilHeight)
+FelineIris = material('/Game/AnimalStudies/Catalogue/Materials/MI_OliveEye')
+CatEyes = shape('/GraphCodeShape/Presets/AnimalEyes',PupilDilation=$PupilDilation,PupilMaterial=$PupilMaterial,CanthusRise=$CanthusRise,PupilWidth=$Pupil,LidOpening=$EyeAperture,IrisFraction=$IrisFraction,GlobeRimWidthInset=$GlobeRimWidthInset,GlobeRimHeightInset=$GlobeRimHeightInset,GlobeReturnOnset=$GlobeReturnOnset,GlobeReturnSpan=$GlobeReturnSpan,GlobeReturnDepth=$GlobeReturnDepth,GlobeDepth=$GlobeDepth,IrisMaterial=$FelineIris,LidMaterial=$Coat)
+EyePart = mesh() {
+  if ($IrisPalette < .5) { add($EyeLibrary.Eye,join=none) }
+  if ($IrisPalette >= .5) { add($CatEyes.Eye,join=none) }
+}
+NosePart = mesh() {
+  add($NoseLibrary.Nose,join=none)
+  save($RootBand) [$output.RootBand]
+}
+EarPart = mesh() { add($Features.Ear,height=$EarHeight,width=$EarWidth,fold=$EarFold,pointed=$EarPoint,join=none) }
+PawPart = mesh() { add($Limbs.Paw,join=none) }
+ForePawPart = mesh() { add($PawPart,join=none) }
+HindPawPart = mesh() { add($PawPart,join=none) }
+ForelegPart = mesh() { add($Limbs.Foreleg,join=none) }
+HindlegPart = mesh() { add($Limbs.Hindleg,join=none) }
+TailPart = mesh() { add($Limbs.Tail,tip_fraction=$TailTipFraction,sag=$TailSag,length=$TailLength,root_thickness=$TailRadius,carry=$TailCarry,curl=$TailCurl,join=none) }
+HeadKit = shape('/GraphCodeShape/Presets/AnimalHead',EyeToPlanumFit=$EyeToPlanumFit,EyeToPlanumRatio=$EyeToPlanumRatio,PalpebralTurnInset=$PalpebralTurnInset,SupraorbitalRimRadius=$SupraorbitalRimRadius,SupraorbitalRimSpan=$SupraorbitalRimSpan,BrowRadius=$BrowRadius,BrowSpan=$BrowSpan,BrowVentralFade=$BrowVentralFade,LabialWidthExponent=$LabialWidthExponent,LabialHeightExponent=$LabialHeightExponent,LabialFloorWidth=$LabialFloorWidth,LabialTaperLevel=$LabialTaperLevel,LabialTaperSpan=$LabialTaperSpan,LabialFullnessGain=$LabialFullnessGain,LabialPadStrength=$LabialPadStrength,LabialPadLatitude=$LabialPadLatitude,LabialPadArc=$LabialPadArc,LabialPadStation=$LabialPadStation,LabialPadSpan=$LabialPadSpan,LipSulcusRelief=$LipSulcusRelief,LipSulcusArc=$LipSulcusArc,CheekLatitude=$CheekLatitude,CheekArc=$CheekArc,CheekStation=$CheekStation,CheekSpan=$CheekSpan,RostralWidthOnset=$RostralWidthOnset,RostralWidthSpan=$RostralWidthSpan,PadLatitude=$PadLatitude,PadArc=$PadArc,PadStation=$PadStation,PadSpan=$PadSpan,PadWidthGain=$PadWidthGain,LipRollLatitude=$LipRollLatitude,LipRollArc=$LipRollArc,LipRollGain=$LipRollGain,LipForwardStation=$LipForwardStation,LipForwardSpan=$LipForwardSpan,LipForwardLevel=$LipForwardLevel,LipForwardHeight=$LipForwardHeight,LipForwardInset=$LipForwardInset,LipForwardFalloff=$LipForwardFalloff,LipLobeCentre=$LipLobeCentre,LipLobeWidth=$LipLobeWidth,PhiltrumWidth=$PhiltrumWidth,PhiltrumReliefGain=$PhiltrumReliefGain,DrapeStart=$DrapeStart,DrapeSpan=$DrapeSpan,DrapeRimInset=$DrapeRimInset,DrapeRimFalloff=$DrapeRimFalloff,RostrumLengthScale=$RostrumLengthScale,RostrumOrbitalClearance=$RostrumOrbitalClearance,RostrumCollarClearance=$RostrumCollarClearance,RhinolabialAdvance=$RhinolabialAdvance,RhinolabialFit=$RhinolabialFit,RhinolabialPosteriorRun=$RhinolabialPosteriorRun,RhinolabialAnteriorRun=$RhinolabialAnteriorRun,RhinolabialDepth=$RhinolabialDepth,RhinolabialHalfWidth=$RhinolabialHalfWidth,RhinolabialOnset=$RhinolabialOnset,RhinolabialBlend=$RhinolabialBlend,RhinolabialRelease=$RhinolabialRelease,RhinolabialDatum=$RhinolabialDatum,RhinolabialTarget=$RhinolabialTarget,MandibularContourFit=$MandibularContourFit,MandibularDatum=$MandibularDatum,MandibularTarget=$MandibularTarget,MandibularTipThickness=$MandibularTipThickness,MandibularAnchorDepth=$MandibularAnchorDepth,ClosedLipOnset=$ClosedLipOnset,ClosedLipRun=$ClosedLipRun,ClosedLipLatitude=$ClosedLipLatitude,ClosedLipArc=$ClosedLipArc,MandibularBorderFit=$MandibularBorderFit,MandibularLevelOnset=$MandibularLevelOnset,MandibularLevelBlend=$MandibularLevelBlend,MandibularRimStart=$MandibularRimStart,MandibularRimEnd=$MandibularRimEnd,MandibularAdvance=$MandibularAdvance,MandibularElevation=$MandibularElevation,OralFissureDepth=$OralFissureDepth,OralFissureWidth=$OralFissureWidth,OralFissureCorner=$OralFissureCorner,OralFissureBlend=$OralFissureBlend,OralFissureLevel=$OralFissureLevel,OralFissureForwardShare=$OralFissureForwardShare,OralFissureLateralShare=$OralFissureLateralShare,LipCornerBlend=$LipCornerBlend,LipRostralBlend=$LipRostralBlend,UpperRollAngle=$UpperRollAngle,LowerRollAngle=$LowerRollAngle,UpperRollSpan=$UpperRollSpan,LowerRollSpan=$LowerRollSpan,UpperRollRelief=$UpperRollRelief,LowerRollRelief=$LowerRollRelief,OrbitalPigmentRadius=$OrbitalPigmentRadius,OrbitalPigmentWidth=$OrbitalPigmentWidth,OrbitalPigmentFade=$OrbitalPigmentFade,OrbitalPigmentReach=$OrbitalPigmentReach,PupilDilation=$PupilDilation,GazeConvergence=$GazeConvergence,GazeYaw=$GazeYaw,GazePitch=$GazePitch,PinnaPigmentMix=$PinnaPigmentMix,PlanumPalette=$PlanumPalette,IrisPalette=$IrisPalette,WhiskerPalette=$WhiskerPalette,PinnaSeamRelax=$PinnaSeamRelax,PinnaSeamExtent=$PinnaSeamExtent,PinnaSeamFalloff=$PinnaSeamFalloff,PigmentReferenceEyeSet=$PigmentReferenceEyeSet,PigmentReferenceOrbitBreadth=$PigmentReferenceOrbitBreadth,PigmentReferenceNoseLevel=$PigmentReferenceNoseLevel,PerioralRelax=$PerioralRelax,PadForwardShare=$PadForwardShare,PadLateralShare=$PadLateralShare,OccipitalSpan=$OccipitalSpan,OccipitalBreadth=$OccipitalBreadth,OccipitalDepth=$OccipitalDepth,PollLevel=$PollLevel,UpperLipReach=$UpperLipReach,UpperLipContour=$UpperLipContour,UpperLipDepth=$UpperLipDepth,ClosedLipFit=$ClosedLipFit,LabialLobeDrop=$LabialLobeDrop,LabialLobeOffset=$LabialLobeOffset,LabialLobeSpan=$LabialLobeSpan,PupilMaterial=$PupilMaterial,FelineWhisker=$FelineWhisker,Whisker=$Whisker,CanthusRise=$CanthusRise,LidOverlap=$LidOverlap,LidTurnWidth=$LidTurnWidth,LowerLidRise=$LowerLidRise,JawCaptureBand=$JawCaptureBand,WhiskerPadStation=$WhiskerPadStation,WhiskerPadLatitude=$WhiskerPadLatitude,OpticalOrbitLift=$OpticalOrbitLift,OpticalOrbitLateral=$OpticalOrbitLateral,TemporalExpansion=$TemporalExpansion,TemporalAxialProfile=$TemporalAxialProfile,TemporalHeightProfile=$TemporalHeightProfile,TemporalLateralSpan=$TemporalLateralSpan,PinnaRootLateral=$PinnaRootLateral,PinnaRootLift=$PinnaRootLift,RadialSurfaceFit=$RadialSurfaceFit,FrontalSurfaceFit=$FrontalSurfaceFit,MuzzleDatum=$MuzzleDatum,RostralTravelLimit=$RostralTravelLimit,LipPath=$LipPath,WhiskerAzimuth=$WhiskerAzimuth,WhiskerElevation=$WhiskerElevation,WhiskerLengths=$WhiskerLengths,CorneaRelief=$CorneaRelief,UpperLidMarginWidth=$UpperLidMarginWidth,LowerLidMarginWidth=$LowerLidMarginWidth,LidMarginPlaneDepth=$LidMarginPlaneDepth,LidMargin=$LidMargin,MandibleBreadth=$MandibleBreadth,LabialProjection=$LabialProjection,CornealExposure=$CornealExposure,SocketDepth=$SocketDepth,SurfaceFit=$SurfaceFit,ChinTravel=$ChinTravel,ChinTravelStart=$ChinTravelStart,ChinTravelSpan=$ChinTravelSpan,SubnasalDepthScale=$SubnasalDepthScale,SubnasalOnset=$SubnasalOnset,SubnasalTransition=$SubnasalTransition,LowerJawScale=$LowerJawScale,ChinHalfWidth=$ChinHalfWidth,ChinCornerLift=$ChinCornerLift,ChinCornerSetback=$ChinCornerSetback,CentralLipNotch=$CentralLipNotch,LowerJawOnset=$LowerJawOnset,LowerJawTransition=$LowerJawTransition,JawFrontStation=$JawFrontStation,JawFrontBlend=$JawFrontBlend,PadOffset=$PadOffset,PadHalfWidth=$PadHalfWidth,PadBelowNose=$PadBelowNose,PadProjection=$PadProjection,WhiskerPadHeight=$WhiskerPadHeight,CheekTaper=$CheekTaper,CheekTaperStart=$CheekTaperStart,CheekTransition=$CheekTransition,JowlEnvelopeFit=$JowlEnvelopeFit,JowlEnvelopeWidth=$JowlEnvelopeWidth,JowlEnvelopeHeight=$JowlEnvelopeHeight,JowlEnvelopeTransition=$JowlEnvelopeTransition,CheekAxialFit=$CheekAxialFit,LowerCheekProfile=$LowerCheekProfile,ChinProjection=$ChinProjection,OrbitBreadth=$OrbitBreadth,CaninePlanum=$CaninePlanum,FelinePlanum=$FelinePlanum,FissureStations=$FissureStations,FissureSides=$FissureSides,FaceSections=$FaceSections,FaceSides=$FaceSides,CheekToLip=$CheekToLip,BridgeRoof=$BridgeRoof,ChinFloor=$ChinFloor,WhiskerCount=$WhiskerCount,WhiskerStations=$WhiskerStations,WhiskerLatitudes=$WhiskerLatitudes,WhiskerStationOffset=$WhiskerStationOffset,WhiskerLatitudeOffset=$WhiskerLatitudeOffset,MuzzleGirthScale=$MuzzleGirthScale,MuzzleBridgeOffset=$MuzzleBridgeOffset,ChinFloorOffset=$ChinFloorOffset,LipGrooveWidth=$LipGrooveWidth,LipTurnProjection=$LipTurnProjection,BrowToGlobe=$BrowToGlobe,Feline=$Feline,LipCorner=$LipCorner,LipFrontStation=$LipFrontStation,LipDepth=$LipDepth,LipThickness=$LipThickness,EarYaw=$EarYaw,GlobeRimWidthInset=$GlobeRimWidthInset,GlobeRimHeightInset=$GlobeRimHeightInset,GlobeReturnOnset=$GlobeReturnOnset,GlobeReturnSpan=$GlobeReturnSpan,GlobeReturnDepth=$GlobeReturnDepth,GlobeDepth=$GlobeDepth,WhiskerSweep=$WhiskerSweep,WhiskerSag=$WhiskerSag,HoundFraction=$HoundFraction,EyeAperture=$EyeAperture,Coat=$Coat,EyePart=$EyePart,NosePart=$NosePart,EarPart=$EarPart,HeadLength=$HeadLength,HeadWidth=$HeadWidth,HeadHeight=$HeadHeight,MuzzleShare=$MuzzleShare,MuzzleWidth=$MuzzleWidth,NoseSize=$NoseSize,EyeSize=$EyeSize,EyeSeparation=$EyeSeparation,EyeLift=$EyeLift,EyeLatitude=$EyeLatitude,EarSet=$EarSet,EarLatitude=$EarLatitude,NoseLevel=$NoseLevel,LipFullness=$LipFullness,ChinSetback=$ChinSetback,PhiltrumDepth=$PhiltrumDepth,EyeSet=$EyeSet,EyeAngle=$EyeAngle,EarHeight=$EarHeight,EarWidth=$EarWidth,EarFold=$EarFold,EarPoint=$EarPoint,EarSpread=$EarSpread,JawDepth=$JawDepth,CheekFullness=$CheekFullness,Brow=$Brow,WhiskerLength=$WhiskerLength,WhiskerRadius=$WhiskerRadius,WhiskerPad=$WhiskerPad)
+CervicalVentralReach = profile(0=0,1=0)
+CervicalVentralRise = profile(0=0,1=0)
+CervicalDorsalReach = profile(0=0,1=0)
+CervicalDorsalRise = profile(0=0,1=0)
+CervicalWidthScale = profile(0=1,1=1)
+CervicalStandards = shape('/GraphCodeShape/Presets/QuadrupedNeck')
+RumpCapSpan = $CervicalStandards.RumpCapSpan
+BreastCapStart = $CervicalStandards.BreastCapStart
+BladeStationOffset = $CervicalStandards.BladeStationOffset
+BladeRake = $CervicalStandards.BladeRake
+BladeSpan = $CervicalStandards.BladeSpan
+BladeRelief = $CervicalStandards.BladeRelief
+HaunchStationOffset = $CervicalStandards.HaunchStationOffset
+HaunchRake = $CervicalStandards.HaunchRake
+HaunchSpan = $CervicalStandards.HaunchSpan
+HaunchRelief = $CervicalStandards.HaunchRelief
+KeelTaper = $CervicalStandards.KeelTaper
+CervicalSeatStation = $CervicalStandards.CervicalSeatStation
+CervicalSeatLevel = $CervicalStandards.CervicalSeatLevel
+CervicalWithersShare = $CervicalStandards.CervicalWithersShare
+CervicalSeatPitch = $CervicalStandards.CervicalSeatPitch
+CervicalSeatBand = $CervicalStandards.CervicalSeatBand
+ShoulderSeatLevel = $CervicalStandards.ShoulderSeatLevel
+HipSeatLevel = $CervicalStandards.HipSeatLevel
+HipCroupShare = $CervicalStandards.HipCroupShare
+ShoulderSeatRake = $CervicalStandards.ShoulderSeatRake
+HipSeatRake = $CervicalStandards.HipSeatRake
+TailSeatSlope = $CervicalStandards.TailSeatSlope
+CervicalOnset = $CervicalStandards.CervicalOnset
+CervicalCapStart = $CervicalStandards.CervicalCapStart
+CervicalRootBlend = $CervicalStandards.CervicalRootBlend
+SkullCapDepth = $CervicalStandards.SkullCapDepth
+SkullBandDepth = $CervicalStandards.SkullBandDepth
+CervicalMuscleLevel = $CervicalStandards.CervicalMuscleLevel
+CervicalMuscleSlope = $CervicalStandards.CervicalMuscleSlope
+CervicalMuscleSpan = $CervicalStandards.CervicalMuscleSpan
+CervicalBladeStation = $CervicalStandards.CervicalBladeStation
+CervicalBladeRake = $CervicalStandards.CervicalBladeRake
+CervicalBladeSpan = $CervicalStandards.CervicalBladeSpan
+CervicalHollowStation = $CervicalStandards.CervicalHollowStation
+CervicalHollowRake = $CervicalStandards.CervicalHollowRake
+CervicalHollowSpan = $CervicalStandards.CervicalHollowSpan
+CervicalHollowDepth = $CervicalStandards.CervicalHollowDepth
+CervicalBladeLevel = $CervicalStandards.CervicalBladeLevel
+CervicalBladeHeight = $CervicalStandards.CervicalBladeHeight
+NeckKit = shape('/GraphCodeShape/Presets/QuadrupedNeck',RumpCapSpan=$RumpCapSpan,BreastCapStart=$BreastCapStart,BladeStationOffset=$BladeStationOffset,BladeRake=$BladeRake,BladeSpan=$BladeSpan,BladeRelief=$BladeRelief,HaunchStationOffset=$HaunchStationOffset,HaunchRake=$HaunchRake,HaunchSpan=$HaunchSpan,HaunchRelief=$HaunchRelief,KeelTaper=$KeelTaper,CervicalSeatStation=$CervicalSeatStation,CervicalSeatLevel=$CervicalSeatLevel,CervicalWithersShare=$CervicalWithersShare,CervicalSeatPitch=$CervicalSeatPitch,CervicalSeatBand=$CervicalSeatBand,ShoulderSeatLevel=$ShoulderSeatLevel,HipSeatLevel=$HipSeatLevel,HipCroupShare=$HipCroupShare,ShoulderSeatRake=$ShoulderSeatRake,HipSeatRake=$HipSeatRake,TailSeatSlope=$TailSeatSlope,CervicalOnset=$CervicalOnset,CervicalCapStart=$CervicalCapStart,CervicalRootBlend=$CervicalRootBlend,SkullCapDepth=$SkullCapDepth,SkullBandDepth=$SkullBandDepth,CervicalMuscleLevel=$CervicalMuscleLevel,CervicalMuscleSlope=$CervicalMuscleSlope,CervicalMuscleSpan=$CervicalMuscleSpan,CervicalBladeStation=$CervicalBladeStation,CervicalBladeRake=$CervicalBladeRake,CervicalBladeSpan=$CervicalBladeSpan,CervicalHollowStation=$CervicalHollowStation,CervicalHollowRake=$CervicalHollowRake,CervicalHollowSpan=$CervicalHollowSpan,CervicalHollowDepth=$CervicalHollowDepth,CervicalBladeLevel=$CervicalBladeLevel,CervicalBladeHeight=$CervicalBladeHeight,LoinTravelOffset=$LoinTravelOffset,HipShareOffset=$HipShareOffset,RibShareOffset=$RibShareOffset,PelvisOffset=$PelvisOffset,WithersOffset=$WithersOffset,BackProfileOffset=$BackProfileOffset,UnderProfileOffsetScale=$UnderProfileOffsetScale,UnderProfileOffset=$UnderProfileOffset,FlankOffset=$FlankOffset,CervicalVentralReach=$CervicalVentralReach,CervicalVentralRise=$CervicalVentralRise,CervicalDorsalReach=$CervicalDorsalReach,CervicalDorsalRise=$CervicalDorsalRise,CervicalWidthScale=$CervicalWidthScale,TorsoPart=$TorsoPart,CervicalForm=$CervicalForm,Feline=$Feline,StandingFit=1,SpineOffset=$SpineOffset,BellyOffset=$BellyOffset,TrunkGirthScale=$TrunkGirthScale,ShoulderStation=$ShoulderStation,HipStation=$HipStation,ForeTrack=$ForeTrack*$StanceWidth,HindTrack=$HindTrack*$StanceWidth,TailStation=$TailStation,TailRootLevel=$TailRootLevel,Skin=$Coat,Length=$Length,LoinExtra=$LoinExtra,ChestWidth=$ChestWidth,ChestDepth=$ChestDepth,HipWidth=$HipWidth,WaistWidth=$WaistWidth,Tuck=$Tuck,CroupRise=$CroupRise,WitherRise=$WitherRise,SkullWidth=$SkullWidth,SkullDepth=$SkullDepth,SkullPitch=$SkullPitch,ThroatFullness=$ThroatFullness,BreastProjection=$BreastProjection,JawInset=$JawInset,MuscleRelief=$MuscleRelief,ShoulderRelief=$ShoulderRelief,Reach=$NeckReach,Rise=$NeckRise+$StandingLift,RootWidth=$NeckRootWidth,Stations=$TrunkSections,Sides=$TrunkSides)
+ForeX = $NeckKit.ShoulderX
+HindX = $NeckKit.HipX
+ForeY = $NeckKit.ShoulderY
+HindY = $NeckKit.HipY
+ForeFootX = $Limbs.ForePawSeat
+HindFootX = $Limbs.HindPawSeat
+# Each leg owns one complete planted paw. Both lateral pairs share these
+# recipes. StanceOffset staggers the feet so the second pair reads in profile.
+Fore = mesh(stride=0) {
+  add($ForelegPart)
+  if ($RegionalMarkings > 0) { material($ForePigmentChart) }
+  warp(with=(W: 1-clamp(point.z/max(.00001,$StrideFadeLevel*$Limbs.ForeHeight),0,1)),by=($stride*$W*$W*(3-2*$W),0,0))
+}
+Hind = mesh(stride=0) {
+  add($HindlegPart)
+  if ($RegionalMarkings > 0) { material($HindPigmentChart) }
+  warp(with=(W: 1-clamp(point.z/max(.00001,$StrideFadeLevel*$Limbs.HindHeight),0,1)),by=($stride*$W*$W*(3-2*$W),0,0))
+}
+FittedTail = mesh() {
+  add($TailPart,join=none)
+  if ($RegionalMarkings > 0) { material($TailPigmentChart) }
+}
+Appendages = mesh() {
+  add($Fore,stride=$RightForeStride,at=($ForeX,$ForeY,0),join=none)
+  add($Fore,stride=$LeftForeStride,mirror=Y,at=($ForeX,-$ForeY,0),join=none)
+  add($Hind,stride=$RightHindStride,at=($HindX,$HindY,0),join=none)
+  add($Hind,stride=$LeftHindStride,mirror=Y,at=($HindX,-$HindY,0),join=none)
+  add($FittedTail,rotate=($TailRoll,0,$TailYaw),at=($NeckKit.TailX,0,$Clearance+$NeckKit.TailZ),join=none)
+}
+# Standing landmarks in the flank plane. These pairs follow the scapular
+# spine, humerus, femoral shaft and caudal thigh as the trunk or stance changes.
+Bell = formula(v) { .5+.5*cos(180*clamp($v,-1,1)) }
+AxialLandmark = formula(x,z,along,slope,width,level,depth) { $Bell(($x-$along-$slope*($z-$level))/$width)*$Bell(($z-$level)/$depth) }
+MuscleArea = formula(x,z,origin,key) { $AxialLandmark($x,$z,$origin+$MuscleStation($key),$MuscleSlope($key),$MuscleSpan($key),$MuscleLevel($key),$MuscleHeight($key))*$MuscleAmplitude($key) }
+# Store a normalized flank chart on the fitted skin before the head is mounted.
+# R spans one tail length behind the rump to 1.5 trunk lengths rostrally.
+# G and B locate the meridian and brisket in units of the individual's chest depth.
+FlankLongitude = weightage() { rule(condition=x,min=-($Length+$LoinExtra),max=1.5*($Length+$LoinExtra),profile=(0=0%,1=100%)) }
+FlankBreadth = weightage() { rule(condition=y,min=-$ChestDepth,max=$ChestDepth,profile=(0=0%,1=100%)) }
+FlankElevation = weightage() { rule(condition=z,min=$Clearance-1.75*$ChestDepth,max=$Clearance+1.5*$ChestDepth,profile=(0=0%,1=100%)) }
+DermalHeight = weightage() { rule(condition=z,min=0,max=$Clearance+$ChestDepth+$WitherRise,profile=(0=0%,1=100%)) }
+# Recover the longitudinal station on the bent tail after the surface remesh.
+TailLocalX = formula(x,y) { ($x-$NeckKit.TailX)*cos($TailYaw)+$y*sin($TailYaw) }
+TailLocalZ = formula(x,y,z) { ($y*cos($TailYaw)-($x-$NeckKit.TailX)*sin($TailYaw))*sin($TailRoll)+($z-$Clearance-$NeckKit.TailZ)*cos($TailRoll) }
+ChordFraction = formula(x,z,ax,az,dx,dz) { clamp((($x-$ax)*$dx+($z-$az)*$dz)/max(.00001,$dx*$dx+$dz*$dz),0,1) }
+ChordWeight = formula(x,z,ax,az,dx,dz,t) { 1/pow(max(.0001,pow($x-$ax-$t*$dx,2)+pow($z-$az-$t*$dz,2)),2) }
+TailCurveStart = $TailRestAngle+$TailCarryDegrees*$TailCarry
+TailCurveTurn = $TailCurlDegrees*$TailCurl
+TailHalfAngle0 = .5*0*$TailCurveTurn
+TailChordScale0 = (sin(abs($TailHalfAngle0))+max(0,.00000001-abs($TailHalfAngle0)*.01745329252))/max(.00000001,abs($TailHalfAngle0)*.01745329252)
+TailArcX0 = $TailLength*(-0*cos($TailCurveStart+$TailHalfAngle0)*$TailChordScale0+$TailReachOffset(0)+$TailPigmentReachOffset(0))
+TailArcZ0 = $TailLength*(0*sin($TailCurveStart+$TailHalfAngle0)*$TailChordScale0+$TailHeightOffset(0)+$TailPigmentHeightOffset(0)-$TailSag*sin(180*0))
+TailHalfAngle1 = .5*.25*$TailCurveTurn
+TailChordScale1 = (sin(abs($TailHalfAngle1))+max(0,.00000001-abs($TailHalfAngle1)*.01745329252))/max(.00000001,abs($TailHalfAngle1)*.01745329252)
+TailArcX1 = $TailLength*(-.25*cos($TailCurveStart+$TailHalfAngle1)*$TailChordScale1+$TailReachOffset(.25)+$TailPigmentReachOffset(.25))
+TailArcZ1 = $TailLength*(.25*sin($TailCurveStart+$TailHalfAngle1)*$TailChordScale1+$TailHeightOffset(.25)+$TailPigmentHeightOffset(.25)-$TailSag*sin(180*.25))
+TailHalfAngle2 = .5*.5*$TailCurveTurn
+TailChordScale2 = (sin(abs($TailHalfAngle2))+max(0,.00000001-abs($TailHalfAngle2)*.01745329252))/max(.00000001,abs($TailHalfAngle2)*.01745329252)
+TailArcX2 = $TailLength*(-.5*cos($TailCurveStart+$TailHalfAngle2)*$TailChordScale2+$TailReachOffset(.5)+$TailPigmentReachOffset(.5))
+TailArcZ2 = $TailLength*(.5*sin($TailCurveStart+$TailHalfAngle2)*$TailChordScale2+$TailHeightOffset(.5)+$TailPigmentHeightOffset(.5)-$TailSag*sin(180*.5))
+TailHalfAngle3 = .5*.75*$TailCurveTurn
+TailChordScale3 = (sin(abs($TailHalfAngle3))+max(0,.00000001-abs($TailHalfAngle3)*.01745329252))/max(.00000001,abs($TailHalfAngle3)*.01745329252)
+TailArcX3 = $TailLength*(-.75*cos($TailCurveStart+$TailHalfAngle3)*$TailChordScale3+$TailReachOffset(.75)+$TailPigmentReachOffset(.75))
+TailArcZ3 = $TailLength*(.75*sin($TailCurveStart+$TailHalfAngle3)*$TailChordScale3+$TailHeightOffset(.75)+$TailPigmentHeightOffset(.75)-$TailSag*sin(180*.75))
+TailHalfAngle4 = .5*1*$TailCurveTurn
+TailChordScale4 = (sin(abs($TailHalfAngle4))+max(0,.00000001-abs($TailHalfAngle4)*.01745329252))/max(.00000001,abs($TailHalfAngle4)*.01745329252)
+TailArcX4 = $TailLength*(-1*cos($TailCurveStart+$TailHalfAngle4)*$TailChordScale4+$TailReachOffset(1)+$TailPigmentReachOffset(1))
+TailArcZ4 = $TailLength*(1*sin($TailCurveStart+$TailHalfAngle4)*$TailChordScale4+$TailHeightOffset(1)+$TailPigmentHeightOffset(1)-$TailSag*sin(180*1))
+ChordT0 = formula(x,z) { $ChordFraction($x,$z,$TailArcX0,$TailArcZ0,$TailArcX1-$TailArcX0,$TailArcZ1-$TailArcZ0) }
+ChordW0 = formula(x,z) { $ChordWeight($x,$z,$TailArcX0,$TailArcZ0,$TailArcX1-$TailArcX0,$TailArcZ1-$TailArcZ0,$ChordT0($x,$z)) }
+ChordT1 = formula(x,z) { $ChordFraction($x,$z,$TailArcX1,$TailArcZ1,$TailArcX2-$TailArcX1,$TailArcZ2-$TailArcZ1) }
+ChordW1 = formula(x,z) { $ChordWeight($x,$z,$TailArcX1,$TailArcZ1,$TailArcX2-$TailArcX1,$TailArcZ2-$TailArcZ1,$ChordT1($x,$z)) }
+ChordT2 = formula(x,z) { $ChordFraction($x,$z,$TailArcX2,$TailArcZ2,$TailArcX3-$TailArcX2,$TailArcZ3-$TailArcZ2) }
+ChordW2 = formula(x,z) { $ChordWeight($x,$z,$TailArcX2,$TailArcZ2,$TailArcX3-$TailArcX2,$TailArcZ3-$TailArcZ2,$ChordT2($x,$z)) }
+ChordT3 = formula(x,z) { $ChordFraction($x,$z,$TailArcX3,$TailArcZ3,$TailArcX4-$TailArcX3,$TailArcZ4-$TailArcZ3) }
+ChordW3 = formula(x,z) { $ChordWeight($x,$z,$TailArcX3,$TailArcZ3,$TailArcX4-$TailArcX3,$TailArcZ4-$TailArcZ3,$ChordT3($x,$z)) }
+TailStationAt = formula(x,z) { ($ChordT0($x,$z)*$ChordW0($x,$z)+(1+$ChordT1($x,$z))*$ChordW1($x,$z)+(2+$ChordT2($x,$z))*$ChordW2($x,$z)+(3+$ChordT3($x,$z))*$ChordW3($x,$z))/(4*($ChordW0($x,$z)+$ChordW1($x,$z)+$ChordW2($x,$z)+$ChordW3($x,$z))) }
+Body = mesh() {
+  add($NeckKit.WithNeck,at=(0,0,$Clearance))
+  add($Appendages,join=blend,falloff=.041*$ChestWidth)
+  remesh($UnitedSkinSpacing*$ChestWidth)
+  # Ease the pectoral-to-brachial transition on the united skin. Restrict smoothing to the axilla.
+  relax($AxillaryBlendRadius) [value=abs(point.x-$ForeX)/max(.00001,$AxillaryLength)+abs(point.z-$Clearance-$AxillaryLevel*$ChestDepth)/max(.00001,$AxillaryDepth),below=$AxillaryBoundary,fade=$AxillaryFalloff]
+  warp(with=(X: (point.x-$LoinExtra*clamp((point.x-.23*$Length)/(.27*$Length+$LoinExtra),0,1))/$Length,Z: (point.z-$Clearance)/$ChestDepth,Side: clamp(abs(point.y)/($ScapularMedialFalloff*$ChestWidth),0,1),Scapula: $MuscleArea($X,$Z,$ShoulderStation,.0), ShoulderGroove: $MuscleArea($X,$Z,$ShoulderStation,.125), Triceps: $MuscleArea($X,$Z,$ShoulderStation,.25), Glute: $MuscleArea($X,$Z,$HipStation,.375), Thigh: $MuscleArea($X,$Z,$HipStation,.50), Hamstring: $MuscleArea($X,$Z,$HipStation,.625), Fossa: $MuscleArea($X,$Z,$HipStation,.75), Flank: $MuscleArea($X,$Z,0,1), Relief: ($Scapula+$ShoulderGroove+$Triceps+$Glute+$Thigh+$Hamstring+$Fossa)*$MuscleDefinition+($Condition-1)*$Flank),by=(0,clamp(point.y*10,-1,1)*$ChestWidth*$Side*$Relief,0))
+  warp(with=(X: (point.x-$LoinExtra)/$Length,Z: (point.z-$Clearance)/$ChestDepth,Sternum: $Bell(($X-$SternalStation)/$SternalSpan)*$Bell(($Z-$SternalLevel)/$SternalDepthSpan),Midline: 1-clamp(abs(point.y)/($SternalHalfWidth*$ChestWidth),0,1)),by=(0,0,-$SternalDrop*$ChestDepth*$Sternum*$Midline))
+  # Faint oblique folds in the loose ventrolateral skin at the neck
+  # root. Coordinates follow the cervical seat and shoulder station.
+  warp(with=(Run: max(1,$NeckKit.HeadX-$ForeX),X: (point.x-$ForeX)/$Run,H: (point.z-$Clearance)/$ChestDepth,L: abs(point.y)/$ChestWidth,Field: $Bell(($X-$CervicalFoldStation)/$CervicalFoldSpan)*$Bell(($H-$CervicalFoldLevel-$CervicalFoldSlope*$X)/$CervicalFoldDepthSpan)*$Bell(($L-$CervicalFoldOffset)/$CervicalFoldHalfWidth),Valley: pow(.5+.5*cos(360*($CervicalFoldAxialCycles*$X+$CervicalFoldVerticalCycles*$H+$CervicalFoldLateralCycles*$L)),$CervicalFoldSharpness)),by=(0,-clamp(point.y*10,-1,1)*$ChestWidth*$SkinFoldDepth*$Field*$Valley,0))
+  uv(box,scale=$Length)
+  if ($RegionalMarkings > 0) {
+    save($SavedForePigmentChart) [material=$ForePigmentChart]
+    save($SavedHindPigmentChart) [material=$HindPigmentChart]
+    save($SavedTailPigmentChart) [material=$TailPigmentChart]
+  }
+  material($Coat)
+  if ($RegionalMarkings > 0) {
+    material($ForePigmentChart) [$SavedForePigmentChart]
+    material($HindPigmentChart) [$SavedHindPigmentChart]
+    material($TailPigmentChart) [$SavedTailPigmentChart]
+  }
+  # Keep the digital pads, interdigital spaces and claw sheaths at source
+  # resolution. All four feet use the very same swappable, finished part.
+  add($ForePawPart,scale=$ForePawScale,at=($ForeX+$ForeFootX+$RightForeStride,$ForeY,0),join=hard)
+  add($ForePawPart,mirror=Y,scale=$ForePawScale,at=($ForeX+$ForeFootX+$LeftForeStride,-$ForeY,0),join=hard)
+  add($HindPawPart,scale=$HindPawScale,at=($HindX+$HindFootX+$RightHindStride,$HindY,0),join=hard)
+  add($HindPawPart,mirror=Y,scale=$HindPawScale,at=($HindX+$HindFootX+$LeftHindStride,-$HindY,0),join=hard)
+  if (max($ForeDewclaw,$CarpalPadScale) > 0) {
+    add($Limbs.Accessory,height=$Limbs.ForeHeight,hind=0,stride=$RightForeStride,at=($ForeX,$ForeY,0),join=hard)
+    add($Limbs.Accessory,height=$Limbs.ForeHeight,hind=0,stride=$LeftForeStride,mirror=Y,at=($ForeX,-$ForeY,0),join=hard)
+  }
+  if ($HindDewclaw > 0) {
+    add($Limbs.Accessory,height=$Limbs.HindHeight,hind=1,stride=$RightHindStride,at=($HindX,$HindY,0),join=hard)
+    add($Limbs.Accessory,height=$Limbs.HindHeight,hind=1,stride=$LeftHindStride,mirror=Y,at=($HindX,-$HindY,0),join=hard)
+  }
+  if ($RegionalMarkings > 0) {
+    material($ForePigmentChart) [material=$Coat,value=max(point.z/$PawWidth,abs(point.x-$ForeX-$ForeFootX-lerp($LeftForeStride,$RightForeStride,clamp(point.y*10000,0,1)))/$PawLength),below=1]
+    material($HindPigmentChart) [material=$Coat,value=max(point.z/$PawWidth,abs(point.x-$HindX-$HindFootX-lerp($LeftHindStride,$RightHindStride,clamp(point.y*10000,0,1)))/$PawLength),below=1]
+    save($SavedForePigmentChart) [material=$ForePigmentChart]
+    save($SavedHindPigmentChart) [material=$HindPigmentChart]
+    save($SavedTailPigmentChart) [material=$TailPigmentChart]
+    material($Coat) [$SavedForePigmentChart]
+    material($Coat) [$SavedHindPigmentChart]
+    material($Coat) [$SavedTailPigmentChart]
+  }
+  save($BodyPigment) [material=$Coat]
+  $PigmentLength = select($BodyPigment,weight=$FlankLongitude)
+  $PigmentBreadth = select($BodyPigment,weight=$FlankBreadth)
+  $PigmentHeight = select($BodyPigment,weight=$FlankElevation)
+  colour(0,channel=rgb) [$BodyPigment]
+  colour(1,channel=r) [$PigmentLength]
+  colour(1,channel=g) [$PigmentBreadth]
+  colour(1,channel=b) [$PigmentHeight]
+  colour(.12,channel=a) [$BodyPigment]
+  if ($RegionalMarkings > 0) {
+    material($ForePigmentChart) [$SavedForePigmentChart]
+    material($HindPigmentChart) [$SavedHindPigmentChart]
+    material($TailPigmentChart) [$SavedTailPigmentChart]
+    $ForeMarkLongitude = select($SavedForePigmentChart,weight=$FlankLongitude)
+    colour(0,channel=g) [material=$ForePigmentChart]
+    colour(1,channel=g) [$ForeMarkLongitude]
+    colour(0,channel=r) [material=$ForePigmentChart]
+    colour(1,channel=r) [material=$ForePigmentChart,value=.01+.98*clamp(point.z/$Limbs.ForeHeight,0,1),above=0,fade=1]
+    colour(.16,channel=a) [material=$ForePigmentChart]
+    $HindMarkLongitude = select($SavedHindPigmentChart,weight=$FlankLongitude)
+    colour(0,channel=g) [material=$HindPigmentChart]
+    colour(1,channel=g) [$HindMarkLongitude]
+    colour(0,channel=r) [material=$HindPigmentChart]
+    colour(1,channel=r) [material=$HindPigmentChart,value=.01+.98*clamp(point.z/$Limbs.HindHeight,0,1),above=0,fade=1]
+    colour(.18,channel=a) [material=$HindPigmentChart]
+    colour(0,channel=r) [material=$TailPigmentChart]
+    colour(1,channel=r) [material=$TailPigmentChart,value=.01+.98*clamp($TailStationAt($TailLocalX(point.x,point.y),$TailLocalZ(point.x,point.y,point.z)),0,1),above=0,fade=1]
+    colour(.20,channel=a) [material=$TailPigmentChart]
+    material($Coat) [$SavedForePigmentChart]
+    material($Coat) [$SavedHindPigmentChart]
+    material($Coat) [$SavedTailPigmentChart]
+  }
+  if ($DermalChart > 0) {
+    save($Dermis) [material=$Coat]
+    $FromSole = select($Dermis,weight=$DermalHeight)
+    colour(0,channel=b) [$Dermis]
+    colour(1,channel=b) [$FromSole]
+    colour(.145,channel=a) [$Dermis]
+  }
+}
+# A swappable head supplies its weld surface and its free inserts in the same
+# local space. Both passes use the same source and the same cranial seat.
+HeadAssembly = mesh(inserts=0) {
+  if ($inserts == 0) { add($HeadKit.FaceSkin,join=none) }
+  if ($inserts > 0) { add($HeadKit.Details,join=none) }
+}
+HeadPart = mesh() {
+  add($HeadAssembly,inserts=0,join=none)
+  add($HeadAssembly,inserts=1,join=none)
+  socket(Root,at=($SkullSeatStation*$HeadLength,0,-$SkullSeatDepth*$HeadHeight),facing=-X,up=+Z,type='mammal/skull@1')
+}
+HeadSeatX = $NeckKit.HeadX-$SkullSeatStation*$HeadLength*cos($HeadCarry)-$SkullSeatDepth*$HeadHeight*sin($HeadCarry)
+HeadSeatZ = $Clearance+$NeckKit.HeadZ-$SkullSeatStation*$HeadLength*sin($HeadCarry)+$SkullSeatDepth*$HeadHeight*cos($HeadCarry)
+StandingSkin = mesh() {
+  add($Body,join=none)
+  add($HeadAssembly,inserts=0,at=($HeadSeatX,0,$HeadSeatZ),rotate=(0,$HeadCarry,0),join=hard)
+  relax(.075*$HeadWidth) [value=abs(point.x-$NeckKit.HeadX)+.55*abs(point.z-$Clearance-$NeckKit.HeadZ),below=.59*$HeadWidth,fade=.12*$HeadWidth]
+  uv(box,scale=$HeadWidth)
+  add($HeadAssembly,inserts=1,at=($HeadSeatX,0,$HeadSeatZ),rotate=(0,$HeadCarry,0),join=none)
+}
+
+
+Animal = mesh() {
+  add($StandingSkin,join=none)
+  if ($UseSpeciesCoat > 0) {
+    if ($CoatPalette < .5) { material($CanineCoat) [material=$Coat] }
+    if ($CoatPalette >= .5) { material($FelineCoat) [material=$Coat] }
+  }
+}
+
+# Groom carrier. Only existing coat skin can acquire a growth slot. Eyes,
+# lips, nasal leather, pads and claws keep their original roots excluded.
+BarrelHair = material('/Engine/BasicShapes/BasicShapeMaterial')
+LegHair = material('/Engine/BasicShapes/BasicShapeMaterial')
+TailHair = material('/Engine/BasicShapes/BasicShapeMaterial')
+RuffHair = material('/Engine/BasicShapes/BasicShapeMaterial')
+FaceHair = material('/Engine/BasicShapes/BasicShapeMaterial')
+MuzzleHair = material('/Engine/BasicShapes/BasicShapeMaterial')
+PinnaHair = material('/Engine/BasicShapes/BasicShapeMaterial')
+BareMargin = material('/Engine/BasicShapes/BasicShapeMaterial')
+LocalHeadX = formula(x,z) { ($x-$HeadSeatX)*cos($HeadCarry)+($z-$HeadSeatZ)*sin($HeadCarry) }
+LocalHeadZ = formula(x,z) { -($x-$HeadSeatX)*sin($HeadCarry)+($z-$HeadSeatZ)*cos($HeadCarry) }
+# The two pinnae lie lateral to their roots. A height-only selection also cuts
+# the hair between the ears. A folded lobe extends down the side of the skull.
+EarGrowth = formula(x,y,z) { max(max(abs($x-$EarSet*$HeadLength)/max(.001,$PinnaHairAxialSpan*$EarWidth),1+($HeadKit.EarRootY-$PinnaHairMedialAllowance*$EarWidth-abs($y))/max(.001,$EarWidth)),1+($HeadKit.EarRootZ-($PinnaHairRootDepth+$EarFold*$EarFold)*$EarHeight-$z)/max(.001,$EarHeight)) }
+# The lash-free margin follows the tilted palpebral aperture and its depth.
+GrowthOrbitU = formula(x,y) { (-($x-$HeadKit.EyeX)*sin($EyeAngle)+(abs($y)-$HeadKit.EyeY)*cos($EyeAngle))/$EyeSize }
+GrowthLidRadius = formula(u,z) { sqrt($u*$u+pow((($z-$HeadKit.EyeZ)/$EyeSize-$CanthusRise*$u-$LowerLidRise*(1-$u*$u))/max(.001,$EyeAperture*$Features.Canthus(clamp(abs($u),0,1))),2)) }
+LidGrowthDistance = formula(x,y,z) { max($GrowthLidRadius($GrowthOrbitU($x,$y),$z)/max(.001,$LidHairClearance),abs((($x-$HeadKit.EyeX)*cos($EyeAngle)+(abs($y)-$HeadKit.EyeY)*sin($EyeAngle))/$EyeSize-$CorneaRelief)/max(.001,$LidHairDepth)) }
+CoatSurface = mesh() {
+  add($StandingSkin,join=none)
+  save($HairSkin) [material=$Coat]
+  material($BarrelHair) [$HairSkin]
+  material($LegHair) [$HairSkin,value=max(abs(point.x-$ForeX)/(.25*$Length),point.z/($Clearance+.19*$ChestDepth)),below=1]
+  material($LegHair) [$HairSkin,value=max(abs(point.x-$HindX)/(.34*$Length),point.z/($Clearance+.20*$ChestDepth)),below=1]
+  material($TailHair) [$HairSkin,value=max(point.x-$TailStation*$Length+.05*$Length,($Clearance+.35*$ChestDepth-point.z)*clamp(1+point.x/(.15*$Length),0,1)-.01),below=0]
+  material($RuffHair) [$HairSkin,value=min(point.x-$ForeX,(point.z-$Clearance-.31*$ChestDepth)),above=0]
+  material($FaceHair) [$HairSkin,value=$LocalHeadX(point.x,point.z)/$HeadLength,above=.14]
+  material($MuzzleHair) [$HairSkin,value=$LocalHeadX(point.x,point.z)/$HeadLength,above=$EyeSet+.075]
+  material($PinnaHair) [$HairSkin,value=$EarGrowth($LocalHeadX(point.x,point.z),point.y,$LocalHeadZ(point.x,point.z)),below=1]
+  material($BareMargin) [$HairSkin,value=$LidGrowthDistance($LocalHeadX(point.x,point.z),point.y,$LocalHeadZ(point.x,point.z)),below=1]
+}
+
+Torso = mesh() {
+  add($NeckKit.StandaloneTorso,join=none)
+  save($NeckBand) [$output.NeckBand]
+}
+Neck = mesh() {
+  add($NeckKit.Neck,join=none)
+  save($SkullBand) [$output.SkullBand]
+}
+WithNeck = mesh() {
+  add($NeckKit.WithNeck,join=none)
+  save($SkullBand) [$output.SkullBand]
+}

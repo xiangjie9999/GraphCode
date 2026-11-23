@@ -1,4 +1,4 @@
-gcshape 1 into:/GraphCodeShape/Presets smooth:.006 shade:80
+gcshape 1 into:/Game/GraphCodeMarket/GraphCode/OrganicBrushes smooth:.006 shade:80
 
 # Reusable projected sculpting controls, not new language verbs.
 # Dimensions and travel are centimetres. The caller owns the part/side mask.

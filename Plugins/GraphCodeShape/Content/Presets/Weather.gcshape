@@ -1,0 +1,66 @@
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Weather  smooth:0.5  shade:25
+
+# WEATHER: snow and moss on the shape being built, as Form's recipes are. Coverage is a soft vertex-colour mask; volume only on flat tops.
+#
+#   SW = shape('/GraphCodeShape/Presets/StoneWall')   W = shape('/GraphCodeShape/Presets/Weather')
+#   Wall = mesh() { add($SW.Wall, len=200, height=120)  $W.Snow(depth=8, detail=16) }
+#
+# COVERAGE IS A SOFT MASK IN THE VERTEX COLOUR, not a material slot, written on the host's own points (no triangles):
+#   R = 1 - snow, G = 1 - moss: 1 is bare, which is also what a channel no line wrote reads, so either recipe can run alone,
+#   in either order, twice. A material reads them: base -> moss by (1 - G), then -> snow by (1 - R)
+#   (no material ships with this preset: bind one that reads R and G). B and A are left to the host.
+# VOLUME ONLY WHERE A MATERIAL CANNOT FAKE IT, and only with points (`detail` cm, or `budget=1`): snow caps and a cornice on
+# flat open tops (a coping, a wall's top stones, a sill, a ridge), moss cushions on tops and at the foot. At `detail=0` a
+# recipe moves no point and costs no triangle.
+
+build {
+}
+
+# SNOW.
+#   depth   cm 0-40 (8)   cap height on a flat open top (volume, with points only)
+#   cover   0-1    (1)    how much of the open, up-facing surface the mask whitens: 1 all of it, 0.5 patches, 0 none
+#   drift   0-2    (0)    extra cap height where a top is part-sheltered but still open (against a riser, a step)
+#   noise   seed          the mask's patchy edge (25 cm) and the cap's lumps (10 cm)
+#   budget  0 game / 1 high: High asks points every `detail` cm (8 at least)
+#   detail  cm 0-40 (0)   points asked of the flat open tops before the cap (about detail/3 apart); 0: no volume at all
+#   cornice 0-1   (0.3)   with a cap: its edge rolled down over the top's edge in low lobes and the cap a skin 0.25 x
+#                         cornice x depth thick, so its lip stands proud
+# The mask: sky() above 0.25 (none under an overhang, a coping's lip or the next roof course) x facing up (none on a wall's
+# face, thinning down a bevel) x noise (0.8 + 0.5 n: patchy where it is thin, never on a face), ramped over 0.35, so its rim is a gradient, never a step.
+Snow = instruction(depth=8.0, cover=1.0, drift=0.0, noise=1, budget=0, detail=0.0, cornice=0.3) {
+  $dt = max(clamp($detail, 0, 40), 8 * clamp($budget, 0, 1))
+  $d = clamp($depth, 0, 40)
+  if ($dt > 0) {
+    # the cap: only where a top is flat AND open (sky x facing up above 0.75), lifted straight up, eased in from its edge
+    warp(by=(0, 0, 0)) [facing=+Z, value=sky() * point.normal.z, above=0.7, smooth=$dt]
+    save($SnowCap) [facing=+Z, value=sky() * point.normal.z, above=0.75]
+    warp(by=(0, 0, ($d * clamp((sky() - 0.4) / 0.4, 0, 1) + $d * clamp($drift, 0, 2) * clamp((0.9 - sky()) / 0.3, 0, 1)) * (1 + 0.35 * noise(point.x / 10, point.y / 10, point.z / 10, $noise + 11)))) [$SnowCap, fade=0.7 * $dt]
+    relax(0.4 * $dt) [$SnowCap]
+    if ($cornice > 0.01) {
+      drip(repeat=30, length=0.5 * $cornice * $d, width=1.6 * $cornice * $d, variation=60%, seed=$noise) [$SnowCap]
+      coat(by=0.25 * $cornice * $d) [$SnowCap]
+    }
+  }
+  colour(0, channel=r) [value=clamp((sky() - 0.25) / 0.45, 0, 1) * clamp((point.normal.z - 0.3) / 0.5, 0, 1) * (0.8 + 0.5 * noise(point.x / 25, point.y / 25, point.z / 25, $noise)), above=0.6 * (1 - clamp($cover, 0, 1)) + 0.02, fade=0.35]
+}
+
+# MOSS.
+#   amount  0-1   (0.5)  how much: 0.25 patches on a roof's slope, 0.5 the tops of a wall, 1 nearly all of it
+#   cushion cm 0-8 (1.5) cushion height on tops and at the foot (volume, with points only)
+#   patch   cm 5-200 (22) the patches' size: about a stone's top on a wall; 40-60 on a roof whose host points lie half a
+#                        metre apart along a course (smaller patches than the points alias into a mottle)
+#   noise   seed         the patches and the cushion's lumps (9 cm)
+#   budget / detail      as Snow's: with points, cushions; at 0 the mask alone
+# The patch value: noise + facing up + shelter (sky below 0.85: joints, under laps, pan channels) + the foot (lowest fifth),
+# about 0 on an open vertical face to 2 on a flat sheltered foot; the mask ramps over 0.35 of it from 0.15 under 1.6 x (1 - amount): patches with soft rims, not a wash.
+Moss = instruction(amount=0.5, cushion=1.5, patch=22.0, noise=1, budget=0, detail=0.0) {
+  $pa = clamp($patch, 5, 200)
+  $dt = max(clamp($detail, 0, 40), 8 * clamp($budget, 0, 1))
+  $th = 1.6 * (1.0 - clamp($amount, 0, 1))
+  if ($dt > 0) {
+    # cushions only where the patch is on a top (facing up past 0.6) or at the foot
+    warp(by=(0, 0, 0)) [value=noise(point.x / $pa, point.y / $pa, point.z / $pa, $noise) + point.normal.z + 0.4 * clamp((0.85 - sky()) / 0.5, 0, 1) + 0.6 * clamp((0.2 - point.t.z) / 0.2, 0, 1) - 3 * (1 - max(clamp((point.normal.z - 0.6) / 0.25, 0, 1), clamp((0.15 - point.t.z) / 0.1, 0, 1))), above=$th - 0.3, smooth=$dt]
+    warp(by=clamp($cushion, 0, 8) * (0.55 + 0.45 * noise(point.x / 9, point.y / 9, point.z / 9, $noise + 7))) [value=noise(point.x / $pa, point.y / $pa, point.z / $pa, $noise) + point.normal.z + 0.4 * clamp((0.85 - sky()) / 0.5, 0, 1) + 0.6 * clamp((0.2 - point.t.z) / 0.2, 0, 1) - 3 * (1 - max(clamp((point.normal.z - 0.6) / 0.25, 0, 1), clamp((0.15 - point.t.z) / 0.1, 0, 1))), above=$th, fade=0.4]
+  }
+  colour(0, channel=g) [value=noise(point.x / $pa, point.y / $pa, point.z / $pa, $noise) + point.normal.z + 0.4 * clamp((0.85 - sky()) / 0.5, 0, 1) + 0.6 * clamp((0.2 - point.t.z) / 0.2, 0, 1), above=$th - 0.15, fade=0.35]
+}

@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
   "Version": 1,
-  "VersionName": "0.1.13",
+  "VersionName": "0.1.14",
   "FriendlyName": "GraphCode Core Extension",
   "Description": "Framework-backed authoring for MVVM, MetaSound, CommonUI and Gameplay Ability System.",
   "Category": "Editor",

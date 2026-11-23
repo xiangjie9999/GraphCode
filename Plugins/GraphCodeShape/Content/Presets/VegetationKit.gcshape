@@ -1,0 +1,1292 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.05  shade:60
+
+# VEGETATION KIT (21 Nov 2026; 1.1, 22 Nov: ivy and litter as PCG parts): leaves of five species at any age, twigs and sprays for Unreal's Procedural Vegetation
+# Editor (PVE) palette, leaf litter, grass (blades, clumps, sward, flowering grasses, rush, sedge) and ivy, all
+# parametric. PVE grows the tree; this kit makes what PVE places and what it cannot author. Design and rounds:
+# `Docs/GC-SHAPE-TREE-KIT.md`.
+#
+#   Veg  = shape('/GraphCodeShape/Presets/VegetationKit', LeafBeech = $MyBeech, Grass = $MyGrass, TwigBark = $MyBark)
+#   Leaf = mesh() { add($Veg.KitLeaf, species=1, age=1.2, noise=4) }
+#   Lawn = mesh() { add($Veg.KitGrass, kind=0, noise=7) }
+#   Ivy  = mesh() { add($Veg.KitIvy, width=300, height=220, noise=3) }
+#
+# THE TOP-LEVEL SUBJECTS (kit §11a: each leads with the same knobs, every knob clamped to the range shown; the entries
+# below them are the advanced layer, every look-defining number a knob):
+#   KitLeaf(species, size, age, noise, budget)       one leaf; PVE frame: origin at the stalk's end, +Z to the tip,
+#                                                    +Y the face, cm
+#   KitTwig(species, size, age, noise, budget)       a twig with its leaves (alternate, spiral, opposite as the species)
+#   KitSpray(species, size, age, noise, budget)      a branchlet of twigs: a PVE foliage palette unit
+#   KitLitter(size, density, noise, budget)          fallen leaves and twigs settled on a flat ground (no ground mesh)
+#   KitGrass(kind, size, age, noise, budget)         a grass clump or sward patch
+#   KitTuft(kind, size, age, noise, budget)          a flowering tuft: leafy clump plus culms with seed heads
+#   KitRush(size, age, noise)                        a soft-rush fountain of round, pointed stems
+#   KitIvy(width, height, density, size, noise, budget)  ivy climbing the plane y = 0 on its -Y side (place it
+#                                                    against a wall face); stems, side shoots, leaves on stalks
+#
+#   species  0-4      0 beech, 1 oak, 2 birch, 3 willow, 4 ivy (KitTwig/KitSpray: 0-2)
+#   kind              KitGrass: 0 lawn tuft, 1 meadow clump, 2 tall dry tussock, 3 green sward patch, 4 dry sward patch
+#                     KitTuft:  0 ryegrass (spikes), 1 bent (open panicles), 2 timothy (plumes), 3 hay meadow, 4 sedge
+#   size     cm       KitLeaf the blade length (-1: the species' own, beech 8, oak 11, birch 5, willow 10, ivy 6; 1-40);
+#                     KitTwig/KitSpray length (10-120); KitLitter the patch width (10-300); KitGrass/KitTuft/KitRush a
+#                     height scale (x, 0.3-3; 1 the kind's own); KitIvy the leaf blade length (2-20)
+#   age      0-2      0 green, 1 turning, 2 dry and curled (grass: 0 fresh .. 2 straw; -1 on KitGrass/KitTuft/KitRush:
+#                     the kind's own)
+#   density  x        KitLitter leaves (0.1-6), KitIvy stems (0.1-4)
+#   width, height cm  KitIvy's area (20-2000, 20-1000)
+#   noise             the seed (any integer)
+#   budget   0-2      0 game (coarse outlines and few points), 1 high, 2 ultra
+#
+# PCG: IVY AND LEAF LITTER ARE PLACED, NOT BAKED (1.1, 22 Nov 2026; owner: "why is it a hard mesh"). The build makes
+# small parts (one ivy leaf in four sizes, a 1.8 cm stem pill, lying beech and oak leaves, a twig, clumps of 7-14 leaves
+# settled on each other) and the pack's graphs place them as instances over any area, in seconds:
+#   PCG/PCG_IvyWall        ivy on a wall whose face looks along +X (_NegX, _PosY, _NegY: the other three facings).
+#                          Runners climb as the contours of a tall noise field, leaves crowd them in layers 0.5-8 cm
+#                          proud, dense at the wall's foot and thinning upward (measured from the volume's own floor).
+#   PCG/PCG_LeafLitter     fallen leaves on flat ground: settled clumps in a drift's core, single leaves at its fringe,
+#                          twigs among them.
+# Raise one with a `.gcw` line over a thin region on the wall face (or a ground region), for example
+#   Ivy = pcg(graph=/Game/GraphCodeMarket/GraphCode/VegetationKit/PCG/PCG_IvyWall, in=$WallFace, min=0, max=220, seed=6)
+# A `trigger=load` volume is generated as the line is written. Every grid is culled to its volume, so any size works.
+# The older baked subjects (KitIvy, KitLitter) remain below for a single mesh, but the demo meshes are the parts.
+#
+# MATERIAL SLOTS: LeafBeech, LeafOak, LeafBirch, LeafIvy, LeafIvyYoung (a two-sided foliage material: vertex colour
+# R = how dry 0-1, G = a per-leaf shade draw; UV: the blade on a full rectangle of leaf surface, u 0 at the stalk to 1 at
+# the tip, the midrib on v = 0.5), TwigBark (bark), Grass (UV: u across the blade, keel on 0.5, v base 0 to tip 1),
+# IvyStem. The willow leaf wears LeafBeech. THE MATERIALS ARE PACKS OF THEIR OWN (GraphCode Market R20): each slot names an
+# instance of a material pack this kit depends on, made by the Build before its first mesh; with the material packs' optional textures they carry the
+# leaf, grass and bark maps, without them the same instances are flat colours measured from those maps. Bind your own
+# at import (`shape(..., LeafBeech = $Mine)`) to replace one. Soil and Stone (the scratch demo ground and wall only) stay
+# pathless: bind them, or the engine draws its grid.
+#
+# MADE FROM THE SCRATCH RECIPES `Content/__MCPTests/Leaf/Leaf.gcshape`, `Grass/Grass.gcshape`, `Leaf/Ivy.gcshape`
+# (below, each section as it was, its materials turned into the slots above). NOTE: sin/cos take DEGREES.
+
+build {
+  SM_Veg_Leaf_Beech = $DemoLeafBeech
+  SM_Veg_Leaf_Oak_Dry = $DemoLeafOakDry
+  SM_Veg_Leaf_Birch = $DemoLeafBirch
+  SM_Veg_Leaf_Ivy = $DemoLeafIvy
+  SM_Veg_Twig_Birch = $DemoTwigBirch
+  SM_Veg_Spray_Beech = $DemoSprayBeech
+  SM_Veg_Grass_Meadow = $DemoGrassMeadow
+  SM_Veg_Grass_Sward = $DemoGrassSward
+  SM_Veg_Tuft_Timothy = $DemoTuftTimothy
+  SM_Veg_Rush = $DemoRush
+  # THE PCG PARTS (1.1): ivy and leaf litter are no longer baked patches. These meshes are what the pack's PCG graphs
+  # (PCG/PCG_IvyWall*, PCG/PCG_LeafLitter) place as instances on any wall or ground.
+  SM_Veg_IvyLeafWall_A = $IvyWallLeafA [pivot=(0, 0, 0)]
+  SM_Veg_IvyLeafWall_B = $IvyWallLeafB [pivot=(0, 0, 0)]
+  SM_Veg_IvyLeafWall_C = $IvyWallLeafC [pivot=(0, 0, 0)]
+  SM_Veg_IvyLeafWall_D = $IvyWallLeafD [pivot=(0, 0, 0)]
+  SM_Veg_IvyStemPill = $IvyStemPill [pivot=(0, 0, 0)]
+  SM_Veg_LitterBeech_A = $LitterBeechA [pivot=(0, 0, 0)]
+  SM_Veg_LitterBeech_B = $LitterBeechB [pivot=(0, 0, 0)]
+  SM_Veg_LitterBeech_C = $LitterBeechC [pivot=(0, 0, 0)]
+  SM_Veg_LitterOak_A = $LitterOakA [pivot=(0, 0, 0)]
+  SM_Veg_LitterOak_B = $LitterOakB [pivot=(0, 0, 0)]
+  SM_Veg_LitterTwig = $LitterTwig [pivot=(0, 0, 0)]
+  SM_Veg_LitterClump_A = $LitterClumpA [pivot=(0, 0, 0)]
+  SM_Veg_LitterClump_B = $LitterClumpB [pivot=(0, 0, 0)]
+  SM_Veg_LitterClump_C = $LitterClumpC [pivot=(0, 0, 0)]
+}
+
+# THE MATERIAL SLOTS (pathless: bind them when you import, as TimberKit's)
+LeafBeech = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Leaf_Beech')
+LeafOak = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Leaf_Oak')
+LeafBirch = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Leaf_Birch')
+LeafIvy = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Leaf_Ivy')
+LeafIvyYoung = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Leaf_IvyYoung')
+TwigBark = material('/Game/GraphCodeMarket/GraphCode/BarkMaterials/Materials/MI_Bark_Beech')
+Soil = material()
+Grass = material('/Game/GraphCodeMarket/GraphCode/FoliageMaterials/Materials/MI_Grass_Meadow')
+# the ivy stem and the litter twig wear oak bark: dark and furrowed at 0.5 cm (beech bark reads as white hairlines there)
+IvyStem = material('/Game/GraphCodeMarket/GraphCode/BarkMaterials/Materials/MI_Bark_Oak')
+LitterTwigBark = material('/Game/GraphCodeMarket/GraphCode/BarkMaterials/Materials/MI_Bark_Oak')
+Stone = material()
+
+# =====================================================================================================================
+# FROM Leaf/Leaf.gcshape (scratch recipe, 21 Nov 2026)
+# =====================================================================================================================
+# LEAF, round 1 (lead, 21 Nov 2026): one parametric broadleaf blade, species as value sets, for Unreal's Procedural
+# Vegetation Editor foliage palette. PVE's leaf frame (PVFoliageFacade.cpp:555, MakeFromYZ): origin at the attachment,
+# +Z toward the tip, +Y the blade's face normal, uniform scale, cm. Authored flat in X (length) / Y (width), then turned.
+#
+# KNOBS (cm, fractions):
+#   len      blade length                       wr     width / length
+#   widest   where the blade is widest, 0 base .. 1 tip
+#   apex     tip sharpness (0.5 blunt, 1 normal, 2 drawn-out)   base  the same at the base
+#   lobes    lobes per side (oak 4-6)           lobe   lobe depth, a fraction of the half-width
+#   sinus    sinus narrowness (2 even waves, 5 broad lobes with narrow sinuses)  skew  left side's offset, of a lobe
+#   lvar     each lobe's own size spread           lean   lobes point toward the tip (cm per cm out from the midrib)
+#   teeth    teeth per side                     tooth  tooth depth, a fraction of the half-width
+#   petiole  stalk length                       pr     stalk radius
+#   curl     blade folded up about the midrib (cm at the margin)   droop  tip hangs down (cm at the tip)
+#   wave     margin waviness (cm)               age    0 fresh .. 1 curled, holed .. 2 dry
+#   noise    the seed
+# NOTE: sin/cos/tan take DEGREES in this grammar.
+
+
+# ivy: the beech surface darkened and glossier (Tint, Roughness), until an ivy surface set exists
+
+# an irregular hole or bite: a jittered ring of points (insects never cut circles)
+Hole = plane(r=0.4, noise=1) {
+  loop (14) {
+    $a = 360 / 14 * output.index
+    $rr = $r * (0.45 + 0.9 * random(seed=$noise * 1009 + output.index, min=0, max=1))
+    $hp[output.index - 1] = ($rr * cos($a), $rr * sin($a))
+  }
+  points($hp, loop=true)
+}
+
+Leaf = mesh(len=8.0, wr=0.6, widest=0.45, apex=1.0, base=1.0, lobes=0, lobe=0.0, teeth=0, tooth=0.0, petiole=1.0, pr=0.08, curl=0.4, droop=0.5, wave=0.0, scallop=0, skew=0.35, lvar=0.3, sinus=2, lean=0, veins=0, vangle=40, pleat=0.0, age=0, holes=1, sp=0, res=1, arch=35, rise=18, sweep=0.06, ltwist=14, cvar=0.4, lpeak=0.5, lshape=0, ears=0, teeth2=0, tooth2=0, asym=0.06, roll=1, palm=0, plen=0.72, pbl=0.4, plat=50, pbas=110, pwc=58, pwl=40, pwb=34, psin=0.56, pexp=0.75, noise=1) {
+  # margin stations: enough that the narrowest sinus or tooth has several
+  # res: detail, 1 hero, 0.35 a leaf on a twig (margin stations and interior points both scale)
+  $n = clamp((24 * max($lobes, 1) + 6 * $teeth * max($teeth2, 1)) * $res, 20, 300)
+  $W = 0.5 * $len * $wr
+  # the two halves are never mirror images: each side its own width (asym, a fraction) and the left side's base
+  # starts a little higher up the midrib (an oblique base, as beech and elm have)
+  $ka = $noise * 1009 + 7331
+  $ka = $ka - 99991 * floor($ka / 99991)
+  $aw = $asym * (2 * random(seed=$ka, min=0, max=1) - 1)
+  # the widest point at t = widest: t is remapped piecewise to u, u = 0.5 at t = widest (sin peaks there, slope 0)
+  $wd = clamp($widest, 0.1, 0.9)
+  # the stalk is part of the outline: a strip 2 x pr wide from the attachment (x = -petiole) to the blade
+  $pts[0] = (-1 * $petiole, $pr)
+  $pts[1] = (-1 * $petiole, -1 * $pr)
+  $pts[2] = (0, -1 * $pr)
+  $q = 3
+  if ($palm > 0.5) {
+    # PALMATE (ivy, maple, plane): the lobes radiate from the stalk's junction, so the outline is POLAR about it,
+    # theta from the midrib: a central lobe on the midrib, a lateral pair at `plat` degrees, a basal pair at `pbas`
+    # (past 90: they wrap back beside the stalk, the heart-shaped base), each a straight-edged triangle `pw*` degrees
+    # wide (`pexp` < 1 bows its edges out a little), broad shallow sinuses at `psin` of the length between them, and
+    # the notch where the stalk enters: the sweep ends at 150 degrees and a straight edge closes into the junction. Each lobe its own length (lvar), the two sides never mirrored.
+    $np = clamp(80 * $res, 28, 200)
+    $kp = $noise * 1009 + 2203
+    $kp = $kp - 99991 * floor($kp / 99991)
+    loop (2) {
+      $side = 3 - 2 * output.index
+      $ll = $plen * (1 + $lvar * (random(seed=$kp + 11 * output.index, min=0, max=1) - 0.5))
+      $lb = $pbl * (1 + $lvar * (random(seed=$kp + 11 * output.index + 5, min=0, max=1) - 0.5))
+      $lc = 1 + 0.5 * $lvar * (random(seed=$kp + 3, min=0, max=1) - 0.5)
+      $pl = $plat + 6 * $lvar * (random(seed=$kp + 11 * output.index + 7, min=0, max=1) - 0.5)
+      loop ($np) {
+        # first side: from the notch round to the tip; second side: from just past the tip back to the notch
+        $j = output.index
+        if ($side < 0) {
+          $j = $np - output.index
+        }
+        $th = 150 * (1 - $j / $np)
+        $rc = $lc * pow(clamp(1 - $th / $pwc, 0, 1), $pexp)
+        $rl = $ll * pow(clamp(1 - abs($th - $pl) / $pwl, 0, 1), $pexp)
+        $rb = $lb * pow(clamp(1 - abs($th - $pbas) / $pwb, 0, 1), $pexp)
+        $rf = $psin * (1 - clamp(($th - 118) / 32, 0, 1))
+        $R = $len * max(max(max($rc, $rl), max($rb, $rf)), 0.04)
+        # tip of the first side is the leaf's tip; the second side starts one station past it
+        $y = max($R * sin($th) * $wr / 1.25, 2 * $pr)
+        $pts[$q] = ($R * cos($th), -1 * $side * $y)
+        $q = $q + 1
+      }
+    }
+  } else {
+    # right margin, base to tip, then left margin, tip to base
+    loop (2) {
+      $side = 3 - 2 * output.index
+      loop ($n - 1) {
+        $j = output.index
+        if ($side < 0) {
+          $j = $n - output.index
+        }
+        $t = $j / $n
+        $tp = 0.5 * $t / $wd
+        if ($t > $wd) {
+          $tp = 0.5 + 0.5 * ($t - $wd) / (1 - $wd)
+        }
+        $e = $base + ($apex - $base) * $t
+        $h = pow(sin(180 * $tp), $e)
+        # the left side's lobes and teeth sit skew of a lobe up from the right's (real leaves are not mirrored)
+        $tq = $tp
+        if ($side < 0) {
+          $tq = $tp + $skew / max($lobes, 1)
+        }
+        # lobes: broad and rounded with narrow sinuses (the sinus term cubed); each lobe its own size
+        $li = floor($lobes * $tq + 0.5)
+        $lk = 1 + $lvar * (random(seed=$noise * 1009 + 97 * $side + $li, min=0, max=1) - 0.5)
+        # lshape: how the lobes' depth runs along the leaf: 0 even, 1 the oak's (largest about `lpeak`, small at the base
+        # and the tip, so the blade is widest above the middle and the lobes shrink down toward the stalk)
+        $lp = 1 - $lshape * (1 - pow(sin(180 * clamp($t / max($lpeak, 0.05) * 0.5, 0, 0.5)), 1) * (1 - 0.6 * clamp(($t - $lpeak) / (1 - $lpeak), 0, 1)))
+        $lb = 1 - $lobe * $lk * $lp * pow(0.5 - 0.5 * cos(360 * $lobes * $tq), $sinus)
+        # margin: saw teeth toward the tip (serrate), or rounded scallops (crenate) with scallop=1
+        $tq2 = $tp
+        if ($side < 0) {
+          $tq2 = $tp + $skew / max($teeth, 1)
+        }
+        $ft = $teeth * $tq2 - floor($teeth * $tq2)
+        # each tooth rises slowly, then drops at its tip: the tip points toward the apex (serrate)
+        $tt = 1 - $tooth * (1 - $ft)
+        # double serration (birch, elm): `teeth2` small teeth on each big one, `tooth2` deep
+        if ($teeth2 > 0.5) {
+          $ft2 = $teeth * $teeth2 * $tq2 - floor($teeth * $teeth2 * $tq2)
+          $tt = $tt - $tooth2 * (1 - $ft2)
+        }
+        if ($scallop > 0.5) {
+          $tt = 1 - $tooth * pow(0.5 - 0.5 * cos(360 * $teeth * $tq2), 2)
+        }
+        # ears: two small rounded lobes clasping the stalk at the base (English oak's auricles)
+        $ea = $ears * pow(max(1 - pow(($t - 0.035) / 0.055, 2), 0), 2)
+        # a tooth is cut to a depth that follows sqrt of the width, not the width itself: real teeth stay sharp up to
+        # the narrow tip instead of fading out with it
+        $tg = clamp(1 - (1 - $tt) / sqrt(max($h, 0.12)), 0.2, 1)
+        $y = max($W * (1 + $side * $aw) * ($h * $lb * $tg + $ea), $pr)
+        # lean: margin points far from the midrib move toward the tip, so lobes point forward and sinuses slant back
+        $pts[$q] = ($len * $t + $lean * $y, -1 * $side * $y)
+        $q = $q + 1
+        if ($side > 0) {
+          if ($j > $n - 1.5) {
+            $pts[$q] = ($len, 0)
+            $q = $q + 1
+          }
+        }
+      }
+    }
+  }
+  $pts[$q] = (0, $pr)
+  points($pts, loop=true)
+  # AGE 0..2: holes and bites (a hole across the margin is a bite), from age 0.5
+  $nh = min(floor(2 + 2 * clamp($age - 0.4, 0, 2)), 5)
+  if ($age < 0.4) {
+    $nh = 0
+  }
+  # OPEN: on lobed leaves (lean) an outline hole can split the blade at some seeds, so lobed leaves take no holes yet
+  if ($lobes > 0.5) {
+    $nh = 0
+  }
+  if ($holes < 0.5) {
+    $nh = 0
+  }
+  if ($nh > 0.5) {
+    loop ($nh) {
+      $k = $noise * 1009 + 31 * output.index
+      $hx = $len * (0.22 + 0.5 * random(seed=$k, min=0, max=1))
+      # nearer the midrib on lobed leaves, so a hole never cuts a lobe off
+      $hy = $W * (0.42 - 0.4 * clamp($lobe, 0, 0.5)) * (2 * random(seed=$k + 1, min=0, max=1) - 1)
+      $hr = $len * (0.012 + 0.022 * random(seed=$k + 2, min=0, max=1))
+      subtract($Hole, r=$hr, noise=$k, at=($hx, $hy))
+    }
+  }
+  fill()
+  # points inside the blade for the warps (about a 40th of the length apart)
+  warp(by=(0, 0, 0)) [top, smooth=$len / (5 * $res)]
+  # UV ON THE FLAT BLADE, before any curl (the warps below carry it, so the texture never stretches with the
+  # curl): a FULL-RECT leaf-surface texture (owner ruling 21 Nov: the geometry cuts the outline, one texture fits
+  # any shape). Even scale, one square = the blade's length both ways: u 0 at the blade's base to 1 at its tip,
+  # the midrib on v = 0.5, so the veins keep their real angles whatever the width; the stalk (x < 0) clamps.
+  uv(plane, at=(0, 0, 0), facing=+Z, up=+X, scale=($len, $len), offset=(0, 0.5))
+  # fold up about the midrib, hang at the tip, a wave along the margin
+  $tw = 360 * 1.5 / $len
+  warp(by=(0, 0, $curl * pow(abs(point.y) / $W, 1.2) + $wave * sin($tw * point.x + 75) * pow(abs(point.y) / $W, 2)))
+  # secondary veins as pleats: ridges running out from the midrib at vangle toward the tip, veins pairs along the blade
+  if ($veins > 0.5) {
+    $ct = 1 / tan($vangle)
+    warp(by=(0, 0, $pleat * (1 + 1.5 * clamp($age, 0, 2)) * cos(360 * $veins * (point.x - abs(point.y) * $ct) / $len) * clamp(3 * abs(point.y) / $W, 0, 1) * clamp(point.x / (0.08 * $len), 0, 1)))
+  }
+  # AGE: as it dries each half ROLLS up about the midrib (a true roll, the half keeps its width: a point d from the
+  # midrib goes round a circle whose radius makes the margin turn `rl` degrees), more toward the tip, each leaf and
+  # each side its own amount; and the blade wrinkles. Age 1 cupped, age 2 rolled into a scoop or a half tube.
+  if ($age > 0.01) {
+    $ag = clamp($age, 0, 2)
+    $kg = $noise * 1009 + 5557
+    $kg = $kg - 99991 * floor($kg / 99991)
+    # roll scales the dry roll: 1 a leaf drying in the air, about 0.4 one pressed flat on the ground by rain
+    $rl = $roll * $ag * (30 + 45 * random(seed=$kg, min=0, max=1))
+    $rs = 0.35 * (2 * random(seed=$kg + 1, min=0, max=1) - 1)
+    $ns = 0.12 * $len
+    warp(by=(0, 0, $ag * 0.012 * $len * noise(point.x / $ns, point.y / $ns, $noise)))
+    # the side sd = (point.y / max(abs(point.y), 0.0001)), the turn at the margin rm, the roll radius rr = W / rm (rad), the turn here pd = rm * |y| / W
+    warp(to=(point.x, (point.y / max(abs(point.y), 0.0001)) * (($W * 57.29578 / max($rl * (1 + $rs * (point.y / max(abs(point.y), 0.0001))) * (0.55 + 0.45 * clamp(point.x / $len, 0, 1)), 0.5)) * sin((max($rl * (1 + $rs * (point.y / max(abs(point.y), 0.0001))) * (0.55 + 0.45 * clamp(point.x / $len, 0, 1)), 0.5) * abs(point.y) / $W)) - point.z * sin((max($rl * (1 + $rs * (point.y / max(abs(point.y), 0.0001))) * (0.55 + 0.45 * clamp(point.x / $len, 0, 1)), 0.5) * abs(point.y) / $W))), ($W * 57.29578 / max($rl * (1 + $rs * (point.y / max(abs(point.y), 0.0001))) * (0.55 + 0.45 * clamp(point.x / $len, 0, 1)), 0.5)) * (1 - cos((max($rl * (1 + $rs * (point.y / max(abs(point.y), 0.0001))) * (0.55 + 0.45 * clamp(point.x / $len, 0, 1)), 0.5) * abs(point.y) / $W))) + point.z * cos((max($rl * (1 + $rs * (point.y / max(abs(point.y), 0.0001))) * (0.55 + 0.45 * clamp(point.x / $len, 0, 1)), 0.5) * abs(point.y) / $W))))
+  }
+  # THE LEAF'S OWN CURVES, each with its own draw (cvar the spread): a slow TWIST about the midrib, a SWEEP of the midrib
+  # to one side in plan, and the ARCH: the blade leaves the stalk rising `rise` degrees and bends over at a constant
+  # rate by `arch` degrees to the tip (a true bend, so the blade keeps its length). `droop` (cm) adds to the arch.
+  $kq = $noise * 1009 + 4441
+  $kq = $kq - 99991 * floor($kq / 99991)
+  $ar = ($arch + 400 * $droop / $len) * (1 + $cvar * (2 * random(seed=$kq, min=0, max=1) - 1))
+  $ri = $rise * (1 + $cvar * (2 * random(seed=$kq + 1, min=0, max=1) - 1))
+  $sw = $sweep * $len * (2 * random(seed=$kq + 2, min=0, max=1) - 1)
+  $lt = $ltwist * (1 + 1.5 * clamp($age, 0, 2)) * (2 * random(seed=$kq + 3, min=0, max=1) - 1)
+  warp(to=(point.x, point.y * cos($lt * max(point.x, 0) / $len) - point.z * sin($lt * max(point.x, 0) / $len) + $sw * pow(max(point.x, 0) / $len, 2), point.y * sin($lt * max(point.x, 0) / $len) + point.z * cos($lt * max(point.x, 0) / $len)))
+  $kd = max(abs($ar), 0.5) / $len
+  $kr = $kd * 3.14159265 / 180
+  warp(to=((sin($ri) - sin($ri - $kd * point.x)) / $kr - point.z * sin($ri - $kd * point.x), point.y, (cos($ri - $kd * point.x) - cos($ri)) / $kr + point.z * cos($ri - $kd * point.x)))
+  # turn into PVE's frame: x (length) -> +Z, z (face normal) -> +Y, y (width) -> +X; the attachment to the origin
+  warp(to=(point.y, point.z, point.x + $petiole))
+  # the species' scanned leaf: sp 0 beech, 1 oak, 2 birch
+  if ($sp < 0.5) {
+    material($LeafBeech)
+  }
+  if ($sp > 0.5) {
+    if ($sp < 1.5) {
+      material($LeafOak)
+    } else {
+      if ($sp < 2.5) {
+        material($LeafBirch)
+      } else {
+        if ($sp < 3.5) {
+          material($LeafIvy)
+        } else {
+          material($LeafIvyYoung)
+        }
+      }
+    }
+  }
+  # vertex colour for the leaf material: R how dry (age 2 = fully dry), G this leaf's own shade draw
+  $dry = clamp(($age - 0.6) / 1.2, 0, 1)
+  colour($dry, channel=r)
+  $sh = random(seed=$noise * 1009 + 977, min=0, max=1)
+  colour($sh, channel=g)
+}
+
+Beech = mesh() { add($Leaf, len=8, wr=0.62, widest=0.52, apex=1.1, base=0.55, teeth=8, tooth=0.04, scallop=1, petiole=1.1, curl=0.45, droop=0.5, wave=0.12, join=none)  uv(keep) }
+Oak = mesh() { add($Leaf, len=11, wr=0.56, widest=0.64, apex=0.5, base=1.7, lobes=5.5, lobe=0.5, lvar=0.7, sinus=2.2, lean=0.35, lshape=0.85, lpeak=0.6, ears=0.2, petiole=0.3, curl=0.35, droop=0.5, wave=0.25, sp=1, join=none)  uv(keep) }
+Birch = mesh() { add($Leaf, len=5, wr=0.78, widest=0.3, apex=2.2, base=0.6, teeth=9, tooth=0.07, teeth2=3, tooth2=0.025, petiole=2.0, pr=0.05, curl=0.25, droop=0.3, sp=2, join=none)  uv(keep) }
+Willow = mesh() { add($Leaf, len=10, wr=0.16, widest=0.4, apex=1.8, base=1.2, teeth=30, tooth=0.04, petiole=0.6, curl=0.3, droop=1.2, join=none)  uv(keep) }
+
+# PVE test: the beech at the size of the hazel sample's leaf meshes (~25 cm), wearing the hazel foliage material
+# our leaf material (Codex's scanned beech sets): R = dry blend (age / 2), G = this leaf's own colour draw
+BeechPVE = mesh() {
+  add($Leaf, len=22, wr=0.62, widest=0.52, apex=1.1, base=0.55, teeth=8, tooth=0.04, scallop=1, petiole=2.5, pr=0.2, curl=1.2, droop=1.4, wave=0.3, join=none)
+  uv(keep)
+}
+
+BeechAge1 = mesh() { add($Leaf, len=8, wr=0.62, widest=0.52, apex=1.1, base=0.55, teeth=8, tooth=0.04, scallop=1, petiole=1.1, curl=0.45, droop=0.5, wave=0.12, age=1, noise=3, join=none)  uv(keep) }
+BeechAge2 = mesh() { add($Leaf, len=8, wr=0.62, widest=0.52, apex=1.1, base=0.55, teeth=8, tooth=0.04, scallop=1, petiole=1.1, curl=0.45, droop=0.5, wave=0.12, age=2, noise=5, join=none)  uv(keep) }
+OakAge2 = mesh() { add($Leaf, len=11, wr=0.56, widest=0.64, apex=0.5, base=1.7, lobes=5.5, lobe=0.5, lvar=0.7, sinus=2.2, lean=0.35, lshape=0.85, lpeak=0.6, ears=0.2, petiole=0.3, curl=0.35, droop=0.5, wave=0.25, age=2, noise=7, sp=1, join=none)  uv(keep) }
+
+# LEAF LITTER: leaves dropped flat-ish from a little above the ground, each turned at random about its normal and tilted
+# a little, settled with collide=settle so each rests on the ground or the leaves under it (G31). Litter leaves are
+# lying leaves: little curl or droop (a rigid curled leaf rests on its hull and stands on edge).
+Ground = mesh(size=60) {
+  rect(w=$size, h=$size)
+  fill()
+  warp(by=(0, 0, 0)) [top, smooth=8]
+  warp(by=(0, 0, 1.2 * noise(point.x / 20, point.y / 20, 2)))
+  # a filled rect faces down here; a mirror turns it to face up (it was culled from above)
+  warp(to=(point.x, -1 * point.y, point.z))
+  material($Soil)
+}
+LyingBeech = mesh(res=1, age=1.8, curl=0.15, noise=1) {
+  add($Leaf, len=8, roll=0.4, res=$res, wr=0.62, widest=0.52, apex=1.1, base=0.55, teeth=8, tooth=0.04, scallop=1, petiole=1.1, curl=$curl, droop=0.15, wave=0.1, age=$age, holes=0, noise=$noise, join=none)
+  uv(keep)
+}
+LyingOak = mesh(res=1, age=1.8, curl=0.15, noise=1) {
+  add($Leaf, len=11, roll=0.4, res=$res, wr=0.56, widest=0.64, apex=0.5, base=1.7, lobes=5.5, lobe=0.5, lvar=0.7, sinus=2.2, lean=0.35, lshape=0.85, lpeak=0.6, ears=0.2, petiole=0.3, curl=$curl, droop=0.2, wave=0.15, age=$age, holes=0, noise=$noise, sp=1, join=none)
+  uv(keep)
+}
+LitterLeaves = mesh(n=60, size=54, res=1, twigs=3, noise=1) {
+  loop ($n) {
+    $k = $noise * 1009 + 7 * output.index
+    $x = $size * (random(seed=$k, min=0, max=1) - 0.5)
+    $y = $size * (random(seed=$k + 1, min=0, max=1) - 0.5)
+    $rr = 90 + 24 * (random(seed=$k + 2, min=0, max=1) - 0.5)
+    if (random(seed=$k + 8, min=0, max=1) > 0.55) {
+      $rr = $rr + 180
+    }
+    $rp = 24 * (random(seed=$k + 3, min=0, max=1) - 0.5)
+    $ry = 360 * random(seed=$k + 4, min=0, max=1)
+    $z = 3 + 0.25 * output.index
+    $v = $k + 6
+    if (random(seed=$k + 5, min=0, max=1) > 0.45) {
+      add($LyingBeech, res=$res, age=1.4 + 0.6 * random(seed=$k + 9, min=0, max=1), noise=$v, at=($x, $y, $z), rotate=($rr, $rp, $ry), collide=settle, obstacle=$Ground, join=none)
+    } else {
+      add($LyingOak, res=$res, age=1.4 + 0.6 * random(seed=$k + 9, min=0, max=1), noise=$v, at=($x, $y, $z), rotate=($rr, $rp, $ry), collide=settle, obstacle=$Ground, join=none)
+    }
+  }
+  # a few dead twigs: a bowed stick with one or two side shoots, lying on its side and settled like the leaves
+  loop ($twigs) {
+    $k = $noise * 1009 + 7919 + 13 * output.index
+    $k = $k - 99991 * floor($k / 99991)
+    $x = 0.7 * $size * (random(seed=$k, min=0, max=1) - 0.5)
+    $y = 0.7 * $size * (random(seed=$k + 1, min=0, max=1) - 0.5)
+    $ry = 360 * random(seed=$k + 2, min=0, max=1)
+    add($DeadTwig, len=14 + 16 * random(seed=$k + 3, min=0, max=1), noise=$k, at=($x, $y, 2 + 0.25 * $n), rotate=(90, 0, $ry), collide=settle, obstacle=$Ground, join=none)
+  }
+  uv(keep)
+}
+Litter = mesh() {
+  add($Ground)
+  add($LitterLeaves, n=110, noise=1, join=none)
+  uv(keep)
+}
+# DEAD TWIG: a thin bowed stick, bark, a side shoot or two cut short (as twigs break)
+DeadTwig = mesh(len=20, r=0.25, noise=1) {
+  add($Stem, len=$len, r=$r, bend=0.12 * $len, join=none)
+  $k = $noise * 1009 + 311
+  $k = $k - 99991 * floor($k / 99991)
+  add($Stem, len=0.35 * $len, r=0.56 * $r, bend=0.05 * $len, at=(0, 0, $len * (0.3 + 0.3 * random(seed=$k, min=0, max=1))), rotate=(0, 38, 0), join=none)
+  if (random(seed=$k + 1, min=0, max=1) > 0.5) {
+    add($Stem, len=0.25 * $len, r=0.44 * $r, bend=0.03 * $len, at=(0, 0, $len * 0.7), rotate=(0, -34, 180), join=none)
+  }
+  uv(keep)
+}
+# GAME LITTER: no ground of its own (it is scattered on terrain by foliage/PCG), the leaves at a third of the
+# outline detail; settled on a flat obstacle so it lies on any gentle ground
+FlatGround = mesh(size=60) {
+  rect(w=$size, h=$size)
+  fill()
+  material($Soil)
+}
+LitterPatchLeaves = mesh(n=45, size=50, noise=1) {
+  loop ($n) {
+    $k = $noise * 1009 + 7 * output.index
+    $x = $size * (random(seed=$k, min=0, max=1) - 0.5)
+    $y = $size * (random(seed=$k + 1, min=0, max=1) - 0.5)
+    $rr = 90 + 24 * (random(seed=$k + 2, min=0, max=1) - 0.5)
+    if (random(seed=$k + 8, min=0, max=1) > 0.55) {
+      $rr = $rr + 180
+    }
+    $rp = 24 * (random(seed=$k + 3, min=0, max=1) - 0.5)
+    $ry = 360 * random(seed=$k + 4, min=0, max=1)
+    $z = 3 + 0.25 * output.index
+    $v = $k + 6
+    if (random(seed=$k + 5, min=0, max=1) > 0.45) {
+      add($LyingBeech, res=0.35, age=1.4 + 0.6 * random(seed=$k + 9, min=0, max=1), noise=$v, at=($x, $y, $z), rotate=($rr, $rp, $ry), collide=settle, obstacle=$FlatGround, join=none)
+    } else {
+      add($LyingOak, res=0.35, age=1.4 + 0.6 * random(seed=$k + 9, min=0, max=1), noise=$v, at=($x, $y, $z), rotate=($rr, $rp, $ry), collide=settle, obstacle=$FlatGround, join=none)
+    }
+  }
+  uv(keep)
+}
+LitterPatch = mesh() { add($LitterPatchLeaves, n=45, noise=3, join=none)  uv(keep) }
+
+# SPECIES: one leaf of a species at a given length (cm), age and draw. sp 0 beech, 1 oak, 2 birch, 3 maple-like
+# (palmate lobes, opposite), 4 willow. A new species is a new value set here; Twig and Spray read only `sp`.
+SpeciesLeaf = mesh(sp=0, len=8, age=0, holes=1, res=1, noise=1) {
+  if ($sp < 0.5) {
+    add($Leaf, len=$len, wr=0.62, widest=0.52, apex=1.1, base=0.55, teeth=8, tooth=0.04, scallop=1, petiole=0.14 * $len, curl=0.09 * $len, droop=0, arch=40, rise=20, wave=0.015 * $len, age=$age, holes=$holes, noise=$noise, res=$res, sp=0, join=none)
+  } else {
+    if ($sp < 1.5) {
+      add($Leaf, len=$len, wr=0.56, widest=0.64, apex=0.5, base=1.7, lobes=5.5, lobe=0.5, lvar=0.7, sinus=2.2, lean=0.35, lshape=0.85, lpeak=0.6, ears=0.2, petiole=0.03 * $len, curl=0.06 * $len, droop=0, arch=30, rise=15, wave=0.03 * $len, age=$age, holes=$holes, noise=$noise, res=$res, sp=1, join=none)
+    } else {
+      if ($sp < 2.5) {
+        add($Leaf, len=$len, wr=0.78, widest=0.3, apex=2.2, base=0.6, teeth=9, tooth=0.07, teeth2=3, tooth2=0.025, petiole=0.4 * $len, pr=0.01 * $len, curl=0.07 * $len, droop=0, arch=45, rise=25, age=$age, holes=$holes, noise=$noise, res=$res, sp=2, join=none)
+      } else {
+        add($Leaf, len=$len, wr=0.16, widest=0.4, apex=1.8, base=1.2, teeth=30, tooth=0.04, petiole=0.06 * $len, curl=0.08 * $len, droop=0, arch=70, rise=10, age=$age, holes=$holes, noise=$noise, res=$res, sp=0, join=none)
+      }
+    }
+  }
+}
+
+# a species leaf turned a quarter about its own length, so its face looks along +X: a positive pitch then leans the
+# tip toward -X and tips the face UP, toward the light, as leaves on a spiral or opposite twig hold it
+FacingLeaf = mesh(sp=0, len=8, age=0, holes=1, res=1, noise=1) {
+  add($SpeciesLeaf, sp=$sp, len=$len, age=$age, holes=$holes, res=$res, noise=$noise, rotate=(0, 0, -90), join=none)
+}
+
+# TWIG: a tapered, bowed stem with leaves by phyllotaxis.
+#   arr  0 alternate in one plane (distichous: beech, elm, hazel), 1 opposite pairs turning 90 deg (decussate: maple,
+#        ash, lilac), 2 spiral by `div` degrees (137.5 the golden angle: oak, birch, cherry), 3 whorls of `whorl`
+#   n    leaf nodes; axil the angle between stem and leaf; leaf the first leaf's length, `shrink` how much smaller the
+#        last is; bend how far the tip bows (cm); r the stem radius at the base; age 0..2 for every leaf, each its own draw
+# Frame: the base at the origin, the stem up +Z, bowing toward +X: what PVE's palette slot expects.
+Stem = mesh(len=30, r=0.25, bend=4) {
+  circle(radius=$r, segments=6)
+  extrude(height=$len)
+  warp(by=(0, 0, 0)) [side, smooth=$len / 4]
+  # taper to 40 % at the tip, and bow over by `bend` cm at the tip
+  warp(to=(point.x * (1 - 0.6 * point.z / $len) + $bend * pow(point.z / $len, 2), point.y * (1 - 0.6 * point.z / $len), point.z))
+  material($TwigBark)
+}
+Twig = mesh(sp=0, len=30, n=9, arr=0, div=137.5, whorl=3, axil=55, leaf=7.5, shrink=0.45, bend=4, r=0.22, age=0, res=0.35, noise=1) {
+  add($Stem, len=$len, r=$r, bend=$bend)
+  $per = 1
+  if ($arr > 0.5) {
+    $per = 2
+  }
+  if ($arr > 2.5) {
+    $per = $whorl
+  }
+  loop ($n) {
+    $i = output.index
+    $t = 0.2 + 0.78 * ($i - 1) / max($n - 1, 1)
+    $z = $len * $t
+    $x = $bend * $t * $t
+    loop ($per) {
+      $j = output.index
+      $k = $noise * 1009 + 13 * $i + 211 * $j
+      # around the stem: alternate swings 0/180 in the twig's plane, opposite pairs 0/180 and turn 90 per node,
+      # spiral steps `div` per node, whorls spread evenly and turn half a step per node
+      $a = 180 * ($i - 2 * floor($i / 2))
+      if ($arr > 0.5) {
+        $a = 180 * ($j - 1) + 90 * ($i - 2 * floor($i / 2))
+      }
+      if ($arr > 1.5) {
+        $a = $div * $i
+      }
+      if ($arr > 2.5) {
+        $a = 360 / $per * ($j - 1) + 180 / $per * $i
+      }
+      $a = $a + 14 * (random(seed=$k, min=0, max=1) - 0.5)
+      $p = $axil + 12 * (random(seed=$k + 1, min=0, max=1) - 0.5)
+      $tw = 30 * (random(seed=$k + 2, min=0, max=1) - 0.5)
+      $l = $leaf * (1 - $shrink * $t) * (0.85 + 0.3 * random(seed=$k + 3, min=0, max=1))
+      # a child's seed folded back under 99991, so nested draws never overflow a whole number
+      $v = ($k + 4) - 99991 * floor(($k + 4) / 99991)
+      if ($arr < 0.5) {
+        # a flat spray: every face toward +Y, the leaves swinging left and right in the twig's plane
+        $ps = $p
+        if ($a > 90) {
+          $ps = -1 * $p
+        }
+        add($SpeciesLeaf, sp=$sp, len=$l, age=$age, res=$res, noise=$v, at=($x, 0, $z), rotate=($tw, $ps, 0), join=none)
+      } else {
+        # faces up: lean out toward the leaf's own direction a (a positive pitch leans toward -X, so yaw a + 180)
+        $ya = $a + 180
+        add($FacingLeaf, sp=$sp, len=$l, age=$age, res=$res, noise=$v, at=($x, 0, $z), rotate=($tw, $p, $ya), join=none)
+      }
+    }
+  }
+}
+
+# SPRAY: a shoot carrying `twigs` side twigs (alternating in one plane for arr 0, else turning about the shoot),
+# each a Twig of its own draw and size, and one at the tip. The unit PVE places on a branch tip.
+Spray = mesh(sp=0, len=55, twigs=6, arr=0, div=137.5, axil=48, leaf=7.5, age=0, res=0.35, noise=1) {
+  add($Stem, len=$len, r=0.35, bend=0.11 * $len)
+  loop ($twigs) {
+    $i = output.index
+    $t = 0.15 + 0.78 * ($i - 1) / max($twigs, 1)
+    $z = $len * $t
+    $x = 0.11 * $len * $t * $t
+    $k = $noise * 1009 + 101 * $i
+    $tl = 0.5 * $len * (1.1 - 0.5 * $t) * (0.85 + 0.3 * random(seed=$k, min=0, max=1))
+    $a = 180 * ($i - 2 * floor($i / 2))
+    if ($arr > 0.5) {
+      $a = 90 * $i
+    }
+    if ($arr > 1.5) {
+      $a = $div * $i
+    }
+    $p = $axil + 10 * (random(seed=$k + 1, min=0, max=1) - 0.5)
+    $kc = $k - 99991 * floor($k / 99991)
+    add($Twig, sp=$sp, len=$tl, n=7, arr=$arr, div=$div, leaf=$leaf, age=$age, res=$res, noise=$kc, at=($x, 0, $z), rotate=(0, $p, $a), join=none)
+  }
+  $kt = ($noise * 1009 + 7) - 99991 * floor(($noise * 1009 + 7) / 99991)
+  $tt = 0.44 * $len
+  add($Twig, sp=$sp, len=$tt, n=7, arr=$arr, div=$div, leaf=$leaf, age=$age, res=$res, noise=$kt, at=(0.11 * $len, 0, $len), join=none)
+}
+
+# the shipped-style lines: a beech spray (alternate), an oak spray (spiral), a maple-like opposite twig, a birch twig
+TwigBeech = mesh() { add($Twig, sp=0, len=30, arr=0, noise=1, join=none) }
+SprayBeech = mesh() { add($Spray, sp=0, arr=0, noise=1, join=none) }
+SprayOak = mesh() { add($Spray, sp=1, arr=2, leaf=10, noise=2, join=none) }
+TwigBirch = mesh() { add($Twig, sp=2, len=28, arr=2, n=11, leaf=5, axil=45, noise=3, join=none) }
+TwigOpposite = mesh() { add($Twig, sp=0, len=30, arr=1, n=6, leaf=8, axil=50, noise=4, join=none) }
+DeadTwigA = mesh() { add($DeadTwig, len=24, noise=4, join=none)  uv(keep) }
+
+# =====================================================================================================================
+# FROM Grass/Grass.gcshape (scratch recipe, 21 Nov 2026)
+# =====================================================================================================================
+# GRASS, round 1 (lead, 21 Nov 2026): a parametric grass blade and clump. Unreal places grass (Landscape grass types,
+# PCG, the foliage tool); this makes the meshes it places. The geometry cuts the blade; the texture is a full rect of
+# blade surface (Codex grasssurf_*): u across the blade's width (keel on u = 0.5), v from the base (0) to the tip (1).
+# NOTE: sin/cos take DEGREES in this grammar.
+#
+# Blade knobs (cm, degrees):
+#   len    blade length              w      widest width            wpos   where it is widest, 0 base .. 1 tip
+#   tip    tip sharpness (1 straight taper, 2 long fine tip)        fold   keel fold, cm the edges rise at full width
+#   lean   lean from vertical at the base     arc   how much more it bends over by the tip (degrees)
+#   twist  twist about its length by the tip  age   0 green .. 1 browning tip .. 2 dry straw     noise  the seed
+# Frame: the base at the origin, growing up +Z, leaning toward +X.
+
+
+# the blade surface (Codex grasssurf_meadow, 21 Nov): keel at u = 0.5, v 0 at the base to 1 at the tip
+
+Blade = mesh(len=30, w=0.6, wpos=0.12, tip=1.4, fold=0.12, lean=10, arc=60, twist=40, roll=0, age=0, steps=24, noise=1) {
+  # steps: outline points up each edge (24 a leaf blade; a spikelet or a panicle thread needs 4)
+  $n = $steps
+  $W = 0.5 * $w
+  $wp = clamp($wpos, 0.02, 0.6)
+  # the outline: up one edge from the base to the tip, back down the other
+  loop (2) {
+    $side = 3 - 2 * output.index
+    loop ($n + 1) {
+      $j = output.index - 1
+      if ($side < 0) {
+        $j = $n - output.index + 1
+      }
+      $t = $j / $n
+      # the width: rising quickly from a narrow base to the widest point, then tapering to the tip
+      $h = 0.55 + 0.45 * $t / $wp
+      if ($t > $wp) {
+        $h = pow(1 - ($t - $wp) / (1 - $wp), 1 / $tip)
+      }
+      $y = $W * max($h, 0.002)
+      if ($j < 0.5) {
+        $y = 0.55 * $W
+      }
+      $q = output.index - 1
+      if ($side < 0) {
+        $q = $n + output.index
+      }
+      $pts[$q] = ($len * $t, -1 * $side * $y)
+    }
+  }
+  points($pts, loop=true)
+  fill()
+  # points enough for the arc and twist: about one row every 1.5-2.5 cm whatever the blade's length
+  warp(by=(0, 0, 0)) [top, smooth=max($len / 12, 2)]
+  # UV on the flat strip: width -> u (keel at 0.5), length -> v (base 0, tip 1)
+  $wu = 2 * $W
+  uv(plane, at=(0, 0, 0), facing=+Z, up=-Y, scale=($wu, $len), offset=(0.5, 0))
+  # the keel fold: the edges rise along the face normal by fold * |y| / W
+  warp(by=(0, 0, $fold * abs(point.y) / $W))
+  # twist about the length: `roll` degrees at the base (a blade's face is not square to its lean, so a clump is never
+  # seen all edge-on from the side), growing by `twist` degrees to the tip
+  warp(to=(point.x, point.y * cos($roll + $twist * point.x / $len) - point.z * sin($roll + $twist * point.x / $len), point.y * sin($roll + $twist * point.x / $len) + point.z * cos($roll + $twist * point.x / $len)))
+  # the arc: the centreline leaves the ground at `lean` from vertical and bends over at a constant rate to lean + arc
+  # by the tip; a point s along it at width y and height h above the blade sits at C(s) + y * Y + h * N(s)
+  $kd = max($arc, 0.5) / $len
+  $kr = $kd * 3.14159265 / 180
+  warp(to=((cos($lean) - cos($lean + $kd * point.x)) / $kr + point.z * cos($lean + $kd * point.x), point.y, (sin($lean + $kd * point.x) - sin($lean)) / $kr - point.z * sin($lean + $kd * point.x)))
+  material($Grass)
+  # vertex colour for the leaf material: R how dry, G this blade's shade
+  $dr = clamp($age - 0.2, 0, 2) / 2
+  # one dryness per blade (tip-first browning is the material's, from v)
+  $dry = clamp($dr + 0.5 * clamp($age - 1, 0, 1), 0, 1)
+  colour($dry, channel=r)
+  $sh = random(seed=$noise * 1009 + 977, min=0, max=1)
+  colour($sh, channel=g)
+}
+
+# CLUMP: `n` blades from a small base of radius `r`, each fanned outward from the centre by its place, with its own
+# length, width, lean, arc, twist and age draw. Value sets below: a lawn tuft, a meadow clump, a tall dry tussock.
+Clump = mesh(n=24, r=1.5, len=30, lvar=0.4, w=0.6, fold=0.12, steps=24, lean=12, leanvar=18, arc=55, arcvar=40, twist=40, age=0, agevar=0.5, dead=0.1, noise=1) {
+  loop ($n) {
+    $i = output.index
+    $k = $noise * 1009 + 17 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $ang = 137.508 * $i + 20 * (random(seed=$k, min=0, max=1) - 0.5)
+    $rad = $r * sqrt(random(seed=$k + 1, min=0, max=1))
+    $x = $rad * cos($ang)
+    $y = $rad * sin($ang)
+    $bl = $len * (1 - $lvar * random(seed=$k + 2, min=0, max=1))
+    $bw = $w * (0.8 + 0.4 * random(seed=$k + 3, min=0, max=1))
+    # the outer blades lean out more than the middle ones
+    $bln = $lean + $leanvar * ($rad / max($r, 0.01)) + 8 * (random(seed=$k + 4, min=0, max=1) - 0.5)
+    $ba = $arc + $arcvar * (random(seed=$k + 5, min=0, max=1) - 0.5)
+    $bt = $twist * (2 * random(seed=$k + 6, min=0, max=1) - 1)
+    $br = 140 * (random(seed=$k + 10, min=0, max=1) - 0.5)
+    $bg = $age + $agevar * random(seed=$k + 7, min=0, max=1)
+    if (random(seed=$k + 8, min=0, max=1) < $dead) {
+      $bg = 2
+    }
+    $v = $k + 9
+    add($Blade, len=$bl, w=$bw, fold=$fold * $bw / 0.6, steps=$steps, lean=$bln, arc=$ba, twist=$bt, roll=$br, age=$bg, noise=$v, at=($x, $y, 0), rotate=(0, 0, $ang), join=none)
+  }
+  uv(keep)
+}
+
+BladeA = mesh() { add($Blade, len=30, w=0.6, lean=10, arc=60, twist=30, join=none) }
+Lawn = mesh() { add($Clump, n=40, r=1.0, len=9, w=0.35, lean=4, leanvar=12, arc=25, arcvar=25, twist=30, age=0, agevar=0.2, dead=0.05, noise=1, join=none) }
+Meadow = mesh() { add($Clump, n=70, r=2.0, len=40, w=0.55, lean=4, leanvar=16, arc=40, arcvar=45, twist=40, age=0.2, agevar=0.6, dead=0.1, noise=2, join=none) }
+TallDry = mesh() { add($Clump, n=80, r=2.5, len=70, w=0.7, lean=3, leanvar=14, arc=40, arcvar=55, twist=50, age=1.4, agevar=0.6, dead=0.3, noise=3, join=none) }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# CULMS AND SEED HEADS (21 Nov): most grass that reads as grass in a field is FLOWERING STEMS standing above the tuft.
+# A culm is a thin tapered TUBE (`h` tall, bowed `bend` cm at the top) with `leaves` stem leaves, alternate (two
+# ranks), and a head of `head` kind: 0 SPIKE (ryegrass, couch: spikelets in two alternating rows), 1 PANICLE (bent,
+# meadow grass, oats: whorls of hair-fine branches, longest at the bottom, each with a spikelet), 2 PLUME (timothy,
+# foxtail: a dense cylinder of short spikelets). Everything in the head is built from the Blade, so it takes the same
+# texture, the same vertex-colour age and the same frame: the base at the origin, growing up +Z.
+# A STEM as games draw one: two ribbons crossed at right angles (an extruded tube squares its wall, so a 70 cm stem of
+# 3 mm would be 1,900 triangles; the pair is about 40 and reads round from any side). Bowed over by `bend` cm at the
+# top as a true arc (the Blade's). It keeps its width up the stem and narrows at the top: `tip` 0.04 a rush's needle
+# point, 0.6 a culm under its head.: its slope at the top is arc = 114.6 * bend / len degrees from vertical.
+Tube = mesh(len=30, r=0.1, tip=0.6, bend=0, lean=0, age=0, noise=1) {
+  $ar = max(114.6 * $bend / $len, 0.5)
+  add($Blade, len=$len, w=2 * $r / max(0.55 + 0.45 * $tip, 0.3), wpos=0.2, tip=0.35 + 0.6 * $tip, fold=0, lean=$lean, arc=$ar, twist=0, roll=0, steps=10, age=$age, noise=$noise, join=none)
+  add($Blade, len=$len, w=2 * $r / max(0.55 + 0.45 * $tip, 0.3), wpos=0.2, tip=0.35 + 0.6 * $tip, fold=0, lean=$lean, arc=$ar, twist=0, roll=90, steps=10, age=$age, noise=$noise, join=none)
+  uv(keep)
+}
+
+# a spikelet: a small lens of bracts, `lean` degrees out from its axis
+Spikelet = mesh(len=0.9, w=0.3, lean=25, age=0, noise=1) {
+  add($Blade, len=$len, w=$w, wpos=0.45, tip=1.1, fold=0.3 * $w, lean=$lean, arc=4, twist=0, roll=60, steps=4, age=$age, noise=$noise, join=none)
+}
+
+Spike = mesh(hl=9, n=14, sl=1.1, sw=0.35, angle=22, age=0, noise=1) {
+  add($Tube, len=$hl, r=0.06, tip=0.5, age=$age, noise=$noise, join=none)
+  loop ($n) {
+    $i = output.index
+    $z = $hl * (0.02 + 0.92 * $i / $n)
+    $k = $noise * 1009 + 13 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    # the top spikelets a little smaller; the two ranks alternate
+    $f = 1 - 0.35 * $i / $n
+    add($Spikelet, len=$sl * $f, w=$sw * $f, lean=$angle + 10 * (random(seed=$k, min=0, max=1) - 0.5), age=$age, noise=$k, at=(0, 0, $z), rotate=(0, 0, 180 * $i + 15 * (random(seed=$k + 1, min=0, max=1) - 0.5)), join=none)
+  }
+}
+
+Panicle = mesh(hl=12, whorls=7, per=4, bl=6, angle=45, sl=0.7, sw=0.26, age=0, noise=1) {
+  add($Tube, len=$hl, r=0.05, tip=0.4, age=$age, noise=$noise, join=none)
+  loop ($whorls) {
+    $j = output.index
+    $z = $hl * (0.05 + 0.85 * $j / $whorls)
+    # branches longest at the bottom whorl, the panicle a cone; each whorl turned from the last
+    $b = $bl * (1 - 0.8 * $j / $whorls) + 0.4
+    loop ($per) {
+      $i = output.index
+      $k = $noise * 1009 + 29 * $j + 7 * $i
+      $k = $k - 99991 * floor($k / 99991)
+      $yaw = 360 * $i / $per + 47 * $j + 30 * (random(seed=$k, min=0, max=1) - 0.5)
+      $a = $angle + 20 * (random(seed=$k + 1, min=0, max=1) - 0.5) - 15 * $j / $whorls
+      # the branch: a hair-fine blade; its spikelet at the tip, pointing on along it
+      add($Blade, len=$b, w=0.09, wpos=0.5, tip=1, fold=0, lean=$a, arc=3, twist=0, roll=40, steps=4, age=$age, noise=$k, at=(0, 0, $z), rotate=(0, 0, $yaw), join=none)
+      add($Spikelet, len=$sl, w=$sw, lean=$a, age=$age, noise=$k + 3, at=($b * sin($a) * cos($yaw), $b * sin($a) * sin($yaw), $z + $b * cos($a)), rotate=(0, 0, $yaw), join=none)
+    }
+  }
+}
+
+Plume = mesh(hl=8, n=110, r=0.32, sl=0.6, sw=0.22, angle=22, age=0, noise=1) {
+  add($Tube, len=$hl, r=0.07, tip=0.6, age=$age, noise=$noise, join=none)
+  loop ($n) {
+    $i = output.index
+    $k = $noise * 1009 + 11 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $yaw = 137.508 * $i
+    $z = $hl * (0.03 + 0.92 * $i / $n)
+    # rounded at both ends
+    $f = 0.6 + 0.4 * sin(180 * clamp($i / $n * 1.15, 0, 1))
+    add($Spikelet, len=$sl * $f, w=$sw, lean=$angle + 12 * (random(seed=$k, min=0, max=1) - 0.5), age=$age, noise=$k, at=($r * cos($yaw), $r * sin($yaw), $z), rotate=(0, 0, $yaw), join=none)
+  }
+}
+
+Culm = mesh(h=60, bend=6, r=0.12, leaves=3, leaf=14, lw=0.4, head=0, hl=9, hage=1.1, age=0, noise=1) {
+  # hage: the head ripens ahead of the stem and leaves (a meadow in flower is a pale haze of heads over green)
+  $ha = $age + $hage
+  add($Tube, len=$h, r=$r, tip=0.55, bend=$bend, age=$age, noise=$noise, join=none)
+  # the stem's arc (as Tube draws it): kd degrees per cm, kr in radians per cm
+  $ca = max(114.6 * $bend / $h, 0.5)
+  $kd = $ca / $h
+  $kr = $kd * 3.14159265 / 180
+  $hx = (1 - cos($ca)) / $kr
+  $hz = sin($ca) / $kr
+  loop ($leaves) {
+    $i = output.index
+    $k = $noise * 1009 + 41 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $sl = $h * (0.08 + 0.45 * $i / max($leaves, 1))
+    $lx = (1 - cos($kd * $sl)) / $kr
+    $lz = sin($kd * $sl) / $kr
+    add($Blade, len=$leaf * (1 - 0.2 * $i), w=$lw, lean=30 + 20 * random(seed=$k, min=0, max=1), arc=50 + 40 * random(seed=$k + 1, min=0, max=1), twist=30, roll=40 * (random(seed=$k + 2, min=0, max=1) - 0.5), steps=12, age=$age + 0.3, noise=$k, at=($lx, 0, $lz), rotate=(0, 0, 180 * $i + 20 * (random(seed=$k + 3, min=0, max=1) - 0.5)), join=none)
+  }
+  # the head stands on the bowed top, tilted by the stem's slope there
+  $tilt = $ca
+  $v = $noise + 7
+  if ($head < 0.5) {
+    add($Spike, hl=$hl, age=$ha, noise=$v, at=($hx, 0, $hz), rotate=(0, -1 * $tilt, 0), join=none)
+  }
+  if ($head > 0.5) {
+    if ($head < 1.5) {
+      add($Panicle, hl=$hl, age=$ha, noise=$v, at=($hx, 0, $hz), rotate=(0, -1 * $tilt, 0), join=none)
+    } else {
+      add($Plume, hl=$hl, age=$ha, noise=$v, at=($hx, 0, $hz), rotate=(0, -1 * $tilt, 0), join=none)
+    }
+  }
+  uv(keep)
+}
+
+# A FLOWERING TUFT: a leafy Clump and `culms` culms from its middle, each its own height, bow, direction and age.
+Tuft = mesh(n=40, len=30, w=0.5, fold=0.12, culms=6, h=60, hvar=0.25, bend=8, head=0, hl=9, leaves=3, age=0.2, agevar=0.5, noise=1) {
+  add($Clump, n=$n, r=1.6, len=$len, w=$w, fold=$fold, lean=4, leanvar=16, arc=40, arcvar=45, twist=40, age=$age, agevar=$agevar, dead=0.1, noise=$noise, join=none)
+  loop ($culms) {
+    $i = output.index
+    $k = $noise * 1009 + 53 * $i + 5
+    $k = $k - 99991 * floor($k / 99991)
+    $ang = 137.508 * $i
+    $rad = 0.8 * sqrt(random(seed=$k, min=0, max=1))
+    $ch = $h * (1 - $hvar * random(seed=$k + 1, min=0, max=1))
+    $cb = $bend * (0.4 + 0.9 * random(seed=$k + 2, min=0, max=1))
+    $ca = $age + $agevar * random(seed=$k + 3, min=0, max=1)
+    add($Culm, h=$ch, bend=$cb, leaves=$leaves, head=$head, hl=$hl * (0.8 + 0.4 * random(seed=$k + 4, min=0, max=1)), age=$ca, noise=$k, at=($rad * cos($ang), $rad * sin($ang), 0), rotate=(0, 0, $ang + 60 * (random(seed=$k + 5, min=0, max=1) - 0.5)), join=none)
+  }
+  uv(keep)
+}
+
+# RUSH (Juncus): round, pointed, leafless stems in a fountain: the middle ones upright, the outer ones leaning out
+# from the base (up to ~35 degrees) and bowing over more.
+Rush = mesh(n=45, r=2.0, h=70, hvar=0.3, age=0.3, noise=1) {
+  loop ($n) {
+    $i = output.index
+    $k = $noise * 1009 + 19 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $ang = 137.508 * $i
+    $rad = $r * sqrt(random(seed=$k, min=0, max=1))
+    $sh = $h * (1 - $hvar * random(seed=$k + 1, min=0, max=1))
+    $sb = $sh * (0.04 + 0.1 * $rad / $r) * (0.6 + 0.8 * random(seed=$k + 2, min=0, max=1))
+    $sa = $age + 0.6 * random(seed=$k + 3, min=0, max=1)
+    add($Tube, len=$sh, r=0.18, tip=0.04, bend=$sb, lean=3 + 20 * pow($rad / $r, 1.3) + 6 * random(seed=$k + 4, min=0, max=1), age=$sa, noise=$k, at=($rad * cos($ang), $rad * sin($ang), 0), rotate=(0, 0, $ang), join=none)
+  }
+  uv(keep)
+}
+
+CulmSpikeA = mesh() { add($Culm, h=55, bend=7, head=0, hl=10, join=none)  uv(keep) }
+CulmPanicleA = mesh() { add($Culm, h=60, bend=9, head=1, hl=14, join=none)  uv(keep) }
+CulmPlumeA = mesh() { add($Culm, h=65, bend=4, head=2, hl=9, join=none)  uv(keep) }
+# perennial ryegrass: dense tuft, flat two-rowed spikes on stiff culms
+Rye = mesh() { add($Tuft, n=45, len=25, w=0.45, culms=7, h=55, bend=6, head=0, hl=12, leaves=2, age=0.1, agevar=0.4, noise=11, join=none)  uv(keep) }
+# bent / meadow grass: fine leaves, open airy panicles
+Bent = mesh() { add($Tuft, n=50, len=18, w=0.3, culms=9, h=45, bend=9, head=1, hl=12, leaves=2, age=0.3, agevar=0.5, noise=12, join=none)  uv(keep) }
+# timothy: tall straight culms, dense cylindrical heads
+Timothy = mesh() { add($Tuft, n=35, len=30, w=0.55, culms=6, h=80, bend=4, head=2, hl=9, leaves=3, age=0.2, agevar=0.4, noise=13, join=none)  uv(keep) }
+# hay meadow in July: drying panicles over a greener base
+HayMeadow = mesh() { add($Tuft, n=50, len=35, w=0.5, culms=12, h=75, hvar=0.35, bend=12, head=1, hl=16, leaves=3, age=1.1, agevar=0.6, noise=14, join=none)  uv(keep) }
+RushA = mesh() { add($Rush, n=90, r=2.0, h=75, noise=15, join=none)  uv(keep) }
+# sedge: stiff, wider, deeply keeled blades and short dark spikes
+SedgeA = mesh() { add($Tuft, n=30, len=40, w=0.8, fold=0.16, culms=4, h=50, bend=3, head=0, hl=4, leaves=1, age=0.4, agevar=0.4, noise=16, join=none)  uv(keep) }
+
+# SWARD (21 Nov, after the first field patch read as a plantation): what covers the ground between tufts. A patch
+# `size` cm across of `n` short blades at low detail (8 steps), spread evenly (not fanned from one point), leaning
+# every way, a share of them dead straw. Planted densely (FT_Sward) it hides the soil the way a real sward does.
+Sward = mesh(n=160, size=40, len=14, lvar=0.5, w=0.35, lean=18, arc=40, age=0.2, agevar=0.6, dead=0.18, noise=1) {
+  loop ($n) {
+    $i = output.index
+    $k = $noise * 1009 + 23 * $i
+    $k = $k - 99991 * floor($k / 99991)
+    $x = $size * (random(seed=$k, min=0, max=1) - 0.5)
+    $y = $size * (random(seed=$k + 1, min=0, max=1) - 0.5)
+    $yaw = 360 * random(seed=$k + 2, min=0, max=1)
+    $bl = $len * (1 - $lvar * random(seed=$k + 3, min=0, max=1))
+    $bg = $age + $agevar * random(seed=$k + 4, min=0, max=1)
+    if (random(seed=$k + 5, min=0, max=1) < $dead) {
+      $bg = 2
+    }
+    add($Blade, len=$bl, w=$w * (0.7 + 0.6 * random(seed=$k + 6, min=0, max=1)), lean=$lean * random(seed=$k + 7, min=0, max=1) + 4, arc=$arc * random(seed=$k + 8, min=0, max=1) + 5, twist=60 * (random(seed=$k + 9, min=0, max=1) - 0.5), roll=140 * (random(seed=$k + 10, min=0, max=1) - 0.5), steps=8, age=$bg, noise=$k, at=($x, $y, 0), rotate=(0, 0, $yaw), join=none)
+  }
+  uv(keep)
+}
+SwardA = mesh() { add($Sward, n=160, size=40, len=26, lean=28, noise=21, join=none)  uv(keep) }
+SwardDry = mesh() { add($Sward, n=140, size=40, len=30, lean=30, age=1.0, agevar=0.8, dead=0.35, noise=22, join=none)  uv(keep) }
+
+# =====================================================================================================================
+# FROM Leaf/Ivy.gcshape (scratch recipe, 21 Nov 2026)
+# =====================================================================================================================
+# IVY (vegetation L7), split out of Leaf.gcshape on 21 Nov so an ivy change rebuilds only the ivy (the leaf file holds
+# 18 meshes, the settled litter among them). The blade is Leaf.gcshape's `Leaf` (sp 3 / 4 wear the ivy surfaces
+# there); the stem is its `Stem`.
+
+
+# ivy stems: grey-brown, not the hazel twig's tan
+
+# ---------------------------------------------------------------------------------------------------------------------
+# IVY ON A WALL (vegetation L7, 21 Nov): Hedera helix. Photos Leaves/06 (juvenile leaf), 07 (ivy on a wall).
+# THE LEAF: the juvenile leaf, 3-5 lobed, as broad as long, a heart-shaped (cordate) base, a long petiole, glossy
+# dark green. `sp` 3 wears IvySurf.
+IvyLeaf = mesh(len=6, young=0, age=0, res=0.35, rise=28, lobe=0.62, pr=0.012, noise=1) {
+  add($Leaf, len=$len, wr=1.25, widest=0.32, apex=1.1, base=0.3, lobes=1, lobe=$lobe, lvar=0.25, sinus=0.7, lean=0.3, skew=0.1, ears=0, palm=1, petiole=0.9 * $len, pr=$pr * $len, curl=0.17 * $len, droop=0, wave=0.06 * $len, arch=25, rise=$rise, ltwist=20, cvar=0.7, age=$age, holes=0, res=$res, sp=3 + clamp(floor($young + 0.5), 0, 1), noise=$noise, join=none)
+  uv(keep)
+}
+IvyLeafA = mesh() { add($IvyLeaf, len=6, noise=3, join=none)  uv(keep) }
+# THE WALL: a dry-stone block `w` wide, `h` tall, `t` thick, its face to -Y at y = -t/2, its foot at z = 0
+IvyWallBlock = mesh(w=300, h=220, t=40) {
+  rect(w=$w, h=$t)
+  extrude(height=$h)
+  uv(box, scale=80)
+  material($Stone)
+}
+# THE PLANT (round 2, 21 Nov: "the connection isn't even there"): every piece is PLACED BY ITS OWN FRAME, no rotate=,
+# so a stem segment runs exactly from its node to the next and every leaf's stalk starts exactly on its node.
+# The wall face is the plane y = fy; the plant grows on its -Y side. Angles: `a` is a stem's heading in the wall plane
+# from straight up (+ toward +X).
+# A STEM SEGMENT from (x0, fy - r, z0) along heading a, `l` long: local z -> u = (sin a, 0, cos a), local x -> the
+# in-plane normal v = (cos a, 0, -sin a), local y -> +Y (a proper turn, no mirror); `bow` bends it in the wall plane.
+IvySeg = mesh(x0=0, z0=0, a=0, l=10, r=0.3, bow=0, fy=-20) {
+  add($Stem, len=$l, r=$r, bend=$bow, join=none)
+  material($IvyStem)
+  warp(to=($x0 + point.x * cos($a) + point.z * sin($a), $fy - 1.2 * $r + point.y, $z0 - point.x * sin($a) + point.z * cos($a)))
+}
+# A LEAF on its node P: the stalk leaves the wall at `tl` degrees out from the wall plane, its line in the plane `phi`
+# degrees from straight down (+ toward +X); the blade faces out and a little up. The leaf's own frame (z its length
+# from the attachment, y its face, x across) goes to D (length), N (face) and X = N x D.
+IvyLeafAt = mesh(px=0, py=0, pz=0, phi=0, tl=30, len=8, young=0, noise=1) {
+  # FAST: an entry is memoised on its name and arguments, so the blade is drawn from a small set (size in 0.5 cm steps,
+  # one of 6 seeds): ~100-200 distinct blades are built for a whole wall instead of one per leaf (4 min -> seconds);
+  # each placed leaf keeps its own stalk angle, lift and place, so no two read alike
+  $ql = 0.5 * floor(2 * $len + 0.5)
+  $qn = 1 + $noise - 6 * floor($noise / 6)
+  add($IvyLeaf, len=$ql, young=$young, noise=$qn, join=none)
+  $dx = sin($phi) * cos($tl)
+  $dy = 0 - sin($tl)
+  $dz = 0 - cos($phi) * cos($tl)
+  # N: (0, -1, 0.35) with its part along D removed, normalised
+  $dt = 0 - $dy + 0.35 * $dz
+  $nx = 0 - $dt * $dx
+  $ny = -1 - $dt * $dy
+  $nz = 0.35 - $dt * $dz
+  $nl = sqrt($nx * $nx + $ny * $ny + $nz * $nz)
+  $nx = $nx / $nl
+  $ny = $ny / $nl
+  $nz = $nz / $nl
+  $xx = $ny * $dz - $nz * $dy
+  $xy = $nz * $dx - $nx * $dz
+  $xz = $nx * $dy - $ny * $dx
+  warp(to=($px + point.x * $xx + point.y * $nx + point.z * $dx, $py + point.x * $xy + point.y * $ny + point.z * $dy, $pz + point.x * $xz + point.y * $nz + point.z * $dz))
+  uv(keep)
+}
+# `stems` stems rise from the foot of the wall, each `nodes` internodes of `seg` cm, heading wandering a few degrees a
+# node; at every node TWO leaves (one each side, alternate in height by the internode), each on its own stalk length and
+# lift, so the blades stand at different depths and overlap like tiles; a side shoot now and then. Leaves are largest
+# low on the plant; only the last node of a stem or shoot carries young (light) leaves.
+IvyPlant = mesh(stems=16, nodes=24, seg=8, span=270, wall=40, leaf=9, noise=1) {
+  $fy = 0 - 0.5 * $wall
+  loop ($stems) {
+    $s = output.index
+    $k0 = $noise * 1009 + 131 * $s
+    $k0 = $k0 - 99991 * floor($k0 / 99991)
+    $x = $span * (random(seed=$k0, min=0, max=1) - 0.5)
+    $z = 0
+    $a = 30 * (random(seed=$k0 + 1, min=0, max=1) - 0.5)
+    $top = floor($nodes * (0.55 + 0.45 * random(seed=$k0 + 2, min=0, max=1)))
+    loop ($nodes) {
+      $i = output.index
+      if ($i < $top + 0.5) {
+        $k = $k0 + 17 * $i
+        $f = 1 - 0.45 * $i / $nodes
+        $da = 16 * (random(seed=$k, min=0, max=1) - 0.5)
+        $a = clamp($a + $da, -45, 45)
+        $l = $seg * (0.8 + 0.4 * random(seed=$k + 1, min=0, max=1))
+        $r = 0.12 + 0.25 * $f
+        add($IvySeg, x0=$x, z0=$z, a=$a, l=$l, r=$r, bow=0.03 * $l * $da / 8, fy=$fy, join=none)
+        $x = $x + $l * sin($a)
+        $z = $z + $l * cos($a)
+        $yg = 0
+        if ($i > $top - 0.5) {
+          $yg = 1
+        }
+        $ls = $leaf * $f * (0.7 + 0.6 * random(seed=$k + 2, min=0, max=1))
+        if ($yg > 0.5) {
+          $ls = 0.55 * $ls
+        }
+        add($IvyLeafAt, px=$x, py=$fy - $r, pz=$z, phi=$a + 55 + 30 * random(seed=$k + 3, min=0, max=1), tl=15 + 45 * random(seed=$k + 4, min=0, max=1), len=$ls, young=$yg, noise=$k + 5, join=none)
+        add($IvyLeafAt, px=$x, py=$fy - $r, pz=$z, phi=$a - 55 - 30 * random(seed=$k + 6, min=0, max=1), tl=15 + 45 * random(seed=$k + 7, min=0, max=1), len=0.9 * $ls, young=$yg, noise=$k + 8, join=none)
+        # a side shoot: four internodes off at 55-75 degrees, leaves at each node
+        if (random(seed=$k + 9, min=0, max=1) < 0.5) {
+          $sx = $x
+          $sz = $z
+          $sa = $a + (55 + 20 * random(seed=$k + 10, min=0, max=1)) * (2 * floor(2 * random(seed=$k + 11, min=0, max=1)) - 1)
+          loop (4) {
+            $j = output.index
+            $kk = $k + 101 * $j
+            $sa = $sa + 14 * (random(seed=$kk, min=0, max=1) - 0.5)
+            $sl = 0.75 * $seg
+            add($IvySeg, x0=$sx, z0=$sz, a=$sa, l=$sl, r=0.7 * $r, bow=0, fy=$fy, join=none)
+            $sx = $sx + $sl * sin($sa)
+            $sz = $sz + $sl * cos($sa)
+            $sy = clamp($j - 3.5, 0, 1)
+            $ss = 0.8 * $ls * (1 - 0.45 * $sy)
+            add($IvyLeafAt, px=$sx, py=$fy - 0.7 * $r, pz=$sz, phi=$sa + 60 + 25 * random(seed=$kk + 3, min=0, max=1), tl=15 + 45 * random(seed=$kk + 4, min=0, max=1), len=$ss, young=$sy, noise=$kk + 5, join=none)
+            add($IvyLeafAt, px=$sx, py=$fy - 0.7 * $r, pz=$sz, phi=$sa - 60 - 25 * random(seed=$kk + 6, min=0, max=1), tl=15 + 45 * random(seed=$kk + 7, min=0, max=1), len=0.9 * $ss, young=$sy, noise=$kk + 8, join=none)
+          }
+        }
+      }
+    }
+  }
+  # NOTHING GOES INTO THE WALL: what would pass behind the face is stopped on it 0.3 cm proud
+  warp(to=(point.x, min(point.y, $fy - 0.3), point.z))
+  uv(keep)
+}
+IvyWallA = mesh() {
+  add($IvyWallBlock, w=300, h=220, t=40, join=none)
+  add($IvyPlant, stems=16, nodes=24, seg=8, span=270, wall=40, leaf=9, noise=5, join=none)
+  uv(keep)
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# IVY AS PARTS FOR PCG (22 Nov; owner: "isn't it supposed to be a procedural vegetation? why is it a hard mesh"): the wall
+# ivy is no longer one baked mesh of thousands of leaves (919k triangles, minutes to build, one wall size). These are
+# the PARTS; the PCG graph `PCG_IvyWall` grows them over any wall as instances. THE WALL FRAME: the wall face is the YZ
+# plane, +X out of the wall, +Z up; the leaf's stalk starts on the wall at the origin and holds the blade out (the
+# leaf's own rise), its tip hanging down. PVE frame (z to the tip, y the face, x across) -> wall frame: tip -> -Z,
+# face -> +X, across -> +Y (a proper turn, no mirror).
+IvyWallLeaf = mesh(len=7, young=0, noise=1) {
+  # held nearly flat to the wall on its stalk (a wall leaf turns its face to the light, the stalk does the reaching)
+  # and its lobes broader than a free shoot's
+  add($IvyLeaf, len=$len, young=$young, rise=10, lobe=0.5, pr=0.025, noise=$noise, join=none)
+  warp(to=(point.y, point.x, -1 * point.z))
+  uv(keep)
+}
+IvyWallLeafA = mesh() { add($IvyWallLeaf, len=9, noise=3, at=(0, 0, 0), join=none)  uv(keep) }
+IvyWallLeafB = mesh() { add($IvyWallLeaf, len=7, noise=5, at=(0, 0, 0), join=none)  uv(keep) }
+IvyWallLeafC = mesh() { add($IvyWallLeaf, len=5.5, noise=7, at=(0, 0, 0), join=none)  uv(keep) }
+IvyWallLeafD = mesh() { add($IvyWallLeaf, len=4, noise=9, at=(0, 0, 0), join=none)  uv(keep) }
+IvyWallLeafYoung = mesh() { add($IvyWallLeaf, len=3, young=1, noise=11, at=(0, 0, 0), join=none)  uv(keep) }
+# LITTER PARTS (22 Nov, owner: "fix the leaves etc. too"): the litter is no longer one baked patch of settled leaves.
+# These are the PARTS; the PCG graph `PCG_LeafLitter` scatters them on any ground as instances. THE GROUND FRAME: lying
+# face up (+Z), the tip along +Y, the blade's middle on the origin so a turn spins it in place. PVE frame -> ground:
+# face (+Y) -> +Z, tip (+Z) -> +Y, across -> -X (a proper turn, no mirror).
+LitterLeaf = mesh(oak=0, age=1.8, curl=0.4, noise=1) {
+  if ($oak > 0.5) {
+    add($LyingOak, age=$age, curl=$curl, noise=$noise, join=none)
+    warp(to=(-1 * point.x, point.z - 5.5, point.y))
+  } else {
+    add($LyingBeech, age=$age, curl=$curl, noise=$noise, join=none)
+    warp(to=(-1 * point.x, point.z - 4, point.y))
+  }
+  uv(keep)
+}
+LitterBeechA = mesh() { add($LitterLeaf, age=1.3, curl=0.25, noise=3, join=none)  uv(keep) }
+LitterBeechB = mesh() { add($LitterLeaf, age=1.7, noise=5, join=none)  uv(keep) }
+LitterBeechC = mesh() { add($LitterLeaf, age=2, curl=0.6, noise=7, join=none)  uv(keep) }
+LitterOakA = mesh() { add($LitterLeaf, oak=1, age=1.5, noise=9, join=none)  uv(keep) }
+LitterOakB = mesh() { add($LitterLeaf, oak=1, age=1.95, curl=0.55, noise=11, join=none)  uv(keep) }
+# LITTER CLUMPS (critic r2: "one flat carpet; real litter is a 3-6 leaf stack, half-buried, pinned under others"):
+# a handful of leaves dropped one after another and settled on the ground and on each other (collide=settle), each
+# its own curl, a twig among some. Instanced by PCG in a drift's core; single leaves make its fringe.
+LitterClump = mesh(n=10, size=24, twig=0, noise=1) {
+  loop ($n) {
+    $k = $noise * 1009 + 7 * output.index
+    $x = $size * (random(seed=$k, min=0, max=1) - 0.5)
+    $y = $size * (random(seed=$k + 1, min=0, max=1) - 0.5)
+    $rr = 90 + 30 * (random(seed=$k + 2, min=0, max=1) - 0.5)
+    if (random(seed=$k + 8, min=0, max=1) > 0.55) {
+      $rr = $rr + 180
+    }
+    $rp = 30 * (random(seed=$k + 3, min=0, max=1) - 0.5)
+    $ry = 360 * random(seed=$k + 4, min=0, max=1)
+    $z = 3 + 0.6 * output.index
+    $c = 0.15 + 0.5 * random(seed=$k + 10, min=0, max=1)
+    if (random(seed=$k + 5, min=0, max=1) > 0.45) {
+      add($LyingBeech, res=0.35, age=1.3 + 0.7 * random(seed=$k + 9, min=0, max=1), curl=$c, noise=$k + 6, at=($x, $y, $z), rotate=($rr, $rp, $ry), collide=settle, obstacle=$FlatGround, join=none)
+    } else {
+      add($LyingOak, res=0.35, age=1.3 + 0.7 * random(seed=$k + 9, min=0, max=1), curl=$c, noise=$k + 6, at=($x, $y, $z), rotate=($rr, $rp, $ry), collide=settle, obstacle=$FlatGround, join=none)
+    }
+  }
+  if ($twig > 0.5) {
+    add($DeadTwigOak, len=22, r=0.45, noise=$noise + 3, at=(0, 0, 2 + 0.6 * $n), rotate=(90, 0, 360 * random(seed=$noise * 31, min=0, max=1)), collide=settle, obstacle=$FlatGround, join=none)
+  }
+  uv(keep)
+}
+DeadTwigOak = mesh(len=20, r=0.25, noise=1) {
+  add($DeadTwig, len=$len, r=$r, noise=$noise, join=none)
+  material($LitterTwigBark)
+}
+LitterClumpA = mesh() { add($LitterClump, n=10, size=24, noise=3, join=none)  uv(keep) }
+LitterClumpB = mesh() { add($LitterClump, n=14, size=30, twig=1, noise=5, join=none)  uv(keep) }
+LitterClumpC = mesh() { add($LitterClump, n=7, size=18, noise=9, join=none)  uv(keep) }
+# a dead twig lying along +X on the ground, its middle on the origin
+LitterTwig = mesh() {
+  add($DeadTwig, len=34, r=0.55, noise=5, join=none)
+  warp(to=(point.z - 17, point.y, 0.55 - 1 * point.x))
+  material($LitterTwigBark)
+  uv(keep)
+}
+# IVY STEM PILL: 1.8 cm of woody stem, upright, its middle on the origin; PCG strings them along the runners
+IvyStemPill = mesh() {
+  add($Stem, len=1.8, r=0.55, bend=0, join=none)
+  warp(to=(point.x, point.y, point.z - 0.9))
+  material($IvyStem)
+}
+
+# =====================================================================================================================
+# THE TOP-LEVEL SUBJECTS (kit §11a): the same knobs in every one, each clamped; documented in the header
+# =====================================================================================================================
+KitLeaf = mesh(species=0, size=-1, age=0, noise=1, budget=1) {
+  $sp = clamp(floor($species + 0.5), 0, 4)
+  $bg = clamp(floor($budget + 0.5), 0, 2)
+  $res = 0.35
+  if ($bg > 0.5) {
+    $res = 1
+  }
+  if ($bg > 1.5) {
+    $res = 1.6
+  }
+  $ag = clamp($age, 0, 2)
+  # the species' own blade length when size < 0
+  $len = 8
+  if ($sp > 0.5) {
+    $len = 11
+  }
+  if ($sp > 1.5) {
+    $len = 5
+  }
+  if ($sp > 2.5) {
+    $len = 10
+  }
+  if ($sp > 3.5) {
+    $len = 6
+  }
+  if ($size > 0) {
+    $len = clamp($size, 1, 40)
+  }
+  if ($sp < 3.5) {
+    add($SpeciesLeaf, sp=$sp, len=$len, age=$ag, res=$res, noise=$noise, join=none)
+  } else {
+    add($IvyLeaf, len=$len, age=$ag, res=0.35 * $res, noise=$noise, join=none)
+  }
+  uv(keep)
+}
+
+KitTwig = mesh(species=0, size=30, age=0, noise=1, budget=1) {
+  $sp = clamp(floor($species + 0.5), 0, 2)
+  $len = clamp($size, 10, 120)
+  $res = 0.2 + 0.25 * clamp(floor($budget + 0.5), 0, 2)
+  $ag = clamp($age, 0, 2)
+  if ($sp < 0.5) {
+    add($Twig, sp=0, len=$len, arr=0, age=$ag, res=$res, noise=$noise, join=none)
+  }
+  if ($sp > 0.5) {
+    if ($sp < 1.5) {
+      add($Twig, sp=1, len=$len, arr=2, leaf=10, age=$ag, res=$res, noise=$noise, join=none)
+    } else {
+      # silver birch: leaves alternate in two flat rows (distichous) along a slender twig that droops
+      add($Twig, sp=2, len=$len, arr=0, n=13, leaf=5, axil=40, bend=0.3 * $len, r=0.12, age=$ag, res=$res, noise=$noise, join=none)
+    }
+  }
+  uv(keep)
+}
+
+KitSpray = mesh(species=0, size=55, age=0, noise=1, budget=1) {
+  $sp = clamp(floor($species + 0.5), 0, 2)
+  $len = clamp($size, 20, 120)
+  $res = 0.2 + 0.25 * clamp(floor($budget + 0.5), 0, 2)
+  $ag = clamp($age, 0, 2)
+  if ($sp < 0.5) {
+    add($Spray, sp=0, len=$len, arr=0, age=$ag, res=$res, noise=$noise, join=none)
+  }
+  if ($sp > 0.5) {
+    if ($sp < 1.5) {
+      add($Spray, sp=1, len=$len, arr=2, leaf=10, age=$ag, res=$res, noise=$noise, join=none)
+    } else {
+      add($Spray, sp=2, len=$len, arr=2, leaf=5, axil=45, age=$ag, res=$res, noise=$noise, join=none)
+    }
+  }
+  uv(keep)
+}
+
+KitLitter = mesh(size=50, density=1, noise=1, budget=1) {
+  $w = clamp($size, 10, 300)
+  $n = clamp(floor(45 * clamp($density, 0.1, 6) * $w * $w / 2500 + 0.5), 1, 400)
+  add($LitterPatchLeaves, n=$n, size=$w, noise=$noise, join=none)
+  uv(keep)
+}
+
+KitGrass = mesh(kind=1, size=1, age=-1, noise=1, budget=1) {
+  $k = clamp(floor($kind + 0.5), 0, 4)
+  $s = clamp($size, 0.3, 3)
+  $st = 8 + 8 * clamp(floor($budget + 0.5), 0, 2)
+  if ($k < 0.5) {
+    $ag = 0
+    if ($age > -0.5) {
+      $ag = clamp($age, 0, 2)
+    }
+    add($Clump, n=40, r=1.0, len=9 * $s, w=0.35, steps=$st, lean=4, leanvar=12, arc=25, arcvar=25, twist=30, age=$ag, agevar=0.2, dead=0.05, noise=$noise, join=none)
+  }
+  if ($k > 0.5) {
+    if ($k < 1.5) {
+      $ag = 0.2
+      if ($age > -0.5) {
+        $ag = clamp($age, 0, 2)
+      }
+      add($Clump, n=70, r=2.0, len=40 * $s, w=0.55, steps=$st, lean=4, leanvar=16, arc=40, arcvar=45, twist=40, age=$ag, agevar=0.6, dead=0.1, noise=$noise, join=none)
+    }
+  }
+  if ($k > 1.5) {
+    if ($k < 2.5) {
+      $ag = 1.4
+      if ($age > -0.5) {
+        $ag = clamp($age, 0, 2)
+      }
+      add($Clump, n=80, r=2.5, len=70 * $s, w=0.7, steps=$st, lean=3, leanvar=14, arc=40, arcvar=55, twist=50, age=$ag, agevar=0.6, dead=0.3, noise=$noise, join=none)
+    }
+  }
+  if ($k > 2.5) {
+    $ag = 0.2
+    $len = 26
+    $dd = 0.18
+    if ($k > 3.5) {
+      $ag = 1.0
+      $len = 30
+      $dd = 0.35
+    }
+    if ($age > -0.5) {
+      $ag = clamp($age, 0, 2)
+    }
+    add($Sward, n=160, size=40, len=$len * $s, lean=28, age=$ag, dead=$dd, noise=$noise, join=none)
+  }
+  uv(keep)
+}
+
+KitTuft = mesh(kind=0, size=1, age=-1, noise=1, budget=1) {
+  $k = clamp(floor($kind + 0.5), 0, 4)
+  $s = clamp($size, 0.3, 3)
+  # each kind's own age, unless the call gives one
+  $ag = 0.1
+  if ($k > 0.5) {
+    $ag = 0.3
+  }
+  if ($k > 1.5) {
+    $ag = 0.2
+  }
+  if ($k > 2.5) {
+    $ag = 1.1
+  }
+  if ($k > 3.5) {
+    $ag = 0.4
+  }
+  if ($age > -0.5) {
+    $ag = clamp($age, 0, 2)
+  }
+  if ($k < 0.5) {
+    add($Tuft, n=45, len=25 * $s, w=0.45, culms=7, h=55 * $s, bend=6, head=0, hl=12, leaves=2, age=$ag, agevar=0.4, noise=$noise, join=none)
+  }
+  if ($k > 0.5) {
+    if ($k < 1.5) {
+      add($Tuft, n=50, len=18 * $s, w=0.3, culms=9, h=45 * $s, bend=9, head=1, hl=12, leaves=2, age=$ag, agevar=0.5, noise=$noise, join=none)
+    }
+  }
+  if ($k > 1.5) {
+    if ($k < 2.5) {
+      add($Tuft, n=35, len=30 * $s, w=0.55, culms=6, h=80 * $s, bend=4, head=2, hl=9, leaves=3, age=$ag, agevar=0.4, noise=$noise, join=none)
+    }
+  }
+  if ($k > 2.5) {
+    if ($k < 3.5) {
+      add($Tuft, n=50, len=35 * $s, w=0.5, culms=12, h=75 * $s, hvar=0.35, bend=12, head=1, hl=16, leaves=3, age=$ag, agevar=0.6, noise=$noise, join=none)
+    } else {
+      add($Tuft, n=30, len=40 * $s, w=0.8, fold=0.16, culms=4, h=50 * $s, bend=3, head=0, hl=4, leaves=1, age=$ag, agevar=0.4, noise=$noise, join=none)
+    }
+  }
+  uv(keep)
+}
+
+KitRush = mesh(size=1, age=-1, noise=1) {
+  $ag = 0.3
+  if ($age > -0.5) {
+    $ag = clamp($age, 0, 2)
+  }
+  add($Rush, n=90, r=2.0, h=75 * clamp($size, 0.3, 3), age=$ag, noise=$noise, join=none)
+  uv(keep)
+}
+
+KitIvy = mesh(width=270, height=200, density=1, size=9, noise=1, budget=1) {
+  $w = clamp($width, 20, 2000)
+  $h = clamp($height, 20, 1000)
+  $stems = clamp(floor(16 * clamp($density, 0.1, 4) * $w / 270 + 0.5), 1, 200)
+  $nodes = clamp(floor($h / 8 + 0.5), 2, 200)
+  # wall=0: the face is the plane y = 0 and the plant grows on its -Y side
+  add($IvyPlant, stems=$stems, nodes=$nodes, seg=8, span=$w, wall=0, leaf=clamp($size, 2, 20), noise=$noise, join=none)
+  uv(keep)
+}
+
+# the build lines' value sets
+DemoLeafBeech = mesh() { add($KitLeaf, species=0, noise=3, join=none)  uv(keep) }
+DemoLeafOakDry = mesh() { add($KitLeaf, species=1, age=1.8, noise=4, join=none)  uv(keep) }
+DemoLeafBirch = mesh() { add($KitLeaf, species=2, noise=5, join=none)  uv(keep) }
+DemoLeafIvy = mesh() { add($KitLeaf, species=4, noise=6, join=none)  uv(keep) }
+DemoTwigBirch = mesh() { add($KitTwig, species=2, size=28, noise=3, join=none)  uv(keep) }
+DemoSprayBeech = mesh() { add($KitSpray, species=0, noise=1, join=none)  uv(keep) }
+DemoLitter = mesh() { add($KitLitter, size=50, noise=3, join=none)  uv(keep) }
+DemoGrassMeadow = mesh() { add($KitGrass, kind=1, noise=2, join=none)  uv(keep) }
+DemoGrassSward = mesh() { add($KitGrass, kind=3, noise=21, join=none)  uv(keep) }
+DemoTuftTimothy = mesh() { add($KitTuft, kind=2, noise=13, join=none)  uv(keep) }
+DemoRush = mesh() { add($KitRush, noise=15, join=none)  uv(keep) }
+DemoIvy = mesh() { add($KitIvy, width=270, height=200, noise=5, join=none)  uv(keep) }

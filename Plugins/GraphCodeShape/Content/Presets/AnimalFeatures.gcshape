@@ -1,0 +1,260 @@
+gcshape 1 into:/Game/AnimalStudies/Parts/Features smooth:.07 shade:78 uv:keep
+
+build { SM_AnimalEye = $Eye }
+Leather = material('/Game/AnimalStudies/Catalogue/Materials/M_NasalLeather')
+Iris = material('/Game/AnimalStudies/Catalogue/Materials/MI_Iris')
+Dark = material('/Game/AnimalStudies/Catalogue/Materials/MI_Dark')
+Coat = material('/Game/AnimalStudies/Catalogue/Materials/MI_Coat')
+Unit = mesh() {
+  arc(radius=1,from=-90,to=90,segments=32)
+  revolve(segments=48,rotate=(0,-90,0))
+}
+
+# Shared optical frame, unit half-width. U runs toward the lateral canthus.
+Canthus = profile(0=1,.25=.98,.5=.92,.75=.82,1=.68)
+CanthusRise = .15
+# Where and how far the concealed globe turns away beneath the eyelids.
+# Dilation scales both pupil axes. Gaze angles rotate the optical markings inside the fixed eyelids.
+PupilDilation = 1
+GazeYaw = 0
+GazePitch = 0
+GlobeRimWidthInset = .04
+GlobeRimHeightInset = .19
+GlobeReturnOnset = .99
+GlobeReturnSpan = .31
+GlobeReturnDepth = .87
+GlobeDepth = .32
+# Unit eye looks along +X. The insert includes the dark limbus, iris and pupil.
+# Both meridians narrow to an almond at the canthi; dilation is independent.
+SlitPupilRadius = .62
+RoundPupilRadius = .39
+PupilRadius = formula(aspect) { clamp($PupilDilation*lerp($SlitPupilRadius,$RoundPupilRadius,clamp($aspect,0,1)),.001,.995) }
+# Fractions of an elliptical aperture. A fractional linear shift is monotone
+# along each chord and holds both ends fixed, including the lid-mating rim.
+OpticalHeightScale = .92
+GazeLimitFraction = .97
+# Keep the dark limbus and the hidden posterior return in their socket.
+IrisMobileFraction = .95
+OpticalChord = formula(v) { sqrt(max(0,1-$v*$v)) }
+SlideOpticalChord = formula(u,half,bias) { ($u+$bias*$half)/max(.00001,1+$bias*$u/max(.00001,$half)) }
+OpticalRise = formula(y,aperture) { max(.001,$aperture*$Canthus(clamp(abs($y),0,1))) }
+AimOptics = instruction(yaw=0,pitch=0,aperture=.78,depth=$GlobeDepth,iris_fraction=.82) {
+  if (abs($yaw)+abs($pitch) > 0) {
+    warp(with=(R: clamp(min($GlobeReturnOnset,$IrisMobileFraction*$iris_fraction),.001,1),U: point.y/$R,LocalZ: point.z-$CanthusRise*point.y,V: $LocalZ/($R*$OpticalRise(point.y,$aperture)),InDisc: $U*$U+$V*$V,Front: clamp(point.x*10000,0,1),Active: $Front*(1-clamp(($InDisc-1)*10000,0,1)),ToU: $SlideOpticalChord($U,$OpticalChord($V),clamp(sin($yaw)/$R,-$GazeLimitFraction,$GazeLimitFraction)),ToY: $R*$ToU,ToV: $SlideOpticalChord($V,$OpticalChord($ToU),clamp(sin($pitch)/($R*$OpticalRise($ToY,$aperture)),-$GazeLimitFraction,$GazeLimitFraction)),ToZ: $R*$ToV*$OpticalRise($ToY,$aperture),OldX: sqrt(max(0,1-point.y*point.y-pow($LocalZ/$OpticalHeightScale,2))),NewX: sqrt(max(0,1-$ToY*$ToY-pow($ToZ/$OpticalHeightScale,2)))),by=($Active*$depth*($NewX-$OldX),$Active*($ToY-point.y),$Active*($ToZ-$LocalZ+$CanthusRise*($ToY-point.y))))
+  }
+}
+Eye = mesh(pupil=.64,aperture=.78,iris_fraction=.82,depth=$GlobeDepth) {
+  arc(radius=1,from=-90,to=90,segments=76)
+  revolve(segments=80,rotate=(0,-90,0))
+  # The limbus and posterior globe remain dark. The iris fills the exposed
+  # cornea, including below the pupil. Only the pupillary zone changes width.
+  material($Dark)
+  material($Iris) [value=point.x,above=sqrt(max(.01,1-$iris_fraction*$iris_fraction))]
+  material($Dark) [value=point.x,above=sqrt(1-pow($PupilRadius($pupil),2))]
+  warp(with=(Radius: sqrt(point.y*point.y+point.z*point.z),RadiusAtPupil: $PupilRadius($pupil),Blend: clamp(($iris_fraction-$Radius)/max(.01,$iris_fraction-$RadiusAtPupil),0,1),Y: point.y*lerp(1,$pupil,$Blend*$Blend*(3-2*$Blend)),X: lerp(point.x,sqrt(max(0,1-$Y*$Y-point.z*point.z)),clamp(point.x/.25,0,1))),to=($X,$Y,point.z))
+  uv(plane,at=(0,0,0),facing=+X,up=+Y,scale=(2,2*$aperture),offset=(.5,.5)) [material=$Iris]
+  warp(with=(Y: point.y,Z: $OpticalHeightScale*point.z,Q: sqrt($Y*$Y+pow($Z/($aperture*$Canthus(clamp(abs($Y),0,1))),2)),Rim: clamp(($Q-$GlobeReturnOnset)/max(.001,$GlobeReturnSpan),0,1)),to=(point.x*$depth-$GlobeReturnDepth*$Rim*$Rim*(3-2*$Rim),$Y*(1-$GlobeRimWidthInset*$Rim),$Z*(1-$GlobeRimHeightInset*$Rim)+$CanthusRise*$Y))
+
+  $AimOptics(yaw=$GazeYaw,pitch=$GazePitch,aperture=$aperture,depth=$depth,iris_fraction=$iris_fraction)
+}
+RoundEye = mesh($Eye,pupil=.9,aperture=.82,depth=$GlobeDepth) { add($Eye,join=none) }
+SlitEye = mesh($Eye,pupil=.22,aperture=.91,depth=$GlobeDepth) { add($Eye,join=none) }
+
+# Canonical nose insert. The first section behind the root provides a closed
+# collar. Lateral alae and the central groove shape the nose leather.
+Feline = 0
+PinnaPigmentMix = $Feline
+PlanumPalette = $Feline
+NostrilLevel = lerp(-.16,-.045,$Feline)
+PlanumCrownFlatten = lerp(.075,.29,$Feline)
+PlanumTipDrop = lerp(.035,.15,$Feline)
+AlarLipLift = lerp(.035,.17,$Feline)
+# Each cross section is expressed relative to the radius of the common collar.
+# Height varies with lateral position by a shear. Its unit Jacobian preserves
+# section area, as does the subsequent rotation into the inclined alar frame.
+NostrilWidth = .175
+NostrilHeight = .115
+NarisArea = 3.141592653589793*$NostrilWidth*$NostrilHeight/4
+NarisAspect = $NostrilHeight/$NostrilWidth
+NarisCant = 16
+NarisHook = .38
+VestibuleExpansion = .14
+AlarSlitShare = .38
+AlarSlitLift = .12
+AlarSlitReach = 1.08
+NarisHalfSpan = formula(area,aspect) { 2*sqrt(max(.000001,$area)/(3.141592653589793*max(.001,$aspect))) }
+NarisHalfRise = formula(area,aspect) { 2*sqrt(max(.000001,$area)*max(.001,$aspect)/3.141592653589793) }
+# The common frontal inlet and lateral slit share one chamber. Sections
+# advance strictly along X, avoiding the fold a broad alar wing could create
+# along the inside of a tight curve. Y and Z are in collar-radius units.
+EntranceFront = 1.30
+TurnStart = .68
+ChamberRear = .34
+TurnRun = .34
+ToolCapShare = .09
+SlitTerminalAspect = .28
+CapRadius = formula(t) { sqrt(max(0,1-pow(clamp(1-$t/$ToolCapShare,0,1),2)-pow(clamp(1-(1-$t)/$ToolCapShare,0,1),2))) }
+Ease = formula(t) { $t*$t*(3-2*$t) }
+BehindEntrance = formula(x) { $Ease(clamp((1-$x)/max(.00001,1-$TurnStart),0,1)) }
+BehindTurn = formula(x) { $Ease(clamp(($TurnStart-$x)/max(.00001,$TurnStart-$ChamberRear),0,1)) }
+# Both endpoints lie outside the leather. The inner section moves laterally
+# as it narrows. Area and aspect describe the unexpanded frontal inlet.
+VestibuleCentre = formula(x,spacing,breadth) { $spacing+$TurnRun*$BehindTurn($x)+max(0,max(1,$breadth)*$AlarSlitReach-$spacing-$TurnRun)*pow($BehindTurn($x),2) }
+CleftBank = formula(u,x) { pow(max(0,$u),2)*$BehindEntrance($x)*(1-pow($BehindTurn($x),2)) }
+Naris = mesh(side=1,breadth=1,tip=1,nostril_w=$NarisHalfSpan($NarisArea,$NarisAspect),rise=$NarisHalfRise($NarisArea,$NarisAspect),spacing=.54) {
+  arc(radius=1,from=-90,to=90,segments=56)
+  revolve(segments=64,rotate=(0,-90,0))
+  # Width increases monotonically across each section. Bending its floor is
+  # a shear, so it cannot turn the bank over or reverse the section winding.
+  warp(with=(T: point.t.x,X: lerp($ChamberRear,$EntranceFront,$T),R: max(.00001,sqrt(max(0,1-point.x*point.x))),U: $side*point.y/$R,V: point.z/$R,C: $CapRadius($T),K: $BehindTurn($X),Expansion: 1+$VestibuleExpansion*$BehindEntrance($X)*(1-$K),Bank: $CleftBank($U,$X),L: $C*($nostril_w*$Expansion*lerp(1,$AlarSlitShare,$K)*$U+$AlarCleftReach*$Bank),H: $C*($rise*$Expansion*lerp(1,$SlitTerminalAspect*$AlarSlitShare,$K)*($V-$NarisHook*($U*$U-.25))-$AlarCleftDrop*$Bank),Angle: $NarisCant*(1-$BehindEntrance($X))),to=($tip*$X,$side*($VestibuleCentre($X,$spacing,$breadth)+$L*cos($Angle)-$H*sin($Angle)),$NostrilLevel+$AlarSlitLift*$K+$L*sin($Angle)+$H*cos($Angle)))
+}
+FelineLeather = material('/Game/AnimalStudies/Catalogue/Materials/MI_RosePlanum')
+PlanumTaper = .91
+NasalLateral = weightage() { rule(condition=y,min=-1.13,max=1.13,profile=(0=0%,1=100%)) }
+NasalElevation = weightage() { rule(condition=z,min=-.78,max=.78,profile=(0=0%,1=100%)) }
+MedialAlarOffset = .62
+MedialAlarBreadth = 1.12
+MedialAlarHeight = 1.20
+MedialAlarLevel = 0
+MedialAlarProjection = .16*(1-$Feline)
+AlarCleftReach = .56
+AlarCleftDrop = .14
+AlarLobuleRelief = .11
+AlarLobuleBreadth = .24
+AlarLobuleHeight = .18
+AlarLobuleOffset = .19
+MedianGrooveHalfWidth = .24
+MedianGrooveDrop = .08
+CleftUpperLevel = .42
+CleftBlendHeight = .55
+PlanumDome = .39
+PlanumHeightRatio = .70
+AlarWingHeight = .22
+AlarCreaseDepth = .055
+AlarCreaseHalfHeight = .072
+AlarCreaseBow = .05
+MoistMarginLevel = .08
+MoistMarginStart = .48
+MoistMarginBlend = .30
+VestibuleMaterial = material('/Game/AnimalStudies/Catalogue/Materials/M_NasalVestibule')
+# The mammal/nose@1 socket fixes its elliptical rim and the surface
+# used by the organic solver. All exposed lengths use collar-radius units.
+CollarAspect = .70
+CollarBandEnd = .22
+# Match the untouched collar tangent before the lumen starts. From the
+# chamber entrance forward this is a single axial affine transform, so
+# even the smallest triangles on the slit keep their relative orientation.
+ProjectionBlend = formula(tip) { min(max(.00001,$ChamberRear-$CollarBandEnd),max(.00001,$tip-$CollarBandEnd)) }
+ProjectionScale = formula(tip,span) { max(.00001,($tip-$CollarBandEnd-.5*$span)/(1-$CollarBandEnd-.5*$span)) }
+ProjectionRun = formula(x,span) { .5*$span*pow(clamp(($x-$CollarBandEnd)/$span,0,1),2)+max(0,$x-$CollarBandEnd-$span) }
+FitProjection = formula(x,tip) { $x+($ProjectionScale($tip,$ProjectionBlend($tip))-1)*$ProjectionRun($x,$ProjectionBlend($tip)) }
+CreaseTravel = formula(y,spacing,breadth) { clamp((abs($y)-$spacing)/max(.00001,max(1,$breadth)*$AlarSlitReach-$spacing),0,1) }
+# The nostril offsets live on the alar wings. An exchanged narrower or
+# broader planum therefore carries its passages and both banks with it.
+AlarSpacing = formula(spacing,breadth) { $spacing*$breadth }
+Nose = mesh(breadth=1,tip=1,cleft=.10,nostril_w=$NarisHalfSpan($NarisArea,$NarisAspect),rise=$NarisHalfRise($NarisArea,$NarisAspect),spacing=.54) {
+  add($Unit,join=none)
+  warp(with=(T: max(0,point.x),Wing: 1+$PlanumTaper*$T*point.z,Groove: max(0,1-abs(point.y)/max(.00001,$MedianGrooveHalfWidth)),Cleft: $cleft*$T*$Groove*clamp(($CleftUpperLevel-point.z)/max(.00001,$CleftBlendHeight),0,1),Height: lerp($CollarAspect,$PlanumHeightRatio,$T)),to=(point.x+$PlanumDome*$T*(1-$T)-$Cleft,point.y*$Wing*lerp(1,$breadth,$T),$Height*point.z+$AlarWingHeight*$T*point.y*point.y-$MedianGrooveDrop*$T*$Groove-$PlanumCrownFlatten*$T*max(0,point.z)+$AlarLipLift*$T*point.y*point.y-$PlanumTipDrop*$T*$Groove))
+  # Each alar lobule sits above the outer half of its own curved passage.
+  # The medial alar bank shares the inlet's spacing and section dimensions.
+  # Its free edge meets the same cut passage as the lateral wing.
+  warp(with=(Y: (abs(point.y)-$AlarSpacing($spacing,$breadth)*$MedialAlarOffset)/max(.00001,$nostril_w*$MedialAlarBreadth),Z: (point.z-$NostrilLevel-$rise*$MedialAlarLevel)/max(.00001,$rise*$MedialAlarHeight),Lobe: $Ease(clamp(1-$Y*$Y-$Z*$Z,0,1)),Free: $Ease(clamp((point.x-$CollarBandEnd)/max(.00001,$ChamberRear-$CollarBandEnd),0,1))),by=($MedialAlarProjection*$Lobe*$Free,0,0))
+  warp(with=(Y: (abs(point.y)-$AlarSpacing($spacing,$breadth)-$AlarLobuleOffset)/max(.00001,$AlarLobuleBreadth),Z: (point.z-$NostrilLevel-$AlarLobuleHeight)/max(.00001,$AlarLobuleHeight),Lobe: $Ease(clamp(1-$Y*$Y-$Z*$Z,0,1))*$Ease(clamp((point.x-$CollarBandEnd)/max(.00001,$ChamberRear-$CollarBandEnd),0,1))),by=($AlarLobuleRelief*$Lobe,0,0))
+  # Trace the alar crease between the entrance and lateral outlet. Its height
+  # follows the lip of the inclined inlet and the rise of the terminal slit.
+  warp(with=(T: $CreaseTravel(point.y,$AlarSpacing($spacing,$breadth),$breadth),Z: $NostrilLevel+lerp($nostril_w*sin($NarisCant),$AlarSlitLift,$T)+$AlarCreaseBow*sin(180*$T),Band: clamp(1-abs(point.z-$Z)/max(.00001,$AlarCreaseHalfHeight),0,1),Free: $Ease(clamp((point.x-$CollarBandEnd)/max(.00001,$ChamberRear-$CollarBandEnd),0,1)),Depth: $AlarCreaseDepth*sin(180*$T)*$Ease($Band)*$Free),by=(-$Depth,-$Depth*point.y,0))
+  colour($MoistMarginLevel,channel=r)
+  colour(1,channel=r) [value=point.x,above=$MoistMarginStart,fade=$MoistMarginBlend]
+  # Preserve pigment coordinates before fitting, scaling and organically welding the insert.
+  material($Leather)
+  save($PlanumSurface) [material=$Leather]
+  $AcrossPlanum = select($PlanumSurface,weight=$NasalLateral)
+  $UpPlanum = select($PlanumSurface,weight=$NasalElevation)
+  colour(0,channel=g)
+  colour(0,channel=b)
+  colour(1,channel=g) [$AcrossPlanum]
+  colour(1,channel=b) [$UpPlanum]
+  if ($PlanumPalette >= .5) { material($FelineLeather) }
+  subtract($Naris,side=1,breadth=$breadth,tip=1,nostril_w=$nostril_w,rise=$rise,spacing=$AlarSpacing($spacing,$breadth))
+  subtract($Naris,side=-1,breadth=$breadth,tip=1,nostril_w=$nostril_w,rise=$rise,spacing=$AlarSpacing($spacing,$breadth))
+  material($VestibuleMaterial) [cut]
+  uv(box,scale=1)
+  cut(plane=(-1,0,0),at=(0,0,0),fill=false)
+  save($RootBand) [value=point.x,below=$CollarBandEnd]
+  if ($tip != 1) { warp(by=($FitProjection(point.x,$tip)-point.x,0,0)) }
+  socket(Root,at=(0,0,0),facing=-X,up=+Z,type='mammal/nose@1',transition=$RootBand)
+}
+BroadNose = mesh() {
+  add($Nose,breadth=1.23,tip=1.05,cleft=.11,join=none)
+  save($RootBand) [$output.RootBand]
+}
+HeartNose = mesh() {
+  add($Nose,breadth=.89,tip=.77,cleft=.18,join=none)
+  save($RootBand) [$output.RootBand]
+}
+
+# Pinna grows from the local base. The rostral face is depressed to leave a
+# rim. Folding rotates distal stations forward and down from the ear base.
+# Helix returns into the pinna, while the lower concha and paired crura
+# remain palpable below it. Pendant ears keep a broad distal lobe.
+ErectWidth = profile(0=.79,.10=.98,.25=1,.39=.88,.54=.72,.70=.53,.84=.33,.95=.14,1=.035)
+LobeWidth = profile(0=.82,.11=.95,.24=1,.43=.91,.62=.76,.77=.60,.87=.46,.94=.30,1=.065)
+EarBell = formula(x,w) { .5+.5*cos(180*clamp($x/$w,-1,1)) }
+EarThickness = 1
+ConchaDepth = 1
+PinnaBendLength = .28
+PinnaBendAngle = 190
+PinnaBaseYaw = 64
+PinnaBurial = .18
+PinnaRake = .17
+LobeFlare = .16
+LobeFlareCurve = profile(0=0,.16=.17,.34=.78,.48=1,.61=.84,.79=.31,.92=.05,1=0)
+LobeTwist = -12
+LobeCup = .14
+PinnaStandOff = .155
+PinnaForward = .12
+# Local cross-sections of the concha, helix and its two crura, in ear widths.
+CartilageHalfThickness = .125
+CartilageTaper = .49
+ConchaRelief = .175
+ConchaStation = .40
+ConchaSpan = .46
+HelixHeight = .13
+HelixInset = .83
+HelixHalfWidth = .17
+HelixStation = .49
+HelixSpan = .47
+MedialCrusHeight = .068
+MedialCrusRoot = -.37
+MedialCrusSlope = .46
+MedialCrusWidth = .19
+MedialCrusStation = .40
+MedialCrusSpan = .32
+LateralCrusHeight = .070
+LateralCrusRoot = .21
+LateralCrusSlope = -.24
+LateralCrusWidth = .17
+LateralCrusStation = .29
+LateralCrusSpan = .22
+Crus = formula(s,l,root,slope,width,station,span) { $EarBell($l-($root+$slope*$s),$width)*$EarBell($s-$station,$span) }
+Pinna = formula(s,l,h,w) { $w*($CartilageHalfThickness*$EarThickness*$h*(1-$CartilageTaper*$s)+max(0,$h)*(-$ConchaRelief*$ConchaDepth*$EarBell($s-$ConchaStation,$ConchaSpan)*(1-$l*$l)+$HelixHeight*$EarBell(abs($l)-$HelixInset,$HelixHalfWidth)*$EarBell($s-$HelixStation,$HelixSpan)+$MedialCrusHeight*$Crus($s,$l,$MedialCrusRoot,$MedialCrusSlope,$MedialCrusWidth,$MedialCrusStation,$MedialCrusSpan)+$LateralCrusHeight*$Crus($s,$l,$LateralCrusRoot,$LateralCrusSlope,$LateralCrusWidth,$LateralCrusStation,$LateralCrusSpan))) }
+EarAcross = weightage() { rule(condition=y,min=-1,max=1,profile=(0=0%,1=100%)) }
+EarAlong = weightage() { rule(condition=z,min=-1,max=1,profile=(0=0%,1=100%)) }
+Ear = mesh(height=4,width=3.0,fold=0,pointed=.75) {
+  arc(radius=1,from=-90,to=90,segments=68)
+  revolve(segments=64)
+  # Store material coordinates in the pinna before its fold and rotation.
+  save($LeatherSurface)
+  $EdgeToEdge = select($LeatherSurface,weight=$EarAcross)
+  $RootToTip = select($LeatherSurface,weight=$EarAlong)
+  colour(0,channel=rgb)
+  colour($PinnaPigmentMix,channel=b)
+  colour(1,channel=r) [$EdgeToEdge]
+  colour(1,channel=g) [$RootToTip]
+  # Store the continuous change from outer leather to thin conchal skin.
+  colour(.80,channel=a)
+  colour(.90,channel=a) [value=point.x/max(.001,sqrt(max(0,1-point.z*point.z)))-.6*abs(point.y)/max(.001,sqrt(max(0,1-point.z*point.z)))-.32*abs(point.t.z-.45),above=.50,fade=.28]
+  warp(with=(T: point.t.z,R: max(.00001,sqrt(max(0,1-point.z*point.z))),H: point.x/$R,L: point.y/$R,Cap: sqrt(max(0,1-pow(clamp(1-$T/.13,0,1),2)-pow(clamp(($T-.93)/.07,0,1),2))),W: $L*$width*.50*lerp($ErectWidth($T)*(1+.42*(.88-$pointed)*$T),$LobeWidth($T),$fold)*$Cap,D: ($Pinna($T,$L,$H,$width)+$LobeCup*$width*$fold*(1-$L*$L)*sin(180*$T))*$Cap,Yaw: $fold*($PinnaBaseYaw+$LobeTwist*(.5-.5*cos(180*clamp(($T-.12)/.58,0,1)))),Tilt: max(.001,$PinnaBendAngle*$fold),A: $Tilt*min(1,$T/$PinnaBendLength),Rad: $PinnaBendLength*$height/($Tilt*.01745329252),Beyond: max(0,$T-$PinnaBendLength)*$height,Across: ($W*cos($Yaw)+$D*sin($Yaw))*lerp(min(1,.82*$Rad/(.48*$width*abs(cos($Yaw))+.19*$width)),1,clamp(($T-$PinnaBendLength)/.29,0,1)),Y: $Rad*(1-cos($A))+$Beyond*sin($Tilt),Z: $Rad*sin($A)+$Beyond*cos($Tilt)),to=($D*cos($Yaw)-$W*sin($Yaw)-$PinnaRake*$height*$T*(1-$fold)+$PinnaForward*$height*$fold*$T,$Y+$height*$fold*($PinnaStandOff*sin(90*$T)+$LobeFlare*$LobeFlareCurve($T))+$Across*cos($A)-.055*$width,$Z-$Across*sin($A)-$PinnaBurial*$height))
+  material($Coat)
+  uv(box,scale=$width)
+}

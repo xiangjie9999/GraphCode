@@ -52,6 +52,7 @@ description (`gc_describe kind:"garment"`) and a row disagree, the description i
 | a narrow hem turned twice | `rim($Hem, turned(0.635cm, twice))` (*added 16 Nov*); older spelling `rim($Hem, turned=0.635cm, layers=3)` | [narrow hem](#a-narrow-hem-and-a-top-that-narrows) |
 | a skirt's top shaped in to the waist | darts: `DartFROther = cut($DartFR)`, then `sew($DartFR, $DartFROther)` | [darts](#a-narrow-hem-and-a-top-that-narrows) |
 | where a simulated skirt is held | `hang(from=$Hips)`, the widest round of the seat | [where to hold the cloth](#fit-skinning-and-collision-are-different-claims) |
+| a leg or sleeve cut longer than the body, stacking above the cuff that grips it (*added 23 Nov*) | `length($Knee_R, $Ankle_R, 1.75cm)` below `construct()`, in the block whose rings it names | [cloth cut longer](#cloth-cut-longer-than-the-body-lengtha-b-cm) |
 | the game cloth's solver, said in the recipe (*added 19 Nov*) | `hang(from=$Hips, damping=5%, local_damping=30%, iterations=12, substeps=4, ccd, self=0.6cm, repair)`; `spacing=1.25cm` for finer simulated points | [solver words](GARMENT-HANG-AND-CURTAINS.md#hangs-solver-words-the-game-cloth-said-in-the-recipe) |
 | a skirt or any garment fitted on a MetaHuman | `mesh:` naming the MetaHuman character asset, not its assembled body mesh | [step 3](#3-inspect-and-measure-the-real-body) |
 | a tee pulled up a little, with creases: a hem lifted and held there while it hangs (*added 19 Nov; not yet looked at by the owner*) | `HemUp = ring((0, 10.2, 94.5), level) { expand(0.26) }`, then `settle() { guide($Hem, $HemUp) }`: the whole hem is taken to the ring and held, its spare cloth folding on its own; held all round, so it gathers into a band, and a few-point lift is not shipped | [the recipe](GARMENT-HANG-AND-CURTAINS.md#a-tee-pulled-up-a-little-with-creases) |
@@ -345,6 +346,40 @@ above the waist the band rests on it (up to 1 cm in, then the build refuses and 
 narrower or start the skirt lower). Very full gathers (about 250 %) can still leave a few faces
 over the stretch limit at the waist; the build names them. Grow it in its own fabric,
 `extend($Waist, 3.5, fabric=$Fused)`, where it is interlined.
+
+#### Cloth cut longer than the body: `length($A, $B, cm)`
+
+*Added 23 Nov 2026; built in the hang, shown on the joggers and the sweater's sleeves (`Common/Joggers.gcgarment`, `Common/Sweater.gcgarment`).* A garment's rings lay its cloth on the
+body, so every length between them is the body's own and nothing has spare cloth to fold. A real leg
+or sleeve is often cut longer than the body it covers, and where it lands on something that holds it,
+the spare length stacks. Write how much longer the cloth between two of the garment's rings is cut:
+
+```gcgarment
+# Joggers: the leg cut 1.75 cm longer than knee-to-cuff (FreeSewing Paco: 1.5-2 cm, DERIVED,
+# Docs/Research/garment-length-ease-stacking.md); the rib cuff grips the ankle, so it stacks above it.
+Leg_R = garment($Top_R, ..., $Knee_R, ..., $Ankle_R, loose=100%, fabric=$Fleece) {
+  construct()
+  band($Ankle_R, width=5cm, fabric=$Rib, cut=60.2%)
+  length($Knee_R, $Ankle_R, 1.75cm)
+}
+```
+
+Nothing moves as the cloth is laid. The hang rests the cloth at its cut, and the cut between the two
+rings is that much longer along its lines, spread evenly from the first ring to the second. Write it
+below `construct()`, in the garment whose rings it names (a leg's in the leg's block); only cloth inside
+the tube between the two rings is lengthened, so one leg's length never reaches the other. The build's
+note gives the points lengthened, at the hang's copy and at its own detail.
+
+The extra length folds only where something holds the cloth below it: a gripping rib cuff, a band.
+**Not yet supported:** a trouser break and a long hem on the ground need a support under the cloth (a
+shoe, the floor), which the test bodies do not have. A sleeve stacks above a rib cuff that grips the wrist even on a
+T-pose arm (the sweater: `length($Armhole_L, $Cuff_L, 1.75cm)`, Sven's 3 % of the 58.3 cm arm); the
+fall of a long sleeve down a hanging arm is not shown. A sweatshirt body is not cut longer (FreeSewing Hugo and Sven:
+0 cm, Docs/Research/sweatshirt-body-blousing.md); its blousing over the hem band is girth, the band 0.85
+of the hem.
+
+Refused by name: one ring named twice; 0 cm or less ("a ring placed higher, not a length"); a percent;
+anything but two rings and a length; a name that is no ring.
 
 ### 5. Compose cloth and hard parts
 

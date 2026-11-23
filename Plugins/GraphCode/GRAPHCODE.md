@@ -5,6 +5,13 @@ file at the start of every session and again before any GraphCode work you would
 memory. It is short on purpose: it holds the rules and the map, and every detail lives one layer
 down.*
 
+## Start with Marketplace precedent
+
+Before authoring an asset, recipe or workflow, search the [GraphCode
+Marketplace](Docs/Guides/MARKET.md) for the closest precedent. Inspect how the pack is built.
+Reuse it when it fits. Adapt its recipe, materials, proportions or behaviour wherever the
+task needs a change. If only part fits, use that part and build the missing piece.
+
 ## 1. Memory is the last authority, not the first
 
 What you remember about GraphCode (from training, an earlier session, another project or a
@@ -81,8 +88,9 @@ Making game content or presentation of any kind? [ASSET-QUALITY.md](Docs/Guides/
 comes first, every time. Unfamiliar or complex work? [RESEARCH-AND-PLAN.md](Docs/Guides/RESEARCH-AND-PLAN.md)
 before building.
 
-## 5. Rules that hold on every route
+## 5. Golden rules for every route
 
+- **Marketplace first.** Find the closest precedent before authoring and adapt it as needed.
 - **Read before writing.** `gc_read` the asset; use `dry_run` where offered; verify the exact asset,
   graph or actor before changing it.
 - **One state, one word:** `saved` is the file on disk; `live` is the editor with unsaved edits.
@@ -99,7 +107,7 @@ A project's own agent instructions (`CLAUDE.md`, `AGENTS.md` or equivalent) shou
 line, so every session starts here instead of from memory:
 
 ```text
-Before any GraphCode work, read <GraphCode plugin>/GRAPHCODE.md and follow its layers; never rely on memory for GraphCode grammar or limits.
+Before any GraphCode work, read <GraphCode plugin>/GRAPHCODE.md. Search the GraphCode Marketplace for precedent before authoring and adapt what you find as needed. Use installed help for grammar and limits.
 ```
 
 [SETUP.md](SETUP.md) writes that line for you when it sets up a project. The GraphCode MCP server

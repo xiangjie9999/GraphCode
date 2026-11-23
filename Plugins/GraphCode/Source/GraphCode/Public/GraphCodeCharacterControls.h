@@ -61,12 +61,17 @@ struct GRAPHCODE_API FGcCharacterGrip
 };
 
 /** A joint's reference motion, `.gcrig` `velocity:`/`accel:`/`ramp:` (header) and `[velocity=, accel=, ramp=]` (joint):
- * this character's normal full effort, 100%, in deg/s, deg/s^2 and seconds. Unset is unknown, never defaulted. */
+ * this character's normal full effort, 100%, in deg/s, deg/s^2 and seconds. Unset is unknown, never defaulted.
+ * `[twist_velocity=, twist_accel=]` (joint only, 2026-11-20): the same for the joint's turn ABOUT ITS OWN LENGTH alone, where a
+ * joint's twist is measured far faster than its swing (a shoulder's internal rotation, Docs/Research/joint-speed-and-acceleration-
+ * references.md section 4). Unset, the twist is measured against Velocity / Accel with the rest of the turn, exactly as before. */
 struct GRAPHCODE_API FGcCharacterMotion
 {
 	FString Bone;   // empty for the file-wide default
 	TOptional<double> Velocity, Accel, Ramp;
-	bool IsSet() const { return Velocity.IsSet() || Accel.IsSet() || Ramp.IsSet(); }
+	TOptional<double> TwistVelocity, TwistAccel;
+	bool IsSet() const { return Velocity.IsSet() || Accel.IsSet() || Ramp.IsSet() || TwistVelocity.IsSet() || TwistAccel.IsSet(); }
+	bool HasTwist() const { return TwistVelocity.IsSet() || TwistAccel.IsSet(); }
 };
 
 /** The whole body's reference motion, `.gcrig` `body_accel:`/`body_speed:` (header only; the body is not a joint): how hard

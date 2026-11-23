@@ -3,13 +3,13 @@
   "phase": "binary-only-product",
   "readyToSend": false,
   "plugin": "GraphCodeGroom",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "engine": "5.7.4",
   "engineBuildId": "47537391",
   "platform": "Win64",
-  "sourceRevision": "e0af22daa6d5f774fd095cf5d36101970a8206c4",
-  "sourceWasDirty": true,
-  "packagedAtUtc": "2026-11-12T12:32:45.1046518Z",
+  "sourceRevision": "6864c959358e50bb622b73602cf91f05bd0180cf",
+  "sourceWasDirty": false,
+  "packagedAtUtc": "2026-11-20T13:44:17.7251250Z",
   "fileCount": 27,
   "privateImplementationIncluded": false
 }

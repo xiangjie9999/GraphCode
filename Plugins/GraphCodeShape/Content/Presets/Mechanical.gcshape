@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.08  shade:40
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Mechanical  smooth:0.08  shade:40
 
 # MECHANICAL — L3 Parts, the hardware a machine is assembled FROM.
 # `Docs/GC-SHAPE-PRESET-LIBRARY.md` §3, L3.
@@ -130,7 +130,7 @@ Boss = mesh(r=1.8, h=1.0, bore=0.7, fillet=0.35) {
   circle(radius=$r)
   subtract($Flange_Bore, bore=$bore)
   extrude(height=$h)
-  round($fillet, segments=3) [top, sharp]
+  round($fillet, segments=3) [top]
   material($Metal)
 }
 

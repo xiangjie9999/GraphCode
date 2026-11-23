@@ -82,6 +82,12 @@ enum class EGcShapeCollide : uint8
 
 	/** Lifted along the normal it landed on until it rests on the earlier copy it met. */
 	Stack,
+
+	/**
+	 * G31 (`Docs/GC-SHAPE-SETTLE.md`): dropped along world -Z from its own place, then tipped and slid until it rests on
+	 * the entry so far, the copies before it and the line's `obstacle=` entries (`GraphCodeShapeCollideSettle`).
+	 */
+	Settle,
 };
 
 /** One dimension of a lattice: how many, and how far apart. */
@@ -204,7 +210,23 @@ struct GRAPHCODESHAPE_API FGcShapeArray
 	 * `apart=` measures between places, and a 6 mm sprinkle reaches 3 mm past its own.
 	 */
 	EGcShapeCollide Collide = EGcShapeCollide::None;
-	
+
+	/**
+	 * `obstacle=$Form` / `obstacle=($A, $B)` — G31: entries a settling copy cannot pass, used at build time only and
+	 * never drawn (as `[collision=$X]` entries are used without being drawn). Names without their `$`; G34: an entry
+	 * called with its arguments keeps them as written, `Board(h=250)`, the way `add($Board, h=250)` passes them.
+	 */
+	TArray<FString> Obstacles;
+
+	/**
+	 * `plane=Y` / `plane=(0, 1, 0.156)` — G34: a settle IN A PLANE, given by its normal (as `cut(plane=)` names one): each
+	 * copy moves only within it and turns only about the normal. Zero: the free 3D settle.
+	 */
+	UE::Math::TVector<double> SettlePlane = UE::Math::TVector<double>::Zero();
+
+	/** `fit=N` beside `plane=` — G34: the turns about the normal each copy tries, the least void below it kept (1..16). */
+	int32 SettleFit = 1;
+
 	EGcShapeOrient Orient = EGcShapeOrient::Keep;
 	bool bOrientStated = false;
 

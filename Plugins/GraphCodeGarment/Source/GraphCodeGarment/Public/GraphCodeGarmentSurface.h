@@ -603,6 +603,14 @@ struct GRAPHCODEGARMENT_API FGcGarmentBuiltSurface
 	 */
 	TArray<FGcGarmentPlacedPart> Seated;
 
+	/**
+	 * Where the hang carried the cloth (23 Nov, <T>\parts-conform\parts-conform-why-23nov.md): each point of the settled sheet as laid, and where it
+	 * hung. A part seated after the hang by a place in SPACE - a ring, `at=$LoopRow@0.125` - is moved with the cloth that lay there
+	 * (`GcGarmentPartsCarry`), as a part sewn to that cloth is: the cargo trousers' band hung 0.9-1.1 cm below where it was laid and its loops,
+	 * placed by a ring at the band's laid height, stood that far over its top edge. A later hang carries these on. Empty: never hung.
+	 */
+	TArray<TPair<FVector, FVector>> HangCarried;
+
 	/** Every `.gcshape` those parts are built from, for the asset's digest. */
 	FString SeatedFolded;
 

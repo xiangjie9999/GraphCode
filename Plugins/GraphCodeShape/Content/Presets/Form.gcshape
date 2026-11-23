@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.5  shade:40
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Form  smooth:0.5  shade:40
 
 # FORM — a shape's surface reshaped by a formula of each point, composed from `warp()` and
 # nothing else (2026-10-30). `warp()` is GraphCode's per-point block: Blender's Set Position

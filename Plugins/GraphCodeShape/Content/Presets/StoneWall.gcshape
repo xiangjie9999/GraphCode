@@ -1,36 +1,54 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.5  shade:25
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/StoneWall  smooth:0.5  shade:25
 
-# STONEWALL: a dry-stone, mortared, ruined or coursed wall module, and a 90 degree corner on a quoin pier. A kit module: it builds
+# STONEWALL: a dry-stone, mortared, ruined, coursed or BOULDER wall module, and a 90 degree corner on a quoin pier. A kit module: it builds
 # buried `bury` cm below z = 0, so it stands in any terrain, and nothing floats.
 #
-#   SW = shape('/GraphCodeShape/Presets/StoneWall', Face = $Stone, Joint = $Core)
+#   SW = shape('/GraphCodeShape/Presets/StoneWall', Face = $Stone, Joint = $Core, Soil = $Dirt)
 #   Wall   = mesh() { add($SW.Wall, len=300, height=130, damage=0.3, noise=7) }
-#   Corner = mesh() { add($SW.Corner, len=300, noise=7, mortar=1) }
+#   Boulders = mesh() { add($SW.Wall, height=250, base=80, top=52, stone=1.3, rows=0, round=0.65, chink=1, uneven=0.7, fill=0.8, cope=0, ends=0) }
 #
-# HOW IT IS MADE: ROWS of field stones, bigger at the base (a drawn height each). Each row side (front, back) is thin shell
-# segments of about 20 cm along x: a BIG stone 2-3 x the row's mean (about 65 % of rows; 4 in 10 of those span two courses, and the
-# row above leaves the hole), the rest broken from points DRAWN inside the segment (`save($P) [inside, scatter=, apart=profile()]`
-# then `fracture(from=$P)`, graded small to big toward a drawn end). A segment shorter than about three and a half stones is ONE
-# stone, so no shards. Front and back draw their own layouts. A core slab sits behind and overlaps both shells, so every void shows
-# darkness (dry) or mortar (mortared). A row of long coping stones caps the intact run; `ends` finishes a head of squared
-# stones; `coursed=1` is the older lattice-band method; `ruin` shortens the rows from one drawn end, so whole stones are missing.
+# HOW IT IS MADE: ROWS of field stones, bigger at the base (a drawn height each). Each row side (front, back) is thin shell segments of about 20 cm along x: a BIG stone 2-3 x the row's mean
+# (about 65 % of rows; 4 in 10 of those span two courses, and the row above leaves the hole), the rest broken from points DRAWN inside the segment (`save($P) [inside, scatter=, apart=profile()]`
+# then `fracture(from=$P)`). A segment shorter than about three and a half stones is ONE stone, so no shards. Front and back draw their own layouts. A core slab sits behind and overlaps both
+# shells, so every void shows darkness (dry) or mortar (mortared). A row of long coping stones caps the intact run; `ends` finishes a head of squared stones; `coursed=1` is the older lattice-band
+# method; `ruin` shortens the rows from one drawn end, so whole stones are missing. BOULDERS (`rows=0`): no rows. The wall's whole thickness is broken ONCE (one
+# fracture) from points laid in rough courses (drawn heights, bigger at the foot; each stone about 2 x as long as it is high, as measured on a real boulder wall:
+# 42-70 x 18-30 cm faces, courses about 21 cm), front and back skins drawn apart, THROUGH-STONES across the whole thickness at the ends on alternate courses, so no seam
+# runs down an end. The break runs in a space squeezed 3 x along the wall and each stone is stretched back, so the beds come out near level. Each stone is finished
+# as the Stone preset's Boulder is (pillow rounding, convex-only wear by curvature(), two octaves of lumps), set in or out, tilted. A few loose Stone Boulders are
+# dropped on top by collide=settle (a ragged top); soil packs the deep gaps and slumps at the foot. The same knobs: a change of settings, never a mode.
 #
 # TOP-LEVEL KNOBS (every one is clamped to the range written):
-#   len     cm   100-600 default 200  module length (Corner: both arms together)
-#   height  cm    40-300 default 120  above z = 0
-#   damage  0-1  default 0            chipped, faceted stone corners and break faces
-#   age     0-2  default 1            rounder corners, more in and out
-#   noise   seed 1-99999 default 1    the whole wall; every stone draws `noise * 1009 + index`
-#   budget  0 game / 1 high           rounding steps and facet size; the stones are the same
-# ADVANCED:
-#   base 40-120 cm (60) foot thickness; top 20-base cm (35) under the coping; stone 0.6-1.6 (1) stone size;
-#   coursed 0/1 (0); mortar 0-1 (0) 0 dry, 1 mortared (joint 1.9 cm, stones rounded 2 cm, in and out +-1);
-#   recess 0.3-3 cm (1.5) mortar face behind the stones' nominal face; ruin 0-1 (0) stepped top, from 0.02;
-#   ends 0-2 (2) finished heads (a ruin keeps the head on its intact end); bury 0-20 cm (8) foot sunk below z = 0;
-#   cope 8-24 cm (14) coping height. `em` and `ce` are the Corner's own: leave them.
-# TIERS: Game at budget 0 (`triangles=8000` is only the cap; the recipe makes 6,000-9,500), High at budget 1 (the author's budget;
-#   the cap 48000 only trims the heaviest).
-# SLOTS: Face (the stones), Joint (core, hearting and mortar).
+#   len cm 100-600 (200) module length (Corner: both arms together); height cm 40-300 (120) above z = 0; damage 0-1 (0) chipped, faceted corners and break faces; age 0-2 (1) rounder corners, more in and out
+#   noise seed 1-99999 (1) the whole wall, every stone draws `noise * 1009 + index`; budget 0 game / 1 high (rounding steps, facet size; the stones are the same)
+# ADVANCED: base 40-120 cm (60) foot thickness; top 20-base cm (35) under the coping; stone 0.6-3 (1) stone size (the row mean is 21 cm x stone; a boulder wall uses 1.9); coursed 0/1 (0);
+#   mortar 0-1 (0) 0 dry, 1 mortared (joint 1.9 cm, stones rounded 2 cm, in and out +-1); recess 0.3-3 cm (1.5) mortar face behind the stones; ruin 0-1 (0) stepped top, from 0.02;
+#   ends 0-2 (2) finished heads (`ends=0` tiles; the heads stay at most 1.6 x stone); bury 0-20 cm (8); cope 0 or 4-24 cm (14) coping height (below 4: NO coping, a ragged top). `em` and `ce` are the Corner's own: leave them.
+# W6 SETTINGS (every default builds the meshes as before):
+#   round 0-1 (0) 0 flat-faced field stone, 1 pillow: corners rounded 4 cm more, each face bulging 11-24 cm (0.6-1.25 x 19, its own draw)
+#   rows 0-1 (1) 1 the rows above, below 0.5 RANDOM STACKING (columns of drawn width and stacks, bigger at the foot, no bed line runs across); `coursed=1` wins; `ruin` and the squared heads are the rows' own: use `ends=0`
+#   chink 0-1 (0) wedge stones on the bed joints between stacked stones (rows=0)
+#   uneven 0-1 (0) in and out up to +-12 cm at 1, tilts +5 degrees more, the face plane waves +-5 cm; with rows=0 and cope=0 the top stones are lifted or dropped by up to 0.3 x the stone (a ragged top)
+#   fill 0-1 (0) 0 dark voids; toward 1 the gaps are packed with SOIL: a lumpy earth slab 3-8.5 cm behind the stones' faces (deeper as `uneven` rises), lying on the wall between its top stones, and a slumped bank at the foot
+# TIERS: Game at budget 0 (`triangles=8000` is only the cap; the recipe makes 6,000-9,500; a Boulder Game module about 25,000: some 110 stones at about 225 each), High at budget 1 (the author's budget; the caps only trim the heaviest).
+# BOULDER LINES: SM_StoneWall_Boulder_{Game,High} = Wall(noise=3, height=250, base=80, top=52, stone=1.3, rows=0, round=0.65, chink=1, uneven=0.7, fill=0.8, cope=0, ends=0): 200 cm modules.
+# ROUND-2 SETTINGS (21 Nov 2026; at their defaults every line above builds as before):
+#   detail 0-1 (0) with rows=0: at 1 the DETAILED boulder wall: the packed break kept, but each stone a chunky field stone (its face pillowed
+#     out from its rim by its own height, two octaves of lumps and dents, about one in five with a flat split face, one in sixteen set deep as a
+#     dark pocket), the joints tight to open by each stone's own size, courses wandering with the wall, sizes graded big low, a ragged top
+#     stepping down by up to 1.7 stones, the face bulging +-11 cm at uneven 1, soil packed in the joints and on the steps.
+#     ROUND 3 (StoneWall 1.2.1): PACKED: each stone keeps its cell's outline (crease 0.6-3, a tight round, over three Catmull-Clark levels
+#     at High and one at Game, whose maps carry the rest; no surface re-lay, which saw-toothed every rim), so stones bear on the ones below and beside them with
+#     1-4 cm joints; small PINNING STONES (spalls) sit in the triangles where three stones meet and in the courses' vertical joints; the
+#     soil lies 14 cm back, deep in the joints (about 6 % of the face shows soil, was 24 %); about 325,000 triangles a 2 m module at High;
+#     the Game maps are 4096 (the UV1 layout of the 12,000-triangle line fills only ~16 % of the square, so 2048 gave 89 px/m)
+#   moss 0-1 (0) with detail=1: moss as a SOFT MASK in the vertex colour (Weather's spelling, G = 1 - moss): patches on the stones' tops and
+#     sheltered rims, and the soil in the joints greened; bind a Face/Soil material that reads Vertex Color G (no triangles added)
+# DETAILED LINES: SM_StoneWall_BoulderDetail_{High,Game} = Wall(noise=3, height=250, base=80, top=52, stone=1.5, rows=0, uneven=0.8, fill=0.8,
+#   cope=0, ends=0, detail=1, moss=0.45; Game moss=0); the Game line is 12,000 triangles, normal, AO and curvature baked from the High (on UV1; UV0 keeps the
+#   100 cm box map for a tiling stone).
+# IMPORTS: the Stone preset (its Boulder finishes the loose top stones; bound to this file's Face slot); Weather (its Moss, with detail=1).
+# SLOTS: Face (the stones), Joint (core, hearting and mortar), Soil (the packed earth of `fill`; unused at fill 0).
 
 build {
   SM_StoneWall_Dry_Game     = $DryGame     [pivot=(0, 0, 0), triangles=8000]
@@ -41,12 +59,18 @@ build {
   SM_StoneWall_Ruin_High    = $RuinHigh    [pivot=(0, 0, 0), triangles=48000]
   SM_StoneWall_Coursed_Game = $CoursedGame [pivot=(0, 0, 0), triangles=8000]
   SM_StoneWall_Corner_Game  = $CornerGame  [pivot=(0, 0, 0), triangles=8000]
+  SM_StoneWall_Boulder_Game = $BoulderGame [pivot=(0, 0, 0), triangles=30000]
+  SM_StoneWall_Boulder_High = $BoulderHigh [pivot=(0, 0, 0), triangles=120000]
+  SM_StoneWall_BoulderDetail_High = $BoulderDetailHigh [pivot=(0, 0, 0)]
+  SM_StoneWall_BoulderDetail_Game = $BoulderDetailGame [pivot=(0, 0, 0), triangles=12000, maps=(normal, ao, curvature), from=$BoulderDetailHigh, resolution=4096, supersample=1, uv_channel=1]
 }
 
 # the stones' material slot (bind your stone at import: Face = $Stone)
 Face  = material()
 # the core, hearting and mortar slot (bind at import: Joint = $Mortar)
 Joint = material()
+# the loose top stones are the Stone preset's Boulders
+St = shape('/GraphCodeShape/Presets/Stone', Face = $Face, Broken = $Face)
 
 # the hearting behind the faces: a slab whose face sits a few cm behind the stones'
 CoreSlab = mesh(w=100.0, t=40.0, h=20.0) {
@@ -198,14 +222,14 @@ Quoin = mesh(qs=60.0, hb=114.0, bu=8.0, st=1.0, sd=1, r=2.5, seg=1, jt=0.3, tt=3
 # A STONE WALL MODULE along +X, buried `bury` cm below z = 0: irregular laid rubble (dry or `mortar=1`), `ruin` for top stones
 # missing along a stepped line, `coursed=1` for level courses, `ends` finished heads; knobs and clamps in the file's header.
 # (`em` and `ce` are the Corner's own: leave them.)
-Wall = mesh(len=200.0, height=120.0, damage=0.0, age=1.0, noise=1, budget=0, base=60.0, top=35.0, stone=1.0, coursed=0, mortar=0.0, recess=1.5, ruin=0.0, ends=2, bury=8.0, cope=14.0, em=-1, ce=0.0) {
+Wall = mesh(len=200.0, height=120.0, damage=0.0, age=1.0, noise=1, budget=0, base=60.0, top=35.0, stone=1.0, coursed=0, mortar=0.0, recess=1.5, ruin=0.0, ends=2, bury=8.0, cope=14.0, round=0.0, rows=1.0, chink=0.0, uneven=0.0, fill=0.0, em=-1, ce=0.0, detail=0.0, moss=0.0) {
   $L  = clamp($len, 100, 600)
   $hh = clamp($height, 40, 300)
   $bu = clamp($bury, 0, 20)
-  $cp = clamp($cope, 8, 24)
+  $cp = clamp(floor(clamp($cope, 0, 24) / 4), 0, 1) * clamp($cope, 8, 24)
   $bs = clamp($base, 40, 120)
   $tt = clamp($top, 20, $bs)
-  $st = clamp($stone, 0.6, 1.6)
+  $st = clamp($stone, 0.6, 3)
   $ag = clamp($age, 0, 2)
   $dm = clamp($damage, 0, 1)
   $ru = clamp($ruin, 0, 1)
@@ -229,7 +253,7 @@ Wall = mesh(len=200.0, height=120.0, damage=0.0, age=1.0, noise=1, budget=0, bas
   $side = $u1 - $u2 + (1 - $u1 - $u2) * $sdr
   $hA = ($mk - 2 * floor($mk / 2)) * (1 - $gate * 0.5 * (1 - $side))
   $hB = floor($mk / 2) * (1 - $gate * 0.5 * (1 + $side))
-  $he = 38 * $st
+  $he = 38 * min($st, 1.6)
   $Lm = $L - ($hA + $hB) * $he
   $xm = ($hA - $hB) * $he * 0.5
   # quality: tier, age, mortar
@@ -275,9 +299,9 @@ Wall = mesh(len=200.0, height=120.0, damage=0.0, age=1.0, noise=1, budget=0, bas
       $sl = $st * (24 + 30 * $big) * (0.45 + 1.4 * random(seed=$sd0 * 59 + $i, min=0, max=1))
       $par = $i - 2 * floor($i / 2)
       $nn = clamp(2 * floor($Li / $sl / 2) + $par, 1, 13)
-      add($Course, w=$Li, t=$bs, h=$ch[$i], n=$nn, sd=$sd0 + 100 * $i, r=$r, seg=$seg, sc=70 - 40 * $bd, bul=2.2 + 1.0 * $ag, io=$io, tilt=3.5 * (1 - 0.6 * $mo), joint=$jt, rec=$rec, at=($xo, 0, $zb[$i]), rotate=(0, $wb, 0), join=none)
+      add($Course, w=$Li, t=$bs, h=$ch[$i], n=$nn, sd=$sd0 + 100 * $i, r=$r + 4 * clamp($round, 0, 1), seg=$seg, sc=70 - 40 * $bd, bul=2.2 + 1.0 * $ag + 12 * clamp($round, 0, 1), io=$io + (12 - $io) * clamp($uneven, 0, 1), tilt=3.5 * (1 - 0.6 * $mo) + 5 * clamp($uneven, 0, 1), joint=$jt, rec=$rec, at=($xo, 0, $zb[$i]), rotate=(0, $wb, 0), join=none)
     }
-    if ($csb < 0.5) {
+    if ($csb + (1 - $csb) * (1 - floor(clamp($rows, 0, 1) + 0.5)) < 0.5) {
       # row mean spacing m; the BIG stone is 2-3 x that (on about 65 % of rows, 4 in 10 of them spanning two courses).
       # FRONT and BACK each draw their own layout (own seeds, own big stone, own two-course holes); an end narrower than
       # half a mean stone joins the big stone beside it.
@@ -315,46 +339,50 @@ Wall = mesh(len=200.0, height=120.0, damage=0.0, age=1.0, noise=1, budget=0, bas
       $bxaB[$i + 1] = $rowL + $s1B
       $bxbB[$i + 1] = $rowL + $s2B
       $hbigB = $ch[$i] + $tallcB * $ch[$i + 1]
-      add($Run, w=$Li, t=$sh, h=$ch[$i], hb=$hbig, s1=$s1, s2=$s2, mid=1 - $hole, xs=$xs, sd=$sd0 + 100 * $i, a0=$a0, a1=$a1, r=$r, seg=$seg, sc=70 - 40 * $bd, bul=1.3 + 0.7 * $ag, io=$io, tilt=3.0 * (1 - 0.6 * $mo), joint=$jt, dm=$dm, bd=$bd, at=($xo, 0 - 0.5 * $bs + 0.5 * $sh, $zb[$i]), rotate=(0, $wb, 0), join=none)
-      add($Run, w=$Li, t=$sh, h=$ch[$i], hb=$hbigB, s1=$s1B, s2=$s2B, mid=1 - $holeB, xs=0 - $xs, sd=$sd0 + 100 * $i + 50, a0=1.2 * $a0, a1=1.2 * $a1, r=$r, seg=$seg, sc=70 - 40 * $bd, bul=1.3 + 0.7 * $ag, io=$io, tilt=3.0 * (1 - 0.6 * $mo), joint=$jt, dm=$dm, bd=$bd, at=($xo, 0.5 * $bs - 0.5 * $sh, $zb[$i]), rotate=(0, $wb, 0), join=none)
+      add($Run, w=$Li, t=$sh, h=$ch[$i], hb=$hbig, s1=$s1, s2=$s2, mid=1 - $hole, xs=$xs, sd=$sd0 + 100 * $i, a0=$a0, a1=$a1, r=$r + 4 * clamp($round, 0, 1), seg=$seg, sc=70 - 40 * $bd, bul=1.3 + 0.7 * $ag + 12 * clamp($round, 0, 1), io=$io + (12 - $io) * clamp($uneven, 0, 1), tilt=3.0 * (1 - 0.6 * $mo) + 5 * clamp($uneven, 0, 1), joint=$jt, dm=$dm, bd=$bd + clamp(100 * clamp($round, 0, 1), 0, 1), at=($xo, 0 - 0.5 * $bs + 0.5 * $sh, $zb[$i]), rotate=(0, $wb, 0), join=none)
+      add($Run, w=$Li, t=$sh, h=$ch[$i], hb=$hbigB, s1=$s1B, s2=$s2B, mid=1 - $holeB, xs=0 - $xs, sd=$sd0 + 100 * $i + 50, a0=1.2 * $a0, a1=1.2 * $a1, r=$r + 4 * clamp($round, 0, 1), seg=$seg, sc=70 - 40 * $bd, bul=1.3 + 0.7 * $ag + 12 * clamp($round, 0, 1), io=$io + (12 - $io) * clamp($uneven, 0, 1), tilt=3.0 * (1 - 0.6 * $mo) + 5 * clamp($uneven, 0, 1), joint=$jt, dm=$dm, bd=$bd + clamp(100 * clamp($round, 0, 1), 0, 1), at=($xo, 0.5 * $bs - 0.5 * $sh, $zb[$i]), rotate=(0, $wb, 0), join=none)
       # the hearting behind both shells, overlapping their inner halves
       add($CoreSlab, w=$Li - 1.0, t=$bs - 2.0 * $rec, h=$ch[$i], at=($xo, 0, $zb[$i]), join=none)
     }
   }
-  # the coping rides the top row, and the finished head at each end that has one
+  if (((1 - $csb) * (1 - floor(clamp($rows, 0, 1) + 0.5)) + clamp($fill, 0, 1)) * (1 - floor(clamp($detail, 0, 1) + 0.5)) > 0.02) {
+    add($Boulders, len=$Lm, xm=$xm, HT=$HT, HB=$HB, bs=$bs, tt=$tt, rec=$rec, bu=$bu, st=$st, bd=$bd, sd0=$sd0, r=$r, io=$io, tl=$tl, jt=$jt, dm=$dm, mo=$mo, rows=$rows, coursed=$csb, round=$round, chink=$chink, uneven=$uneven, fill=$fill, cope=$cope, join=none)
+  }
   $cl0 = $hA * (0 - 0.5 * $L) + (1 - $hA) * ($xoL[$nc - 1] - 0.5 * $LiL[$nc - 1])
   $cr0 = $hB * (0.5 * $L) + (1 - $hB) * ($xoL[$nc - 1] + 0.5 * $LiL[$nc - 1])
-  $Cl = $cr0 - $cl0
-  $Cx = 0.5 * ($cl0 + $cr0)
   # the heads, the end columns of larger squared stones
-  $nh = clamp(floor($HB / (22 * $st) + 0.5), 3, 12)
+  $nh = clamp(floor($HB / (22 * min($st, 1.6)) + 0.5), 3, 12)
   if ($hA > 0.5) {
     add($Head, w=$he, t=$bs, h=$HB, n=$nh, sd=$sd0 + 211, r=$r * 0.8, seg=$seg, jt=$jt, io=1.0 + 0.3 * $io, at=(0 - 0.5 * $L + 0.5 * $he, 0, -$bu), join=none)
   }
   if ($hB > 0.5) {
     add($Head, w=$he, t=$bs, h=$HB, n=$nh, sd=$sd0 + 223, r=$r * 0.8, seg=$seg, jt=$jt, io=1.0 + 0.3 * $io, at=(0.5 * $L - 0.5 * $he, 0, -$bu), join=none)
   }
-  # the coping
-  $nk = clamp(floor($Cl / (46 * $st) + 0.5), 2, 8)
-  add($Cope, w=$Cl, t=$bs, h=$cp, n=$nk, sd=$sd0 + 77, r=$r, seg=$seg, sc=70 - 40 * $bd, io=1.5, joint=$jt, at=($Cx, 0, $hh - $cp), join=none)
-  # the batter: both faces lean in, foot `base` thick, `top` under the coping; a Corner's joining end leans in with them
-  warp(to=(point.x + $ce * (1 - $tt / $bs) * clamp((point.z + $bu) / $HT, 0, 1) * clamp((point.x - (0.5 * $L - 40)) / 40, 0, 1), point.y * (1 - (1 - $tt / $bs) * clamp((point.z + $bu) / $HT, 0, 1)), point.z))
+  if ($cp > 0.5) {
+  $nk = clamp(floor(($cr0 - $cl0) / (46 * $st) + 0.5), 2, 8)
+  add($Cope, w=$cr0 - $cl0, t=$bs, h=$cp, n=$nk, sd=$sd0 + 77, r=$r, seg=$seg, sc=70 - 40 * $bd, io=1.5, joint=$jt, at=(0.5 * ($cl0 + $cr0), 0, $hh - $cp), join=none)
+  }
+  # ROUND 2: the detailed boulder wall (rows < 0.5, detail 1); the batter below leans it with the rest
+  if ((1 - $csb) * (1 - floor(clamp($rows, 0, 1) + 0.5)) * floor(clamp($detail, 0, 1) + 0.5) > 0.5) {
+    add($BoulderDetail, len=$Lm, xm=$xm, HT=$HT, bs=$bs, tt=$tt, bu=$bu, st=$st, bd=$bd, sd0=$sd0, uneven=$uneven, fill=$fill, moss=$moss, join=none)
+  }
+  warp(to=(point.x + $ce * (1 - $tt / $bs) * clamp((point.z + $bu) / $HT, 0, 1) * clamp((point.x - (0.5 * $L - 40)) / 40, 0, 1), point.y * (1 - (1 - $tt / $bs) * clamp((point.z + $bu) / $HT, 0, 1)) + 5 * clamp($uneven, 0, 1) * sin(2.2 * point.x + 40) * sin(1.7 * point.z + 20), point.z))
 }
 
-# two half-runs at 90 degrees meeting at one quoin pier; each arm's joining end leans in to meet the pier's face
-Corner = mesh(len=200.0, height=120.0, damage=0.0, age=1.0, noise=1, budget=0, base=60.0, top=35.0, stone=1.0, mortar=0.0, recess=1.5, bury=8.0, cope=14.0) {
-  $arm = 0.5 * clamp($len, 100, 600)
+Corner = mesh(len=200.0, height=120.0, damage=0.0, age=1.0, noise=1, budget=0, base=60.0, top=35.0, stone=1.0, mortar=0.0, recess=1.5, bury=8.0, cope=14.0, round=0.0, rows=1.0, chink=0.0, uneven=0.0, fill=0.0) {
   $q   = clamp($base, 40, 120)
-  $hq  = clamp($height, 40, 300) + clamp($bury, 0, 20) - clamp($cope, 8, 24)
+  $hq  = clamp($height, 40, 300) + clamp($bury, 0, 20) - clamp(floor(clamp($cope, 0, 24) / 4), 0, 1) * clamp($cope, 8, 24)
   $tq  = clamp($top, 20, $q)
-  $sq  = clamp($stone, 0.6, 1.6)
+  $sw  = clamp($stone, 0.6, 3)
   $mq  = clamp($mortar, 0, 1)
   $bq  = clamp($budget, 0, 1)
   $sdq = floor(clamp($noise, 1, 99999))
-  add($Wall, len=$arm, height=$height, damage=$damage, age=$age, noise=$sdq, budget=$bq, base=$q, top=$tq, stone=$sq, mortar=$mq, recess=$recess, bury=$bury, cope=$cope, em=1, ce=0.5 * $q, at=(0 - 0.5 * $q - 0.5 * $arm, 0, 0), join=none)
-  add($Wall, len=$arm, height=$height, damage=$damage, age=$age, noise=$sdq + 500, budget=$bq, base=$q, top=$tq, stone=$sq, mortar=$mq, recess=$recess, bury=$bury, cope=$cope, em=1, ce=0.5 * $q, at=(0, 0 - 0.5 * $q - 0.5 * $arm, 0), rotate=(0, 0, 90), join=none)
-  add($Quoin, qs=$q, hb=$hq, bu=$bury, st=$sq, sd=$sdq + 900, r=(2.6 + 1.6 * clamp($age, 0, 2)) * (1 - 0.52 * $mq) * 0.8, seg=1 + 2 * $bq, jt=0.3 + 1.6 * $mq, tt=$tq, join=none)
+  add($Wall, len=(0.5 * clamp($len, 100, 600)), height=$height, damage=$damage, age=$age, noise=$sdq, budget=$bq, base=$q, top=$tq, stone=$sw, mortar=$mq, recess=$recess, bury=$bury, cope=$cope, round=$round, rows=$rows, chink=$chink, uneven=$uneven, fill=$fill, em=1, ce=0.5 * $q, at=(0 - 0.5 * $q - 0.5 * (0.5 * clamp($len, 100, 600)), 0, 0), join=none)
+  add($Wall, len=(0.5 * clamp($len, 100, 600)), height=$height, damage=$damage, age=$age, noise=$sdq + 500, budget=$bq, base=$q, top=$tq, stone=$sw, mortar=$mq, recess=$recess, bury=$bury, cope=$cope, round=$round, rows=$rows, chink=$chink, uneven=$uneven, fill=$fill, em=1, ce=0.5 * $q, at=(0, 0 - 0.5 * $q - 0.5 * (0.5 * clamp($len, 100, 600)), 0), rotate=(0, 0, 90), join=none)
+  add($Quoin, qs=$q, hb=$hq, bu=$bury, st=min($sw, 1.6), sd=$sdq + 900, r=(2.6 + 1.6 * clamp($age, 0, 2)) * (1 - 0.52 * $mq) * 0.8, seg=1 + 2 * $bq, jt=0.3 + 1.6 * $mq, tt=$tq, join=none)
+  if ($cope > 3.99) {
   add($Cope, w=0.5 * ($q + $tq), t=0.5 * ($q + $tq), h=clamp($cope, 8, 24), n=2, sd=$sdq + 977, r=2.6, seg=1 + 2 * $bq, sc=70 - 40 * $bq, io=1.0, joint=0.3 + 1.6 * $mq, at=(0, 0, clamp($height, 40, 300) - clamp($cope, 8, 24)), join=none)
+  }
 }
 
 # a 2 m dry-stone module, game tier (about 8,000 triangles)
@@ -373,3 +401,596 @@ RuinHigh    = mesh() { add($Wall, noise=4, budget=1, ruin=0.6, ends=1) }
 CoursedGame = mesh() { add($Wall, noise=2, budget=0, coursed=1) }
 # a 90 degree corner on a quoin pier, game tier
 CornerGame  = mesh() { add($Corner, noise=2, budget=0) }
+
+# W6/W7 (appended after the shipped entries, so every earlier entry is untouched)
+# the soil packed in the gaps (fill > 0), a lumpy earth surface behind the stones' faces; bind your soil or moss ground at import: Soil = $Dirt
+Soil = material()
+
+# THE BOULDER PART OF A WALL (rows < 0.5) AND ITS SOIL (fill > 0). W7: the body is split down the middle of its thickness and each
+# half is broken ONCE (`RubbleHalf`) from points laid on its face and its two ends, so the stones touch by construction, wrap the
+# ends and run through to the middle; a thin core in the middle stops daylight; the soil sits 3-8 cm behind the faces.
+# Wall passes its own working values; knobs are clamped here as in Wall.
+Boulders = mesh(len=200.0, xm=0.0, HT=258.0, HB=258.0, bs=80.0, tt=52.0, rec=16.0, bu=8.0, st=1.0, bd=0, sd0=1, r=4.2, io=3.8, tl=4.5, jt=0.3, dm=0.0, mo=0.0, rows=1.0, coursed=0, round=0.0, chink=0.0, uneven=0.0, fill=0.0, cope=14.0) {
+  $rd = clamp($round, 0, 1)
+  $up = clamp($uneven, 0, 1)
+  $fl = clamp($fill, 0, 1)
+  $chk = clamp($chink, 0, 1)
+  $bo = (1 - clamp($coursed, 0, 1)) * (1 - floor(clamp($rows, 0, 1) + 0.5))
+  $cpon = clamp(floor(clamp($cope, 0, 24) / 4), 0, 1)
+  $dsb = 17 * $st
+  $hbh = 0.5 * $bs
+  $iou = $io + (12 - $io) * $up
+  $dso = 14 - 5 * $fl
+  if ($bo > 0.5) {
+    add($RubbleHalf, w=$len, t=$bs, h=$HB, ds=$dsb, sd=$sd0 + 5, crs=1 - $rd, sub=1 + $bd, io=$iou, tilt=$tl + 3 * $up, joint=$jt, rg=1 - $cpon, chk=$chk, dm=$dm, fc=$bd, at=($xm, 0, 0 - $bu), join=none)
+    add($CoreSlab, w=$len - 2 * (0.3 * $dsb + 4), t=$bs - 2 * max($dso + 6, 0.25 * $bs), h=$HB - 0.5 * $dsb, at=($xm, 0, 0 - $bu), join=none)
+    # LOOSE TOP STONES (a ragged top, the photo's line wanders by about a course): a few Stone Boulders dropped onto the
+    # packed wall by collide=settle, long side along the wall; `cope` > 0 lays none
+    $tsn = (1 - $cpon) * clamp(floor($len / 85 + random(seed=$sd0 * 131, min=0, max=1)), 1, 8)
+    loop ($tsn) {
+      $tk = output.index - 1
+      $tsx = $xm + clamp(($tk + 0.5 + random(seed=$sd0 * 137 + $tk, min=-0.12, max=0.12)) * $len / $tsn - 0.5 * $len, 1.8 * $dsb - 0.5 * $len, 0.5 * $len - 1.8 * $dsb)
+      $tsy = random(seed=$sd0 * 139 + $tk, min=-0.22, max=0.22) * $bs
+      $tss = $dsb * random(seed=$sd0 * 149 + $tk, min=1.8, max=2.6)
+      add($St.Boulder, size=$tss, height=0.5, noise=$sd0 * 151 + $tk, budget=$bd - 1, at=($tsx, $tsy, $HB - $bu + 0.6 * $tss), rotate=(0, 0, random(seed=$sd0 * 157 + $tk, min=-12, max=12)), collide=settle, join=none)
+    }
+  }
+  if ($fl > 0.02) {
+    add($SoilSlab, w=$len - 2.0 * $dso, t=$bs - 2.0 * $dso, h=$HB - 0.32 * $dsb * (1 - $cpon) * $bo - 2.0, rm=50 - 22 * $bd, sd=$sd0 + 3, am=2.5, at=($xm, 0, 0 - $bu), join=none)
+    add($Bank, w=$len, mw=16 + 8 * $fl, mh=$bu + 10 + 12 * $fl, rm=16 - 5 * $bd, sd=$sd0 + 11, at=($xm, 0 - 0.5 * $bs - 2, 0 - $bu), join=none)
+    add($Bank, w=$len, mw=16 + 8 * $fl, mh=$bu + 10 + 12 * $fl, rm=16 - 5 * $bd, sd=$sd0 + 17, at=($xm, 0.5 * $bs + 2, 0 - $bu), rotate=(0, 0, 180), join=none)
+  }
+}
+
+# ONE HALF OF A BOULDER WALL'S THICKNESS (rows < 0.5), its outer face toward `sg` (-1 the front, +1 the back): broken once from points
+# laid in rows of drawn height (bigger low) with each point jittered hard, so no row or column shows. A few BIG stones clear the points
+# round them; about one point in eight is dropped (a larger stone) and one in six split in two (two small ones); `chk` adds small
+# stones in the joints, set back. The two ends get their own points, so stones wrap round the end. Each stone is subdivided round
+# (`crs` creases its outline first: 0 a pillow, 1 a flat-faced field stone), set out of the face (`io`, rarely in), tilted; with
+# `rg` = 1 the top stones are dropped unevenly (a ragged top). Per-stone draws are keyed `sd * 1009 + output.index`.
+RubbleHalf = mesh(w=200.0, t=80.0, h=258.0, ds=40.0, sd=1, crs=0.0, sub=1, io=8.0, tilt=4.0, joint=0.3, rg=1.0, chk=0.0, dm=0.0, fc=0, stw=1, elong=3.0) {
+  $m[0] = 0
+  $nc[0] = 0
+  # BOTH SKINS in one body (front sg -1, back +1, the back's stones 1.15 x), so the ends can tie through
+  loop (2) {
+    $sg = 2 * output.index - 3
+    $sk = $sd + 4 * (output.index - 1)
+    $dk = $ds * (1 + 0.15 * (output.index - 1))
+    $nr = clamp(floor($h / (0.6 * $dk)) + 3, 3, 30)
+    $za[0] = 0
+    loop ($nr) {
+      $i = output.index - 1
+      $u = clamp($za[0] / $h, 0, 1)
+      $rh[$i] = $dk * (1.15 - 0.3 * $u) * (0.72 + 0.56 * random(seed=$sk * 31 + $i, min=0, max=1))
+      $rz[$i] = $za[0] + 0.5 * $rh[$i]
+      $za[0] = $za[0] + $rh[$i]
+      $rn[$i] = clamp(floor($w / ($rh[$i] * (1.6 + 0.7 * random(seed=$sk * 37 + $i, min=0, max=1))) + 0.5), 1, 12)
+      $ro[$i] = random(seed=$sk * 41 + $i, min=-0.5, max=0.5)
+    }
+    # the BIG stones: about one per 12 stone areas, low more often than high; each clears the points round it
+    $nb = clamp(floor($w * $h / ($dk * $dk * 12) + 0.5), 1, 8)
+    loop ($nb) {
+      $b = output.index - 1
+      $bx[$b] = random(seed=$sk * 43 + $b, min=-0.5 * $w + 0.7 * $dk, max=0.5 * $w - 0.7 * $dk)
+      $bv = random(seed=$sk * 47 + $b, min=0, max=1)
+      $bz[$b] = 0.45 * $dk + ($h - 1.3 * $dk) * $bv * $bv
+      $br[$b] = $dk * (0.8 + 0.35 * random(seed=$sk * 53 + $b, min=0, max=1))
+      $q = $m[0]
+      $pts[$q] = ($bx[$b], $sg * 0.3 * $t, $bz[$b])
+      $m[0] = $q + 1
+    }
+    loop ($nr * 12) {
+      $k = output.index - 1
+      $i = floor($k / 12)
+      $j = $k - 12 * $i
+      if ($j < $rn[$i]) {
+        if ($rz[$i] < $h - 0.25 * $rh[$i]) {
+          $cw = $w / $rn[$i]
+          $x = 0 - 0.5 * $w + $cw * ($j + 0.5 + 0.7 * $ro[$i] + random(seed=$sk * 59 + $k, min=-0.3, max=0.3))
+          $z = $rz[$i] + $rh[$i] * random(seed=$sk * 61 + $k, min=-0.22, max=0.22)
+          $ok[0] = clamp(floor((0.5 * $w - 0.4 * $dk - abs($x)) / 1000 + 1), 0, 1)
+          loop ($nb) {
+            $b = output.index - 1
+            $ddx = ($x - $bx[$b]) / 1.25
+            $ddz = $z - $bz[$b]
+            if (sqrt($ddx * $ddx + $ddz * $ddz) < $br[$b]) {
+              $ok[0] = 0
+            }
+          }
+          $keep = $ok[0] * floor(random(seed=$sk * 67 + $k, min=0, max=1) + 0.95)
+          if ($keep > 0.5) {
+            $yy = $sg * 0.3 * $t
+            $spl = floor(random(seed=$sk * 73 + $k, min=0, max=1) + 0.08)
+            $q = $m[0]
+            $pts[$q] = ($x - $spl * 0.22 * $cw, $yy, $z + $spl * random(seed=$sk * 79 + $k, min=-0.15, max=0.15) * $rh[$i])
+            $m[0] = $q + 1
+            if ($spl > 0.5) {
+              $q2 = $m[0]
+              $pts[$q2] = ($x + 0.22 * $cw, $yy, $z)
+              $m[0] = $q2 + 1
+            }
+            $chp = floor(random(seed=$sk * 83 + $k, min=0, max=1) + 0.35 * $chk) * clamp(floor((0.5 * $w - 0.5 * $dk - abs($x + 0.5 * $cw)) / 1000 + 1), 0, 1) * clamp(floor(($h - 0.7 * $dk - $z - 0.5 * $rh[$i]) / 1000 + 1), 0, 1)
+            if ($chp > 0.5) {
+              $q3 = $nc[0]
+              $csg[$q3] = $sg
+              $cpt[$q3] = ($x + 0.5 * $cw, 8 + 6 * random(seed=$sk * 89 + $k, min=0, max=1), $z + 0.5 * $rh[$i])
+              $nc[0] = $q3 + 1
+            }
+          }
+        }
+      }
+    }
+  }
+  # the two ends: through-stones across the whole thickness on alternate courses (a front and a back stone between), so no straight joint runs down the end
+  loop (2) {
+    $se = 2 * output.index - 3
+    $sde = $sd + 9000 * output.index
+    $ne = clamp(floor($h / (0.85 * $ds)) + 2, 3, 30)
+    $ze[0] = 0
+    loop ($ne) {
+      $i = output.index - 1
+      $u = clamp($ze[0] / $h, 0, 1)
+      $eh = $ds * (1.55 - 0.55 * $u) * (0.75 + 0.5 * random(seed=$sde * 31 + $i, min=0, max=1))
+      $ez = $ze[0] + 0.5 * $eh
+      $ze[0] = $ze[0] + $eh
+      if ($ez < $h + 0.3 * $eh) {
+        $ex = $se * (0.5 * $w - 0.48 * $eh)
+        $ezj = $ez + random(seed=$sde * 41 + $i, min=-0.2, max=0.2) * $eh
+        $thr = $i - 2 * floor($i / 2)
+        if ($thr > 0.5) {
+          $q = $m[0]
+          $pts[$q] = ($ex, random(seed=$sde * 37 + $i, min=-0.06, max=0.06) * $t, $ezj)
+          $m[0] = $q + 1
+        }
+        if ($thr < 0.5) {
+          $q = $m[0]
+          $pts[$q] = ($ex + $se * random(seed=$sde * 43 + $i, min=-0.15, max=0.1) * $eh, -0.3 * $t, $ezj)
+          $pts[$q + 1] = ($ex + $se * random(seed=$sde * 47 + $i, min=-0.15, max=0.1) * $eh, 0.3 * $t, $ezj)
+          $m[0] = $q + 2
+        }
+      }
+    }
+  }
+  $nch = $nc[0]
+  # ELONG: the half is broken in a space squeezed `elong` x along the wall and stretched back after, so every stone is
+  # `elong` x longer than tall (the photo's bedded stones run about 2.2 : 1); 1 keeps W7's cells
+  $zel = clamp($elong, 1, 4)
+  $zmp = $m[0]
+  loop ($zmp) {
+    $zq = output.index - 1
+    $pts[$zq] = ($pts[$zq].x / $zel, $pts[$zq].y, $pts[$zq].z)
+  }
+  rect(w=$w / $zel, h=$t)  extrude(height=$h)
+  fracture(from=$pts, gap=$joint / $zel, seed=$sd) {
+    place(scale=($zel, 1, 1))
+    place(by=(($zel - 1) * output.place.x, 0, 0))
+    # each cell weathers as one of the Stone recipe's boulders: seeded edge loss (one convex rebuild), the pillow rounding,
+    # convex-only wear by curvature(), lumps of two octaves (the Stone preset's Boulder)
+    # (weather() is left out: a cell that holds part of the body's [bottom] is refused by weather's base invariant, and a
+    # cell cannot read its own tags)
+    if ($crs > 0.01) {
+      crease($crs) [sharp]
+    }
+    subdivide($sub)
+    if ($stw > 0.5) {
+      $zkw = 0.035 * $ds
+      warp(by=0 - $zkw * clamp(curvature(), 0, 1))
+      $zkl = 0.4 * $ds
+      $zka = 0.045 * $ds
+      $zks = $sd * 1009 + output.index
+      warp(by=$zka * (noise(point.x / $zkl, point.y / $zkl, point.z / $zkl, $zks) + 0.5 * noise(2 * point.x / $zkl, 2 * point.y / $zkl, 2 * point.z / $zkl, $zks + 7)))
+    }
+    if ($dm > 0.02) {
+      roughen(by=1.0 + 2.5 * $dm, scale=14, form=faceted, seed=$sd * 1009 + output.index + 3000)
+    }
+    if ($fc > 0.5) {
+      roughen(by=1.2, scale=16, form=faceted, seed=$sd * 1009 + output.index + 11)
+    }
+    $fsg = clamp(output.place.y * 100, -1, 1)
+    $fex = clamp((abs(output.place.x) * $zel - (0.5 * $w - 0.32 * $ds)) / 4, 0, 1)
+    $fsx = clamp(output.place.x * 100, -1, 1)
+    $fo = random(seed=$sd * 1009 + output.index, min=-0.2 * $io, max=$io)
+    $ftop = $rg * clamp((output.place.z - ($h - 0.9 * $ds)) / (0.3 * $ds), 0, 1)
+    $fdz = 0 - $ftop * random(seed=$sd * 1009 + output.index + 1300, min=0, max=0.25 * $ds)
+    $ftr = random(seed=$sd * 1009 + output.index + 300, min=-$tilt, max=$tilt)
+    $ftp = random(seed=$sd * 1009 + output.index + 500, min=-$tilt, max=$tilt)
+    $fyw = random(seed=$sd * 1009 + output.index + 900, min=-$tilt, max=$tilt)
+    place(by=($fex * $fsx * $fo, $fsg * $fo * (1 - 0.5 * $fex), $fdz), rotate=($ftr, $ftp, $fyw))
+    material($Face)
+  }
+  # the chinks: small wedge stones in the joints, their tips a few cm behind the faces
+  if ($nch > 0.5) {
+    loop ($nch) {
+      $c = output.index - 1
+      $ca = $cpt[$c].y
+      add($Chink, a=$ca, spin=random(seed=$sd * 97 + $c, min=0, max=180), at=($cpt[$c].x, $csg[$c] * (0.5 * $t - 3.5 - 0.8 * $ca), $cpt[$c].z), rotate=(0 - 90 * $csg[$c], 0, 0), join=none)
+    }
+  }
+}
+
+# ONE CHINK: a small tapered wedge stone, base on the hearting, tip toward the viewer, spun about its own axis
+Chink = mesh(a=10.0, spin=0.0) {
+  rect(w=$a, h=$a * 0.75)  extrude(height=$a * 0.8, to=45%)
+  place(rotate=(0, 0, $spin))
+  material($Face)
+}
+
+# THE SOIL: a lumpy earth slab packed behind the stones' faces (and capping the wall between its top stones)
+SoilSlab = mesh(w=200.0, t=40.0, h=250.0, rm=16.0, sd=1, am=2.2) {
+  rect(w=$w, h=$t)  extrude(height=$h)  remesh($rm)
+  roughen(by=$am, scale=$rm * 2.2, seed=$sd)
+  material($Soil)
+}
+
+# THE SOIL AT THE FOOT: a low slumped bank along the stones' feet, its height and reach waving along the wall (lumps, low saddles),
+# so it never reads as a ledge. Its back edge runs under the stones.
+Bank = mesh(w=200.0, mw=30.0, mh=16.0, rm=9.0, sd=1) {
+  rect(w=$w, h=$mw, at=(0, 0 - 0.5 * $mw + 6, 0))  round($mw * 0.4)  extrude(height=$mh)  round($mh * 0.45) [top]  remesh($rm)
+  $ph1 = random(seed=$sd * 7, min=0, max=360)
+  $ph2 = random(seed=$sd * 11, min=0, max=360)
+  warp(to=(point.x, 6 + (point.y - 6) * clamp(0.5 + 0.55 * sin(2.6 * point.x + $ph1) + 0.3 * sin(7.3 * point.x + $ph2), 0.15, 1.1), point.z * clamp(0.45 + 0.6 * sin(2.6 * point.x + $ph1) + 0.3 * sin(7.3 * point.x + $ph2), 0.08, 1.2)))
+  roughen(by=2.2, scale=$rm * 2.5, seed=$sd)
+  material($Soil)
+}
+
+# a boulder wall: rounded field stones in rough courses, packed tight, deep gaps with soil, loose stones on a ragged top (about 250 cm, battered), game tier
+BoulderGame = mesh() { add($Wall, noise=3, budget=0, height=250, base=80, top=52, stone=1.3, rows=0, round=0.65, chink=1, uneven=0.7, fill=0.8, cope=0, ends=0) }
+# a boulder wall, high tier
+BoulderHigh = mesh() { add($Wall, noise=3, budget=1, height=250, base=80, top=52, stone=1.3, rows=0, round=0.65, chink=1, uneven=0.7, fill=0.8, cope=0, ends=0) }
+
+# ---- ROUND 2 (21 Nov 2026): the DETAILED boulder wall (`detail`, `moss`); appended, so every entry above is untouched ----
+Wth = shape('/GraphCodeShape/Presets/Weather')
+
+# ONE PACKED BOULDER BODY for detail=1, both skins in one fracture (front -1, back +1). Knobs: ds stone height cm, crs crease 0 pillow .. 1
+# flat-faced, sub subdivide levels, io in/out cm, tilt deg, joint cm, rg ragged top, dome pillow (x ds), lump relief, chip (split-face
+# relief), det 1 High / 0 Game, elong the stones' run, wave how far the courses wander (x ds), loose joint spread, split share of stones with
+# a split face, deep share of pocket stones. Per-stone draws are keyed `sd * 1009 + index`. Round 3: crm the crease's least draw (crease
+# crs x crm..crm+2), rl 1 re-lays High at `fr`-cm points (round 2; it saw-tooths every rim, so 0 since round 3), yt the share of the tilt
+# turned in the face's own plane, dsk how deep a pocket stone sinks (x round 2's 0.35-0.6 ds), pin share of the stones' triangles given a
+# pinning stone, pdp how far its face sits behind the stones' rims (cm).
+BoulderStones = mesh(w=200.0, t=80.0, h=258.0, ds=22.0, sd=1, crs=0.4, sub=2, io=7.0, tilt=5.0, joint=0.5, rg=1.0, dome=0.36, lump=1.0, chip=1.0, det=1, elong=2.3, wave=1.0, fr=2.5, loose=0.4, split=0.2, deep=1.0, yt=1.0, dsk=1.0, pin=0.0, pdp=2.5, rl=1, crm=0.2) {
+  $m[0] = 0
+  # THE RAGGED TOP: the top line steps down by up to 1.7 stones station by station (as RaggedBody draws it)
+  $nst = clamp(floor($w / (1.5 * $ds) + 0.5), 2, 12)
+  loop ($nst) {
+    $k = output.index - 1
+    $tz[$k] = $h - $rg * $ds * 1.7 * pow(random(seed=$sd * 211 + $k, min=0, max=1), 1.6)
+  }
+  $wp1 = random(seed=$sd * 17, min=0, max=360)
+  $wp2 = random(seed=$sd * 19, min=0, max=360)
+  loop (2) {
+    $sg = 2 * output.index - 3
+    $sk = $sd + 4 * (output.index - 1)
+    $dk = $ds * (1 + 0.12 * (output.index - 1))
+    $nr = clamp(floor($h / (0.6 * $dk)) + 3, 3, 30)
+    $za[0] = 0
+    loop ($nr) {
+      $i = output.index - 1
+      $u = clamp($za[0] / $h, 0, 1)
+      # graded: the foot's courses 1.5 x, the top's 0.75 x, each drawn +-40 %
+      $rh[$i] = $dk * (1.5 - 0.75 * $u) * (0.6 + 0.8 * random(seed=$sk * 31 + $i, min=0, max=1))
+      $rz[$i] = $za[0] + 0.5 * $rh[$i]
+      $za[0] = $za[0] + $rh[$i]
+      $rn[$i] = clamp(floor($w / ($rh[$i] * (1.0 + 0.8 * random(seed=$sk * 37 + $i, min=0, max=1))) + 0.5), 1, 14)
+      $ro[$i] = random(seed=$sk * 41 + $i, min=-0.5, max=0.5)
+    }
+    # BIG stones: about one per 8 stone areas, mostly low; each clears the points round it
+    $nb = clamp(floor($w * $h / ($dk * $dk * 8) + 0.5), 1, 12)
+    loop ($nb) {
+      $b = output.index - 1
+      $bx[$b] = random(seed=$sk * 43 + $b, min=-0.5 * $w + 0.7 * $dk, max=0.5 * $w - 0.7 * $dk)
+      $bv = random(seed=$sk * 47 + $b, min=0, max=1)
+      $bz[$b] = 0.5 * $dk + ($h - 1.4 * $dk) * $bv * $bv
+      $br[$b] = $dk * (0.85 + 0.45 * random(seed=$sk * 53 + $b, min=0, max=1)) * (1.15 - 0.3 * $bz[$b] / $h)
+      $bkx = clamp(floor(($bx[$b] + 0.5 * $w) / ($w / $nst)), 0, $nst - 1)
+      $btl = min($tz[$bkx], min($tz[clamp($bkx - 1, 0, $nst - 1)], $tz[clamp($bkx + 1, 0, $nst - 1)]))
+      $bz[$b] = min($bz[$b], $btl - 0.7 * $br[$b])
+      $q = $m[0]
+      $pts[$q] = ($bx[$b], $sg * 0.3 * $t, $bz[$b])
+      $m[0] = $q + 1
+    }
+    loop ($nr * 14) {
+      $k = output.index - 1
+      $i = floor($k / 14)
+      $j = $k - 14 * $i
+      if ($j < $rn[$i]) {
+        $cw = $w / $rn[$i]
+        $x = 0 - 0.5 * $w + $cw * ($j + 0.5 + 0.7 * $ro[$i] + random(seed=$sk * 59 + $k, min=-0.32, max=0.32))
+        $kx = clamp(floor(($x + 0.5 * $w) / ($w / $nst)), 0, $nst - 1)
+        $tlo = min($tz[$kx], min($tz[clamp($kx - 1, 0, $nst - 1)], $tz[clamp($kx + 1, 0, $nst - 1)]))
+        # the courses wander: a wall-wide wave (growing up the wall) plus each stone's own jitter
+        $zw = $wave * $dk * (0.3 * sin(2.3 * $x + $wp1) + 0.18 * sin(5.9 * $x + $wp2)) * clamp(0.25 + $rz[$i] / $h, 0, 1)
+        $z = $rz[$i] + $zw + $rh[$i] * random(seed=$sk * 61 + $k, min=-0.18, max=0.18)
+        if ($z < $tlo - 0.4 * $rh[$i]) {
+          $ok[0] = clamp(floor((0.5 * $w - 0.4 * $dk - abs($x)) / 1000 + 1), 0, 1)
+          loop ($nb) {
+            $b = output.index - 1
+            $ddx = ($x - $bx[$b]) / 1.2
+            $ddz = $z - $bz[$b]
+            if (sqrt($ddx * $ddx + $ddz * $ddz) < $br[$b]) {
+              $ok[0] = 0
+            }
+          }
+          $keep = $ok[0] * floor(random(seed=$sk * 67 + $k, min=0, max=1) + 0.96)
+          if ($keep > 0.5) {
+            $yy = $sg * 0.3 * $t
+            $spl = floor(random(seed=$sk * 73 + $k, min=0, max=1) + 0.07)
+            $q = $m[0]
+            $pts[$q] = ($x - $spl * 0.22 * $cw, $yy, $z + $spl * random(seed=$sk * 79 + $k, min=-0.15, max=0.15) * $rh[$i])
+            $m[0] = $q + 1
+            if ($spl > 0.5) {
+              $q2 = $m[0]
+              $pts[$q2] = ($x + 0.22 * $cw, $yy, $z)
+              $m[0] = $q2 + 1
+            }
+          }
+        }
+      }
+    }
+  }
+  # the two ends: through-stones on two courses in three, a front and a back stone on the third
+  loop (2) {
+    $se = 2 * output.index - 3
+    $sde = $sd + 9000 * output.index
+    $ne = clamp(floor($h / (0.85 * $ds)) + 2, 3, 30)
+    $ze[0] = 0
+    loop ($ne) {
+      $i = output.index - 1
+      $u = clamp($ze[0] / $h, 0, 1)
+      $eh = $ds * (1.55 - 0.55 * $u) * (0.75 + 0.5 * random(seed=$sde * 31 + $i, min=0, max=1))
+      $ez = $ze[0] + 0.5 * $eh
+      $ze[0] = $ze[0] + $eh
+      if ($ez < $h + 0.3 * $eh) {
+        $ex = $se * (0.5 * $w - 0.48 * $eh)
+        $ezj = $ez + random(seed=$sde * 41 + $i, min=-0.2, max=0.2) * $eh
+        $thr = clamp($i - 3 * floor($i / 3), 0, 1)
+        if ($thr > 0.5) {
+          $q = $m[0]
+          $pts[$q] = ($ex, random(seed=$sde * 37 + $i, min=-0.06, max=0.06) * $t, $ezj)
+          $m[0] = $q + 1
+        }
+        if ($thr < 0.5) {
+          $q = $m[0]
+          $pts[$q] = ($ex + $se * random(seed=$sde * 43 + $i, min=-0.15, max=0.1) * $eh, -0.3 * $t, $ezj)
+          $pts[$q + 1] = ($ex + $se * random(seed=$sde * 47 + $i, min=-0.15, max=0.1) * $eh, 0.3 * $t, $ezj)
+          $m[0] = $q + 2
+        }
+      }
+    }
+  }
+  $zel = clamp($elong, 1, 4)
+  $zmp = $m[0]
+  loop ($zmp) {
+    $zq = output.index - 1
+    $pts[$zq] = ($pts[$zq].x / $zel, $pts[$zq].y, $pts[$zq].z)
+  }
+  add($RaggedBody, w=$w, t=$t, h=$h, ds=$ds, sd=$sd, rg=$rg, zel=$zel)
+  fracture(from=$pts, gap=$joint / $zel, seed=$sd) {
+    $gk = $sd * 1009 + output.index
+    # each stone a little smaller than its cell, by its own draw: joints from tight to open
+    $gsh = random(seed=$gk + 2400, min=1 - 0.1 * $loose, max=1)
+    place(scale=($zel * $gsh, 1, $gsh))
+    place(by=(($zel - 1) * output.place.x, 0, 0))
+    # which faces show: the skin's face (front -1 / back +1), an end's face, a top stone's top
+    $fsg = clamp(output.place.y * 100, -1, 1)
+    $fex = clamp((abs(output.place.x) * $zel - (0.5 * $w - 0.32 * $ds)) / 4, 0, 1)
+    $fsx = clamp(output.place.x * 100, -1, 1)
+    $gsl = clamp(output.index - output.count + 2, 0, 1)
+    # ROUNDING: each stone its own crispness, a tight round held over `sub` Catmull-Clark levels (round 3: a crease under 0.5 lets the
+    # whole outline shrink several cm, so the stones stopped touching and soil filled the gaps)
+    crease($crs * random(seed=$gk + 2100, min=$crm, max=$crm + 2)) [sharp]
+    subdivide($sub)
+    if ($det * (1 - $gsl) * $rl > 0.5) {
+      remesh($fr, mode=surface)
+    }
+    # THE PILLOW (the shown face bulges from its rim along its own normal, highest mid-stone, each stone its own height,
+    # the side each point's own so a through-stone's two faces both bulge), LUMPS (0.55 ds,
+    # 0.22 ds, and 1.3 ds so the big stones are not smooth pillows) and DENTS (0.3 ds): the stone's own form, never one smooth dome.
+    # (the side is each point's own, so a through-stone's two faces both bulge out of the wall; the cell's centre side made
+    # its far face move the wrong way and fold into teeth.) The lumps move every point straight out of (or into) the wall, not along its own normal: on a rim the normal turns 90
+    # degrees within a row or two of points, and a lump along it folds that row into a line of TEETH
+    $gdm = $dome * $ds * random(seed=$gk + 2200, min=0.45, max=1.35)
+    $gl0 = 1.3 * $ds
+    $gl1 = 0.55 * $ds
+    $gl2 = 0.22 * $ds
+    $gl3 = 0.3 * $ds
+    warp(with=(Sy: clamp(point.y / 2, -1, 1), Wy: (1 - $fex) * pow(clamp(clamp(point.y / 2, -1, 1) * point.normal.y, 0, 1), 2), Wx: $fex * clamp($fsx * point.normal.x, 0, 1), Bl: pow(max(0, sin(180 * point.t.x) * sin(180 * point.t.z)), 0.35)), by=$gdm * max($Wy * $Bl, $Wx))
+    warp(with=(Lm: $lump * $ds * (0.05 * noise(point.x / $gl0, point.y / $gl0, point.z / $gl0, $gk + 3) + 0.075 * noise(point.x / $gl1, point.y / $gl1, point.z / $gl1, $gk) + 0.028 * noise(point.x / $gl2, point.y / $gl2, point.z / $gl2, $gk + 7) - 0.08 * pow(clamp((noise(point.x / $gl3, point.y / $gl3, point.z / $gl3, $gk + 13) - 0.2) / 0.6, 0, 1), 2))), by=($fex * $fsx * $Lm, (1 - $fex) * clamp(point.y / 2, -1, 1) * $Lm, 0))
+    # the rim's thin rows (where the face meets the joint) relaxed after the lumps, so no row is left folded
+    if ($det * (1 - $gsl) > 0.5) {
+      relax(0.7 * $fr)
+    }
+    # A SPLIT FACE on about half the stones: a plane tilted up to about 27 degrees off the face, everything in front of it
+    # laid flat onto it (a broken-off face, flat, meeting the rounded rest at an edge eased over about 2.5 points: a narrower
+    # knee than the points leaves a zig-zag of teeth along the edge)
+    $gsp = floor(random(seed=$gk + 2300, min=0, max=1) + $split) * abs($fsg) * (1 - $fex)
+    if ($gsp > 0.5) {
+      $ga = random(seed=$gk + 2310, min=-0.38, max=0.38)
+      $gb = random(seed=$gk + 2320, min=-0.38, max=0.38)
+      $gn = sqrt(1 + $ga * $ga + $gb * $gb)
+      $gq = 0.5 * $t + $gdm * random(seed=$gk + 2330, min=0.3, max=0.9)
+      $gcx = output.place.x * $zel
+      $gcz = output.place.z
+      warp(with=(E: ($ga * (point.x - $gcx) + $fsg * point.y - $gq + $gb * (point.z - $gcz)) / $gn, D: 0.5 * ($E + sqrt($E * $E + 6.25 * $fr * $fr))), by=(0 - $D * $ga / $gn, 0 - $D * $fsg / $gn, 0 - $D * $gb / $gn))
+    }
+    # in and out of the face; about one stone in sixteen sits deep, a dark pocket in the face
+    # the smallest two pieces are thin flakes where the body's steps or ends meet a cell: never a stone, they sink into the
+    # soil (left in the face, the moves above fold a flake through itself into rows of TEETH)
+    $gdp = clamp(floor(random(seed=$gk + 2500, min=0, max=1) + 0.06 * $deep) + $gsl, 0, 1)
+    $fo = (1 - $gdp) * random(seed=$gk, min=-0.45 * $io, max=$io) - $gdp * $ds * random(seed=$gk + 2510, min=0.35, max=0.6) * ($gsl + (1 - $gsl) * $dsk)
+    $ftr = random(seed=$gk + 300, min=-$tilt, max=$tilt)
+    $ftp = $yt * random(seed=$gk + 500, min=-$tilt, max=$tilt)
+    $fyw = random(seed=$gk + 900, min=-$tilt, max=$tilt)
+    place(by=($fex * $fsx * $fo, $fsg * $fo * (1 - 0.5 * $fex), 0), rotate=($ftr, $ftp, $fyw))
+    material($Face)
+  }
+  # PINNING STONES (round 3): where three stones meet, their rounded corners leave a small triangle. It lies at the Voronoi
+  # vertex = the circumcentre of a Delaunay triangle of the sites (in the squeezed space the fracture works in). Each face's sites
+  # are triangulated locally: every triple within `2.2 ds` whose circumcircle holds no other site. A small rounded stone (a spall,
+  # a chinker) is wedged at each centre, its face `pdp` cm behind the stones' rims, so soil shows only deep in the joints.
+  # `pin` is the share of triangles that get one.
+  if ($pin > 0.01) {
+    $qz = clamp($elong, 1, 4)
+    $qr2 = 4.84 * $ds * $ds
+    $qnp = $m[0]
+    loop (2) {
+      $qs = 2 * output.index - 3
+      $qn[0] = 0
+      loop ($qnp) {
+        $qi = output.index - 1
+        if ($qs * $pts[$qi].y > 0.2 * $t) {
+          $qc = $qn[0]
+          $qx[$qc] = $pts[$qi].x
+          $qzz[$qc] = $pts[$qi].z
+          $qn[0] = $qc + 1
+        }
+      }
+      $qm = $qn[0]
+      loop ($qm) {
+        $qa = output.index - 1
+        loop ($qm) {
+          $qb = output.index - 1
+          $qbx = $qx[$qb] - $qx[$qa]
+          $qbz = $qzz[$qb] - $qzz[$qa]
+          if (clamp($qb - $qa, 0, 1) * clamp($qr2 - $qbx * $qbx - $qbz * $qbz, 0, 1) > 0.5) {
+            loop ($qm) {
+              $qcc = output.index - 1
+              $qcx = $qx[$qcc] - $qx[$qa]
+              $qcz = $qzz[$qcc] - $qzz[$qa]
+              $qdt = 2 * ($qbx * $qcz - $qbz * $qcx)
+              if (clamp($qcc - $qb, 0, 1) * clamp($qr2 - $qcx * $qcx - $qcz * $qcz, 0, 1) * clamp(abs($qdt) - 1, 0, 1) > 0.5) {
+                $qb2 = $qbx * $qbx + $qbz * $qbz
+                $qc2 = $qcx * $qcx + $qcz * $qcz
+                $qux = ($qcz * $qb2 - $qbz * $qc2) / $qdt
+                $quz = ($qbx * $qc2 - $qcx * $qb2) / $qdt
+                $qrr = $qux * $qux + $quz * $quz
+                $qe[0] = clamp(100 * (0.36 * $qr2 - $qrr), 0, 1)
+                if ($qe[0] > 0.5) {
+                  loop ($qm) {
+                    $qd = output.index - 1
+                    $qdx = $qx[$qd] - $qx[$qa] - $qux
+                    $qdz = $qzz[$qd] - $qzz[$qa] - $quz
+                    if ($qdx * $qdx + $qdz * $qdz < $qrr - 1) {
+                      $qe[0] = 0
+                    }
+                  }
+                }
+                $qk = $sd * 7001 + 5000 * ($qs + 2) + 97 * $qa + 13 * $qb + $qcc
+                $qpz = $qzz[$qa] + $quz
+                $qpa = $ds * random(seed=$qk + 13, min=0.28, max=0.5)
+                if ($qe[0] * clamp(100 * ($pin - random(seed=$qk + 11, min=0, max=1)), 0, 1) * clamp($qpz - 0.25 * $ds, 0, 1) > 0.5) {
+                  add($Pin, a=$qpa, sd=$qk, spin=random(seed=$qk + 23, min=0, max=180), at=(($qx[$qa] + $qux) * $qz, $qs * (0.5 * $t - $pdp - 0.5 * $qpa), $qpz), rotate=(0 - 90 * $qs, 0, 0), join=none)
+                }
+                # the vertical joints of a course (a near-level edge of the triangle, its third site above) are the widest: a
+                # spall in the middle of each, a little deeper
+                if ($qe[0] > 0.5) {
+                  loop (3) {
+                    $qj = output.index
+                    $qex = clamp(2 - $qj, 0, 1) * $qbx + clamp($qj - 1, 0, 1) * $qcx - clamp($qj - 2, 0, 1) * $qbx
+                    $qez = clamp(2 - $qj, 0, 1) * $qbz + clamp($qj - 1, 0, 1) * $qcz - clamp($qj - 2, 0, 1) * $qbz
+                    $qox = clamp($qj - 2, 0, 1) * $qbx
+                    $qoz = clamp($qj - 2, 0, 1) * $qbz
+                    $qtz = clamp(2 - $qj, 0, 1) * $qcz + clamp($qj - 1, 0, 1) * clamp(3 - $qj, 0, 1) * $qbz
+                    $qmz = $qoz + 0.5 * $qez
+                    $qkm = $qk * 3 + $qj
+                    $qam = $ds * random(seed=$qkm + 13, min=0.22, max=0.36)
+                    $qlv = clamp(100 * (0.5 * abs($qex) * $qz - abs($qez)), 0, 1) * clamp(100 * ($qtz - $qmz), 0, 1)
+                    if ($qlv * clamp(100 * (0.7 * $pin - random(seed=$qkm + 11, min=0, max=1)), 0, 1) * clamp($qzz[$qa] + $qmz - 0.25 * $ds, 0, 1) > 0.5) {
+                      add($Pin, a=$qam, sd=$qkm, spin=random(seed=$qkm + 23, min=0, max=180), at=(($qx[$qa] + $qox + 0.5 * $qex) * $qz, $qs * (0.5 * $t - $pdp - 1.5 - 0.5 * $qam), $qzz[$qa] + $qmz), rotate=(0 - 90 * $qs, 0, 0), join=none)
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+# ONE PINNING STONE (round 3): a small rounded stone, its flat base toward the hearting and its rounded face toward the viewer, spun
+# about its own axis (about 300 triangles)
+Pin = mesh(a=10.0, sd=1, spin=0.0) {
+  polyhedron(size=($a, 0.7 * $a, 0.5 * $a), faces=9, evenness=35%, seed=$sd)
+  crease(0.6) [sharp]
+  subdivide(1)
+  place(rotate=(0, 0, $spin))
+  material($Face)
+}
+
+# THE DETAILED BOULDER WALL (detail 1): Wall passes its working values. The packed stones, the hearting, a few loose Stone
+# Boulders settled on the ragged top, the soil (`fill`), the bulging face, the box map, then the moss mask (Wall batters it).
+# Round 3 knobs (defaults = the shipped look): sdp soil depth behind the faces (cm; -1 = round 2's 9 - 5 fill), yt, dsk, pin, pdp, crs,
+# crm, rl, dome, lump, split, deep (passed to BoulderStones), tf / iof scale the tilt and the in/out, sbh / sbg Catmull-Clark levels at
+# High / Game.
+BoulderDetail = mesh(len=200.0, xm=0.0, HT=258.0, bs=80.0, tt=52.0, bu=8.0, st=1.5, bd=1, sd0=3, uneven=0.8, fill=0.8, moss=0.0, sdp=14.0, yt=0.3, dsk=0.4, pin=0.9, pdp=2.5, tf=1.0, iof=1.0, crs=1.2, dome=0.46, lump=1.0, split=0.2, deep=1.0, sbh=3, sbg=1, rl=0, crm=0.5) {
+  $L = $len
+  $up = clamp($uneven, 0, 1)
+  $fl = clamp($fill, 0, 1)
+  $mo = clamp($moss, 0, 1)
+  $dsb = 17 * $st
+  $dso = (9 - 5 * $fl) * clamp(0 - 100 * $sdp, 0, 1) + max($sdp, 0)
+  add($BoulderStones, w=$L, t=$bs, h=$HT, ds=$dsb, sd=$sd0 + 5, sub=$sbg + ($sbh - $sbg) * $bd, rl=$rl, crm=$crm, io=(3 + 5 * $up) * $iof, tilt=(3 + 5 * $up) * $tf, crs=$crs, dome=$dome, lump=$lump, split=$split, deep=$deep, det=$bd, yt=$yt, dsk=$dsk, pin=$pin, pdp=$pdp, join=none, at=(0, 0, 0 - $bu))
+  add($CoreSlab, w=$L - 2 * (0.3 * $dsb + 4), t=$bs - 2 * max($dso + 8, 0.25 * $bs), h=$HT - 2.2 * $dsb, at=(0, 0, 0 - $bu), join=none)
+  # LOOSE TOP STONES: Stone Boulders dropped on the stepped top by collide=settle
+  $tsn = clamp(floor($L / 50 + random(seed=$sd0 * 131, min=0, max=1)), 1, 9)
+  loop ($tsn) {
+    $tk = output.index - 1
+    $tsx = clamp(($tk + 0.5 + random(seed=$sd0 * 137 + $tk, min=-0.15, max=0.15)) * $L / $tsn - 0.5 * $L, 1.6 * $dsb - 0.5 * $L, 0.5 * $L - 1.6 * $dsb)
+    $tsy = random(seed=$sd0 * 139 + $tk, min=-0.22, max=0.22) * $tt
+    $tss = $dsb * random(seed=$sd0 * 149 + $tk, min=1.3, max=2.0)
+    add($St.Boulder, size=$tss, height=0.5, noise=$sd0 * 151 + $tk, budget=$bd - 1, at=($tsx, $tsy, $HT - $bu + 0.6 * $tss), rotate=(0, 0, random(seed=$sd0 * 157 + $tk, min=-15, max=15)), collide=settle, join=none)
+  }
+  if ($fl > 0.02) {
+    add($SoilFill, w=$L, inx=$dso + 0.3 * $dsb, t=$bs - 2.0 * $dso, h=$HT, rm=24 - 10 * $bd, sd=$sd0 + 3, am=2.5, ds=$dsb, rsd=$sd0 + 5, low=0.55 * $dsb, at=(0, 0, 0 - $bu), join=none)
+    add($Bank, w=$L, mw=16 + 8 * $fl, mh=$bu + 10 + 12 * $fl, rm=11 - 7 * $bd, sd=$sd0 + 11, at=(0, 0 - 0.5 * $bs - 2, 0 - $bu), join=none)
+    add($Bank, w=$L, mw=16 + 8 * $fl, mh=$bu + 10 + 12 * $fl, rm=11 - 7 * $bd, sd=$sd0 + 17, at=(0, 0.5 * $bs + 2, 0 - $bu), rotate=(0, 0, 180), join=none)
+  }
+  # the face bulging in broad lumps (+-11 cm at uneven 1; Wall's own batter leans both faces after)
+  $wq1 = random(seed=$sd0 * 23, min=0, max=360)
+  $wq2 = random(seed=$sd0 * 29, min=0, max=360)
+  warp(by=(0, 11 * $up * (0.65 * sin(1.5 * point.x + $wq1) * sin(1.1 * point.z + $wq2) + 0.35 * sin(3.7 * point.x + 0.5 * $wq2) * sin(2.9 * point.z + $wq1)), 0))
+  uv(box, scale=100)
+  # MOSS (a vertex-colour mask, G = 1 - moss): Weather's patches on tops and sheltered rims, and the soil in the joints greened
+  if ($mo > 0.01) {
+    $Wth.Moss(amount=$mo, patch=18, noise=$sd0 + 2)
+    if ($fl > 0.02) {
+      colour(0, channel=g, mix=multiply) [material=$Soil, value=noise(point.x / 16, point.y / 16, point.z / 16, $sd0 + 38) + 0.35 * noise(point.x / 5, point.y / 5, point.z / 5, $sd0 + 40), above=0.6 - 1.6 * $mo, fade=0.3]
+    }
+  }
+  place(by=($xm, 0, 0))
+}
+
+# THE SOIL of detail=1 packed behind the stones (it shows in every joint) and lying on the stepped top
+SoilFill = mesh(w=200.0, t=40.0, h=250.0, rm=16.0, sd=1, am=2.2, ds=22.0, rsd=1, low=10.0, inx=5.0) {
+  add($RaggedBody, w=$w, t=$t, h=$h, ds=$ds, sd=$rsd, low=$low)
+  place(scale=(($w - 2 * $inx) / $w, 1, 1))
+  remesh($rm)
+  roughen(by=$am, scale=$rm * 3, seed=$sd)
+  material($Soil)
+}
+
+# THE BODY WITH A RAGGED TOP: the wall's section in x (squeezed by `zel`) and z, the top stepping down station by station
+# (the same draws BoulderStones reads), stood up through the thickness `t`; `low` lowers the whole top (the soil under the stones)
+RaggedBody = mesh(w=200.0, t=80.0, h=258.0, ds=22.0, sd=1, rg=1.0, zel=1.0, low=0.0) {
+  $nst = clamp(floor($w / (1.5 * $ds) + 0.5), 2, 12)
+  $sg2 = $w / $nst
+  $ol[0] = (0 - 0.5 * $w / $zel, 0)
+  $ol[1] = (0.5 * $w / $zel, 0)
+  loop ($nst) {
+    $k = $nst - output.index
+    $tzk = $h - $low - $rg * $ds * 1.7 * pow(random(seed=$sd * 211 + $k, min=0, max=1), 1.6)
+    $xl = 0 - 0.5 * $w + $k * $sg2
+    $q = 2 * output.index
+    $ol[$q] = (($xl + $sg2 - 0.1 * $sg2) / $zel, $tzk)
+    $ol[$q + 1] = (($xl + 0.1 * $sg2) / $zel, $tzk)
+  }
+  points($ol, loop=true)  extrude(height=$t)
+  warp(to=(point.x, 0.5 * $t - point.z, point.y))
+}
+
+# a detailed boulder wall (round 2): chunky pillowed field stones, split faces, dark pockets, a ragged stepped top, soil and moss in the joints, high tier
+BoulderDetailHigh = mesh() { add($Wall, noise=3, budget=1, height=250, base=80, top=52, stone=1.5, rows=0, uneven=0.8, fill=0.8, cope=0, ends=0, detail=1, moss=0.45) }
+# the same wall, game tier (the line bakes normal, AO and curvature from the high tier; no moss mask: 12,000 vertices draw it as triangles, so a material greens the joints from the baked AO and curvature)
+BoulderDetailGame = mesh() { add($Wall, noise=3, budget=0, height=250, base=80, top=52, stone=1.5, rows=0, uneven=0.8, fill=0.8, cope=0, ends=0, detail=1) }

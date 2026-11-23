@@ -282,6 +282,15 @@ struct FGcRigJoint
 	TOptional<double> Ramp;
 
 	/**
+	 * `twist_velocity=` (deg/s) and `twist_accel=` (deg/s^2), 2026-11-20: the same reference for this joint's turn ABOUT ITS OWN
+	 * LENGTH alone, for a joint whose twist is measured far faster than its swing (a shoulder's internal rotation: 7,000 deg/s and
+	 * 500,000 deg/s^2 against 1,100 and 25,000 for its flexion, Docs/Research/joint-speed-and-acceleration-references.md section 4).
+	 * Unset, the twist is timed against `velocity=` / `accel=` with the rest of the turn, exactly as before. The ramp is the joint's.
+	 */
+	TOptional<double> TwistVelocity;
+	TOptional<double> TwistAccel;
+
+	/**
 	 * `dynamic=0.75` (MOVE-RELAX1, Docs/GC-MOVE-RELAX-PLAN.md 2.1): HOW FREELY THIS JOINT'S PHYSICS BODY MOVES when something
 	 * simulates it, 0..1. 0 is a body only animation moves, 1 one that swings free, and between a spring holds it toward its
 	 * animation pose, weaker as the number rises. Unset is 1, because a rig-built asset today has no drive on any joint, so

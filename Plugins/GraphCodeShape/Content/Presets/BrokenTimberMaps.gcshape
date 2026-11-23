@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.2  shade:40
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/BrokenTimberMaps  smooth:0.2  shade:40
 
 # BROKEN TIMBER MAPS — the TEXTURE LAYER of `BrokenTimber.gcshape`, in a file of
 # its own so the meshes build in about two and a half minutes and the seven

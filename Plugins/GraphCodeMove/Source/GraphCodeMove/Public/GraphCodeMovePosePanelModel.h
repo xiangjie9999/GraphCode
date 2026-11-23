@@ -122,6 +122,13 @@ struct FGcMovePoseRow
 	FString Beside;
 	/** Ruling 107: the tip's second line, drawn grey under Tip: where the value is saved (Tip says what it does to the motion). Empty: none. */
 	FString TipWhere;
+	/** UX ROUND 4 (the owner, 20 Nov: "anything modified compared to the save file, show it as modified, and also, have a revert button"): what is
+	 *  written for this value differs from the SAVED file on disk (its number at its call, a bone override's word, a timing value at the build line). A
+	 *  value that only moves with its parent is not modified. SavedText: the saved file's own text for it, bSavedWritten false when the saved file
+	 *  does not write it (reverting unwrites it: it follows again). */
+	bool bModified = false;
+	bool bSavedWritten = false;
+	FString SavedText;
 };
 
 /**
@@ -154,9 +161,30 @@ struct FGcMovePosePanel
 	 *  button calls IGcMovePosePanelHost::PressPanelButton(Path). Both empty: nothing is drawn. */
 	FString Line;
 	FString ButtonText;
+	/** UX round 4: the modified values in this group and the groups under it ("Back · 2 changed"); RevertWhyNot: why the group's values cannot be
+	 *  written back from here (the tab's write guard), empty when they can. */
+	int32 Changed = 0;
+	FString RevertWhyNot;
 };
 
 /** Everything the panel draws. */
+/** UX ROUND 3 (the owner, 20 Nov: "should have a button like show in editor for the animations isn't it? Or else how do I know where's my animation"):
+ *  one animation of the chosen pose on disk (or where it will be), with Show in Content Browser and Open beside it. */
+struct FGcMovePoseBuilt
+{
+	/** What it is, plainly: "This pose", "The motion", "The animation", "Copy for Clothed MetaHuman". */
+	FString What;
+	/** The asset's long package name (`/Game/.../A_PresetSlash_Manny`): where it is, or where the build writes it. */
+	FString Package;
+	/** It is on disk: Show and Open are on. */
+	bool bBuilt = false;
+	/** REVIEW-UXR3 3: a build that rewrites it is running: the row is grey, Show and Open off until it is done (a copy is never rewritten by a build). */
+	bool bWaiting = false;
+	/** Built: where, in plain words ("Saved A_PresetSlash_Manny in /Game/GraphCodeExamples/PresetSlash_20261118"). Not built: why the buttons are off and
+	 *  what to do ("Not built yet. Press Build now."). */
+	FString Line;
+};
+
 struct FGcMovePosePanelModel
 {
 	/** The open file (a long package name, `/Game/.../Tune6`), empty when none. */
@@ -241,6 +269,12 @@ struct FGcMovePosePanelModel
 	 * (that pose's sentences, one a line; empty: none), Warnings the chosen pose's, one sentence each. */
 	TArray<FString> PoseWarnings;
 	TArray<FString> Warnings;
+	/** UX round 2 (PANEL-RETEST-1119 item 4): why the stage is empty, in plain words and what to do ("This file names no character to show ..."); empty
+	 *  when a character stands on it. The viewport says it over the empty stage. */
+	FString StageLine;
+	/** UX round 3 (the owner, 20 Nov): the chosen pose's animations, each with Show in Content Browser and Open: its own clip, the motion played from it
+	 *  (the action beside a keys file, or a timed clip of the same file), and every copy Save for <character> wrote beside them. */
+	TArray<FGcMovePoseBuilt> Built;
 };
 
 DECLARE_MULTICAST_DELEGATE(FGcMovePosePanelChanged);
@@ -299,6 +333,14 @@ public:
 	virtual void ToPresets() {}
 	/** Build the file as saved (the owner, 19 Nov: the stale saved animation's "Build now"); nothing is written to the file. */
 	virtual void BuildNow() {}
+	/** UX round 4 (the owner, 20 Nov): one value back to the saved file's (FGcMovePoseRow::SavedText), or every modified value of a group and the groups
+	 *  under it; each press one undo step, the pose solved again as after a drag. */
+	virtual void RevertRow(const FString& PanelPath, const FString& Row) {}
+	virtual void RevertPanel(const FString& PanelPath) {}
+	/** UX round 3 (the owner, 20 Nov): Built[Index] in Unreal's Content Browser (its folder opened, the asset selected), and opened in Unreal's animation
+	 *  editor. Nothing while it is not built. */
+	virtual void ShowBuiltInBrowser(int32 Index) {}
+	virtual void OpenBuiltAsset(int32 Index) {}
 
 	virtual void Undo() = 0;
 	virtual void Redo() = 0;

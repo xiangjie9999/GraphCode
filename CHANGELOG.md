@@ -4,6 +4,17 @@ Each release is published on the [Releases](https://github.com/xiangjie9999/Grap
 signed manifest, signature and archive. The editor offers new releases itself. Longer notes with pictures:
 [graphcode.dev/whats-new](https://graphcode.dev/whats-new). All releases are for Unreal Engine 5.7.4, Win64.
 
+## 0.1.14 (23 November 2026)
+
+- **Move:** hold a sword or any handle firmly from three posed values (new guide HOLDING-A-SWORD and a SwordGrip example); faster balance builds and quicker collision checks; the motion-from-video tools now ship inside Move.
+- **Shape:** new presets for animals (cats, dogs, heads, paws, eyes, noses) and nature (vegetation, understory, dead wood, rocks and cliffs, stone, concrete), plus rope and weather.
+- **Market:** "Get in Unreal" on a pack's web page opens it straight in your editor.
+- **Garment** and **MCP** updates.
+- Carries our new hardware release key, `release-tpm-2`, so later releases can be signed with it.
+
+Archive SHA-256: `88529c88e3ba4e17b9c6ac330d262e5a2f7350d4cedcaccab71754335ae29485` (131,838,784 bytes),
+signed by `release-backup-1`.
+
 ## 0.1.13 (20 November 2026)
 
 - **Garment:** collar and cuff bands wind cleanly; cut edges lie flat at the lay; new `hang()` solver words and

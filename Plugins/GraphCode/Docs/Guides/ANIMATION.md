@@ -153,6 +153,14 @@ component-space centimetres; facing is labelled as an `(x,y,z,w)` quaternion. Fr
 final output after timing and refinement. Dry runs report the same solved keys, before compression;
 these notes do not measure compressed playback. Requires the updated native plugin (2026-10-13).
 
+**A held thing's direction is its own line, not a chain end** (21 Nov 2026). A chain's `end` line is its end BONE
+(`arm_r end` is middle_metacarpal_r and `sword_r end` hand_r on the BlueEdge body). A held part rides its own
+carrier (palm_r), and the carrier's own turn (a grip's seat) shows in no chain end: a blade read off a chain end
+was 10-12 deg off the blade the build placed. Each `surface(part=)` a bone holds is read on its own:
+`held part $Sword (part Sword, on 'palm_r') at (...) facing quaternion(...)`, then
+`held part $Sword axes, the part's own, in the character's space: +X (...) +Y (...) +Z (...)` (a sword's blade is
+its +Z). Spec: `GraphCode.Move.Readings.HeldPart.BladeFromTheCarrier`. Needs the build after 21 Nov.
+
 For a hand at output frame N, add a named `point(bone=hand_l)` if the exact landmark is not already
 reported, select `[readings=(N)]`, and use `gc_apply dry_run:true`. This avoids publishing a test
 animation but still solves the full target; it is not a cheap isolated-pose query. Divide a reported

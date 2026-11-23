@@ -114,6 +114,12 @@ public:
 		FGcMoveBuildResult& OutResult, FString& OutError);
 
 	/**
+	 * The pose editor's Save / Build now: the next write of DocumentPath (the `asset_path` the panel submits) needs no
+	 * authoring licence. In-process only, one write, lapses after Seconds. Never call it for an agent's request.
+	 */
+	static void GrantPoseEditorBuild(const FString& DocumentPath, double Seconds);
+
+	/**
 	 * The sweep's question: is the recipe for this clip still in the program that built it? False with
 	 * `OutReason` is *the recipe is gone*; false with `OutError` is *no product here to ask*, which a
 	 * Core-only install must not report as every move-built clip being broken.

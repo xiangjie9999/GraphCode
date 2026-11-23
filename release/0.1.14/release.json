@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "suite": "GraphCode",
+  "version": "0.1.14",
+  "platform": "Win64",
+  "format": "tar.xz",
+  "engine": "5.7.4",
+  "engineBuildId": "47537391",
+  "products": [
+    "GraphCode",
+    "GraphCodePlay",
+    "GraphCodeMove",
+    "GraphCodeWorld",
+    "GraphCodeShape",
+    "GraphCodeRig",
+    "GraphCodeGroom",
+    "GraphCodeCoreExtension",
+    "GraphCodeGarment",
+    "GraphCodeIntegrate"
+  ],
+  "size": 131838784,
+  "sha256": "88529c88e3ba4e17b9c6ac330d262e5a2f7350d4cedcaccab71754335ae29485",
+  "files": 1236,
+  "parts": [
+    {
+      "index": 1,
+      "name": "part-001.bin",
+      "size": 50331648,
+      "sha256": "7b4cd21422a53d0427ab5039bace217278a797e302c29a3e265d1457fadf2d1d"
+    },
+    {
+      "index": 2,
+      "name": "part-002.bin",
+      "size": 50331648,
+      "sha256": "edc5c654e49d50579c7464f8f9f702f36f0acdd16c7e02cc9955fb9ff661ec03"
+    },
+    {
+      "index": 3,
+      "name": "part-003.bin",
+      "size": 31175488,
+      "sha256": "7d2a79f1d292fd7294d21ddca53e161d2b4c4d2526e20a5191b88e2de01b08d4"
+    }
+  ],
+  "notes": "Move: faster balance builds and a collision speed-up; Garment, Shape and MCP updates",
+  "publishedAt": "2026-11-23T16:04:28Z",
+  "source": {
+    "commit": "ae98c507f51ffaba72f159263f69d33e9a23004d",
+    "dirty": true,
+    "builtAtUtc": "11/23/2026 12:22:53"
+  }
+}

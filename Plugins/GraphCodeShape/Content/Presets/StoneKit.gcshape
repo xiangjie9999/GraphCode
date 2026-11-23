@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.12  shade:40
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/StoneKit  smooth:0.12  shade:40
 
 # STONE KIT — the damage kit's stone subjects (Docs/GC-SHAPE-DAMAGE-KIT.md §12: the owner's references and the
 # budget ruling; §12.3: nothing is a perfect rectangle). AGED IS THE DEFAULT LOOK: an intact stone here is never new.

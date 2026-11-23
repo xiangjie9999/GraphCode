@@ -1,4 +1,4 @@
-gcshape 1 into:/GraphCodeShape/Presets smooth:0.012 shade:80
+gcshape 1 into:/Game/GraphCodeMarket/GraphCode/Hands smooth:0.012 shade:80
 
 # Hand forms built from interchangeable digit recipes. +Z goes from wrist to
 # fingers; -Y is the palm. The thumb is on -X. Size parameters are centimetres.

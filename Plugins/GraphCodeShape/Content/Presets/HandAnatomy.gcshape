@@ -1,4 +1,4 @@
-gcshape 1 into:/GraphCodeShape/Presets smooth:.02 shade:80
+gcshape 1 into:/Game/GraphCodeMarket/GraphCode/HandAnatomy smooth:.02 shade:80
 
 # Parametric stylized hand. Centimetres; wrist at origin, +Z toward fingers,
 # -Y palmar, thumb on -X. Static rest pose, not a rig or finished anatomy.

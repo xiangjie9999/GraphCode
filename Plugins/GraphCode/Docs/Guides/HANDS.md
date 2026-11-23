@@ -705,6 +705,8 @@ right in one view and wrong in another is wrong.
 
 ## Holding on a MetaHuman body: what the VR hand has that a body lacks (2026-10-13)
 
+> **The fast route for a sword or any handle (20 Nov 2026):** [HOLDING-A-SWORD.md](HOLDING-A-SWORD.md), a copy-and-adapt recipe with a paste-in preset block, [../Examples/SwordGrip/SwordGrip.gcmove](../Examples/SwordGrip/SwordGrip.gcmove).
+
 The hammer, sword and pistol holds above were built on Epic's VR hand, whose `.gcrig` was made for holding. A
 MetaHuman body is not, and the same lines give a weak grip on it until its rig gets the same four things
 (the BlueEdge sword, `GraphCodeExamples/BlueEdge_20261013`, BUILD.md has the record):

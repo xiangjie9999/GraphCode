@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.1  shade:42
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Profiles  smooth:0.1  shade:42
 
 # PROFILES — the SHAPE of a variation, with no size of its own. Layer L1 of the
 # preset library (`Docs/GC-SHAPE-PRESET-LIBRARY.md` §1): the values every other

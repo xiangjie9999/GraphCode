@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.12  shade:40
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Masonry  smooth:0.12  shade:40
 
 # MASONRY — L3 Parts, structural. One recognizable building unit per entry, each
 # still one entry. `Docs/GC-SHAPE-PRESET-LIBRARY.md` §3, L3.

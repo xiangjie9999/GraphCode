@@ -1,0 +1,17 @@
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/UnderstoryKit  smooth:0.25  shade:60
+
+# UnderstoryConifer: builds one group of the understory parts from Understory.gcshape (one file per group: the 8M resident
+# triangle ceiling is per build).
+
+build {
+  SM_Und_Conifer_SpraySpruce = $DemoSpraySpruce [pivot=(0, 0, 0)]
+  SM_Und_Conifer_SprayPine = $DemoSprayPine [pivot=(0, 0, 0)]
+  SM_Und_Conifer_ConeSpruce = $DemoConeSpruce [pivot=(0, 0, 0)]
+  SM_Und_Conifer_ConePine = $DemoConePine [pivot=(0, 0, 0)]
+}
+
+DemoSpraySpruce = mesh() { add($U.KitConifer, part=0, species=0, noise=31, join=none)  uv(keep) }
+DemoSprayPine = mesh() { add($U.KitConifer, part=0, species=1, noise=33, join=none)  uv(keep) }
+DemoConeSpruce = mesh() { add($U.KitConifer, part=2, species=0, noise=35, join=none)  uv(keep) }
+DemoConePine = mesh() { add($U.KitConifer, part=2, species=1, noise=37, join=none)  uv(keep) }
+U = shape('/GraphCodeShape/Presets/UnderstoryKit')

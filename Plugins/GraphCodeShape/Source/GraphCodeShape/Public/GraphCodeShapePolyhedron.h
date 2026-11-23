@@ -50,11 +50,54 @@ namespace GraphCodeShapePolyhedron
 
 		/** Free is the rock-oriented default; Prism deliberately retains a flat top. */
 		EMode Mode = EMode::Free;
+
+		/**
+		 * **G32: ONE JOINT SET** (`joints=((dip=, azimuth=, spacing=), ...)`, 2026-11-20, `Docs/GC-SHAPE-ROCK-GRAMMAR.md`
+		 * §3 item 1): a PAIR of parallel planes across the `size=` box. `Dip` is the planes' angle from level in degrees
+		 * (0 level, 90 upright); `Azimuth` the way they lean down, degrees from +X toward +Y; `Spacing` the gap between
+		 * the pair as a share of the box's width across them (1 = the pair touches the box's far corners).
+		 */
+		struct FJointSet
+		{
+			double Dip = 0.0;
+			double Azimuth = 0.0;
+			double Spacing = 1.0;
+
+			/**
+			 * **G33: `save=$Fresh`** (2026-11-20, `Docs/GC-SHAPE-ROCK-GRAMMAR.md` §4): the name, without its `$`, of the
+			 * ordinary region the faces of BOTH planes of this set become. Empty: the set's faces stay unnamed. Two sets
+			 * with one name make one region, their union.
+			 */
+			FString Save;
+		};
+
+		/** G32: with sets, `Faces` counts EXTRA random breaks (0 allowed) and every plane goes into one rebuild. */
+		TArray<FJointSet> Joints;
+
+		/** G32: the most, in degrees, a joint plane leans off its set's direction (seeded per plane). */
+		double Tilt = 0.0;
+	};
+
+	/** The most joint sets one polyhedron takes, and the most extra breaks beside them. */
+	constexpr int32 MostJointSets = 8;
+	constexpr int32 MostJointBreaks = 64;
+	/** The most a joint plane may lean off its set, degrees: past it the set no longer reads as one family. */
+	constexpr double MostJointTilt = 45.0;
+
+	/**
+	 * G33: one named region a polyhedron made (`joints=((..., save=$Fresh))`): its name without the `$`, and the
+	 * triangles of the output mesh it holds, in order. The evaluator writes it into the body's ONE NAMESPACE.
+	 */
+	struct FSavedRegion
+	{
+		FString Name;
+		TArray<int32> Triangles;
 	};
 
 	/** Build one convex, closed mesh. Its horizontal `[bottom]` face lies exactly on z=0. */
 	GRAPHCODESHAPE_API bool Generate(const FOptions& Options,
-		UE::Geometry::FDynamicMesh3& OutMesh, FString& OutError);
+		UE::Geometry::FDynamicMesh3& OutMesh, FString& OutError, TArray<FString>* OutNotes = nullptr,
+		TArray<FSavedRegion>* OutRegions = nullptr);
 
 	/**
 	 * Recover the minimal supporting planes of an already-built convex closed mesh. Coplanar
@@ -73,5 +116,6 @@ namespace GraphCodeShapePolyhedron
 
 	/** Read the public instruction, generate it, then apply its ordinary group-1 placement. */
 	GRAPHCODESHAPE_API bool Run(const FGcShapeDocument& Document,
-		const FGcShapeInstruction& Line, UE::Geometry::FDynamicMesh3& OutMesh, FString& OutError);
+		const FGcShapeInstruction& Line, UE::Geometry::FDynamicMesh3& OutMesh, FString& OutError,
+		TArray<FString>* OutNotes = nullptr, TArray<FSavedRegion>* OutRegions = nullptr);
 }

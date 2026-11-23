@@ -605,6 +605,15 @@ enum class EGcGarmentOp : uint8
 
 	/** A buttonhole (14 Nov): parsed later; no builder yet. Appended at the end: values are compared and may be stored. */
 	Buttonhole,
+
+	/**
+	 * `length($Knee, $Ankle, 4cm)` (23 Nov; Docs/Research/standing-garment-fold-causes.md cause (a), garment-length-ease-stacking.md): the
+	 * garment's cloth between two of its rings cut that much LONGER along its lines than the lay puts it - a trouser's break, a jogger's stack
+	 * above its cuff, a sleeve longer than the arm. Nothing moves at the lay; the hang rests the cloth at its cut, so held above and landing on
+	 * what is below, the extra length folds where it lands. Fields reused (no new member): `Target` the first ring, `Second` the second,
+	 * `Amount.Value` the extra length (cm). Appended at the end: values are compared and may be stored.
+	 */
+	Length,
 };
 
 /** How `match()`'s extra cloth shows (GC-GARMENT-MATCH.md §2): one job, the look a parameter. */
@@ -863,6 +872,17 @@ struct GRAPHCODEGARMENT_API FGcGarmentStep
 	 * grown there; on a line of cloth, positive the way the rings count (GC-GARMENT-STITCH.md §4–§5).
 	 */
 	double OffsetCm = 0.0;
+
+	/**
+	 * `stitch($Hem, at=turn, needles=2, gauge=4.8mm)` (22 Nov): the rows a machine sews from what the edge declares - `at=turn`, the first
+	 * needle at the edge's own turned depth (its raw edge); `needles=n` rows, each `gauge=` nearer the edge than the last. Unwritten: one
+	 * row at `offset=`, as before.
+	 */
+	bool bStitchAtTurn = false;
+	int32 StitchNeedles = 1;
+	double StitchGaugeCm = 0.0;
+	/** `inset=` with `at=turn`: the first needle this far inside the turn's inner edge (an edge-stitched hem's 2 mm); 0, at it (a coverstitch). */
+	double StitchInsetCm = 0.0;
 
 	/** `stitch(..., every=3mm)`: from one needle hole to the next. */
 	double EveryCm = 0.3;

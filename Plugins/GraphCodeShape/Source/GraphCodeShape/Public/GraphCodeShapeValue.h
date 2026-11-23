@@ -590,7 +590,7 @@ namespace GraphCodeShapeValue
 	 * rather than pointing somewhere — and it does not come through here.
 	 */
 	GRAPHCODESHAPE_API bool ReadAlong(const FGcShapeInstruction& Line,
-		UE::Math::TVector<double>& Out, FString& OutError);
+		UE::Math::TVector<double>& Out, FString& OutError, const FGcShapeDocument* Document = nullptr);
 
 	/**
 	 * How many segments a circle of this radius needs to stay inside the file's chord tolerance.

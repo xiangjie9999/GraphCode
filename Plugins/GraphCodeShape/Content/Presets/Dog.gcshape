@@ -1,0 +1,731 @@
+gcshape 1 into:/Game/AnimalStudies/Dog smooth:.04 shade:80 uv:keep
+
+# Medium dog torso. Deep breast, tucked loin and distinct withers.
+# Override these centimetre dimensions at import. Positive LoinExtra lengthens
+# the space between pelvis and ribs. Torso carries the six common landmarks.
+build {
+  SM_Dog = $Animal [pivot=(0,0,0)]
+  SM_DogTorso = $Torso [pivot=(0,0,0)]
+  SM_DogNeck = $Neck [pivot=(0,0,0)]
+  SM_DogWithNeck = $WithNeck [pivot=(0,0,0)]
+}
+
+Defaults = shape('/GraphCodeShape/Presets/QuadrupedAnimal',Feline=$Feline)
+# The lower jaw rests beneath the nasal collar. Distances on the border
+# profiles are head-length fractions, sampled from occiput to muzzle.
+EyeToPlanumFit = $Defaults.EyeToPlanumFit
+EyeToPlanumRatio = $Defaults.EyeToPlanumRatio
+PalpebralTurnInset = $Defaults.PalpebralTurnInset
+SupraorbitalRimRadius = $Defaults.SupraorbitalRimRadius
+SupraorbitalRimSpan = $Defaults.SupraorbitalRimSpan
+BrowRadius = $Defaults.BrowRadius
+BrowSpan = $Defaults.BrowSpan
+BrowVentralFade = $Defaults.BrowVentralFade
+LabialWidthExponent = $Defaults.LabialWidthExponent
+LabialHeightExponent = $Defaults.LabialHeightExponent
+LabialFloorWidth = $Defaults.LabialFloorWidth
+LabialTaperLevel = $Defaults.LabialTaperLevel
+LabialTaperSpan = $Defaults.LabialTaperSpan
+LabialFullnessGain = $Defaults.LabialFullnessGain
+LabialPadStrength = $Defaults.LabialPadStrength
+LabialPadLatitude = $Defaults.LabialPadLatitude
+LabialPadArc = $Defaults.LabialPadArc
+LabialPadStation = $Defaults.LabialPadStation
+LabialPadSpan = $Defaults.LabialPadSpan
+LipSulcusRelief = $Defaults.LipSulcusRelief
+LipSulcusArc = $Defaults.LipSulcusArc
+CheekLatitude = $Defaults.CheekLatitude
+CheekArc = $Defaults.CheekArc
+CheekStation = $Defaults.CheekStation
+CheekSpan = $Defaults.CheekSpan
+RostralWidthOnset = $Defaults.RostralWidthOnset
+RostralWidthSpan = $Defaults.RostralWidthSpan
+PadLatitude = $Defaults.PadLatitude
+PadArc = $Defaults.PadArc
+PadStation = $Defaults.PadStation
+PadSpan = $Defaults.PadSpan
+PadWidthGain = $Defaults.PadWidthGain
+LipRollLatitude = $Defaults.LipRollLatitude
+LipRollArc = $Defaults.LipRollArc
+LipRollGain = $Defaults.LipRollGain
+LipForwardStation = $Defaults.LipForwardStation
+LipForwardSpan = $Defaults.LipForwardSpan
+LipForwardLevel = $Defaults.LipForwardLevel
+LipForwardHeight = $Defaults.LipForwardHeight
+LipForwardInset = $Defaults.LipForwardInset
+LipForwardFalloff = $Defaults.LipForwardFalloff
+LipLobeCentre = $Defaults.LipLobeCentre
+LipLobeWidth = $Defaults.LipLobeWidth
+PhiltrumWidth = $Defaults.PhiltrumWidth
+PhiltrumReliefGain = $Defaults.PhiltrumReliefGain
+DrapeStart = $Defaults.DrapeStart
+DrapeSpan = $Defaults.DrapeSpan
+DrapeRimInset = $Defaults.DrapeRimInset
+DrapeRimFalloff = $Defaults.DrapeRimFalloff
+RostrumLengthScale = $Defaults.RostrumLengthScale
+RostrumOrbitalClearance = $Defaults.RostrumOrbitalClearance
+RostrumCollarClearance = $Defaults.RostrumCollarClearance
+RhinolabialAdvance = $Defaults.RhinolabialAdvance
+RhinolabialFit = $Defaults.RhinolabialFit
+RhinolabialPosteriorRun = $Defaults.RhinolabialPosteriorRun
+RhinolabialAnteriorRun = $Defaults.RhinolabialAnteriorRun
+RhinolabialDepth = $Defaults.RhinolabialDepth
+RhinolabialHalfWidth = $Defaults.RhinolabialHalfWidth
+RhinolabialOnset = $Defaults.RhinolabialOnset
+RhinolabialBlend = $Defaults.RhinolabialBlend
+RhinolabialRelease = $Defaults.RhinolabialRelease
+RhinolabialDatum = profile(0=$Defaults.RhinolabialDatum(0),1=$Defaults.RhinolabialDatum(1))
+RhinolabialTarget = profile(0=$Defaults.RhinolabialTarget(0),1=$Defaults.RhinolabialTarget(1))
+MandibularContourFit = $Defaults.MandibularContourFit
+MandibularDatum = profile(0=$Defaults.MandibularDatum(0),1=$Defaults.MandibularDatum(1))
+MandibularTarget = profile(0=$Defaults.MandibularTarget(0),1=$Defaults.MandibularTarget(1))
+MandibularTipThickness = $Defaults.MandibularTipThickness
+MandibularAnchorDepth = $Defaults.MandibularAnchorDepth
+ClosedLipOnset = $Defaults.ClosedLipOnset
+ClosedLipRun = $Defaults.ClosedLipRun
+ClosedLipLatitude = $Defaults.ClosedLipLatitude
+ClosedLipArc = $Defaults.ClosedLipArc
+MandibularBorderFit = $Defaults.MandibularBorderFit
+MandibularLevelOnset = $Defaults.MandibularLevelOnset
+MandibularLevelBlend = $Defaults.MandibularLevelBlend
+MandibularRimStart = $Defaults.MandibularRimStart
+MandibularRimEnd = $Defaults.MandibularRimEnd
+MandibularAdvance = profile(0=0,1=0)
+MandibularElevation = profile(0=0,1=0)
+OralFissureDepth = $Defaults.OralFissureDepth
+OralFissureWidth = $Defaults.OralFissureWidth
+OralFissureCorner = $Defaults.OralFissureCorner
+OralFissureBlend = $Defaults.OralFissureBlend
+OralFissureLevel = profile(0=-.30,1=-.22)
+OralFissureForwardShare = $Defaults.OralFissureForwardShare
+OralFissureLateralShare = $Defaults.OralFissureLateralShare
+LipCornerBlend = $Defaults.LipCornerBlend
+LipRostralBlend = $Defaults.LipRostralBlend
+UpperRollAngle = $Defaults.UpperRollAngle
+LowerRollAngle = $Defaults.LowerRollAngle
+UpperRollSpan = $Defaults.UpperRollSpan
+LowerRollSpan = $Defaults.LowerRollSpan
+UpperRollRelief = $Defaults.UpperRollRelief
+LowerRollRelief = $Defaults.LowerRollRelief
+OrbitalPigmentRadius = $Defaults.OrbitalPigmentRadius
+OrbitalPigmentWidth = $Defaults.OrbitalPigmentWidth
+OrbitalPigmentFade = $Defaults.OrbitalPigmentFade
+OrbitalPigmentReach = $Defaults.OrbitalPigmentReach
+# Additive axial profiles in normalized rump-to-breast coordinates.
+LoinTravelOffset = profile(0=0,1=0)
+HipShareOffset = profile(0=0,1=0)
+RibShareOffset = profile(0=0,1=0)
+PelvisOffset = profile(0=0,1=0)
+WithersOffset = profile(0=0,1=0)
+BackProfileOffset = profile(0=0,1=0)
+UnderProfileOffsetScale = 1
+UnderProfileOffset = profile(0=0,1=0)
+FlankOffset = profile(0=0,1=0)
+# Relax span, strength and falloff are fractions of pinna breadth at the ear root.
+PinnaSeamRelax = $Defaults.PinnaSeamRelax
+PinnaSeamExtent = $Defaults.PinnaSeamExtent
+PinnaSeamFalloff = $Defaults.PinnaSeamFalloff
+# Growth-region distances follow the actual ear roots, lobe and lid opening.
+PinnaHairMedialAllowance = $Defaults.PinnaHairMedialAllowance
+PinnaHairAxialSpan = $Defaults.PinnaHairAxialSpan
+PinnaHairRootDepth = $Defaults.PinnaHairRootDepth
+LidHairClearance = $Defaults.LidHairClearance
+LidHairDepth = $Defaults.LidHairDepth
+BrachialSectionFit = $Defaults.BrachialSectionFit
+BrachialSectionOnset = $Defaults.BrachialSectionOnset
+BrachialElbowSample = $Defaults.BrachialElbowSample
+BrachialUpperSample = $Defaults.BrachialUpperSample
+BrachialSectionEnd = $Defaults.BrachialSectionEnd
+BrachialElbowOffset = profile(0=0,1=0)
+BrachialUpperOffset = profile(0=0,1=0)
+ShoulderStation = $Defaults.ShoulderStation
+HipStation = $Defaults.HipStation
+ForeTrack = $Defaults.ForeTrack
+HindTrack = $Defaults.HindTrack
+TailStation = $Defaults.TailStation
+# Orient the tail�s bending plane at its sacral attachment, in degrees.
+TailYaw = $Defaults.TailYaw
+TailRoll = $Defaults.TailRoll
+TailRootLevel = $Defaults.TailRootLevel
+ForeCarpusLevel = $Defaults.ForeCarpusLevel
+ElbowLevel = $Defaults.ElbowLevel
+HockLevel = $Defaults.HockLevel
+StifleLevel = $Defaults.StifleLevel
+ForePawScale = $Defaults.ForePawScale
+ForeInsertionDepth = $Defaults.ForeInsertionDepth
+HindInsertionDepth = $Defaults.HindInsertionDepth
+LipFrontStation = $Defaults.LipFrontStation
+LipDepth = $Defaults.LipDepth
+JawCaptureBand = $Defaults.JawCaptureBand
+ChinTravelStart = $Defaults.ChinTravelStart
+ChinTravelSpan = $Defaults.ChinTravelSpan
+JawFrontStation = $Defaults.JawFrontStation
+JawFrontBlend = $Defaults.JawFrontBlend
+PinnaStandOff = $Defaults.PinnaStandOff
+PinnaForward = $Defaults.PinnaForward
+PinnaBaseYaw = $Defaults.PinnaBaseYaw
+PinnaBurial = $Defaults.PinnaBurial
+PinnaRake = $Defaults.PinnaRake
+LobeFlare = $Defaults.LobeFlare
+LobeTwist = $Defaults.LobeTwist
+LobeCup = $Defaults.LobeCup
+SocketDepth = $Defaults.SocketDepth
+EarYaw = $Defaults.EarYaw
+EarThickness = $Defaults.EarThickness
+ConchaDepth = $Defaults.ConchaDepth
+TailSag = $Defaults.TailSag
+EyeSeparation = $Defaults.EyeSeparation
+EyeLift = $Defaults.EyeLift
+LipFullness = $Defaults.LipFullness
+Length = 39
+LoinExtra = $Defaults.LoinExtra
+ChestWidth = 13.4
+ChestDepth = 17.8
+HipWidth = 11.8
+ForeUpperInset = .072*$ChestWidth
+HindUpperInset = .042*$HipWidth
+UpperInsetOnset = $Defaults.UpperInsetOnset
+UpperInsetPeak = $Defaults.UpperInsetPeak
+AxillaryBlendRadius = .042*$ChestWidth
+AxillaryLevel = $Defaults.AxillaryLevel
+AxillaryLength = .18*$Length
+AxillaryDepth = .46*$ChestDepth
+WaistWidth = 9.7
+Tuck = 3.9
+CroupRise = -0.3
+WitherRise = 1.15
+Skin = material('/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial')
+RumpCapSpan = $Defaults.RumpCapSpan
+BreastCapStart = $Defaults.BreastCapStart
+BladeStationOffset = $Defaults.BladeStationOffset
+BladeRake = $Defaults.BladeRake
+BladeSpan = $Defaults.BladeSpan
+BladeRelief = $Defaults.BladeRelief
+HaunchStationOffset = $Defaults.HaunchStationOffset
+HaunchRake = $Defaults.HaunchRake
+HaunchSpan = $Defaults.HaunchSpan
+HaunchRelief = $Defaults.HaunchRelief
+KeelTaper = $Defaults.KeelTaper
+CervicalSeatStation = $Defaults.CervicalSeatStation
+CervicalSeatLevel = $Defaults.CervicalSeatLevel
+CervicalWithersShare = $Defaults.CervicalWithersShare
+CervicalSeatPitch = $Defaults.CervicalSeatPitch
+CervicalSeatBand = $Defaults.CervicalSeatBand
+ShoulderSeatLevel = $Defaults.ShoulderSeatLevel
+HipSeatLevel = $Defaults.HipSeatLevel
+HipCroupShare = $Defaults.HipCroupShare
+ShoulderSeatRake = $Defaults.ShoulderSeatRake
+HipSeatRake = $Defaults.HipSeatRake
+TailSeatSlope = $Defaults.TailSeatSlope
+CervicalOnset = $Defaults.CervicalOnset
+CervicalCapStart = $Defaults.CervicalCapStart
+CervicalRootBlend = $Defaults.CervicalRootBlend
+SkullCapDepth = $Defaults.SkullCapDepth
+SkullBandDepth = $Defaults.SkullBandDepth
+CervicalMuscleLevel = $Defaults.CervicalMuscleLevel
+CervicalMuscleSlope = $Defaults.CervicalMuscleSlope
+CervicalMuscleSpan = $Defaults.CervicalMuscleSpan
+CervicalBladeStation = $Defaults.CervicalBladeStation
+CervicalBladeRake = $Defaults.CervicalBladeRake
+CervicalBladeSpan = $Defaults.CervicalBladeSpan
+CervicalHollowStation = $Defaults.CervicalHollowStation
+CervicalHollowRake = $Defaults.CervicalHollowRake
+CervicalHollowSpan = $Defaults.CervicalHollowSpan
+CervicalHollowDepth = $Defaults.CervicalHollowDepth
+CervicalBladeLevel = $Defaults.CervicalBladeLevel
+CervicalBladeHeight = $Defaults.CervicalBladeHeight
+Body = shape('/GraphCodeShape/Presets/QuadrupedTorso',RumpCapSpan=$RumpCapSpan,BreastCapStart=$BreastCapStart,BladeStationOffset=$BladeStationOffset,BladeRake=$BladeRake,BladeSpan=$BladeSpan,BladeRelief=$BladeRelief,HaunchStationOffset=$HaunchStationOffset,HaunchRake=$HaunchRake,HaunchSpan=$HaunchSpan,HaunchRelief=$HaunchRelief,KeelTaper=$KeelTaper,CervicalSeatStation=$CervicalSeatStation,CervicalSeatLevel=$CervicalSeatLevel,CervicalWithersShare=$CervicalWithersShare,CervicalSeatPitch=$CervicalSeatPitch,CervicalSeatBand=$CervicalSeatBand,ShoulderSeatLevel=$ShoulderSeatLevel,HipSeatLevel=$HipSeatLevel,HipCroupShare=$HipCroupShare,ShoulderSeatRake=$ShoulderSeatRake,HipSeatRake=$HipSeatRake,TailSeatSlope=$TailSeatSlope,LoinTravelOffset=$LoinTravelOffset,HipShareOffset=$HipShareOffset,RibShareOffset=$RibShareOffset,PelvisOffset=$PelvisOffset,WithersOffset=$WithersOffset,BackProfileOffset=$BackProfileOffset,UnderProfileOffsetScale=$UnderProfileOffsetScale,UnderProfileOffset=$UnderProfileOffset,FlankOffset=$FlankOffset,Feline=$Feline,SpineOffset=$SpineOffset,BellyOffset=$BellyOffset,TrunkGirthScale=$TrunkGirthScale,ShoulderStation=$ShoulderStation,HipStation=$HipStation,ForeTrack=$ForeTrack,HindTrack=$HindTrack,TailStation=$TailStation,TailRootLevel=$TailRootLevel, Length=$Length, LoinExtra=$LoinExtra, ChestWidth=$ChestWidth, ChestDepth=$ChestDepth, HipWidth=$HipWidth, WaistWidth=$WaistWidth, Tuck=$Tuck, CroupRise=$CroupRise, WitherRise=$WitherRise, Skin=$Skin)
+TorsoStations = 56
+TorsoSides = 48
+StockTorso = mesh() {
+  add($Body.Torso,stations=$TorsoStations,sides=$TorsoSides,join=none)
+  save($NeckBand) [$output.NeckBand]
+}
+Torso = mesh() {
+  add($TorsoPart,source=$StockTorso,landmarks=1,join=none)
+  save($NeckBand) [$output.NeckBand]
+}
+
+NeckReach = .233*$Length
+NeckRise = .585*$ChestDepth
+NeckRootWidth = .85*$ChestWidth
+SkullWidth = .515*$ChestWidth
+SkullDepth = .438*$ChestDepth
+SkullPitch = 45
+ThroatFullness = .067*$ChestDepth
+BreastProjection = .083*$ChestDepth
+JawInset = .045*$ChestDepth
+MuscleRelief = .080
+ShoulderRelief = .135
+NeckStations = 144
+NeckSides = 96
+Cervical = shape('/GraphCodeShape/Presets/QuadrupedNeck',RumpCapSpan=$RumpCapSpan,BreastCapStart=$BreastCapStart,BladeStationOffset=$BladeStationOffset,BladeRake=$BladeRake,BladeSpan=$BladeSpan,BladeRelief=$BladeRelief,HaunchStationOffset=$HaunchStationOffset,HaunchRake=$HaunchRake,HaunchSpan=$HaunchSpan,HaunchRelief=$HaunchRelief,KeelTaper=$KeelTaper,CervicalSeatStation=$CervicalSeatStation,CervicalSeatLevel=$CervicalSeatLevel,CervicalWithersShare=$CervicalWithersShare,CervicalSeatPitch=$CervicalSeatPitch,CervicalSeatBand=$CervicalSeatBand,ShoulderSeatLevel=$ShoulderSeatLevel,HipSeatLevel=$HipSeatLevel,HipCroupShare=$HipCroupShare,ShoulderSeatRake=$ShoulderSeatRake,HipSeatRake=$HipSeatRake,TailSeatSlope=$TailSeatSlope,CervicalOnset=$CervicalOnset,CervicalCapStart=$CervicalCapStart,CervicalRootBlend=$CervicalRootBlend,SkullCapDepth=$SkullCapDepth,SkullBandDepth=$SkullBandDepth,CervicalMuscleLevel=$CervicalMuscleLevel,CervicalMuscleSlope=$CervicalMuscleSlope,CervicalMuscleSpan=$CervicalMuscleSpan,CervicalBladeStation=$CervicalBladeStation,CervicalBladeRake=$CervicalBladeRake,CervicalBladeSpan=$CervicalBladeSpan,CervicalHollowStation=$CervicalHollowStation,CervicalHollowRake=$CervicalHollowRake,CervicalHollowSpan=$CervicalHollowSpan,CervicalHollowDepth=$CervicalHollowDepth,CervicalBladeLevel=$CervicalBladeLevel,CervicalBladeHeight=$CervicalBladeHeight,LoinTravelOffset=$LoinTravelOffset,HipShareOffset=$HipShareOffset,RibShareOffset=$RibShareOffset,PelvisOffset=$PelvisOffset,WithersOffset=$WithersOffset,BackProfileOffset=$BackProfileOffset,UnderProfileOffsetScale=$UnderProfileOffsetScale,UnderProfileOffset=$UnderProfileOffset,FlankOffset=$FlankOffset,CervicalVentralReach=$CervicalVentralReach,CervicalVentralRise=$CervicalVentralRise,CervicalDorsalReach=$CervicalDorsalReach,CervicalDorsalRise=$CervicalDorsalRise,CervicalWidthScale=$CervicalWidthScale,Feline=$Feline,TorsoPart=$TorsoPart,CervicalForm=$CervicalForm,SpineOffset=$SpineOffset,BellyOffset=$BellyOffset,TrunkGirthScale=$TrunkGirthScale,ShoulderStation=$ShoulderStation,HipStation=$HipStation,ForeTrack=$ForeTrack,HindTrack=$HindTrack,TailStation=$TailStation,TailRootLevel=$TailRootLevel,Length=$Length,LoinExtra=$LoinExtra,ChestWidth=$ChestWidth,ChestDepth=$ChestDepth,HipWidth=$HipWidth,WaistWidth=$WaistWidth,Tuck=$Tuck,CroupRise=$CroupRise,WitherRise=$WitherRise,Skin=$Skin,Reach=$NeckReach,Rise=$NeckRise,RootWidth=$NeckRootWidth,SkullWidth=$SkullWidth,SkullDepth=$SkullDepth,SkullPitch=$SkullPitch,ThroatFullness=$ThroatFullness,BreastProjection=$BreastProjection,JawInset=$JawInset,MuscleRelief=$MuscleRelief,ShoulderRelief=$ShoulderRelief,Stations=$NeckStations,Sides=$NeckSides)
+Neck = mesh() {
+  add($Cervical.Neck,join=none)
+  save($SkullBand) [$output.SkullBand]
+}
+WithNeck = mesh() {
+  add($Cervical.WithNeck,join=none)
+  save($SkullBand) [$output.SkullBand]
+}
+
+# Whole-animal layer. Base supplies the shared family dimensions. Options
+# binds all numeric overrides before individual feature defaults are selected.
+# Each caller supplies a concrete torso at its requested tessellation.
+# A landmark-bearing replacement preserves the named cervical transition band.
+TorsoPart = mesh(source=$RequiredSurface,landmarks=1) {
+  add($source,join=none)
+  if ($landmarks > 0) { save($NeckBand) [$output.NeckBand] }
+}
+CervicalForm = instruction(baseline=$RequiredCervicalForm) { $baseline() }
+MedialAlarOffset = $Defaults.MedialAlarOffset
+MedialAlarBreadth = $Defaults.MedialAlarBreadth
+MedialAlarHeight = $Defaults.MedialAlarHeight
+MedialAlarLevel = $Defaults.MedialAlarLevel
+MedialAlarProjection = $Defaults.MedialAlarProjection
+AlarCleftReach = $Defaults.AlarCleftReach
+AlarCleftDrop = $Defaults.AlarCleftDrop
+AlarLobuleRelief = $Defaults.AlarLobuleRelief
+AlarLobuleBreadth = $Defaults.AlarLobuleBreadth
+AlarLobuleHeight = $Defaults.AlarLobuleHeight
+AlarLobuleOffset = $Defaults.AlarLobuleOffset
+MedianGrooveHalfWidth = $Defaults.MedianGrooveHalfWidth
+MedianGrooveDrop = $Defaults.MedianGrooveDrop
+CleftUpperLevel = $Defaults.CleftUpperLevel
+CleftBlendHeight = $Defaults.CleftBlendHeight
+PlanumDome = $Defaults.PlanumDome
+PlanumHeightRatio = $Defaults.PlanumHeightRatio
+AlarWingHeight = $Defaults.AlarWingHeight
+AlarCreaseDepth = $Defaults.AlarCreaseDepth
+AlarCreaseHalfHeight = $Defaults.AlarCreaseHalfHeight
+AlarCreaseBow = $Defaults.AlarCreaseBow
+MoistMarginLevel = $Defaults.MoistMarginLevel
+MoistMarginStart = $Defaults.MoistMarginStart
+MoistMarginBlend = $Defaults.MoistMarginBlend
+VestibuleMaterial = material('/Game/AnimalStudies/Catalogue/Materials/M_NasalVestibule')
+EntranceFront = $Defaults.EntranceFront
+TurnStart = $Defaults.TurnStart
+ChamberRear = $Defaults.ChamberRear
+TurnRun = $Defaults.TurnRun
+SlitTerminalAspect = $Defaults.SlitTerminalAspect
+Feline = 0
+PinnaPigmentMix = $Feline
+PlanumPalette = $Feline
+IrisPalette = $Feline
+WhiskerPalette = $Feline
+HoundFraction = 0
+RegionalMarkings = $Defaults.RegionalMarkings
+# Temporary material IDs preserve each part through the body remesh.
+ForePigmentChart = material()
+HindPigmentChart = material()
+TailPigmentChart = material()
+TailPigmentReachOffset = profile(0=0,1=0)
+TailPigmentHeightOffset = profile(0=0,1=0)
+TailRestAngle = $Defaults.TailRestAngle
+TailCarryDegrees = $Defaults.TailCarryDegrees
+TailCurlDegrees = $Defaults.TailCurlDegrees
+Coat = material('/Game/AnimalStudies/Catalogue/Materials/MI_Coat')
+Base = shape('/GraphCodeShape/Presets/QuadrupedAnimal',MedialAlarOffset=$MedialAlarOffset,MedialAlarBreadth=$MedialAlarBreadth,MedialAlarHeight=$MedialAlarHeight,MedialAlarLevel=$MedialAlarLevel,MedialAlarProjection=$MedialAlarProjection,AlarCleftReach=$AlarCleftReach,AlarCleftDrop=$AlarCleftDrop,AlarLobuleRelief=$AlarLobuleRelief,AlarLobuleBreadth=$AlarLobuleBreadth,AlarLobuleHeight=$AlarLobuleHeight,AlarLobuleOffset=$AlarLobuleOffset,MedianGrooveHalfWidth=$MedianGrooveHalfWidth,MedianGrooveDrop=$MedianGrooveDrop,CleftUpperLevel=$CleftUpperLevel,CleftBlendHeight=$CleftBlendHeight,PlanumDome=$PlanumDome,PlanumHeightRatio=$PlanumHeightRatio,AlarWingHeight=$AlarWingHeight,AlarCreaseDepth=$AlarCreaseDepth,AlarCreaseHalfHeight=$AlarCreaseHalfHeight,AlarCreaseBow=$AlarCreaseBow,MoistMarginLevel=$MoistMarginLevel,MoistMarginStart=$MoistMarginStart,MoistMarginBlend=$MoistMarginBlend,VestibuleMaterial=$VestibuleMaterial,EntranceFront=$EntranceFront,TurnStart=$TurnStart,ChamberRear=$ChamberRear,TurnRun=$TurnRun,SlitTerminalAspect=$SlitTerminalAspect,EyeToPlanumFit=$EyeToPlanumFit,EyeToPlanumRatio=$EyeToPlanumRatio,PalpebralTurnInset=$PalpebralTurnInset,SupraorbitalRimRadius=$SupraorbitalRimRadius,SupraorbitalRimSpan=$SupraorbitalRimSpan,BrowRadius=$BrowRadius,BrowSpan=$BrowSpan,BrowVentralFade=$BrowVentralFade,LabialWidthExponent=$LabialWidthExponent,LabialHeightExponent=$LabialHeightExponent,LabialFloorWidth=$LabialFloorWidth,LabialTaperLevel=$LabialTaperLevel,LabialTaperSpan=$LabialTaperSpan,LabialFullnessGain=$LabialFullnessGain,LabialPadStrength=$LabialPadStrength,LabialPadLatitude=$LabialPadLatitude,LabialPadArc=$LabialPadArc,LabialPadStation=$LabialPadStation,LabialPadSpan=$LabialPadSpan,LipSulcusRelief=$LipSulcusRelief,LipSulcusArc=$LipSulcusArc,CheekLatitude=$CheekLatitude,CheekArc=$CheekArc,CheekStation=$CheekStation,CheekSpan=$CheekSpan,RostralWidthOnset=$RostralWidthOnset,RostralWidthSpan=$RostralWidthSpan,PadLatitude=$PadLatitude,PadArc=$PadArc,PadStation=$PadStation,PadSpan=$PadSpan,PadWidthGain=$PadWidthGain,LipRollLatitude=$LipRollLatitude,LipRollArc=$LipRollArc,LipRollGain=$LipRollGain,LipForwardStation=$LipForwardStation,LipForwardSpan=$LipForwardSpan,LipForwardLevel=$LipForwardLevel,LipForwardHeight=$LipForwardHeight,LipForwardInset=$LipForwardInset,LipForwardFalloff=$LipForwardFalloff,LipLobeCentre=$LipLobeCentre,LipLobeWidth=$LipLobeWidth,PhiltrumWidth=$PhiltrumWidth,PhiltrumReliefGain=$PhiltrumReliefGain,DrapeStart=$DrapeStart,DrapeSpan=$DrapeSpan,DrapeRimInset=$DrapeRimInset,DrapeRimFalloff=$DrapeRimFalloff,RostrumLengthScale=$RostrumLengthScale,RostrumOrbitalClearance=$RostrumOrbitalClearance,RostrumCollarClearance=$RostrumCollarClearance,RhinolabialAdvance=$RhinolabialAdvance,RhinolabialFit=$RhinolabialFit,RhinolabialPosteriorRun=$RhinolabialPosteriorRun,RhinolabialAnteriorRun=$RhinolabialAnteriorRun,RhinolabialDepth=$RhinolabialDepth,RhinolabialHalfWidth=$RhinolabialHalfWidth,RhinolabialOnset=$RhinolabialOnset,RhinolabialBlend=$RhinolabialBlend,RhinolabialRelease=$RhinolabialRelease,RhinolabialDatum=$RhinolabialDatum,RhinolabialTarget=$RhinolabialTarget,MandibularContourFit=$MandibularContourFit,MandibularDatum=$MandibularDatum,MandibularTarget=$MandibularTarget,MandibularTipThickness=$MandibularTipThickness,MandibularAnchorDepth=$MandibularAnchorDepth,ClosedLipOnset=$ClosedLipOnset,ClosedLipRun=$ClosedLipRun,ClosedLipLatitude=$ClosedLipLatitude,ClosedLipArc=$ClosedLipArc,MandibularBorderFit=$MandibularBorderFit,MandibularLevelOnset=$MandibularLevelOnset,MandibularLevelBlend=$MandibularLevelBlend,MandibularRimStart=$MandibularRimStart,MandibularRimEnd=$MandibularRimEnd,MandibularAdvance=$MandibularAdvance,MandibularElevation=$MandibularElevation,OralFissureDepth=$OralFissureDepth,OralFissureWidth=$OralFissureWidth,OralFissureCorner=$OralFissureCorner,OralFissureBlend=$OralFissureBlend,OralFissureLevel=$OralFissureLevel,OralFissureForwardShare=$OralFissureForwardShare,OralFissureLateralShare=$OralFissureLateralShare,LipCornerBlend=$LipCornerBlend,LipRostralBlend=$LipRostralBlend,UpperRollAngle=$UpperRollAngle,LowerRollAngle=$LowerRollAngle,UpperRollSpan=$UpperRollSpan,LowerRollSpan=$LowerRollSpan,UpperRollRelief=$UpperRollRelief,LowerRollRelief=$LowerRollRelief,OrbitalPigmentRadius=$OrbitalPigmentRadius,OrbitalPigmentWidth=$OrbitalPigmentWidth,OrbitalPigmentFade=$OrbitalPigmentFade,OrbitalPigmentReach=$OrbitalPigmentReach,LoinTravelOffset=$LoinTravelOffset,HipShareOffset=$HipShareOffset,RibShareOffset=$RibShareOffset,PelvisOffset=$PelvisOffset,WithersOffset=$WithersOffset,BackProfileOffset=$BackProfileOffset,UnderProfileOffsetScale=$UnderProfileOffsetScale,UnderProfileOffset=$UnderProfileOffset,FlankOffset=$FlankOffset,SternalStation=$SternalStation,SternalSpan=$SternalSpan,SternalLevel=$SternalLevel,SternalDepthSpan=$SternalDepthSpan,SternalHalfWidth=$SternalHalfWidth,ScapularMedialFalloff=$ScapularMedialFalloff,AxillaryBoundary=$AxillaryBoundary,AxillaryFalloff=$AxillaryFalloff,CervicalFoldStation=$CervicalFoldStation,CervicalFoldSpan=$CervicalFoldSpan,CervicalFoldLevel=$CervicalFoldLevel,CervicalFoldSlope=$CervicalFoldSlope,CervicalFoldDepthSpan=$CervicalFoldDepthSpan,CervicalFoldOffset=$CervicalFoldOffset,CervicalFoldHalfWidth=$CervicalFoldHalfWidth,CervicalFoldAxialCycles=$CervicalFoldAxialCycles,CervicalFoldVerticalCycles=$CervicalFoldVerticalCycles,CervicalFoldLateralCycles=$CervicalFoldLateralCycles,CervicalFoldSharpness=$CervicalFoldSharpness,TrunkSections=$TrunkSections,TrunkSides=$TrunkSides,UnitedSkinSpacing=$UnitedSkinSpacing,TailPigmentReachOffset=$TailPigmentReachOffset,TailPigmentHeightOffset=$TailPigmentHeightOffset,RegionalMarkings=$RegionalMarkings,TailRestAngle=$TailRestAngle,TailCarryDegrees=$TailCarryDegrees,TailCurlDegrees=$TailCurlDegrees,ForePigmentChart=$ForePigmentChart,HindPigmentChart=$HindPigmentChart,TailPigmentChart=$TailPigmentChart,PupilDilation=$PupilDilation,GazeConvergence=$GazeConvergence,GazeYaw=$GazeYaw,GazePitch=$GazePitch,PinnaPigmentMix=$PinnaPigmentMix,PlanumPalette=$PlanumPalette,IrisPalette=$IrisPalette,WhiskerPalette=$WhiskerPalette,SkullSeatStation=$SkullSeatStation,SkullSeatDepth=$SkullSeatDepth,SternalDrop=$SternalDrop,LipGrooveWidth=$LipGrooveWidth,LipTurnProjection=$LipTurnProjection,BrowToGlobe=$BrowToGlobe,CanineIris=$CanineIris,FelineIris=$FelineIris,UseSpeciesCoat=0,Feline=$Feline,MuscleDefinition=$MuscleDefinition,Condition=$Condition,HoundFraction=$HoundFraction,Length=$Length,LoinExtra=$LoinExtra,ChestWidth=$ChestWidth,ChestDepth=$ChestDepth,HipWidth=$HipWidth,WaistWidth=$WaistWidth,Tuck=$Tuck,CroupRise=$CroupRise,WitherRise=$WitherRise,NeckReach=$NeckReach,NeckRise=$NeckRise,NeckRootWidth=$NeckRootWidth,SkullWidth=$SkullWidth,SkullDepth=$SkullDepth,SkullPitch=$SkullPitch,ThroatFullness=$ThroatFullness,BreastProjection=$BreastProjection,JawInset=$JawInset,MuscleRelief=$MuscleRelief,ShoulderRelief=$ShoulderRelief)
+Clearance = $ChestDepth*lerp(1.07,.695,$Feline)
+LegMass = lerp(.88,.92,$Feline)
+PawWidth = $ChestWidth*lerp(.34,.35,$Feline)
+PawLength = $PawWidth*lerp(1.22,1.04,$Feline)
+DigitArch = lerp(.93,1.12,$Feline)
+PadDepth = $Base.PadDepth
+ClawLength = lerp(.126,0,$Feline)
+ToeSpread = $Base.ToeSpread
+ToeLength = $Base.ToeLength
+ElbowSet = $Base.ElbowSet
+HockSet = lerp(.15,.17,$Feline)
+HindFootReach = lerp(.080,.13,$Feline)
+HindPawScale = lerp(.94,.97,$Feline)
+PasternReach = $Base.PasternReach
+PasternWidth = $Base.PasternWidth
+PasternDepth = $Base.PasternDepth
+PasternLevel = $Base.PasternLevel
+SoleInset = $Base.SoleInset
+DewDigitReach = $Defaults.DewDigitReach
+DewDigitBreadth = $Defaults.DewDigitBreadth
+DewDigitLength = $Defaults.DewDigitLength
+DewPadStation = $Defaults.DewPadStation
+DewPadBreadth = $Defaults.DewPadBreadth
+DewPadLength = $Defaults.DewPadLength
+DewClawStation = $Defaults.DewClawStation
+CarpalPadBreadth = $Defaults.CarpalPadBreadth
+CarpalPadLength = $Defaults.CarpalPadLength
+CarpalPadInset = $Base.CarpalPadInset
+ForeDewclaw = $Base.ForeDewclaw
+HindDewclaw = $Base.HindDewclaw
+CarpalPadScale = $Base.CarpalPadScale
+SkinFoldDepth = lerp(.026,.033,$Feline)
+StifleSet = lerp(.13,.095,$Feline)
+ForeSweep = profile(0=0,1=0)
+HindSweep = profile(0=0,1=0)
+# Profiles run from paw to proximal attachment. Angles turn from cranial
+# toward lateral on the right limb. Positive relief is a local radius fraction.
+InsertionStart = $Base.InsertionStart
+DermalChart = $Base.DermalChart
+BrachialisLine = profile(0=0,.46=0,.56=.035,.64=.11,.74=.12,.85=.045,1=0)
+CarpalExtensorLine = profile(0=0,.13=0,.23=.022,.34=.07,.47=.13,.55=.082,.65=0,1=0)
+CarpalFlexorLine = profile(0=0,.16=0,.29=.018,.42=.077,.52=.102,.59=.036,.64=0,1=0)
+BrachioradialisLine = profile(0=0,.19=0,.33=.025,.45=.075,.53=.052,.62=0,1=0)
+QuadricepsLine = profile(0=0,.45=0,.55=.038,.64=.112,.74=.142,.84=.082,.95=0,1=0)
+LateralThighLine = profile(0=0,.39=0,.50=.030,.62=.090,.75=.140,.86=.116,.96=.022,1=0)
+GastrocnemiusLine = profile(0=0,.235=0,.29=.033,.37=.116,.45=.153,.51=.096,.59=0,1=0)
+CalcanealLine = profile(0=0,.19=0,.245=.085,.29=.126,.34=.098,.40=.040,.46=0,1=0)
+SoleusLine = profile(0=0,.27=0,.35=.058,.43=.090,.51=.055,.565=0,1=0)
+LimbCompartmentAngle = profile(0=34,.125=48,.25=-147,.375=12,.5=28,.625=113,.75=155,.875=180,1=103)
+LimbCompartmentFocus = profile(0=4,.125=6,.25=4,.375=8,.5=3,.625=3,.75=4,.875=12,1=6)
+SoleusShare = $Feline
+BrachioradialisShare = lerp(.20,.86,$Feline)
+ForeDepthScale = profile(0=1,.20=1,.34=1+.07*$Feline,.50=1+.18*$Feline,.62=1+.26*$Feline,.76=1+.15*$Feline,.91=1,1=1)
+HindDepthScale = profile(0=1,.23=1,.40=.95,.54=.86,.65=.91,.78=.97,1=1)
+ForeGirthScale = profile(0=1,.21=1+.05*$Feline,.38=1+.20*$Feline,.58=1+.24*$Feline,.72=1+.14*$Feline,.88=1,1=1)
+HindGirthScale = profile(0=1,1=1)
+TailLength = $Length*lerp(.77,.85,$Feline)
+TailRadius = $ChestWidth*lerp(.135,.124,$Feline)
+TailCarry = lerp(-.40,.34,$Feline)
+TailCurl = lerp(.23,.75,$Feline)
+HeadLength = $Length*lerp(.475,.381,$Feline)
+HeadWidth = $HeadLength*lerp(.526,.715,$Feline)
+HeadHeight = $HeadLength*lerp(.490,.541,$Feline)
+HeadCarry = lerp(-4,-8,$Feline)
+MuzzleShare = lerp(.445,.23,$Feline)
+MuzzleWidth = lerp(.725,.86,$Feline)
+NoseSize = $HeadWidth*lerp(lerp(.166,.138,$HoundFraction),.096,$Feline)
+EyeSize = $HeadWidth*lerp(.134,.108,$Feline)
+SpineOffset = profile(0=0,.12=1.45*$Feline,.27=2.02*$Feline,.40=1.70*$Feline,.55=.54*$Feline,.68=-.24*$Feline,.80=-.32*$Feline,1=0)
+BellyOffset = profile(0=0,.14=-.42*$Feline,.26=-1.03*$Feline,.38=-.30*$Feline,.53=.32*$Feline,.69=-.38*$Feline,.79=-.52*$Feline,.90=.42*$Feline,1=0)
+TrunkGirthScale = profile(0=1,1=1)
+LipCorner = lerp(.56,.64,$Feline)
+LipThickness = lerp(.52,.20,$Feline)
+SkullSeatStation = lerp(.365,.32,$Feline)
+SkullSeatDepth = $Defaults.SkullSeatDepth
+# Sternal and shoulder coordinates are normalized to the trunk. Neck folds
+# follow the oblique field between the foreleg and the base of the skull.
+SternalStation = $Defaults.SternalStation
+SternalSpan = $Defaults.SternalSpan
+SternalLevel = $Defaults.SternalLevel
+SternalDepthSpan = $Defaults.SternalDepthSpan
+SternalHalfWidth = $Defaults.SternalHalfWidth
+ScapularMedialFalloff = $Defaults.ScapularMedialFalloff
+AxillaryBoundary = $Defaults.AxillaryBoundary
+AxillaryFalloff = $Defaults.AxillaryFalloff
+CervicalFoldStation = $Defaults.CervicalFoldStation
+CervicalFoldSpan = $Defaults.CervicalFoldSpan
+CervicalFoldLevel = $Defaults.CervicalFoldLevel
+CervicalFoldSlope = $Defaults.CervicalFoldSlope
+CervicalFoldDepthSpan = $Defaults.CervicalFoldDepthSpan
+CervicalFoldOffset = $Defaults.CervicalFoldOffset
+CervicalFoldHalfWidth = $Defaults.CervicalFoldHalfWidth
+CervicalFoldAxialCycles = $Defaults.CervicalFoldAxialCycles
+CervicalFoldVerticalCycles = $Defaults.CervicalFoldVerticalCycles
+CervicalFoldLateralCycles = $Defaults.CervicalFoldLateralCycles
+CervicalFoldSharpness = $Defaults.CervicalFoldSharpness
+TrunkSections = $Defaults.TrunkSections
+TrunkSides = $Defaults.TrunkSides
+UnitedSkinSpacing = $Defaults.UnitedSkinSpacing
+SternalDrop = lerp(0,.018,$Feline)
+DigitReachOffset = profile(0=0,1=0)
+DigitLengthScale = profile(0=1,1=1)
+DigitBreadthScale = profile(0=1,1=1)
+DigitSpanOffset = profile(0=0,1=0)
+WhiskerPadStation = lerp(0,.032,$Feline)
+WhiskerPadLatitude = lerp(0,13,$Feline)
+FaceSections = $Base.FaceSections
+FaceSides = $Base.FaceSides
+FissureStations = .20*$FaceSections
+FissureSides = $FaceSides*5/6
+CheekToLip = profile(0=.42,.56=.38,.65=.345,.73=.31,.80=.286,.855=.277,.89=.255,.918=.227,.943=.184,.962=.145,1=.138)
+BridgeRoof = profile(0=.30,.56=.232,.68=.162,.76=.127,.84=.099,.915=.090,.960=.095,1=.10)
+ChinFloor = profile(0=-.63,.56=-.56,.68=-.451,.75=-.396,.81=-.355,.85=-.331,.89=-.315,.917=-.282,.943=-.203,.964=-.129,1=-.11)
+WhiskerCount = $Base.WhiskerCount
+WhiskerStations = profile(0=.790,.2=.764,.4=.744,.6=.815,.8=.792,1=.770)
+WhiskerLatitudes = profile(0=93,.2=96,.4=99,.6=103,.8=106,1=110)
+WhiskerStationOffset = profile(0=0,1=0)
+WhiskerLatitudeOffset = profile(0=0,1=0)
+MuzzleGirthScale = profile(0=1,.51=1,.64=1+.045*(1-$Feline),.75=1+.115*(1-$Feline),.84=1+.20*(1-$Feline),.92=1+.16*(1-$Feline),.971=1+.045*(1-$Feline),1=1)
+MuzzleBridgeOffset = profile(0=0,1=0)
+ChinFloorOffset = profile(0=0,.49=0,.62=-.05*(1-$Feline),.74=-.13*(1-$Feline),.83=-.18*(1-$Feline),.90=-.175*(1-$Feline),.945=-.10*(1-$Feline),.98=0,1=0)
+RadialSurfaceFit = lerp(.90,.97,$Feline)
+FrontalSurfaceFit = lerp(.40,.90,$Feline)
+MuzzleDatum = lerp(1,.9875,$Feline)
+RostralTravelLimit = lerp(.115,.052,$Feline)
+SurfaceFit = lerp(.95,.94,$Feline)
+ChinTravel = .11*$Feline
+# Depth of the subnasal lip and mandibular skin below the nasal collar.
+SubnasalDepthScale = $Defaults.SubnasalDepthScale
+SubnasalOnset = $Defaults.SubnasalOnset
+SubnasalTransition = $Defaults.SubnasalTransition
+LowerJawScale = lerp(1.12,.61,$Feline)
+ChinHalfWidth = lerp(.29,.27,$Feline)*$HeadWidth
+ChinCornerLift = lerp(.020,.082,$Feline)*$HeadLength
+ChinCornerSetback = lerp(.012,.047,$Feline)*$HeadLength
+CentralLipNotch = lerp(.034,0,$Feline)*$HeadLength
+LowerJawOnset = .065*$HeadLength
+LowerJawTransition = .093*$HeadLength
+PadOffset = lerp(.17,.19,$Feline)*$HeadWidth
+PadHalfWidth = lerp(.19,.18,$Feline)*$HeadWidth
+PadBelowNose = lerp(.105,.083,$Feline)*$HeadLength
+PerioralRelax = lerp(.019,.052,$Feline)*$HeadWidth
+PadForwardShare = lerp(.40,.18,$Feline)
+PadLateralShare = lerp(.46,.72,$Feline)
+PadProjection = lerp(.027,.041,$Feline)*$HeadLength
+WhiskerPadHeight = lerp(.090,.084,$Feline)*$HeadLength
+CheekTaper = lerp(.015,.125,$Feline)
+CheekTaperStart = .21*$HeadWidth
+CheekTransition = .21*$HeadWidth
+# Fraction of cheek shaping applied from the nape to the nasal collar.
+JowlEnvelopeFit = $Defaults.JowlEnvelopeFit
+JowlEnvelopeWidth = profile(0=.32,1=.32)
+JowlEnvelopeHeight = profile(0=0,.07=1,.43=1,.62=0,1=0)
+JowlEnvelopeTransition = $Defaults.JowlEnvelopeTransition
+CheekAxialFit = profile(0=1,1=1)
+LowerCheekProfile = profile(0=.4,.20=1,.36=1,.50=.72,.60=.34,.69=0,1=0)
+ChinProjection = lerp(.14,.08,$Feline)
+LipGrooveWidth = $Defaults.LipGrooveWidth
+LipTurnProjection = $Defaults.LipTurnProjection
+BrowToGlobe = $Defaults.BrowToGlobe
+CanineIris = material('/Game/AnimalStudies/Catalogue/Materials/MI_AmberEye')
+FelineIris = material('/Game/AnimalStudies/Catalogue/Materials/MI_OliveEye')
+ErectWidth = profile(0=.79,.10=.98,.25=1,.39=.88,.54=.72,.70=.53,.84=.33,.95=.14,1=.035)
+LobeWidth = profile(0=.82,.11=.95,.24=1,.43=.91,.62=.76,.77=.60,.87=.46,.94=.30,1=.065)
+PinnaBendLength = $Base.PinnaBendLength
+PinnaBendAngle = $Base.PinnaBendAngle
+LobeFlareCurve = profile(0=0,.16=.17,.34=.78,.48=1,.61=.84,.79=.31,.92=.05,1=0)
+NostrilLevel = lerp(-.16,-.045,$Feline)
+PlanumCrownFlatten = lerp(.075,.29,$Feline)
+PlanumTipDrop = lerp(.035,.15,$Feline)
+AlarLipLift = lerp(.035,.17,$Feline)
+NostrilSpacing = lerp(.54,.78,$Feline)
+NostrilWidth = lerp(.175,.14,$Feline)
+NostrilHeight = lerp(.115,.085,$Feline)
+NarisArea = 3.141592653589793*$NostrilWidth*$NostrilHeight/4
+NarisAspect = $NostrilHeight/$NostrilWidth
+NarisCant = 16
+NarisHook = .38
+VestibuleExpansion = .14
+AlarSlitShare = .38
+AlarSlitLift = .12
+AlarSlitReach = 1.08
+NasalWingWidth = 1-.11*$Feline
+NasalProjection = 1-.23*$Feline
+NasalCleft = .10+.08*$Feline
+IrisFraction = lerp(.91,.95,$Feline)
+CornealExposure = lerp(.79,.80,$Feline)
+OccipitalSpan = lerp(.31,.25,$Feline)
+OccipitalBreadth = lerp(.445,.44,$Feline)
+OccipitalDepth = lerp(.50,.47,$Feline)
+PollLevel = lerp(.055,.095,$Feline)
+UpperLipReach = lerp(.009,0,$Feline)
+UpperLipContour = profile(0=0,.16=.02,.34=.41,.51=.95,.67=1,.84=.59,1=.08)
+UpperLipDepth = .22*$HeadLength
+ClosedLipFit = 1-$Feline
+LabialLobeDrop = lerp(.032,0,$Feline)*$HeadLength
+LabialLobeOffset = .083*$HeadLength
+LabialLobeSpan = .096*$HeadLength
+PupilMaterial = material('/Game/AnimalStudies/Catalogue/Materials/MI_CornealPupil')
+FelineWhisker = material('/Game/AnimalStudies/Catalogue/Materials/MI_CatVibrissa')
+Whisker = material('/Game/AnimalStudies/Catalogue/Materials/MI_Whisker')
+CanthusRise = lerp(.08,.22,$Feline)
+LidOverlap = lerp(.050,.078,$Feline)
+LidTurnWidth = lerp(.18,.21,$Feline)
+LowerLidRise = lerp(.035,.068,$Feline)
+CorneaRelief = lerp(-.045,-.115,$Feline)
+# Hairless pigmented tissue at the two edges of the palpebral fissure.
+UpperLidMarginWidth = $Defaults.UpperLidMarginWidth
+LowerLidMarginWidth = $Defaults.LowerLidMarginWidth
+LidMarginPlaneDepth = $Defaults.LidMarginPlaneDepth
+LidMargin = material('/Game/AnimalStudies/Catalogue/Materials/MI_LidMargin')
+# Where and how far the concealed globe turns away beneath the eyelids.
+# Dilation scales both pupil axes. Gaze angles rotate the optical markings inside the fixed eyelids.
+PupilDilation = 1
+GazeYaw = 0
+# Positive convergence turns both pupils toward the midline.
+GazeConvergence = 0
+GazePitch = 0
+GlobeRimWidthInset = $Defaults.GlobeRimWidthInset
+GlobeRimHeightInset = $Defaults.GlobeRimHeightInset
+GlobeReturnOnset = $Defaults.GlobeReturnOnset
+GlobeReturnSpan = $Defaults.GlobeReturnSpan
+GlobeReturnDepth = $Defaults.GlobeReturnDepth
+GlobeDepth = lerp(.29,.21,$Feline)
+WhiskerSweep = $Base.WhiskerSweep
+WhiskerSag = $Base.WhiskerSag
+TailTipFraction = lerp(.36,.39,$Feline)
+ForeProximalLevel = $Base.ForeProximalLevel
+HindProximalLevel = $Base.HindProximalLevel
+ForePawSeatFraction = $Base.ForePawSeatFraction
+HindPawSeatFraction = $Base.HindPawSeatFraction
+StrideFadeLevel = $Base.StrideFadeLevel
+DewclawMedialSet = $Base.DewclawMedialSet
+DewclawCarpusFraction = $Base.DewclawCarpusFraction
+# Digit I follows the local limb axis at the same level as its attachment.
+DewclawAxialStation = $ForeCarpusLevel*$DewclawCarpusFraction
+HindDewclawHockFraction = $Defaults.HindDewclawHockFraction
+HindDewclawStation = $HockLevel*$HindDewclawHockFraction
+DewclawPitch = $Base.DewclawPitch
+DewclawYaw = $Base.DewclawYaw
+CarpalPadPitch = $Base.CarpalPadPitch
+TailHeightOffset = profile(0=0,1=0)
+TailReachOffset = profile(0=0,1=0)
+CervicalVentralReach = profile(0=0,1=0)
+CervicalVentralRise = profile(0=0,1=0)
+CervicalDorsalReach = profile(0=0,1=0)
+CervicalDorsalRise = profile(0=0,1=0)
+CervicalWidthScale = profile(0=1,1=1)
+OrbitBreadth = lerp(.94,.67,$Feline)
+CaninePlanum = material('/Game/AnimalStudies/Catalogue/Materials/MI_AfraPlanum')
+FelinePlanum = material('/Game/AnimalStudies/Catalogue/Materials/MI_RosePlanum')
+PlanumTaper = lerp(.91,1.90,$Feline)
+MandibleBreadth = lerp(.82,.64,$Feline)
+LabialProjection = lerp(.006,.007,$Feline)
+OpticalOrbitLift = lerp(.038,-.053,$Feline)*$HeadLength
+OpticalOrbitLateral = lerp(-.035,.004,$Feline)*$HeadLength
+# Lateral temporal fullness carries the skin and the attached ear, while
+# the ocular centres retain their independent registration.
+TemporalExpansion = $Defaults.TemporalExpansion
+TemporalAxialProfile = profile(0=0,.08=.23,.19=.80,.34=1,.43=.92,.54=.53,.63=.10,.70=0,1=0)
+TemporalHeightProfile = profile(0=.02,.12=.20,.35=.80,.55=1,.80=.89,.96=.50,1=.18)
+TemporalLateralSpan = $Defaults.TemporalLateralSpan
+PinnaRootLateral = lerp(.057,.060,$Feline)*$HeadLength
+PinnaRootLift = lerp(.027,-.038,$Feline)*$HeadLength
+EyeLatitude = lerp(58,61,$Feline)
+EarSet = lerp(.26,.235,$Feline)
+EarLatitude = lerp(44,49,$Feline)
+PigmentReferenceEyeSet = lerp(.53835,.7469,$Feline)
+PigmentReferenceOrbitBreadth = lerp(.94,.67,$Feline)
+PigmentReferenceNoseLevel = lerp(.047,.067,$Feline)
+NoseLevel = lerp(.047,.067,$Feline)
+ChinSetback = lerp(.011,.010,$Feline)
+PhiltrumDepth = lerp(.030,.025,$Feline)
+EyeSet = (1-$MuzzleShare)*.97
+EyeAngle = lerp(42,18,$Feline)
+Pupil = lerp(.86,.26,$Feline)
+EyeAperture = lerp(.49,.53,$Feline)
+EarHeight = $HeadHeight*lerp(1.21,.81,$Feline)
+EarWidth = $HeadWidth*lerp(.68,.49,$Feline)
+EarFold = lerp(.822,.035,$Feline)
+EarPoint = lerp(.70,1.10,$Feline)
+EarSpread = lerp(18,35,$Feline)
+JawDepth = lerp(.22,.20,$Feline)
+CheekFullness = lerp(.14,.25,$Feline)
+Brow = lerp(.11,.14,$Feline)
+WhiskerLength = $HeadWidth*lerp(.32,.91,$Feline)
+WhiskerRadius = $HeadWidth*lerp(.0022,.0016,$Feline)
+WhiskerPad = lerp(.83,1.52,$Feline)
+# Muscle profile keys: scapular spine 0, adjacent groove .125, triceps .25,
+# gluteals .375, thigh .5, hamstrings .625, femoral fossa .75, flank 1.
+MuscleStation = profile(.0=-.024,.125=-.075,.25=-.053,.375=.025,.50=.032,.625=-.113,.75=-.04,1=.37)
+MuscleSlope = profile(.0=-.235,.125=-.235,.25=.135,.375=-.10,.50=-.23,.625=-.12,.75=-.17,1=.12)
+MuscleSpan = profile(.0=.075,.125=.036,.25=.085,.375=.13,.50=.095,.625=.085,.75=.055,1=.19)
+MuscleLevel = profile(.0=.64,.125=.59,.25=.20,.375=.67,.50=.16,.625=.23,.75=.19,1=.40)
+MuscleHeight = profile(.0=.43,.125=.35,.25=.37,.375=.34,.50=.45,.625=.43,.75=.37,1=.38)
+MuscleAmplitude = profile(.0=.039,.125=-.018,.25=.033,.375=.036,.50=.045,.625=.033,.75=-.025,1=.039)
+LipPath = profile(0=132,.17=138,.42=144,.64=147,.75=150,.84=158,.92=170,1=180)
+WhiskerAzimuth = profile(0=.03,.2=-.12,.4=-.27,.6=.07,.8=-.13,1=-.23)
+WhiskerElevation = profile(0=.25,.2=.17,.4=.11,.6=.025,.8=-.035,1=-.09)
+WhiskerLengths = profile(0=.82,.2=1,.4=.97,.6=.89,.8=.79,1=.7)
+MuscleDefinition = $Defaults.MuscleDefinition
+Condition = $Defaults.Condition
+ThighMass = $Base.ThighMass
+ShankMass = $Base.ShankMass
+StandingLift = -lerp(.197,.107,$Feline)*$ChestDepth
+StanceWidth = $Base.StanceWidth
+StanceOffset = lerp(.085,.095,$Feline)
+RightForeStride = .38*$StanceOffset*$Length
+LeftForeStride = -.62*$StanceOffset*$Length
+RightHindStride = -.88*$StanceOffset*$Length
+LeftHindStride = .46*$StanceOffset*$Length
+HeelHeightScale = $Defaults.HeelHeightScale
+HeelStart = $Defaults.HeelStart
+HeelEnd = $Defaults.HeelEnd
+ToeRootBreadth = $Defaults.ToeRootBreadth
+ToeTipTaper = $Defaults.ToeTipTaper
+ToeSplayRoot = $Defaults.ToeSplayRoot
+KnuckleStation = $Defaults.KnuckleStation
+KnuckleSpan = $Defaults.KnuckleSpan
+ToeCentreHeight = $Defaults.ToeCentreHeight
+ToeAxialArch = $Defaults.ToeAxialArch
+KnuckleLift = $Defaults.KnuckleLift
+ToeCrossDepth = $Defaults.ToeCrossDepth
+KnuckleDepth = $Defaults.KnuckleDepth
+PadLobes = $Defaults.PadLobes
+PadLobeDepth = $Defaults.PadLobeDepth
+PadToeTaper = $Defaults.PadToeTaper
+PadCentreHeight = $Defaults.PadCentreHeight
+PadCrossDepth = $Defaults.PadCrossDepth
+ClawRootLength = $Defaults.ClawRootLength
+ClawRootRoundness = $Defaults.ClawRootRoundness
+ClawBurial = $Defaults.ClawBurial
+ClawBreadth = $Defaults.ClawBreadth
+ClawBaseHeight = $Defaults.ClawBaseHeight
+ClawDescent = $Defaults.ClawDescent
+ClawHook = $Defaults.ClawHook
+ClawCrossDepth = $Defaults.ClawCrossDepth
+DigitalPadStation = $Defaults.DigitalPadStation
+ClawReferenceBreadth = $Defaults.ClawReferenceBreadth
+PalmSilhouetteFit = $Defaults.PalmSilhouetteFit
+PalmContactRoundness = $Defaults.PalmContactRoundness
+PalmAsymmetry = $Defaults.PalmAsymmetry
+PalmContourOffset = profile(0=0,1=0)
+PalmPadBreadth = $Defaults.PalmPadBreadth
+PalmPadLength = $Defaults.PalmPadLength
+PalmPadStation = $Defaults.PalmPadStation
+DigitalPadWidth = $Defaults.DigitalPadWidth
+DigitalPadLength = $Defaults.DigitalPadLength
+ClawSetback = $Defaults.ClawSetback
+HeelBreadthOffset = profile(0=0,1=0)
+HeelRoofOffset = profile(0=0,1=0)
+HeelFloorOffset = profile(0=0,1=0)
+ReferenceCarpus = $Defaults.ReferenceCarpus
+ReferenceElbow = $Defaults.ReferenceElbow
+ReferenceHock = $Defaults.ReferenceHock
+ReferenceStifle = $Defaults.ReferenceStifle
+ThighBlendStart = $ReferenceHock
+ThighBlendEnd = $ReferenceStifle
+UpperGirthStart = $Defaults.UpperGirthStart
+UpperGirthEnd = $Defaults.UpperGirthEnd
+ReferenceChestRatio = $Defaults.ReferenceChestRatio
+ReferenceHipRatio = $Defaults.ReferenceHipRatio
+LimbCapStart = $Defaults.LimbCapStart
+SoleCapSpan = $Defaults.SoleCapSpan
+CarpusFalloff = $Defaults.CarpusFalloff
+ElbowFalloff = $Defaults.ElbowFalloff
+HockFalloff = $Defaults.HockFalloff
+StifleFalloff = $Defaults.StifleFalloff
+TailTipRoundStart = $Defaults.TailTipRoundStart
+TailRootRoundEnd = $Defaults.TailRootRoundEnd
+TailGirthScale = profile(0=1,1=1)
+Options = shape('/GraphCodeShape/Presets/QuadrupedAnimal',RumpCapSpan=$RumpCapSpan,BreastCapStart=$BreastCapStart,BladeStationOffset=$BladeStationOffset,BladeRake=$BladeRake,BladeSpan=$BladeSpan,BladeRelief=$BladeRelief,HaunchStationOffset=$HaunchStationOffset,HaunchRake=$HaunchRake,HaunchSpan=$HaunchSpan,HaunchRelief=$HaunchRelief,KeelTaper=$KeelTaper,CervicalSeatStation=$CervicalSeatStation,CervicalSeatLevel=$CervicalSeatLevel,CervicalWithersShare=$CervicalWithersShare,CervicalSeatPitch=$CervicalSeatPitch,CervicalSeatBand=$CervicalSeatBand,ShoulderSeatLevel=$ShoulderSeatLevel,HipSeatLevel=$HipSeatLevel,HipCroupShare=$HipCroupShare,ShoulderSeatRake=$ShoulderSeatRake,HipSeatRake=$HipSeatRake,TailSeatSlope=$TailSeatSlope,CervicalOnset=$CervicalOnset,CervicalCapStart=$CervicalCapStart,CervicalRootBlend=$CervicalRootBlend,SkullCapDepth=$SkullCapDepth,SkullBandDepth=$SkullBandDepth,CervicalMuscleLevel=$CervicalMuscleLevel,CervicalMuscleSlope=$CervicalMuscleSlope,CervicalMuscleSpan=$CervicalMuscleSpan,CervicalBladeStation=$CervicalBladeStation,CervicalBladeRake=$CervicalBladeRake,CervicalBladeSpan=$CervicalBladeSpan,CervicalHollowStation=$CervicalHollowStation,CervicalHollowRake=$CervicalHollowRake,CervicalHollowSpan=$CervicalHollowSpan,CervicalHollowDepth=$CervicalHollowDepth,CervicalBladeLevel=$CervicalBladeLevel,CervicalBladeHeight=$CervicalBladeHeight,HeelHeightScale=$HeelHeightScale,HeelStart=$HeelStart,HeelEnd=$HeelEnd,ToeRootBreadth=$ToeRootBreadth,ToeTipTaper=$ToeTipTaper,ToeSplayRoot=$ToeSplayRoot,KnuckleStation=$KnuckleStation,KnuckleSpan=$KnuckleSpan,ToeCentreHeight=$ToeCentreHeight,ToeAxialArch=$ToeAxialArch,KnuckleLift=$KnuckleLift,ToeCrossDepth=$ToeCrossDepth,KnuckleDepth=$KnuckleDepth,PadLobes=$PadLobes,PadLobeDepth=$PadLobeDepth,PadToeTaper=$PadToeTaper,PadCentreHeight=$PadCentreHeight,PadCrossDepth=$PadCrossDepth,ClawRootLength=$ClawRootLength,ClawRootRoundness=$ClawRootRoundness,ClawBurial=$ClawBurial,ClawBreadth=$ClawBreadth,ClawBaseHeight=$ClawBaseHeight,ClawDescent=$ClawDescent,ClawHook=$ClawHook,ClawCrossDepth=$ClawCrossDepth,DigitalPadStation=$DigitalPadStation,ClawReferenceBreadth=$ClawReferenceBreadth,PalmSilhouetteFit=$PalmSilhouetteFit,PalmContactRoundness=$PalmContactRoundness,PalmAsymmetry=$PalmAsymmetry,PalmContourOffset=$PalmContourOffset,PalmPadBreadth=$PalmPadBreadth,PalmPadLength=$PalmPadLength,PalmPadStation=$PalmPadStation,DigitalPadWidth=$DigitalPadWidth,DigitalPadLength=$DigitalPadLength,ClawSetback=$ClawSetback,HeelBreadthOffset=$HeelBreadthOffset,HeelRoofOffset=$HeelRoofOffset,HeelFloorOffset=$HeelFloorOffset,ReferenceCarpus=$ReferenceCarpus,ReferenceElbow=$ReferenceElbow,ReferenceHock=$ReferenceHock,ReferenceStifle=$ReferenceStifle,ThighBlendStart=$ThighBlendStart,ThighBlendEnd=$ThighBlendEnd,UpperGirthStart=$UpperGirthStart,UpperGirthEnd=$UpperGirthEnd,ReferenceChestRatio=$ReferenceChestRatio,ReferenceHipRatio=$ReferenceHipRatio,LimbCapStart=$LimbCapStart,SoleCapSpan=$SoleCapSpan,CarpusFalloff=$CarpusFalloff,ElbowFalloff=$ElbowFalloff,HockFalloff=$HockFalloff,StifleFalloff=$StifleFalloff,TailTipRoundStart=$TailTipRoundStart,TailRootRoundEnd=$TailRootRoundEnd,TailGirthScale=$TailGirthScale,MedialAlarOffset=$MedialAlarOffset,MedialAlarBreadth=$MedialAlarBreadth,MedialAlarHeight=$MedialAlarHeight,MedialAlarLevel=$MedialAlarLevel,MedialAlarProjection=$MedialAlarProjection,AlarCleftReach=$AlarCleftReach,AlarCleftDrop=$AlarCleftDrop,AlarLobuleRelief=$AlarLobuleRelief,AlarLobuleBreadth=$AlarLobuleBreadth,AlarLobuleHeight=$AlarLobuleHeight,AlarLobuleOffset=$AlarLobuleOffset,MedianGrooveHalfWidth=$MedianGrooveHalfWidth,MedianGrooveDrop=$MedianGrooveDrop,CleftUpperLevel=$CleftUpperLevel,CleftBlendHeight=$CleftBlendHeight,PlanumDome=$PlanumDome,PlanumHeightRatio=$PlanumHeightRatio,AlarWingHeight=$AlarWingHeight,AlarCreaseDepth=$AlarCreaseDepth,AlarCreaseHalfHeight=$AlarCreaseHalfHeight,AlarCreaseBow=$AlarCreaseBow,MoistMarginLevel=$MoistMarginLevel,MoistMarginStart=$MoistMarginStart,MoistMarginBlend=$MoistMarginBlend,VestibuleMaterial=$VestibuleMaterial,EntranceFront=$EntranceFront,TurnStart=$TurnStart,ChamberRear=$ChamberRear,TurnRun=$TurnRun,SlitTerminalAspect=$SlitTerminalAspect,EyeToPlanumFit=$EyeToPlanumFit,EyeToPlanumRatio=$EyeToPlanumRatio,PalpebralTurnInset=$PalpebralTurnInset,SupraorbitalRimRadius=$SupraorbitalRimRadius,SupraorbitalRimSpan=$SupraorbitalRimSpan,BrowRadius=$BrowRadius,BrowSpan=$BrowSpan,BrowVentralFade=$BrowVentralFade,LabialWidthExponent=$LabialWidthExponent,LabialHeightExponent=$LabialHeightExponent,LabialFloorWidth=$LabialFloorWidth,LabialTaperLevel=$LabialTaperLevel,LabialTaperSpan=$LabialTaperSpan,LabialFullnessGain=$LabialFullnessGain,LabialPadStrength=$LabialPadStrength,LabialPadLatitude=$LabialPadLatitude,LabialPadArc=$LabialPadArc,LabialPadStation=$LabialPadStation,LabialPadSpan=$LabialPadSpan,LipSulcusRelief=$LipSulcusRelief,LipSulcusArc=$LipSulcusArc,CheekLatitude=$CheekLatitude,CheekArc=$CheekArc,CheekStation=$CheekStation,CheekSpan=$CheekSpan,RostralWidthOnset=$RostralWidthOnset,RostralWidthSpan=$RostralWidthSpan,PadLatitude=$PadLatitude,PadArc=$PadArc,PadStation=$PadStation,PadSpan=$PadSpan,PadWidthGain=$PadWidthGain,LipRollLatitude=$LipRollLatitude,LipRollArc=$LipRollArc,LipRollGain=$LipRollGain,LipForwardStation=$LipForwardStation,LipForwardSpan=$LipForwardSpan,LipForwardLevel=$LipForwardLevel,LipForwardHeight=$LipForwardHeight,LipForwardInset=$LipForwardInset,LipForwardFalloff=$LipForwardFalloff,LipLobeCentre=$LipLobeCentre,LipLobeWidth=$LipLobeWidth,PhiltrumWidth=$PhiltrumWidth,PhiltrumReliefGain=$PhiltrumReliefGain,DrapeStart=$DrapeStart,DrapeSpan=$DrapeSpan,DrapeRimInset=$DrapeRimInset,DrapeRimFalloff=$DrapeRimFalloff,RostrumLengthScale=$RostrumLengthScale,RostrumOrbitalClearance=$RostrumOrbitalClearance,RostrumCollarClearance=$RostrumCollarClearance,RhinolabialAdvance=$RhinolabialAdvance,RhinolabialFit=$RhinolabialFit,RhinolabialPosteriorRun=$RhinolabialPosteriorRun,RhinolabialAnteriorRun=$RhinolabialAnteriorRun,RhinolabialDepth=$RhinolabialDepth,RhinolabialHalfWidth=$RhinolabialHalfWidth,RhinolabialOnset=$RhinolabialOnset,RhinolabialBlend=$RhinolabialBlend,RhinolabialRelease=$RhinolabialRelease,RhinolabialDatum=$RhinolabialDatum,RhinolabialTarget=$RhinolabialTarget,MandibularContourFit=$MandibularContourFit,MandibularDatum=$MandibularDatum,MandibularTarget=$MandibularTarget,MandibularTipThickness=$MandibularTipThickness,MandibularAnchorDepth=$MandibularAnchorDepth,ClosedLipOnset=$ClosedLipOnset,ClosedLipRun=$ClosedLipRun,ClosedLipLatitude=$ClosedLipLatitude,ClosedLipArc=$ClosedLipArc,MandibularBorderFit=$MandibularBorderFit,MandibularLevelOnset=$MandibularLevelOnset,MandibularLevelBlend=$MandibularLevelBlend,MandibularRimStart=$MandibularRimStart,MandibularRimEnd=$MandibularRimEnd,MandibularAdvance=$MandibularAdvance,MandibularElevation=$MandibularElevation,OralFissureDepth=$OralFissureDepth,OralFissureWidth=$OralFissureWidth,OralFissureCorner=$OralFissureCorner,OralFissureBlend=$OralFissureBlend,OralFissureLevel=$OralFissureLevel,OralFissureForwardShare=$OralFissureForwardShare,OralFissureLateralShare=$OralFissureLateralShare,LipCornerBlend=$LipCornerBlend,LipRostralBlend=$LipRostralBlend,UpperRollAngle=$UpperRollAngle,LowerRollAngle=$LowerRollAngle,UpperRollSpan=$UpperRollSpan,LowerRollSpan=$LowerRollSpan,UpperRollRelief=$UpperRollRelief,LowerRollRelief=$LowerRollRelief,OrbitalPigmentRadius=$OrbitalPigmentRadius,OrbitalPigmentWidth=$OrbitalPigmentWidth,OrbitalPigmentFade=$OrbitalPigmentFade,OrbitalPigmentReach=$OrbitalPigmentReach,LoinTravelOffset=$LoinTravelOffset,HipShareOffset=$HipShareOffset,RibShareOffset=$RibShareOffset,PelvisOffset=$PelvisOffset,WithersOffset=$WithersOffset,BackProfileOffset=$BackProfileOffset,UnderProfileOffsetScale=$UnderProfileOffsetScale,UnderProfileOffset=$UnderProfileOffset,FlankOffset=$FlankOffset,SternalStation=$SternalStation,SternalSpan=$SternalSpan,SternalLevel=$SternalLevel,SternalDepthSpan=$SternalDepthSpan,SternalHalfWidth=$SternalHalfWidth,ScapularMedialFalloff=$ScapularMedialFalloff,AxillaryBoundary=$AxillaryBoundary,AxillaryFalloff=$AxillaryFalloff,CervicalFoldStation=$CervicalFoldStation,CervicalFoldSpan=$CervicalFoldSpan,CervicalFoldLevel=$CervicalFoldLevel,CervicalFoldSlope=$CervicalFoldSlope,CervicalFoldDepthSpan=$CervicalFoldDepthSpan,CervicalFoldOffset=$CervicalFoldOffset,CervicalFoldHalfWidth=$CervicalFoldHalfWidth,CervicalFoldAxialCycles=$CervicalFoldAxialCycles,CervicalFoldVerticalCycles=$CervicalFoldVerticalCycles,CervicalFoldLateralCycles=$CervicalFoldLateralCycles,CervicalFoldSharpness=$CervicalFoldSharpness,TrunkSections=$TrunkSections,TrunkSides=$TrunkSides,UnitedSkinSpacing=$UnitedSkinSpacing,TailPigmentReachOffset=$TailPigmentReachOffset,TailPigmentHeightOffset=$TailPigmentHeightOffset,RegionalMarkings=$RegionalMarkings,TailRestAngle=$TailRestAngle,TailCarryDegrees=$TailCarryDegrees,TailCurlDegrees=$TailCurlDegrees,ForePigmentChart=$ForePigmentChart,HindPigmentChart=$HindPigmentChart,TailPigmentChart=$TailPigmentChart,PupilDilation=$PupilDilation,GazeConvergence=$GazeConvergence,GazeYaw=$GazeYaw,GazePitch=$GazePitch,PinnaPigmentMix=$PinnaPigmentMix,PlanumPalette=$PlanumPalette,IrisPalette=$IrisPalette,WhiskerPalette=$WhiskerPalette,BrachialSectionFit=$BrachialSectionFit,BrachialSectionOnset=$BrachialSectionOnset,BrachialElbowSample=$BrachialElbowSample,BrachialUpperSample=$BrachialUpperSample,BrachialSectionEnd=$BrachialSectionEnd,BrachialElbowOffset=$BrachialElbowOffset,BrachialUpperOffset=$BrachialUpperOffset,PinnaHairMedialAllowance=$PinnaHairMedialAllowance,PinnaHairAxialSpan=$PinnaHairAxialSpan,PinnaHairRootDepth=$PinnaHairRootDepth,LidHairClearance=$LidHairClearance,LidHairDepth=$LidHairDepth,PinnaSeamRelax=$PinnaSeamRelax,PinnaSeamExtent=$PinnaSeamExtent,PinnaSeamFalloff=$PinnaSeamFalloff,PigmentReferenceEyeSet=$PigmentReferenceEyeSet,PigmentReferenceOrbitBreadth=$PigmentReferenceOrbitBreadth,PigmentReferenceNoseLevel=$PigmentReferenceNoseLevel,HindDewclawHockFraction=$HindDewclawHockFraction,HindDewclawStation=$HindDewclawStation,PerioralRelax=$PerioralRelax,ForeUpperInset=$ForeUpperInset,HindUpperInset=$HindUpperInset,UpperInsetOnset=$UpperInsetOnset,UpperInsetPeak=$UpperInsetPeak,AxillaryBlendRadius=$AxillaryBlendRadius,AxillaryLevel=$AxillaryLevel,AxillaryLength=$AxillaryLength,AxillaryDepth=$AxillaryDepth,PadForwardShare=$PadForwardShare,PadLateralShare=$PadLateralShare,NarisArea=$NarisArea,NarisAspect=$NarisAspect,NarisCant=$NarisCant,NarisHook=$NarisHook,VestibuleExpansion=$VestibuleExpansion,AlarSlitShare=$AlarSlitShare,AlarSlitLift=$AlarSlitLift,AlarSlitReach=$AlarSlitReach,NostrilLevel=$NostrilLevel,PlanumCrownFlatten=$PlanumCrownFlatten,PlanumTipDrop=$PlanumTipDrop,AlarLipLift=$AlarLipLift,CervicalVentralReach=$CervicalVentralReach,CervicalVentralRise=$CervicalVentralRise,CervicalDorsalReach=$CervicalDorsalReach,CervicalDorsalRise=$CervicalDorsalRise,CervicalWidthScale=$CervicalWidthScale,ForeProximalLevel=$ForeProximalLevel,HindProximalLevel=$HindProximalLevel,ForePawSeatFraction=$ForePawSeatFraction,HindPawSeatFraction=$HindPawSeatFraction,StrideFadeLevel=$StrideFadeLevel,DewclawAxialStation=$DewclawAxialStation,DewclawMedialSet=$DewclawMedialSet,DewclawCarpusFraction=$DewclawCarpusFraction,DewclawPitch=$DewclawPitch,DewclawYaw=$DewclawYaw,CarpalPadPitch=$CarpalPadPitch,TailHeightOffset=$TailHeightOffset,TailReachOffset=$TailReachOffset,DermalChart=$DermalChart,OccipitalSpan=$OccipitalSpan,OccipitalBreadth=$OccipitalBreadth,OccipitalDepth=$OccipitalDepth,PollLevel=$PollLevel,UpperLipReach=$UpperLipReach,UpperLipContour=$UpperLipContour,UpperLipDepth=$UpperLipDepth,ClosedLipFit=$ClosedLipFit,LabialLobeDrop=$LabialLobeDrop,LabialLobeOffset=$LabialLobeOffset,LabialLobeSpan=$LabialLobeSpan,PupilMaterial=$PupilMaterial,FelineWhisker=$FelineWhisker,Whisker=$Whisker,CanthusRise=$CanthusRise,LidOverlap=$LidOverlap,LidTurnWidth=$LidTurnWidth,LowerLidRise=$LowerLidRise,ForeInsertionDepth=$ForeInsertionDepth,HindInsertionDepth=$HindInsertionDepth,InsertionStart=$InsertionStart,BrachialisLine=$BrachialisLine,CarpalExtensorLine=$CarpalExtensorLine,CarpalFlexorLine=$CarpalFlexorLine,BrachioradialisLine=$BrachioradialisLine,QuadricepsLine=$QuadricepsLine,LateralThighLine=$LateralThighLine,GastrocnemiusLine=$GastrocnemiusLine,CalcanealLine=$CalcanealLine,SoleusLine=$SoleusLine,LimbCompartmentAngle=$LimbCompartmentAngle,LimbCompartmentFocus=$LimbCompartmentFocus,SoleusShare=$SoleusShare,BrachioradialisShare=$BrachioradialisShare,JawCaptureBand=$JawCaptureBand,WhiskerPadStation=$WhiskerPadStation,WhiskerPadLatitude=$WhiskerPadLatitude,OpticalOrbitLift=$OpticalOrbitLift,OpticalOrbitLateral=$OpticalOrbitLateral,TemporalExpansion=$TemporalExpansion,TemporalAxialProfile=$TemporalAxialProfile,TemporalHeightProfile=$TemporalHeightProfile,TemporalLateralSpan=$TemporalLateralSpan,PinnaRootLateral=$PinnaRootLateral,PinnaRootLift=$PinnaRootLift,RadialSurfaceFit=$RadialSurfaceFit,FrontalSurfaceFit=$FrontalSurfaceFit,MuzzleDatum=$MuzzleDatum,RostralTravelLimit=$RostralTravelLimit,MuscleStation=$MuscleStation,MuscleSlope=$MuscleSlope,MuscleSpan=$MuscleSpan,MuscleLevel=$MuscleLevel,MuscleHeight=$MuscleHeight,MuscleAmplitude=$MuscleAmplitude,LipPath=$LipPath,WhiskerAzimuth=$WhiskerAzimuth,WhiskerElevation=$WhiskerElevation,WhiskerLengths=$WhiskerLengths,CorneaRelief=$CorneaRelief,UpperLidMarginWidth=$UpperLidMarginWidth,LowerLidMarginWidth=$LowerLidMarginWidth,LidMarginPlaneDepth=$LidMarginPlaneDepth,LidMargin=$LidMargin,MandibleBreadth=$MandibleBreadth,LabialProjection=$LabialProjection,RightForeStride=$RightForeStride,LeftForeStride=$LeftForeStride,RightHindStride=$RightHindStride,LeftHindStride=$LeftHindStride,CornealExposure=$CornealExposure,SocketDepth=$SocketDepth,SurfaceFit=$SurfaceFit,ChinTravel=$ChinTravel,ChinTravelStart=$ChinTravelStart,ChinTravelSpan=$ChinTravelSpan,SubnasalDepthScale=$SubnasalDepthScale,SubnasalOnset=$SubnasalOnset,SubnasalTransition=$SubnasalTransition,LowerJawScale=$LowerJawScale,ChinHalfWidth=$ChinHalfWidth,ChinCornerLift=$ChinCornerLift,ChinCornerSetback=$ChinCornerSetback,CentralLipNotch=$CentralLipNotch,LowerJawOnset=$LowerJawOnset,LowerJawTransition=$LowerJawTransition,JawFrontStation=$JawFrontStation,JawFrontBlend=$JawFrontBlend,PadOffset=$PadOffset,PadHalfWidth=$PadHalfWidth,PadBelowNose=$PadBelowNose,PadProjection=$PadProjection,WhiskerPadHeight=$WhiskerPadHeight,CheekTaper=$CheekTaper,CheekTaperStart=$CheekTaperStart,CheekTransition=$CheekTransition,JowlEnvelopeFit=$JowlEnvelopeFit,JowlEnvelopeWidth=$JowlEnvelopeWidth,JowlEnvelopeHeight=$JowlEnvelopeHeight,JowlEnvelopeTransition=$JowlEnvelopeTransition,CheekAxialFit=$CheekAxialFit,LowerCheekProfile=$LowerCheekProfile,ChinProjection=$ChinProjection,PinnaStandOff=$PinnaStandOff,PinnaForward=$PinnaForward,OrbitBreadth=$OrbitBreadth,CaninePlanum=$CaninePlanum,FelinePlanum=$FelinePlanum,PlanumTaper=$PlanumTaper,DigitReachOffset=$DigitReachOffset,DigitLengthScale=$DigitLengthScale,DigitBreadthScale=$DigitBreadthScale,DigitSpanOffset=$DigitSpanOffset,FissureStations=$FissureStations,FissureSides=$FissureSides,FaceSections=$FaceSections,FaceSides=$FaceSides,CheekToLip=$CheekToLip,BridgeRoof=$BridgeRoof,ChinFloor=$ChinFloor,WhiskerCount=$WhiskerCount,WhiskerStations=$WhiskerStations,WhiskerLatitudes=$WhiskerLatitudes,WhiskerStationOffset=$WhiskerStationOffset,WhiskerLatitudeOffset=$WhiskerLatitudeOffset,MuzzleGirthScale=$MuzzleGirthScale,MuzzleBridgeOffset=$MuzzleBridgeOffset,ChinFloorOffset=$ChinFloorOffset,SkullSeatStation=$SkullSeatStation,SkullSeatDepth=$SkullSeatDepth,SternalDrop=$SternalDrop,LipGrooveWidth=$LipGrooveWidth,LipTurnProjection=$LipTurnProjection,BrowToGlobe=$BrowToGlobe,CanineIris=$CanineIris,FelineIris=$FelineIris,UseSpeciesCoat=0,Feline=$Feline,LipCorner=$LipCorner,LipFrontStation=$LipFrontStation,LipDepth=$LipDepth,LipThickness=$LipThickness,ErectWidth=$ErectWidth,LobeWidth=$LobeWidth,PinnaBendLength=$PinnaBendLength,PinnaBendAngle=$PinnaBendAngle,PinnaBaseYaw=$PinnaBaseYaw,PinnaBurial=$PinnaBurial,PinnaRake=$PinnaRake,LobeFlare=$LobeFlare,LobeFlareCurve=$LobeFlareCurve,LobeTwist=$LobeTwist,LobeCup=$LobeCup,SpineOffset=$SpineOffset,BellyOffset=$BellyOffset,TrunkGirthScale=$TrunkGirthScale,NostrilSpacing=$NostrilSpacing,NostrilWidth=$NostrilWidth,NostrilHeight=$NostrilHeight,NasalWingWidth=$NasalWingWidth,NasalProjection=$NasalProjection,NasalCleft=$NasalCleft,IrisFraction=$IrisFraction,GlobeRimWidthInset=$GlobeRimWidthInset,GlobeRimHeightInset=$GlobeRimHeightInset,GlobeReturnOnset=$GlobeReturnOnset,GlobeReturnSpan=$GlobeReturnSpan,GlobeReturnDepth=$GlobeReturnDepth,GlobeDepth=$GlobeDepth,EarYaw=$EarYaw,EarThickness=$EarThickness,ConchaDepth=$ConchaDepth,WhiskerSweep=$WhiskerSweep,WhiskerSag=$WhiskerSag,TailTipFraction=$TailTipFraction,TailSag=$TailSag,ShoulderStation=$ShoulderStation,HipStation=$HipStation,ForeTrack=$ForeTrack,HindTrack=$HindTrack,TailStation=$TailStation,TailYaw=$TailYaw,TailRoll=$TailRoll,TailRootLevel=$TailRootLevel,ForeCarpusLevel=$ForeCarpusLevel,ElbowLevel=$ElbowLevel,HockLevel=$HockLevel,StifleLevel=$StifleLevel,HindFootReach=$HindFootReach,ForePawScale=$ForePawScale,HindPawScale=$HindPawScale,PasternReach=$PasternReach,PasternWidth=$PasternWidth,PasternDepth=$PasternDepth,PasternLevel=$PasternLevel,SoleInset=$SoleInset,DewDigitReach=$DewDigitReach,DewDigitBreadth=$DewDigitBreadth,DewDigitLength=$DewDigitLength,DewPadStation=$DewPadStation,DewPadBreadth=$DewPadBreadth,DewPadLength=$DewPadLength,DewClawStation=$DewClawStation,CarpalPadBreadth=$CarpalPadBreadth,CarpalPadLength=$CarpalPadLength,CarpalPadInset=$CarpalPadInset,ForeDewclaw=$ForeDewclaw,HindDewclaw=$HindDewclaw,CarpalPadScale=$CarpalPadScale,SkinFoldDepth=$SkinFoldDepth,ForeSweep=$ForeSweep,HindSweep=$HindSweep,ForeDepthScale=$ForeDepthScale,HindDepthScale=$HindDepthScale,ForeGirthScale=$ForeGirthScale,HindGirthScale=$HindGirthScale,MuscleDefinition=$MuscleDefinition,Condition=$Condition,HoundFraction=$HoundFraction,Length=$Length,LoinExtra=$LoinExtra,ChestWidth=$ChestWidth,ChestDepth=$ChestDepth,HipWidth=$HipWidth,WaistWidth=$WaistWidth,Tuck=$Tuck,CroupRise=$CroupRise,WitherRise=$WitherRise,NeckReach=$NeckReach,NeckRise=$NeckRise,NeckRootWidth=$NeckRootWidth,SkullWidth=$SkullWidth,SkullDepth=$SkullDepth,SkullPitch=$SkullPitch,ThroatFullness=$ThroatFullness,BreastProjection=$BreastProjection,JawInset=$JawInset,MuscleRelief=$MuscleRelief,ShoulderRelief=$ShoulderRelief,Clearance=$Clearance,LegMass=$LegMass,PawWidth=$PawWidth,PawLength=$PawLength,ToeSpread=$ToeSpread,DigitArch=$DigitArch,PadDepth=$PadDepth,ClawLength=$ClawLength,ToeLength=$ToeLength,ElbowSet=$ElbowSet,HockSet=$HockSet,StifleSet=$StifleSet,TailLength=$TailLength,TailRadius=$TailRadius,TailCarry=$TailCarry,TailCurl=$TailCurl,HeadLength=$HeadLength,HeadWidth=$HeadWidth,HeadHeight=$HeadHeight,HeadCarry=$HeadCarry,MuzzleShare=$MuzzleShare,MuzzleWidth=$MuzzleWidth,NoseSize=$NoseSize,EyeSize=$EyeSize,EyeSeparation=$EyeSeparation,EyeLift=$EyeLift,EyeLatitude=$EyeLatitude,EarSet=$EarSet,EarLatitude=$EarLatitude,NoseLevel=$NoseLevel,LipFullness=$LipFullness,ChinSetback=$ChinSetback,PhiltrumDepth=$PhiltrumDepth,EyeSet=$EyeSet,EyeAngle=$EyeAngle,Pupil=$Pupil,EyeAperture=$EyeAperture,EarHeight=$EarHeight,EarWidth=$EarWidth,EarFold=$EarFold,EarPoint=$EarPoint,EarSpread=$EarSpread,JawDepth=$JawDepth,CheekFullness=$CheekFullness,Brow=$Brow,WhiskerLength=$WhiskerLength,WhiskerRadius=$WhiskerRadius,WhiskerPad=$WhiskerPad,ThighMass=$ThighMass,ShankMass=$ShankMass,StandingLift=$StandingLift,StanceWidth=$StanceWidth,StanceOffset=$StanceOffset,Coat=$Coat)
+NosePart = mesh() {
+  add($Options.NosePart,join=none)
+  save($RootBand) [$output.RootBand]
+}
+EyePart = mesh() { add($Options.EyePart,join=none) }
+EarPart = mesh() { add($Options.EarPart,join=none) }
+ForelegPart = mesh() { add($Options.ForelegPart,join=none) }
+HindlegPart = mesh() { add($Options.HindlegPart,join=none) }
+PawPart = mesh() { add($Options.PawPart,join=none) }
+ForePawPart = mesh() { add($PawPart,join=none) }
+HindPawPart = mesh() { add($PawPart,join=none) }
+TailPart = mesh() { add($Options.TailPart,join=none) }
+HeadKit = shape('/GraphCodeShape/Presets/AnimalHead',EyeToPlanumFit=$EyeToPlanumFit,EyeToPlanumRatio=$EyeToPlanumRatio,PalpebralTurnInset=$PalpebralTurnInset,SupraorbitalRimRadius=$SupraorbitalRimRadius,SupraorbitalRimSpan=$SupraorbitalRimSpan,BrowRadius=$BrowRadius,BrowSpan=$BrowSpan,BrowVentralFade=$BrowVentralFade,LabialWidthExponent=$LabialWidthExponent,LabialHeightExponent=$LabialHeightExponent,LabialFloorWidth=$LabialFloorWidth,LabialTaperLevel=$LabialTaperLevel,LabialTaperSpan=$LabialTaperSpan,LabialFullnessGain=$LabialFullnessGain,LabialPadStrength=$LabialPadStrength,LabialPadLatitude=$LabialPadLatitude,LabialPadArc=$LabialPadArc,LabialPadStation=$LabialPadStation,LabialPadSpan=$LabialPadSpan,LipSulcusRelief=$LipSulcusRelief,LipSulcusArc=$LipSulcusArc,CheekLatitude=$CheekLatitude,CheekArc=$CheekArc,CheekStation=$CheekStation,CheekSpan=$CheekSpan,RostralWidthOnset=$RostralWidthOnset,RostralWidthSpan=$RostralWidthSpan,PadLatitude=$PadLatitude,PadArc=$PadArc,PadStation=$PadStation,PadSpan=$PadSpan,PadWidthGain=$PadWidthGain,LipRollLatitude=$LipRollLatitude,LipRollArc=$LipRollArc,LipRollGain=$LipRollGain,LipForwardStation=$LipForwardStation,LipForwardSpan=$LipForwardSpan,LipForwardLevel=$LipForwardLevel,LipForwardHeight=$LipForwardHeight,LipForwardInset=$LipForwardInset,LipForwardFalloff=$LipForwardFalloff,LipLobeCentre=$LipLobeCentre,LipLobeWidth=$LipLobeWidth,PhiltrumWidth=$PhiltrumWidth,PhiltrumReliefGain=$PhiltrumReliefGain,DrapeStart=$DrapeStart,DrapeSpan=$DrapeSpan,DrapeRimInset=$DrapeRimInset,DrapeRimFalloff=$DrapeRimFalloff,RostrumLengthScale=$RostrumLengthScale,RostrumOrbitalClearance=$RostrumOrbitalClearance,RostrumCollarClearance=$RostrumCollarClearance,RhinolabialAdvance=$RhinolabialAdvance,RhinolabialFit=$RhinolabialFit,RhinolabialPosteriorRun=$RhinolabialPosteriorRun,RhinolabialAnteriorRun=$RhinolabialAnteriorRun,RhinolabialDepth=$RhinolabialDepth,RhinolabialHalfWidth=$RhinolabialHalfWidth,RhinolabialOnset=$RhinolabialOnset,RhinolabialBlend=$RhinolabialBlend,RhinolabialRelease=$RhinolabialRelease,RhinolabialDatum=$RhinolabialDatum,RhinolabialTarget=$RhinolabialTarget,MandibularContourFit=$MandibularContourFit,MandibularDatum=$MandibularDatum,MandibularTarget=$MandibularTarget,MandibularTipThickness=$MandibularTipThickness,MandibularAnchorDepth=$MandibularAnchorDepth,ClosedLipOnset=$ClosedLipOnset,ClosedLipRun=$ClosedLipRun,ClosedLipLatitude=$ClosedLipLatitude,ClosedLipArc=$ClosedLipArc,MandibularBorderFit=$MandibularBorderFit,MandibularLevelOnset=$MandibularLevelOnset,MandibularLevelBlend=$MandibularLevelBlend,MandibularRimStart=$MandibularRimStart,MandibularRimEnd=$MandibularRimEnd,MandibularAdvance=$MandibularAdvance,MandibularElevation=$MandibularElevation,OralFissureDepth=$OralFissureDepth,OralFissureWidth=$OralFissureWidth,OralFissureCorner=$OralFissureCorner,OralFissureBlend=$OralFissureBlend,OralFissureLevel=$OralFissureLevel,OralFissureForwardShare=$OralFissureForwardShare,OralFissureLateralShare=$OralFissureLateralShare,LipCornerBlend=$LipCornerBlend,LipRostralBlend=$LipRostralBlend,UpperRollAngle=$UpperRollAngle,LowerRollAngle=$LowerRollAngle,UpperRollSpan=$UpperRollSpan,LowerRollSpan=$LowerRollSpan,UpperRollRelief=$UpperRollRelief,LowerRollRelief=$LowerRollRelief,OrbitalPigmentRadius=$OrbitalPigmentRadius,OrbitalPigmentWidth=$OrbitalPigmentWidth,OrbitalPigmentFade=$OrbitalPigmentFade,OrbitalPigmentReach=$OrbitalPigmentReach,PupilDilation=$PupilDilation,GazeConvergence=$GazeConvergence,GazeYaw=$GazeYaw,GazePitch=$GazePitch,PinnaPigmentMix=$PinnaPigmentMix,PlanumPalette=$PlanumPalette,IrisPalette=$IrisPalette,WhiskerPalette=$WhiskerPalette,PinnaSeamRelax=$PinnaSeamRelax,PinnaSeamExtent=$PinnaSeamExtent,PinnaSeamFalloff=$PinnaSeamFalloff,PigmentReferenceEyeSet=$PigmentReferenceEyeSet,PigmentReferenceOrbitBreadth=$PigmentReferenceOrbitBreadth,PigmentReferenceNoseLevel=$PigmentReferenceNoseLevel,PerioralRelax=$PerioralRelax,PadForwardShare=$PadForwardShare,PadLateralShare=$PadLateralShare,OccipitalSpan=$OccipitalSpan,OccipitalBreadth=$OccipitalBreadth,OccipitalDepth=$OccipitalDepth,PollLevel=$PollLevel,UpperLipReach=$UpperLipReach,UpperLipContour=$UpperLipContour,UpperLipDepth=$UpperLipDepth,ClosedLipFit=$ClosedLipFit,LabialLobeDrop=$LabialLobeDrop,LabialLobeOffset=$LabialLobeOffset,LabialLobeSpan=$LabialLobeSpan,PupilMaterial=$PupilMaterial,FelineWhisker=$FelineWhisker,Whisker=$Whisker,CanthusRise=$CanthusRise,LidOverlap=$LidOverlap,LidTurnWidth=$LidTurnWidth,LowerLidRise=$LowerLidRise,JawCaptureBand=$JawCaptureBand,WhiskerPadStation=$WhiskerPadStation,WhiskerPadLatitude=$WhiskerPadLatitude,OpticalOrbitLift=$OpticalOrbitLift,OpticalOrbitLateral=$OpticalOrbitLateral,TemporalExpansion=$TemporalExpansion,TemporalAxialProfile=$TemporalAxialProfile,TemporalHeightProfile=$TemporalHeightProfile,TemporalLateralSpan=$TemporalLateralSpan,PinnaRootLateral=$PinnaRootLateral,PinnaRootLift=$PinnaRootLift,RadialSurfaceFit=$RadialSurfaceFit,FrontalSurfaceFit=$FrontalSurfaceFit,MuzzleDatum=$MuzzleDatum,RostralTravelLimit=$RostralTravelLimit,LipPath=$LipPath,WhiskerAzimuth=$WhiskerAzimuth,WhiskerElevation=$WhiskerElevation,WhiskerLengths=$WhiskerLengths,CorneaRelief=$CorneaRelief,UpperLidMarginWidth=$UpperLidMarginWidth,LowerLidMarginWidth=$LowerLidMarginWidth,LidMarginPlaneDepth=$LidMarginPlaneDepth,LidMargin=$LidMargin,MandibleBreadth=$MandibleBreadth,LabialProjection=$LabialProjection,CornealExposure=$CornealExposure,SocketDepth=$SocketDepth,SurfaceFit=$SurfaceFit,ChinTravel=$ChinTravel,ChinTravelStart=$ChinTravelStart,ChinTravelSpan=$ChinTravelSpan,SubnasalDepthScale=$SubnasalDepthScale,SubnasalOnset=$SubnasalOnset,SubnasalTransition=$SubnasalTransition,LowerJawScale=$LowerJawScale,ChinHalfWidth=$ChinHalfWidth,ChinCornerLift=$ChinCornerLift,ChinCornerSetback=$ChinCornerSetback,CentralLipNotch=$CentralLipNotch,LowerJawOnset=$LowerJawOnset,LowerJawTransition=$LowerJawTransition,JawFrontStation=$JawFrontStation,JawFrontBlend=$JawFrontBlend,PadOffset=$PadOffset,PadHalfWidth=$PadHalfWidth,PadBelowNose=$PadBelowNose,PadProjection=$PadProjection,WhiskerPadHeight=$WhiskerPadHeight,CheekTaper=$CheekTaper,CheekTaperStart=$CheekTaperStart,CheekTransition=$CheekTransition,JowlEnvelopeFit=$JowlEnvelopeFit,JowlEnvelopeWidth=$JowlEnvelopeWidth,JowlEnvelopeHeight=$JowlEnvelopeHeight,JowlEnvelopeTransition=$JowlEnvelopeTransition,CheekAxialFit=$CheekAxialFit,LowerCheekProfile=$LowerCheekProfile,ChinProjection=$ChinProjection,OrbitBreadth=$OrbitBreadth,CaninePlanum=$CaninePlanum,FelinePlanum=$FelinePlanum,FissureStations=$FissureStations,FissureSides=$FissureSides,FaceSections=$FaceSections,FaceSides=$FaceSides,CheekToLip=$CheekToLip,BridgeRoof=$BridgeRoof,ChinFloor=$ChinFloor,WhiskerCount=$WhiskerCount,WhiskerStations=$WhiskerStations,WhiskerLatitudes=$WhiskerLatitudes,WhiskerStationOffset=$WhiskerStationOffset,WhiskerLatitudeOffset=$WhiskerLatitudeOffset,MuzzleGirthScale=$MuzzleGirthScale,MuzzleBridgeOffset=$MuzzleBridgeOffset,ChinFloorOffset=$ChinFloorOffset,LipGrooveWidth=$LipGrooveWidth,LipTurnProjection=$LipTurnProjection,BrowToGlobe=$BrowToGlobe,Feline=$Feline,LipCorner=$LipCorner,LipFrontStation=$LipFrontStation,LipDepth=$LipDepth,LipThickness=$LipThickness,EarYaw=$EarYaw,GlobeRimWidthInset=$GlobeRimWidthInset,GlobeRimHeightInset=$GlobeRimHeightInset,GlobeReturnOnset=$GlobeReturnOnset,GlobeReturnSpan=$GlobeReturnSpan,GlobeReturnDepth=$GlobeReturnDepth,GlobeDepth=$GlobeDepth,WhiskerSweep=$WhiskerSweep,WhiskerSag=$WhiskerSag,HoundFraction=$HoundFraction,EyeAperture=$EyeAperture,Coat=$Coat,EyePart=$EyePart,NosePart=$NosePart,EarPart=$EarPart,HeadLength=$HeadLength,HeadWidth=$HeadWidth,HeadHeight=$HeadHeight,MuzzleShare=$MuzzleShare,MuzzleWidth=$MuzzleWidth,NoseSize=$NoseSize,EyeSize=$EyeSize,EyeSeparation=$EyeSeparation,EyeLift=$EyeLift,EyeLatitude=$EyeLatitude,EarSet=$EarSet,EarLatitude=$EarLatitude,NoseLevel=$NoseLevel,LipFullness=$LipFullness,ChinSetback=$ChinSetback,PhiltrumDepth=$PhiltrumDepth,EyeSet=$EyeSet,EyeAngle=$EyeAngle,EarHeight=$EarHeight,EarWidth=$EarWidth,EarFold=$EarFold,EarPoint=$EarPoint,EarSpread=$EarSpread,JawDepth=$JawDepth,CheekFullness=$CheekFullness,Brow=$Brow,WhiskerLength=$WhiskerLength,WhiskerRadius=$WhiskerRadius,WhiskerPad=$WhiskerPad)
+# A swappable head supplies its weld surface and its free inserts in the same
+# local space. Both passes use the same source and the same cranial seat.
+HeadAssembly = mesh(inserts=0) {
+  if ($inserts == 0) { add($HeadKit.FaceSkin,join=none) }
+  if ($inserts > 0) { add($HeadKit.Details,join=none) }
+}
+Whole = shape('/GraphCodeShape/Presets/QuadrupedAnimal',RumpCapSpan=$RumpCapSpan,BreastCapStart=$BreastCapStart,BladeStationOffset=$BladeStationOffset,BladeRake=$BladeRake,BladeSpan=$BladeSpan,BladeRelief=$BladeRelief,HaunchStationOffset=$HaunchStationOffset,HaunchRake=$HaunchRake,HaunchSpan=$HaunchSpan,HaunchRelief=$HaunchRelief,KeelTaper=$KeelTaper,CervicalSeatStation=$CervicalSeatStation,CervicalSeatLevel=$CervicalSeatLevel,CervicalWithersShare=$CervicalWithersShare,CervicalSeatPitch=$CervicalSeatPitch,CervicalSeatBand=$CervicalSeatBand,ShoulderSeatLevel=$ShoulderSeatLevel,HipSeatLevel=$HipSeatLevel,HipCroupShare=$HipCroupShare,ShoulderSeatRake=$ShoulderSeatRake,HipSeatRake=$HipSeatRake,TailSeatSlope=$TailSeatSlope,CervicalOnset=$CervicalOnset,CervicalCapStart=$CervicalCapStart,CervicalRootBlend=$CervicalRootBlend,SkullCapDepth=$SkullCapDepth,SkullBandDepth=$SkullBandDepth,CervicalMuscleLevel=$CervicalMuscleLevel,CervicalMuscleSlope=$CervicalMuscleSlope,CervicalMuscleSpan=$CervicalMuscleSpan,CervicalBladeStation=$CervicalBladeStation,CervicalBladeRake=$CervicalBladeRake,CervicalBladeSpan=$CervicalBladeSpan,CervicalHollowStation=$CervicalHollowStation,CervicalHollowRake=$CervicalHollowRake,CervicalHollowSpan=$CervicalHollowSpan,CervicalHollowDepth=$CervicalHollowDepth,CervicalBladeLevel=$CervicalBladeLevel,CervicalBladeHeight=$CervicalBladeHeight,HeelHeightScale=$HeelHeightScale,HeelStart=$HeelStart,HeelEnd=$HeelEnd,ToeRootBreadth=$ToeRootBreadth,ToeTipTaper=$ToeTipTaper,ToeSplayRoot=$ToeSplayRoot,KnuckleStation=$KnuckleStation,KnuckleSpan=$KnuckleSpan,ToeCentreHeight=$ToeCentreHeight,ToeAxialArch=$ToeAxialArch,KnuckleLift=$KnuckleLift,ToeCrossDepth=$ToeCrossDepth,KnuckleDepth=$KnuckleDepth,PadLobes=$PadLobes,PadLobeDepth=$PadLobeDepth,PadToeTaper=$PadToeTaper,PadCentreHeight=$PadCentreHeight,PadCrossDepth=$PadCrossDepth,ClawRootLength=$ClawRootLength,ClawRootRoundness=$ClawRootRoundness,ClawBurial=$ClawBurial,ClawBreadth=$ClawBreadth,ClawBaseHeight=$ClawBaseHeight,ClawDescent=$ClawDescent,ClawHook=$ClawHook,ClawCrossDepth=$ClawCrossDepth,DigitalPadStation=$DigitalPadStation,ClawReferenceBreadth=$ClawReferenceBreadth,PalmSilhouetteFit=$PalmSilhouetteFit,PalmContactRoundness=$PalmContactRoundness,PalmAsymmetry=$PalmAsymmetry,PalmContourOffset=$PalmContourOffset,PalmPadBreadth=$PalmPadBreadth,PalmPadLength=$PalmPadLength,PalmPadStation=$PalmPadStation,DigitalPadWidth=$DigitalPadWidth,DigitalPadLength=$DigitalPadLength,ClawSetback=$ClawSetback,HeelBreadthOffset=$HeelBreadthOffset,HeelRoofOffset=$HeelRoofOffset,HeelFloorOffset=$HeelFloorOffset,ReferenceCarpus=$ReferenceCarpus,ReferenceElbow=$ReferenceElbow,ReferenceHock=$ReferenceHock,ReferenceStifle=$ReferenceStifle,ThighBlendStart=$ThighBlendStart,ThighBlendEnd=$ThighBlendEnd,UpperGirthStart=$UpperGirthStart,UpperGirthEnd=$UpperGirthEnd,ReferenceChestRatio=$ReferenceChestRatio,ReferenceHipRatio=$ReferenceHipRatio,LimbCapStart=$LimbCapStart,SoleCapSpan=$SoleCapSpan,CarpusFalloff=$CarpusFalloff,ElbowFalloff=$ElbowFalloff,HockFalloff=$HockFalloff,StifleFalloff=$StifleFalloff,TailTipRoundStart=$TailTipRoundStart,TailRootRoundEnd=$TailRootRoundEnd,TailGirthScale=$TailGirthScale,MedialAlarOffset=$MedialAlarOffset,MedialAlarBreadth=$MedialAlarBreadth,MedialAlarHeight=$MedialAlarHeight,MedialAlarLevel=$MedialAlarLevel,MedialAlarProjection=$MedialAlarProjection,AlarCleftReach=$AlarCleftReach,AlarCleftDrop=$AlarCleftDrop,AlarLobuleRelief=$AlarLobuleRelief,AlarLobuleBreadth=$AlarLobuleBreadth,AlarLobuleHeight=$AlarLobuleHeight,AlarLobuleOffset=$AlarLobuleOffset,MedianGrooveHalfWidth=$MedianGrooveHalfWidth,MedianGrooveDrop=$MedianGrooveDrop,CleftUpperLevel=$CleftUpperLevel,CleftBlendHeight=$CleftBlendHeight,PlanumDome=$PlanumDome,PlanumHeightRatio=$PlanumHeightRatio,AlarWingHeight=$AlarWingHeight,AlarCreaseDepth=$AlarCreaseDepth,AlarCreaseHalfHeight=$AlarCreaseHalfHeight,AlarCreaseBow=$AlarCreaseBow,MoistMarginLevel=$MoistMarginLevel,MoistMarginStart=$MoistMarginStart,MoistMarginBlend=$MoistMarginBlend,VestibuleMaterial=$VestibuleMaterial,EntranceFront=$EntranceFront,TurnStart=$TurnStart,ChamberRear=$ChamberRear,TurnRun=$TurnRun,SlitTerminalAspect=$SlitTerminalAspect,EyeToPlanumFit=$EyeToPlanumFit,EyeToPlanumRatio=$EyeToPlanumRatio,PalpebralTurnInset=$PalpebralTurnInset,SupraorbitalRimRadius=$SupraorbitalRimRadius,SupraorbitalRimSpan=$SupraorbitalRimSpan,BrowRadius=$BrowRadius,BrowSpan=$BrowSpan,BrowVentralFade=$BrowVentralFade,LabialWidthExponent=$LabialWidthExponent,LabialHeightExponent=$LabialHeightExponent,LabialFloorWidth=$LabialFloorWidth,LabialTaperLevel=$LabialTaperLevel,LabialTaperSpan=$LabialTaperSpan,LabialFullnessGain=$LabialFullnessGain,LabialPadStrength=$LabialPadStrength,LabialPadLatitude=$LabialPadLatitude,LabialPadArc=$LabialPadArc,LabialPadStation=$LabialPadStation,LabialPadSpan=$LabialPadSpan,LipSulcusRelief=$LipSulcusRelief,LipSulcusArc=$LipSulcusArc,CheekLatitude=$CheekLatitude,CheekArc=$CheekArc,CheekStation=$CheekStation,CheekSpan=$CheekSpan,RostralWidthOnset=$RostralWidthOnset,RostralWidthSpan=$RostralWidthSpan,PadLatitude=$PadLatitude,PadArc=$PadArc,PadStation=$PadStation,PadSpan=$PadSpan,PadWidthGain=$PadWidthGain,LipRollLatitude=$LipRollLatitude,LipRollArc=$LipRollArc,LipRollGain=$LipRollGain,LipForwardStation=$LipForwardStation,LipForwardSpan=$LipForwardSpan,LipForwardLevel=$LipForwardLevel,LipForwardHeight=$LipForwardHeight,LipForwardInset=$LipForwardInset,LipForwardFalloff=$LipForwardFalloff,LipLobeCentre=$LipLobeCentre,LipLobeWidth=$LipLobeWidth,PhiltrumWidth=$PhiltrumWidth,PhiltrumReliefGain=$PhiltrumReliefGain,DrapeStart=$DrapeStart,DrapeSpan=$DrapeSpan,DrapeRimInset=$DrapeRimInset,DrapeRimFalloff=$DrapeRimFalloff,RostrumLengthScale=$RostrumLengthScale,RostrumOrbitalClearance=$RostrumOrbitalClearance,RostrumCollarClearance=$RostrumCollarClearance,RhinolabialAdvance=$RhinolabialAdvance,RhinolabialFit=$RhinolabialFit,RhinolabialPosteriorRun=$RhinolabialPosteriorRun,RhinolabialAnteriorRun=$RhinolabialAnteriorRun,RhinolabialDepth=$RhinolabialDepth,RhinolabialHalfWidth=$RhinolabialHalfWidth,RhinolabialOnset=$RhinolabialOnset,RhinolabialBlend=$RhinolabialBlend,RhinolabialRelease=$RhinolabialRelease,RhinolabialDatum=$RhinolabialDatum,RhinolabialTarget=$RhinolabialTarget,MandibularContourFit=$MandibularContourFit,MandibularDatum=$MandibularDatum,MandibularTarget=$MandibularTarget,MandibularTipThickness=$MandibularTipThickness,MandibularAnchorDepth=$MandibularAnchorDepth,ClosedLipOnset=$ClosedLipOnset,ClosedLipRun=$ClosedLipRun,ClosedLipLatitude=$ClosedLipLatitude,ClosedLipArc=$ClosedLipArc,MandibularBorderFit=$MandibularBorderFit,MandibularLevelOnset=$MandibularLevelOnset,MandibularLevelBlend=$MandibularLevelBlend,MandibularRimStart=$MandibularRimStart,MandibularRimEnd=$MandibularRimEnd,MandibularAdvance=$MandibularAdvance,MandibularElevation=$MandibularElevation,OralFissureDepth=$OralFissureDepth,OralFissureWidth=$OralFissureWidth,OralFissureCorner=$OralFissureCorner,OralFissureBlend=$OralFissureBlend,OralFissureLevel=$OralFissureLevel,OralFissureForwardShare=$OralFissureForwardShare,OralFissureLateralShare=$OralFissureLateralShare,LipCornerBlend=$LipCornerBlend,LipRostralBlend=$LipRostralBlend,UpperRollAngle=$UpperRollAngle,LowerRollAngle=$LowerRollAngle,UpperRollSpan=$UpperRollSpan,LowerRollSpan=$LowerRollSpan,UpperRollRelief=$UpperRollRelief,LowerRollRelief=$LowerRollRelief,OrbitalPigmentRadius=$OrbitalPigmentRadius,OrbitalPigmentWidth=$OrbitalPigmentWidth,OrbitalPigmentFade=$OrbitalPigmentFade,OrbitalPigmentReach=$OrbitalPigmentReach,LoinTravelOffset=$LoinTravelOffset,HipShareOffset=$HipShareOffset,RibShareOffset=$RibShareOffset,PelvisOffset=$PelvisOffset,WithersOffset=$WithersOffset,BackProfileOffset=$BackProfileOffset,UnderProfileOffsetScale=$UnderProfileOffsetScale,UnderProfileOffset=$UnderProfileOffset,FlankOffset=$FlankOffset,SternalStation=$SternalStation,SternalSpan=$SternalSpan,SternalLevel=$SternalLevel,SternalDepthSpan=$SternalDepthSpan,SternalHalfWidth=$SternalHalfWidth,ScapularMedialFalloff=$ScapularMedialFalloff,AxillaryBoundary=$AxillaryBoundary,AxillaryFalloff=$AxillaryFalloff,CervicalFoldStation=$CervicalFoldStation,CervicalFoldSpan=$CervicalFoldSpan,CervicalFoldLevel=$CervicalFoldLevel,CervicalFoldSlope=$CervicalFoldSlope,CervicalFoldDepthSpan=$CervicalFoldDepthSpan,CervicalFoldOffset=$CervicalFoldOffset,CervicalFoldHalfWidth=$CervicalFoldHalfWidth,CervicalFoldAxialCycles=$CervicalFoldAxialCycles,CervicalFoldVerticalCycles=$CervicalFoldVerticalCycles,CervicalFoldLateralCycles=$CervicalFoldLateralCycles,CervicalFoldSharpness=$CervicalFoldSharpness,TrunkSections=$TrunkSections,TrunkSides=$TrunkSides,UnitedSkinSpacing=$UnitedSkinSpacing,TailPigmentReachOffset=$TailPigmentReachOffset,TailPigmentHeightOffset=$TailPigmentHeightOffset,RegionalMarkings=$RegionalMarkings,TailRestAngle=$TailRestAngle,TailCarryDegrees=$TailCarryDegrees,TailCurlDegrees=$TailCurlDegrees,ForePigmentChart=$ForePigmentChart,HindPigmentChart=$HindPigmentChart,TailPigmentChart=$TailPigmentChart,PupilDilation=$PupilDilation,GazeConvergence=$GazeConvergence,GazeYaw=$GazeYaw,GazePitch=$GazePitch,PinnaPigmentMix=$PinnaPigmentMix,PlanumPalette=$PlanumPalette,IrisPalette=$IrisPalette,WhiskerPalette=$WhiskerPalette,BrachialSectionFit=$BrachialSectionFit,BrachialSectionOnset=$BrachialSectionOnset,BrachialElbowSample=$BrachialElbowSample,BrachialUpperSample=$BrachialUpperSample,BrachialSectionEnd=$BrachialSectionEnd,BrachialElbowOffset=$BrachialElbowOffset,BrachialUpperOffset=$BrachialUpperOffset,PinnaHairMedialAllowance=$PinnaHairMedialAllowance,PinnaHairAxialSpan=$PinnaHairAxialSpan,PinnaHairRootDepth=$PinnaHairRootDepth,LidHairClearance=$LidHairClearance,LidHairDepth=$LidHairDepth,PinnaSeamRelax=$PinnaSeamRelax,PinnaSeamExtent=$PinnaSeamExtent,PinnaSeamFalloff=$PinnaSeamFalloff,PigmentReferenceEyeSet=$PigmentReferenceEyeSet,PigmentReferenceOrbitBreadth=$PigmentReferenceOrbitBreadth,PigmentReferenceNoseLevel=$PigmentReferenceNoseLevel,HindDewclawHockFraction=$HindDewclawHockFraction,HindDewclawStation=$HindDewclawStation,PerioralRelax=$PerioralRelax,ForeUpperInset=$ForeUpperInset,HindUpperInset=$HindUpperInset,UpperInsetOnset=$UpperInsetOnset,UpperInsetPeak=$UpperInsetPeak,AxillaryBlendRadius=$AxillaryBlendRadius,AxillaryLevel=$AxillaryLevel,AxillaryLength=$AxillaryLength,AxillaryDepth=$AxillaryDepth,PadForwardShare=$PadForwardShare,PadLateralShare=$PadLateralShare,NarisArea=$NarisArea,NarisAspect=$NarisAspect,NarisCant=$NarisCant,NarisHook=$NarisHook,VestibuleExpansion=$VestibuleExpansion,AlarSlitShare=$AlarSlitShare,AlarSlitLift=$AlarSlitLift,AlarSlitReach=$AlarSlitReach,NostrilLevel=$NostrilLevel,PlanumCrownFlatten=$PlanumCrownFlatten,PlanumTipDrop=$PlanumTipDrop,AlarLipLift=$AlarLipLift,CervicalVentralReach=$CervicalVentralReach,CervicalVentralRise=$CervicalVentralRise,CervicalDorsalReach=$CervicalDorsalReach,CervicalDorsalRise=$CervicalDorsalRise,CervicalWidthScale=$CervicalWidthScale,ForeProximalLevel=$ForeProximalLevel,HindProximalLevel=$HindProximalLevel,ForePawSeatFraction=$ForePawSeatFraction,HindPawSeatFraction=$HindPawSeatFraction,StrideFadeLevel=$StrideFadeLevel,DewclawAxialStation=$DewclawAxialStation,DewclawMedialSet=$DewclawMedialSet,DewclawCarpusFraction=$DewclawCarpusFraction,DewclawPitch=$DewclawPitch,DewclawYaw=$DewclawYaw,CarpalPadPitch=$CarpalPadPitch,TailHeightOffset=$TailHeightOffset,TailReachOffset=$TailReachOffset,TorsoPart=$TorsoPart,CervicalForm=$CervicalForm,DermalChart=$DermalChart,OccipitalSpan=$OccipitalSpan,OccipitalBreadth=$OccipitalBreadth,OccipitalDepth=$OccipitalDepth,PollLevel=$PollLevel,UpperLipReach=$UpperLipReach,UpperLipContour=$UpperLipContour,UpperLipDepth=$UpperLipDepth,ClosedLipFit=$ClosedLipFit,LabialLobeDrop=$LabialLobeDrop,LabialLobeOffset=$LabialLobeOffset,LabialLobeSpan=$LabialLobeSpan,PupilMaterial=$PupilMaterial,FelineWhisker=$FelineWhisker,Whisker=$Whisker,CanthusRise=$CanthusRise,LidOverlap=$LidOverlap,LidTurnWidth=$LidTurnWidth,LowerLidRise=$LowerLidRise,ForeInsertionDepth=$ForeInsertionDepth,HindInsertionDepth=$HindInsertionDepth,InsertionStart=$InsertionStart,BrachialisLine=$BrachialisLine,CarpalExtensorLine=$CarpalExtensorLine,CarpalFlexorLine=$CarpalFlexorLine,BrachioradialisLine=$BrachioradialisLine,QuadricepsLine=$QuadricepsLine,LateralThighLine=$LateralThighLine,GastrocnemiusLine=$GastrocnemiusLine,CalcanealLine=$CalcanealLine,SoleusLine=$SoleusLine,LimbCompartmentAngle=$LimbCompartmentAngle,LimbCompartmentFocus=$LimbCompartmentFocus,SoleusShare=$SoleusShare,BrachioradialisShare=$BrachioradialisShare,JawCaptureBand=$JawCaptureBand,WhiskerPadStation=$WhiskerPadStation,WhiskerPadLatitude=$WhiskerPadLatitude,OpticalOrbitLift=$OpticalOrbitLift,OpticalOrbitLateral=$OpticalOrbitLateral,TemporalExpansion=$TemporalExpansion,TemporalAxialProfile=$TemporalAxialProfile,TemporalHeightProfile=$TemporalHeightProfile,TemporalLateralSpan=$TemporalLateralSpan,PinnaRootLateral=$PinnaRootLateral,PinnaRootLift=$PinnaRootLift,RadialSurfaceFit=$RadialSurfaceFit,FrontalSurfaceFit=$FrontalSurfaceFit,MuzzleDatum=$MuzzleDatum,RostralTravelLimit=$RostralTravelLimit,MuscleStation=$MuscleStation,MuscleSlope=$MuscleSlope,MuscleSpan=$MuscleSpan,MuscleLevel=$MuscleLevel,MuscleHeight=$MuscleHeight,MuscleAmplitude=$MuscleAmplitude,LipPath=$LipPath,WhiskerAzimuth=$WhiskerAzimuth,WhiskerElevation=$WhiskerElevation,WhiskerLengths=$WhiskerLengths,CorneaRelief=$CorneaRelief,UpperLidMarginWidth=$UpperLidMarginWidth,LowerLidMarginWidth=$LowerLidMarginWidth,LidMarginPlaneDepth=$LidMarginPlaneDepth,LidMargin=$LidMargin,MandibleBreadth=$MandibleBreadth,LabialProjection=$LabialProjection,RightForeStride=$RightForeStride,LeftForeStride=$LeftForeStride,RightHindStride=$RightHindStride,LeftHindStride=$LeftHindStride,CornealExposure=$CornealExposure,SocketDepth=$SocketDepth,SurfaceFit=$SurfaceFit,ChinTravel=$ChinTravel,ChinTravelStart=$ChinTravelStart,ChinTravelSpan=$ChinTravelSpan,SubnasalDepthScale=$SubnasalDepthScale,SubnasalOnset=$SubnasalOnset,SubnasalTransition=$SubnasalTransition,LowerJawScale=$LowerJawScale,ChinHalfWidth=$ChinHalfWidth,ChinCornerLift=$ChinCornerLift,ChinCornerSetback=$ChinCornerSetback,CentralLipNotch=$CentralLipNotch,LowerJawOnset=$LowerJawOnset,LowerJawTransition=$LowerJawTransition,JawFrontStation=$JawFrontStation,JawFrontBlend=$JawFrontBlend,PadOffset=$PadOffset,PadHalfWidth=$PadHalfWidth,PadBelowNose=$PadBelowNose,PadProjection=$PadProjection,WhiskerPadHeight=$WhiskerPadHeight,CheekTaper=$CheekTaper,CheekTaperStart=$CheekTaperStart,CheekTransition=$CheekTransition,JowlEnvelopeFit=$JowlEnvelopeFit,JowlEnvelopeWidth=$JowlEnvelopeWidth,JowlEnvelopeHeight=$JowlEnvelopeHeight,JowlEnvelopeTransition=$JowlEnvelopeTransition,CheekAxialFit=$CheekAxialFit,LowerCheekProfile=$LowerCheekProfile,ChinProjection=$ChinProjection,PinnaStandOff=$PinnaStandOff,PinnaForward=$PinnaForward,OrbitBreadth=$OrbitBreadth,CaninePlanum=$CaninePlanum,FelinePlanum=$FelinePlanum,PlanumTaper=$PlanumTaper,DigitReachOffset=$DigitReachOffset,DigitLengthScale=$DigitLengthScale,DigitBreadthScale=$DigitBreadthScale,DigitSpanOffset=$DigitSpanOffset,FissureStations=$FissureStations,FissureSides=$FissureSides,FaceSections=$FaceSections,FaceSides=$FaceSides,CheekToLip=$CheekToLip,BridgeRoof=$BridgeRoof,ChinFloor=$ChinFloor,WhiskerCount=$WhiskerCount,WhiskerStations=$WhiskerStations,WhiskerLatitudes=$WhiskerLatitudes,WhiskerStationOffset=$WhiskerStationOffset,WhiskerLatitudeOffset=$WhiskerLatitudeOffset,MuzzleGirthScale=$MuzzleGirthScale,MuzzleBridgeOffset=$MuzzleBridgeOffset,ChinFloorOffset=$ChinFloorOffset,SkullSeatStation=$SkullSeatStation,SkullSeatDepth=$SkullSeatDepth,SternalDrop=$SternalDrop,LipGrooveWidth=$LipGrooveWidth,LipTurnProjection=$LipTurnProjection,BrowToGlobe=$BrowToGlobe,CanineIris=$CanineIris,FelineIris=$FelineIris,UseSpeciesCoat=0,Feline=$Feline,LipCorner=$LipCorner,LipFrontStation=$LipFrontStation,LipDepth=$LipDepth,LipThickness=$LipThickness,ErectWidth=$ErectWidth,LobeWidth=$LobeWidth,PinnaBendLength=$PinnaBendLength,PinnaBendAngle=$PinnaBendAngle,PinnaBaseYaw=$PinnaBaseYaw,PinnaBurial=$PinnaBurial,PinnaRake=$PinnaRake,LobeFlare=$LobeFlare,LobeFlareCurve=$LobeFlareCurve,LobeTwist=$LobeTwist,LobeCup=$LobeCup,SpineOffset=$SpineOffset,BellyOffset=$BellyOffset,TrunkGirthScale=$TrunkGirthScale,NostrilSpacing=$NostrilSpacing,NostrilWidth=$NostrilWidth,NostrilHeight=$NostrilHeight,NasalWingWidth=$NasalWingWidth,NasalProjection=$NasalProjection,NasalCleft=$NasalCleft,IrisFraction=$IrisFraction,GlobeRimWidthInset=$GlobeRimWidthInset,GlobeRimHeightInset=$GlobeRimHeightInset,GlobeReturnOnset=$GlobeReturnOnset,GlobeReturnSpan=$GlobeReturnSpan,GlobeReturnDepth=$GlobeReturnDepth,GlobeDepth=$GlobeDepth,EarYaw=$EarYaw,EarThickness=$EarThickness,ConchaDepth=$ConchaDepth,WhiskerSweep=$WhiskerSweep,WhiskerSag=$WhiskerSag,TailTipFraction=$TailTipFraction,TailSag=$TailSag,ShoulderStation=$ShoulderStation,HipStation=$HipStation,ForeTrack=$ForeTrack,HindTrack=$HindTrack,TailStation=$TailStation,TailYaw=$TailYaw,TailRoll=$TailRoll,TailRootLevel=$TailRootLevel,ForeCarpusLevel=$ForeCarpusLevel,ElbowLevel=$ElbowLevel,HockLevel=$HockLevel,StifleLevel=$StifleLevel,HindFootReach=$HindFootReach,ForePawScale=$ForePawScale,HindPawScale=$HindPawScale,PasternReach=$PasternReach,PasternWidth=$PasternWidth,PasternDepth=$PasternDepth,PasternLevel=$PasternLevel,SoleInset=$SoleInset,DewDigitReach=$DewDigitReach,DewDigitBreadth=$DewDigitBreadth,DewDigitLength=$DewDigitLength,DewPadStation=$DewPadStation,DewPadBreadth=$DewPadBreadth,DewPadLength=$DewPadLength,DewClawStation=$DewClawStation,CarpalPadBreadth=$CarpalPadBreadth,CarpalPadLength=$CarpalPadLength,CarpalPadInset=$CarpalPadInset,ForeDewclaw=$ForeDewclaw,HindDewclaw=$HindDewclaw,CarpalPadScale=$CarpalPadScale,SkinFoldDepth=$SkinFoldDepth,ForeSweep=$ForeSweep,HindSweep=$HindSweep,ForeDepthScale=$ForeDepthScale,HindDepthScale=$HindDepthScale,ForeGirthScale=$ForeGirthScale,HindGirthScale=$HindGirthScale,MuscleDefinition=$MuscleDefinition,Condition=$Condition,HoundFraction=$HoundFraction,Length=$Length,LoinExtra=$LoinExtra,ChestWidth=$ChestWidth,ChestDepth=$ChestDepth,HipWidth=$HipWidth,WaistWidth=$WaistWidth,Tuck=$Tuck,CroupRise=$CroupRise,WitherRise=$WitherRise,NeckReach=$NeckReach,NeckRise=$NeckRise,NeckRootWidth=$NeckRootWidth,SkullWidth=$SkullWidth,SkullDepth=$SkullDepth,SkullPitch=$SkullPitch,ThroatFullness=$ThroatFullness,BreastProjection=$BreastProjection,JawInset=$JawInset,MuscleRelief=$MuscleRelief,ShoulderRelief=$ShoulderRelief,Clearance=$Clearance,LegMass=$LegMass,PawWidth=$PawWidth,PawLength=$PawLength,ToeSpread=$ToeSpread,DigitArch=$DigitArch,PadDepth=$PadDepth,ClawLength=$ClawLength,ToeLength=$ToeLength,ElbowSet=$ElbowSet,HockSet=$HockSet,StifleSet=$StifleSet,TailLength=$TailLength,TailRadius=$TailRadius,TailCarry=$TailCarry,TailCurl=$TailCurl,HeadLength=$HeadLength,HeadWidth=$HeadWidth,HeadHeight=$HeadHeight,HeadCarry=$HeadCarry,MuzzleShare=$MuzzleShare,MuzzleWidth=$MuzzleWidth,NoseSize=$NoseSize,EyeSize=$EyeSize,EyeSeparation=$EyeSeparation,EyeLift=$EyeLift,EyeLatitude=$EyeLatitude,EarSet=$EarSet,EarLatitude=$EarLatitude,NoseLevel=$NoseLevel,LipFullness=$LipFullness,ChinSetback=$ChinSetback,PhiltrumDepth=$PhiltrumDepth,EyeSet=$EyeSet,EyeAngle=$EyeAngle,Pupil=$Pupil,EyeAperture=$EyeAperture,EarHeight=$EarHeight,EarWidth=$EarWidth,EarFold=$EarFold,EarPoint=$EarPoint,EarSpread=$EarSpread,JawDepth=$JawDepth,CheekFullness=$CheekFullness,Brow=$Brow,WhiskerLength=$WhiskerLength,WhiskerRadius=$WhiskerRadius,WhiskerPad=$WhiskerPad,ThighMass=$ThighMass,ShankMass=$ShankMass,StandingLift=$StandingLift,StanceWidth=$StanceWidth,StanceOffset=$StanceOffset,Coat=$Coat,NosePart=$NosePart,EyePart=$EyePart,EarPart=$EarPart,ForelegPart=$ForelegPart,HindlegPart=$HindlegPart,PawPart=$PawPart,ForePawPart=$ForePawPart,HindPawPart=$HindPawPart,TailPart=$TailPart,HeadAssembly=$HeadAssembly)
+Fur = material('/Game/AnimalStudies/Catalogue/Materials/MI_FieldCoat')
+Animal = mesh() {
+  add($Whole.Animal,join=none)
+  material($Fur) [material=$Coat]
+}
+Head = mesh() {
+  add($Whole.HeadPart,join=none)
+  material($Fur) [material=$Coat]
+}
+
+CoatSurface = mesh() { add($Whole.CoatSurface,join=none) }

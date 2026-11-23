@@ -1,4 +1,4 @@
-gcshape 1  into:/GraphCodeShape/Presets  smooth:0.5  shade:40
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/TimberKitUltra  smooth:0.5  shade:40
 
 # TIMBER KIT, ULTRA TIER: each TimberKit subject at `budget=2` (its third tier, the heavy one), in a file of its own
 # so the kit builds in a few minutes and these lines are built only when wanted (kit §12.1: the budget is the

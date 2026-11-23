@@ -1,4 +1,4 @@
-gcshape 1 into:/GraphCodeShape/Presets smooth:0.003 shade:80
+gcshape 1 into:/Game/GraphCodeMarket/GraphCode/FingerAnatomy smooth:0.003 shade:80
 
 # Finger study under development. Centimetres; +Z root to tip, -Y palmar.
 # One constructor for digits 2-5. Thumb anatomy is a separate future study.

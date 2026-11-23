@@ -125,6 +125,10 @@ public class GraphCodeMove : ModuleRules
 				// — it rebuilds each op's FRetargetChainMapping, which no reflective write to
 				// `SourceIKRigAsset` can do. Both live here and neither has a runtime equivalent.
 				"IKRigEditor",
+				// Show on (UX step 5, CODER-NOTES-18.md; the owner, 20 Nov: "i didnt see manny to be selected there"): Unreal's own installer of a template's
+				// shared content (FFeaturePackContentSource::InsertAdditionalResources), the one the "Add Feature or Content Pack" dialog runs, for the Third
+				// Person template's Characters pack (Manny and Quinn).
+				"AddContentDialog",
 
 				// constraints() emits stock Control Rig units; no GraphCode runtime dependency.
 				"ControlRig",
@@ -198,6 +202,10 @@ public class GraphCodeMove : ModuleRules
 				// editor's own file dialog, and the Train window shows the held-out pictures the route drew (FImageUtils::LoadImage into an FImage).
 				"DesktopPlatform",
 				"ImageCore",
+				// The Train window for customers (the owner, 23 Nov: "all my customers cant train", "i cant even choose a character"): its Add takes the
+				// character from the Content Browser selection, and the picture tools are found in this plugin's own Resources/PictureRoute (IPluginManager).
+				"ContentBrowser",
+				"Projects",
 			}
 		);
 

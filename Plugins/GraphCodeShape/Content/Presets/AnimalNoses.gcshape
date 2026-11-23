@@ -1,0 +1,78 @@
+gcshape 1 into:/Game/AnimalStudies/Parts/Noses smooth:.04 shade:75 uv:keep
+# Published inserts have an open, 2 cm wide elliptical root at x=0.
+# Scale them through the head's NoseSize. The collar stays fixed as the tip changes.
+build { SM_NoseInsert = $Nose }
+NasalStandards = shape('/GraphCodeShape/Presets/AnimalFeatures',Feline=$Feline)
+MedialAlarOffset = $NasalStandards.MedialAlarOffset
+MedialAlarBreadth = $NasalStandards.MedialAlarBreadth
+MedialAlarHeight = $NasalStandards.MedialAlarHeight
+MedialAlarLevel = $NasalStandards.MedialAlarLevel
+MedialAlarProjection = $NasalStandards.MedialAlarProjection
+AlarCleftReach = $NasalStandards.AlarCleftReach
+AlarCleftDrop = $NasalStandards.AlarCleftDrop
+AlarLobuleRelief = $NasalStandards.AlarLobuleRelief
+AlarLobuleBreadth = $NasalStandards.AlarLobuleBreadth
+AlarLobuleHeight = $NasalStandards.AlarLobuleHeight
+AlarLobuleOffset = $NasalStandards.AlarLobuleOffset
+MedianGrooveHalfWidth = $NasalStandards.MedianGrooveHalfWidth
+MedianGrooveDrop = $NasalStandards.MedianGrooveDrop
+CleftUpperLevel = $NasalStandards.CleftUpperLevel
+CleftBlendHeight = $NasalStandards.CleftBlendHeight
+PlanumDome = $NasalStandards.PlanumDome
+PlanumHeightRatio = $NasalStandards.PlanumHeightRatio
+AlarWingHeight = $NasalStandards.AlarWingHeight
+AlarCreaseDepth = $NasalStandards.AlarCreaseDepth
+AlarCreaseHalfHeight = $NasalStandards.AlarCreaseHalfHeight
+AlarCreaseBow = $NasalStandards.AlarCreaseBow
+MoistMarginLevel = $NasalStandards.MoistMarginLevel
+MoistMarginStart = $NasalStandards.MoistMarginStart
+MoistMarginBlend = $NasalStandards.MoistMarginBlend
+Interior = material('/Game/AnimalStudies/Catalogue/Materials/M_NasalVestibule')
+EntranceFront = $NasalStandards.EntranceFront
+TurnStart = $NasalStandards.TurnStart
+ChamberRear = $NasalStandards.ChamberRear
+TurnRun = $NasalStandards.TurnRun
+SlitTerminalAspect = $NasalStandards.SlitTerminalAspect
+Feline = 0
+PlanumPalette = $Feline
+NostrilLevel = lerp(-.16,-.045,$Feline)
+PlanumCrownFlatten = lerp(.075,.29,$Feline)
+PlanumTipDrop = lerp(.035,.15,$Feline)
+AlarLipLift = lerp(.035,.17,$Feline)
+FelineLeather = material('/Game/AnimalStudies/Catalogue/Materials/MI_RosePlanum')
+PlanumTaper = .91
+WingWidth = 1
+Projection = 1
+# Independent tip fits share the same attachment rim as the neutral insert.
+BroadWingScale = 1.25
+BroadProjectionScale = 1.06
+BroadCleftScale = 1.2
+HeartWingScale = .88
+HeartProjectionScale = .76
+HeartCleftScale = 1.8
+CleftDepth = .10
+NostrilWidth = .175
+NostrilHeight = .115
+NarisArea = 3.141592653589793*$NostrilWidth*$NostrilHeight/4
+NarisAspect = $NostrilHeight/$NostrilWidth
+NarisCant = 16
+NarisHook = .38
+VestibuleExpansion = .14
+AlarSlitShare = .38
+AlarSlitLift = .12
+AlarSlitReach = 1.08
+NostrilSpacing = .54
+Leather = material('/Game/AnimalStudies/Catalogue/Materials/M_NasalLeather')
+Parts = shape('/GraphCodeShape/Presets/AnimalFeatures',MedialAlarOffset=$MedialAlarOffset,MedialAlarBreadth=$MedialAlarBreadth,MedialAlarHeight=$MedialAlarHeight,MedialAlarLevel=$MedialAlarLevel,MedialAlarProjection=$MedialAlarProjection,AlarCleftReach=$AlarCleftReach,AlarCleftDrop=$AlarCleftDrop,AlarLobuleRelief=$AlarLobuleRelief,AlarLobuleBreadth=$AlarLobuleBreadth,AlarLobuleHeight=$AlarLobuleHeight,AlarLobuleOffset=$AlarLobuleOffset,MedianGrooveHalfWidth=$MedianGrooveHalfWidth,MedianGrooveDrop=$MedianGrooveDrop,CleftUpperLevel=$CleftUpperLevel,CleftBlendHeight=$CleftBlendHeight,PlanumDome=$PlanumDome,PlanumHeightRatio=$PlanumHeightRatio,AlarWingHeight=$AlarWingHeight,AlarCreaseDepth=$AlarCreaseDepth,AlarCreaseHalfHeight=$AlarCreaseHalfHeight,AlarCreaseBow=$AlarCreaseBow,MoistMarginLevel=$MoistMarginLevel,MoistMarginStart=$MoistMarginStart,MoistMarginBlend=$MoistMarginBlend,VestibuleMaterial=$Interior,EntranceFront=$EntranceFront,TurnStart=$TurnStart,ChamberRear=$ChamberRear,TurnRun=$TurnRun,SlitTerminalAspect=$SlitTerminalAspect,PlanumPalette=$PlanumPalette,NarisArea=$NarisArea,NarisAspect=$NarisAspect,NarisCant=$NarisCant,NarisHook=$NarisHook,VestibuleExpansion=$VestibuleExpansion,AlarSlitShare=$AlarSlitShare,AlarSlitLift=$AlarSlitLift,AlarSlitReach=$AlarSlitReach,NostrilLevel=$NostrilLevel,PlanumCrownFlatten=$PlanumCrownFlatten,PlanumTipDrop=$PlanumTipDrop,AlarLipLift=$AlarLipLift,Feline=$Feline,FelineLeather=$FelineLeather,PlanumTaper=$PlanumTaper,Leather=$Leather,Dark=$Interior)
+Nose = mesh() {
+  add($Parts.Nose,breadth=$WingWidth,tip=$Projection,cleft=$CleftDepth,spacing=$NostrilSpacing,join=none)
+  save($RootBand) [$output.RootBand]
+}
+Broad = mesh() {
+  add($Parts.Nose,breadth=$BroadWingScale*$WingWidth,tip=$BroadProjectionScale*$Projection,cleft=$BroadCleftScale*$CleftDepth,spacing=$NostrilSpacing,join=none)
+  save($RootBand) [$output.RootBand]
+}
+Heart = mesh() {
+  add($Parts.Nose,breadth=$HeartWingScale*$WingWidth,tip=$HeartProjectionScale*$Projection,cleft=$HeartCleftScale*$CleftDepth,spacing=$NostrilSpacing,join=none)
+  save($RootBand) [$output.RootBand]
+}

@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
   "Version": 1,
-  "VersionName": "0.1.13",
+  "VersionName": "0.1.14",
   "FriendlyName": "GraphCode Rig",
   "Description": "A .gcrig declares where a mesh bends, and builds its skeleton, skin weights, physics bodies and IK rig from that one declaration.",
   "Category": "Editor",

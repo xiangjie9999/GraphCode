@@ -1,0 +1,254 @@
+gcshape 1  into:/Game/GraphCodeMarket/GraphCode/Stone  smooth:0.2  shade:40
+
+# STONE - one parametric stone. Every kind (field stone / boulder, split stone, river cobble, slab) is a NAMED VALUE SET
+# of the same continuous settings; nothing switches method (owner, 20 Nov 2026: "the stone should be parametric too").
+#
+#   S = shape('/Game/GraphCodeMarket/GraphCode/Stone/Stone', Face = $Granite, Broken = $FreshGranite)
+#   add($S.Stone, size=55, round=0.7, split=1, noise=7)          # your own values
+#   add($S.Boulder, noise=7)                                       # a value set; any knob still overridable
+#
+# THE ORDER IS THE ARTIST'S, AND THE HEAVY PART IS ONE PASS (Docs/GC-SHAPE-ROCK-GRAMMAR.md section 3):
+#   (1) BIG PLANES: a convex `polyhedron` of `faces` planes, proportions `width`/`height`; an affine `lean` shear.
+#   (2) EDGE LOSS AND CHIPS: one `weather()` convex rebuild (no boolean): each arris loses its own seeded depth.
+#   (3) SPLITS: `split` fresh planes, each found by a ray (`save ... project=`) and shaved `depth` deep (one small boolean on
+#       the ~15-face cage); BED: one horizontal `cut` lays the lowest `bed` share flat (the stone sits, never balances).
+#   (4) ROUNDING: Catmull-Clark of that clean cage, every edge held by a crease (weathered arrises by `round`, cut faces by
+#       `seat`/`fresh`), so the radius follows weather's uneven bevels and varies edge to edge.
+#   (5) LUMPS (0.4 x size) and MEDIUM relief (`cell` plates or billowed lumps): per-point warps, no added triangles.
+#   (6) FINE grain and PITS on High/Ultra only. Every relief pass fades in above the bearing face.
+# THE FRAME: lying on its bearing face at z = 0, centred in X/Y; X is the long axis.
+# SLOTS (pathless): `Face` the weathered skin, `Broken` every `cut` face (splits and the hidden bed). UVs: one box map.
+#
+# KNOBS - every one CLAMPED to the range beside it (a value past it builds the range's end); `noise` draws everything else:
+#   size      cm, the longest side (pebble 5, cobble 15-25, field stone 30-80, boulder 80-300)          [3, 400]     60
+#   width     width / length (measured: boulders ~0.7, cobbles 0.71 median)                           [0.2, 1]     0.75
+#   height    height / length (measured: boulders 0.4-0.65, cobbles ~0.45, slabs 0.06-0.15)            [0.06, 1]    0.55
+#   vary      per-seed spread: W and H +-vary, planes n or n+1, evenness +-60 vary points, lean, round +-0.6 vary, split +-1   [0, 0.4] 0.12
+#   joints    joint SETS bounding the mass (G32): 0 random planes (`faces`/`even` below), 1-3 sets: a bed set dipping 0-12 deg,
+#             then upright sets `jdip`-90 deg, the third about 90 deg from the second in plan     [0, 3]       0
+#   jspace    a set's gap as a share of the box's width across it (+-0.15 per seed): low = the joints bound the stone,
+#             1 = they cut nothing and the box's sides do (a loaf)                               [0.3, 1]     0.8
+#   jbed      the bed set's own gap (0 = same as jspace; 0.3-0.6 broad flat top and bottom for bedded wall stones) [0, 1] 0
+#   jtilt     degrees each joint plane leans its own way                                         [0, 45]      8
+#   jdip      the steepest an "upright" set may stand: 90 square quarried blocks, ~60 leaning field-stone sides [45, 90] 78
+#   breaks    extra shallow random breaks beside the sets                                        [0, 12]      2
+#   abrade    convex-only wear by curvature() (G32): ridges and rims worn back, hollows kept      [0, 1]       0
+#   faces     big planes: 6 a block, 7 a field stone, 8 is an octahedron (a double pyramid: avoid), 14+ an egg [5, 32] 10
+#   even      % evenness of those planes: 100 with 6 faces is an exact box, ~86 an irregular block, <70 wedges  [0, 100] 35
+#   split     fresh split planes shaved off (flat faces from splitting or quarrying)                   [0, 6]       1
+#   depth     how deep a split bites, a fraction of the stone's reach in its direction                 [0.05, 0.6]  0.2
+#   round     weathered arris rounding: 0 sharp (fresh quarry) .. 0.8 field boulder .. 1 water-worn     [0, 1]       0.6
+#   fresh     how much crisper cut faces' edges stay than weathered ones                               [0, 1]       0.6
+#   wear      edge loss depth, a fraction of size (weather amount)                                     [0, 0.2]     0.06
+#   cover     share of arrises worn                                                                     [0, 1]       0.7
+#   chips     share of wear facets biased deep (bites)                                                  [0, 1]       0.15
+#   bed       share of the height cut flat as the bearing face (5-25 %; the height is compensated)      [0, 0.3]     0
+#   seat      how crisp the bearing face's rim stays (sides meet the ground upright)                    [0, 1]       0
+#   base      bottom-heavy flare: footprint wider, top narrower (measured tops 0.75-0.9 of base)       [0, 0.5]     0.15
+#   lean      the top sheared over the base, a fraction of height                                      [0, 0.5]     0.15
+#   lumps     broad unevenness, a fraction of size, bulges about 0.4 x size across                     [0, 0.15]    0.04
+#   rough     medium relief, a fraction of size, plates 0.35 x size / (1 + 1.3 budget) across         [0, 0.05]    0.012
+#   grain     the medium relief's form: below 0.5 billowed lumps, above faceted plates                  [0, 1]       0.5
+#   fine      fine grain, a fraction of size (High/Ultra)                                               [0, 0.02]    0.004
+#   pits      erosion pock depth, a fraction of size (High/Ultra)                                       [0, 0.03]    0.006
+#   noise     the seed; every draw is keyed `noise * 1009 + k`                                          [1, 99999]   1
+#   budget    -1 Low (one subdivide level, ~150-300 triangles: stones repeated in a wall), 0 Game (about 430-1,000),
+#             1 High (about 36,000-90,000), 2 Ultra                                                  [-1, 2]      1
+#   tile      cm per UV tile                                                                            [1, 1000]    100
+#
+# VALUE SETS (each is `Stone` with these values; settings taken from Docs/Research/stone-real-and-cg.md, the measured table):
+#   Boulder (weathered field stone / glacial erratic; photos r07-r10): joints 3, jspace 0.55, jtilt 15, jdip 60, breaks 4,
+#           abrade 0.7, size 70, width 0.72, height 0.55, vary 0.2, round 0.72, wear 0.08, cover 0.6, chips 0.25, bed 0.12,
+#           seat 0.35, base 0, lean 0.1, lumps 0.05 (two octaves), split 0
+#   Split   (angular split / quarried stone; Powers 'angular'): joints 3, jspace 0.6, jtilt 6, jdip 78, breaks 2,
+#           size 45, width 0.6, height 0.45, split 1, round 0.15, fresh 1, chips 0.45, bed 0.1, seat 1, grain 1 (faceted)
+#   Cobble  (river cobble; r12, r16: W/L median 0.71, well rounded): size 20, width 0.71, height 0.45, faces 14, even 70,
+#           split 0, round 1, wear 0, lumps 0.03, rough 0.003
+#   Slab    (flag / slab; clapper bridges r23, r24, r27): size 90, width 0.55, height 0.12, faces 6, even 93 (parallel
+#           bedding faces), split 2 (steep: elevation capped by 2 x height), round 0.4, fresh 0.7, seat 0.5
+
+build {
+  SM_Stone_Boulder_Game = $BoulderGame [pivot=(0, 0, 0)]
+  SM_Stone_Boulder_High = $BoulderHigh [pivot=(0, 0, 0)]
+  SM_Stone_Split_Game   = $SplitGame [pivot=(0, 0, 0)]
+  SM_Stone_Split_High   = $SplitHigh [pivot=(0, 0, 0)]
+  SM_Stone_Cobble_Game  = $CobbleGame [pivot=(0, 0, 0)]
+  SM_Stone_Cobble_High  = $CobbleHigh [pivot=(0, 0, 0)]
+  SM_Stone_Slab_Game    = $SlabGame [pivot=(0, 0, 0)]
+  SM_Stone_Slab_High    = $SlabHigh [pivot=(0, 0, 0)]
+}
+
+Face   = material()
+Broken = material()
+
+# a split plane's cutter: a cube whose near face (normal -X) passes `b` cm behind its own origin, so placed at a surface
+# point and turned so its +X runs along the cast, it shaves everything more than `b` deep along that direction
+SplitCut = mesh(s=100.0, b=5.0) {
+  polyhedron(size=($s, $s, $s), faces=6, evenness=100%)
+  place(by=(0.5 * $s - $b, 0, 0 - 0.5 * $s))
+}
+
+Stone = mesh(size=60.0 [range=(3, 400)], width=0.75 [range=(0.2, 1)], height=0.55 [range=(0.06, 1)], faces=10 [range=(5, 32)], even=35.0 [range=(0, 100)], split=1 [range=(0, 6)], depth=0.2 [range=(0.05, 0.6)], round=0.6 [range=(0, 1)], fresh=0.6 [range=(0, 1)], wear=0.06 [range=(0, 0.2)], cover=0.7 [range=(0, 1)], chips=0.15 [range=(0, 1)], lumps=0.04 [range=(0, 0.15)], rough=0.012 [range=(0, 0.05)], grain=0.5 [range=(0, 1)], fine=0.004 [range=(0, 0.02)], pits=0.006 [range=(0, 0.03)], lean=0.15 [range=(0, 0.5)], base=0.15 [range=(0, 0.5)], seat=0.0 [range=(0, 1)], vary=0.12 [range=(0, 0.4)], bed=0.0 [range=(0, 0.3)], joints=0 [range=(0, 3)], jspace=0.8 [range=(0.3, 1)], jbed=0.0 [range=(0, 1)], jtilt=8.0 [range=(0, 45)], jdip=78.0 [range=(45, 90)], breaks=2 [range=(0, 12)], abrade=0.0 [range=(0, 1)], noise=1 [range=(1, 99999)], budget=1 [range=(-1, 2)], tile=100.0 [range=(1, 1000)]) {
+  $nz = floor($noise)
+  $k0 = $nz * 1009
+  $bg = floor($budget + 0.5)
+  # Catmull-Clark pulls a convex cage in, more the rounder it is: grow the cage so the stone keeps about `size`
+  $gr = 1 + 0.22 * $round
+  $L = $size * $gr
+  # VARY: each seed draws its own proportions about the set's (a different stone, not a rescaled copy)
+  $W = $L * clamp($width * (1 + $vary * random(seed=$k0 + 2, min=-1, max=1)), 0.2, 1)
+  # the cage is made taller by 1 / (1 - bed), so the stone keeps `height` after its foot is laid flat
+  $H = $L * clamp($height * (1 + $vary * random(seed=$k0 + 3, min=-1, max=1)), 0.06, 1) / (1 - $bed)
+  # (1) THE BIG PLANES
+  # `vary` also draws the plane count (n or n + 1; never fewer: 5 planes is a wedge) and evenness (+-35 x vary points) per seed
+  $fq = clamp(floor($faces + 0.5) + floor(min(1, 8 * $vary) * random(seed=$k0 + 4, min=0, max=1.99)), 5, 32)
+  $eq = clamp($even + 60 * $vary * random(seed=$k0 + 5, min=-1, max=1), 0, 100)
+  # (1) THE BIG PLANES: `joints` > 0 bounds the mass by JOINT SETS (granite: about three near-perpendicular families, one
+  # near level; G32 `polyhedron(joints=)`, one rebuild): a bed set dipping 0-12 degrees and up to two upright sets `jdip`-90
+  # degrees, the second about 90 degrees from the first in plan; each pair's gap `jspace` (+-0.15 per seed) of the box's
+  # width across it; `jtilt` leans every plane its own way; `breaks` adds random shallow breaks. `joints` 0: random planes.
+  $js = floor($joints + 0.5)
+  $jd1 = random(seed=$k0 + 30, min=0, max=12)
+  $ja1 = random(seed=$k0 + 31, min=0, max=360)
+  $jd2 = random(seed=$k0 + 32, min=$jdip, max=90)
+  $ja2 = random(seed=$k0 + 33, min=0, max=360)
+  $jd3 = random(seed=$k0 + 34, min=$jdip, max=90)
+  $ja3 = $ja2 + 90 + random(seed=$k0 + 35, min=-25, max=25)
+  # `jbed` (when 0.3 or more) gives the bed set its own gap: low = broad flat top and bottom, as bedded wall rubble
+  $jb = $jspace + clamp(ceil($jbed - 0.29), 0, 1) * ($jbed - $jspace)
+  $sp1 = 100 * clamp($jb + random(seed=$k0 + 36, min=-0.1, max=0.1), 0.3, 1)
+  $sp2 = 100 * clamp($jspace + random(seed=$k0 + 37, min=-0.15, max=0.15), 0.3, 1)
+  $sp3 = 100 * clamp($jspace + random(seed=$k0 + 38, min=-0.15, max=0.15), 0.3, 1)
+  $bq = floor($breaks + 0.5)
+  if ($js > 2.5) {
+    polyhedron(size=($L, $W, $H), joints=((dip=$jd1, azimuth=$ja1, spacing=$sp1%), (dip=$jd2, azimuth=$ja2, spacing=$sp2%), (dip=$jd3, azimuth=$ja3, spacing=$sp3%)), tilt=$jtilt, faces=$bq, seed=$nz)
+  } else {
+    if ($js > 1.5) {
+      polyhedron(size=($L, $W, $H), joints=((dip=$jd1, azimuth=$ja1, spacing=$sp1%), (dip=$jd2, azimuth=$ja2, spacing=$sp2%)), tilt=$jtilt, faces=$bq, seed=$nz)
+    } else {
+      if ($js > 0.5) {
+        polyhedron(size=($L, $W, $H), joints=((dip=$jd2, azimuth=$ja2, spacing=$sp2%)), tilt=$jtilt, faces=$bq, seed=$nz)
+      } else {
+        polyhedron(size=($L, $W, $H), faces=$fq, evenness=$eq%, seed=$nz)
+      }
+    }
+  }
+  # the top leans over the base along a drawn direction (an affine shear keeps every plane a plane)
+  $la = random(seed=$k0 + 1, min=0, max=360)
+  $lq = $lean * (1 + min(1, 4 * $vary) * random(seed=$k0 + 6, min=-0.8, max=1.2))
+  warp(to=(point.x + $lq * cos($la) * point.z, point.y + $lq * sin($la) * point.z, point.z))
+  # (2b) EDGE LOSS AND CHIPS in ONE convex rebuild (no boolean): seeded planar facets off the exposed arrises, each edge
+  # its own depth, so the rounding below varies from edge to edge; `chips` biases facets to the deep end (bites)
+  if ($wear > 0) {
+    $cv = $cover * 100
+    $ch = $chips * 100
+    weather(amount=$wear * $L, coverage=$cv%, variation=70%, scale=0.35 * $L, chips=$ch%, seed=$nz)
+  }
+  # (2) SPLIT PLANES: each shaves a cap off the mass along a drawn direction (sides and top, never the bearing face)
+  $ns = clamp(floor($split + 0.5 + min(1, 4 * $vary) * clamp($split, 0, 1) * random(seed=$k0 + 7, min=-1, max=1)), 0, 6)
+  if ($ns > 0) {
+    loop ($ns) {
+      $i = output.index
+      $az = random(seed=$k0 + 100 + $i, min=0, max=360)
+      $el = random(seed=$k0 + 200 + $i, min=0, max=60 * min(1, 2 * $height))
+      $dx = cos($el) * cos($az)
+      $dy = cos($el) * sin($az)
+      $dz = sin($el)
+      $reach = sqrt(pow(0.5 * $L * $dx, 2) + pow(0.5 * $W * $dy, 2) + pow(0.5 * $H * $dz, 2))
+      $bite = $reach * $depth * random(seed=$k0 + 300 + $i, min=0.6, max=1.4)
+      $cr = 2 * $L
+      save($SplitAt) [at=(0, 0, 0.5 * $H), project=($dx, $dy, $dz), within=$cr]
+      subtract($SplitCut, s=4 * $L, b=$bite, at=$SplitAt, rotate=(random(seed=$k0 + 400 + $i, min=0, max=90), $el, $az))
+    }
+  }
+  # BED: the lowest `bed` share of the height cut off the cage by ONE horizontal plane (Rock Forge's base flatten, 5-25 % of
+  # height), so the stone sits on a broad true plane whatever the seed; the cut face is tagged `cut` and creased by `seat`
+  if ($bed > 0) {
+    $hb = $bed * $H
+    cut(plane=-Z, at=(0, 0, $hb))
+    place(by=(0, 0, 0 - $hb))
+  }
+  # (3) ROUNDING: OpenSubdiv sharpness 0 (fully round) .. 4 (holds as a line through four levels)
+  # `vary` also draws the roundness per seed (+-0.6 x vary): some stones crisper, some softer
+  $rq = clamp($round + 0.6 * $vary * random(seed=$k0 + 8, min=-1, max=1), 0, 1)
+  $sw = 4 * pow(1 - $rq, 1.2)
+  $sc = $sw + $fresh * (4 - $sw)
+  crease($sw) [sharp]
+  # SEAT: the edges round the bearing face kept crisper, so the sides meet the ground upright (a planted stone). With a `bed`
+  # the bearing face is a `cut` face, so the cut faces (bed and splits) take the crisper of `seat` and `fresh`
+  if ($bed > 0) {
+    crease($sw + max($seat, $fresh) * (4 - $sw)) [cut]
+  } else {
+    if ($seat > 0) {
+      crease($sw + $seat * (4 - $sw)) [bottom]
+    }
+    if ($ns > 0) {
+      crease($sc) [cut]
+    }
+  }
+  subdivide(2 + $bg)
+  # BOTTOM-HEAVY: the footprint widens and the top narrows (measured: tops 0.75-0.9 of the base width on the erratics)
+  if ($base > 0) {
+    warp(to=(point.x * (1 + $base * (0.5 - point.t.z)), point.y * (1 + $base * (0.5 - point.t.z)), point.z))
+  }
+  # ABRASION: convex parts worn back by how much they turn (G32 `curvature()`), hollows kept: every crisp rim (a split, a
+  # chip) weathers like the rest; faded off the bearing face
+  if ($abrade > 0) {
+    $ab = $abrade * 0.03 * $size
+    $hz = 0.04 * $H + 0.2
+    warp(by=0 - $ab * clamp(curvature(), 0, 1) * clamp((point.z - $hz) / $hz, 0, 1))
+  }
+  # every relief pass below fades in above the bearing face, so the base stays one clean plane (no folds where it meets)
+  $fz = 0.02 * $H + 0.2
+  $ff = 0.12 * $H
+  # (4) LUMPS: broad bulges and hollows (0.4 x size across), so no face is a dead plane and no silhouette is symmetric.
+  # A per-point warp along the normal: it adds no triangles, and the `zf` ramp keeps the bearing face flat.
+  # (5) MEDIUM relief (0.35 x size / (1 + 1.3 budget) across): faceted plates (`cell`) or billowed lumps by `grain`.
+  $sl = 0.4 * $size
+  $sm = 0.35 * $size / (1 + 1.3 * max($bg, 0))
+  $am = $rough * $size
+  if ($grain > 0.5) {
+    warp(with=(Zf: clamp((point.z - $fz) / $ff, 0, 1)), by=$Zf * ($lumps * $size * (noise(point.x / $sl, point.y / $sl, point.z / $sl, $nz + 11) + 0.5 * noise(point.x / (0.5 * $sl), point.y / (0.5 * $sl), point.z / (0.5 * $sl), $nz + 12)) + $am * cell(point.x / $sm, point.y / $sm, point.z / $sm, $nz + 13)))
+  } else {
+    warp(with=(Zf: clamp((point.z - $fz) / $ff, 0, 1)), by=$Zf * ($lumps * $size * (noise(point.x / $sl, point.y / $sl, point.z / $sl, $nz + 11) + 0.5 * noise(point.x / (0.5 * $sl), point.y / (0.5 * $sl), point.z / (0.5 * $sl), $nz + 12)) + $am * (2 * abs(noise(point.x / $sm, point.y / $sm, point.z / $sm, $nz + 13)) - 1)))
+  }
+  if ($bg > 0.5) {
+    if ($fine > 0) {
+      roughen(by=$fine * $size, scale=(0.07 - 0.02 * $bg) * $size, seed=$k0 + 17) [above=$fz, fade=$fz]
+    }
+    # (6) PITS: rounded pocks where a noise field peaks, sunk along the normal
+    if ($pits > 0) {
+      $pf = 0.025 * $size
+      warp(by=0 - $pits * $size * pow(clamp((noise(point.x / $pf, point.y / $pf, point.z / $pf, $nz) - 0.3) / 0.4, 0, 1), 0.6)) [above=$fz]
+    }
+  }
+  material($Face)
+  if ($ns > 0) {
+    material($Broken) [cut]
+  }
+  uv(box, scale=$tile)
+}
+
+# ---- VALUE SETS: the same Stone, named values (each still takes every other knob) ---------------------------------------
+Boulder = mesh($Stone, jdip=60.0, joints=3, jspace=0.55, jtilt=15.0, breaks=4, abrade=0.7, base=0.0, seat=0.35, vary=0.2, bed=0.12, size=70.0, width=0.72, height=0.55, faces=6, even=80.0, split=0, depth=0.14, round=0.72, fresh=0.1, wear=0.08, cover=0.6, chips=0.25, lumps=0.05, rough=0.006, grain=0.3, fine=0.003, pits=0.004, lean=0.1) {
+  add($Stone)
+}
+Split = mesh($Stone, joints=3, jspace=0.6, jtilt=6.0, breaks=2, abrade=0.0, size=45.0, width=0.6, height=0.45, faces=6, even=88.0, vary=0.15, bed=0.1, seat=1.0, split=1, depth=0.18, round=0.15, fresh=1.0, wear=0.025, cover=0.6, chips=0.45, lumps=0.012, rough=0.012, grain=1.0, fine=0.003, pits=0.002, lean=0.05, base=0.0) {
+  add($Stone)
+}
+Cobble = mesh($Stone, size=20.0, width=0.71, height=0.45, faces=14, even=70.0, split=0, round=1.0, wear=0.0, chips=0.0, lumps=0.03, rough=0.003, grain=0.0, fine=0.0015, pits=0.002, lean=0.05) {
+  add($Stone)
+}
+Slab = mesh($Stone, size=90.0, width=0.55, height=0.12, faces=6, even=93.0, vary=0.12, bed=0.0, seat=0.5, split=2, depth=0.12, round=0.4, fresh=0.7, wear=0.03, cover=0.6, chips=0.3, lumps=0.012, rough=0.006, grain=0.8, fine=0.002, pits=0.004, lean=0.03, base=0.0) {
+  add($Stone)
+}
+
+# ---- tiers (a build line cannot pass values) -------------------------------------------------------------------------
+BoulderGame = mesh($Boulder, budget=0) { add($Boulder) }
+BoulderHigh = mesh($Boulder, budget=1) { add($Boulder) }
+SplitGame   = mesh($Split, budget=0) { add($Split) }
+SplitHigh   = mesh($Split, budget=1) { add($Split) }
+CobbleGame  = mesh($Cobble, budget=0) { add($Cobble) }
+CobbleHigh  = mesh($Cobble, budget=1) { add($Cobble) }
+SlabGame    = mesh($Slab, budget=0) { add($Slab) }
+SlabHigh    = mesh($Slab, budget=1) { add($Slab) }
