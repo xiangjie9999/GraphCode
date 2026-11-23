@@ -1,0 +1,35 @@
+gc 1  kind:material  asset:/Game/GraphCode/Groom/M_GcCardMasked
+parent: /Script/Engine.Material
+
+settings {
+  BlendMode = BLEND_Masked
+  bUsedWithSkeletalMesh = true
+  OpacityMaskClipValue = 0.5
+  ShadingModel = MSM_TwoSidedFoliage
+  TwoSided = true
+}
+
+graph {
+  n0 = TextureCoordinate()
+  n1 = TextureSampleParameter2D(in0=n0.out0) [ParameterName=Paint, Texture=obj'/Engine/EngineResources/WhiteSquareTexture.WhiteSquareTexture', link0.name="Coordinates"]
+  n2 = TextureSampleParameter2D(in0=n0.out0) [ParameterName=PaintNormal, SamplerType=SAMPLERTYPE_Normal, Texture=obj'/Engine/EngineMaterials/FlatNormal.FlatNormal', link0.name="Coordinates"]
+  n3 = VectorParameter() [DefaultValue=(R=1.0,G=1.0,B=1.0,A=1.0), ParameterName=Tint]
+  n4 = VectorParameter() [DefaultValue=(R=1.0,G=1.0,B=1.0,A=1.0), ParameterName=BackTint]
+  n5 = TwoSidedSign()
+  n6 = Custom(in0=n1.out0, in1=n3.out0.rgb, in2=n4.out0.rgb, in3=n5.out0) [Code="// GraphCodeGroom masked card (GC-GROOM-FEATHER-PLAN.md FC1): the painted atlas times Tint; the back face (TwoSidedSign -1)\n// is multiplied by BackTint too, so one painted side serves both and a feather can be darker or warmer underneath.\nreturn Paint * Tint * (Sign < 0.0 ? BackTint : float3(1.0, 1.0, 1.0));\n", Description="Masked card colour: atlas x Tint, x BackTint on the back face", Inputs=((InputName=Paint),(InputName=Tint),(InputName=BackTint),(InputName=Sign)), link0.name="Paint", link1.name="Tint", link2.name="BackTint", link3.name="Sign"]
+  n7 = ScalarParameter() [DefaultValue=0.33, ParameterName=AlphaClip]
+  n8 = Subtract(in0=n1.out4, in1=n7.out0) [link0.name="A", link1.name="B"]
+  n9 = Constant() [R=0.5]
+  n10 = Add(in0=n8.out0, in1=n9.out0) [link0.name="A", link1.name="B"]
+  n11 = Constant3Vector() [Constant=(R=0.0,G=0.0,B=1.0,A=1.0)]
+  n12 = ScalarParameter() [DefaultValue=1.0, ParameterName=NormalStrength]
+  n13 = LinearInterpolate(in0=n11.out0, in1=n2.out0.rgb, in2=n12.out0) [link0.name="A", link1.name="B", link2.name="Alpha"]
+  n14 = Normalize(in0=n13.out0) [link0.name="VectorInput"]
+  n15 = ScalarParameter() [DefaultValue=0.35, ParameterName=Transmission]
+  n16 = Multiply(in0=n6.out0, in1=n15.out0) [link0.name="A", link1.name="B"]
+  n17 = ScalarParameter() [DefaultValue=0.65, ParameterName=Roughness]
+  result = MaterialResult(BaseColor=n6.out0, OpacityMask=n10.out0, Normal=n14.out0, SubsurfaceColor=n16.out0, Roughness=n17.out0)
+}
+
+comments {
+}

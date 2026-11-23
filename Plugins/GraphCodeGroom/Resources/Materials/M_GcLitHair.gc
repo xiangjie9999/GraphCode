@@ -1,0 +1,52 @@
+gc 1  kind:material  asset:/Game/GraphCode/Groom/M_GcLitHair
+parent: /Script/Engine.Material
+
+settings {
+  bTangentSpaceNormal = false
+  bUsedWithNanite = true
+  bUsedWithSkeletalMesh = true
+}
+
+graph {
+  n0 = VectorParameter() [DefaultValue=(R=0.85,G=0.8,B=0.75,A=1.0), ParameterName=RootColor]
+  n1 = VectorParameter() [DefaultValue=(R=0.85,G=0.8,B=0.75,A=1.0), ParameterName=TipColor]
+  n2 = TextureCoordinate()
+  n3 = ScalarParameter() [DefaultValue=0.1, ParameterName=GradientStart]
+  n4 = Subtract(in0=n2.out0.g, in1=n3.out0) [link0.name="A", link1.name="B"]
+  n5 = ScalarParameter() [DefaultValue=0.7, ParameterName=GradientEnd]
+  n6 = Subtract(in0=n5.out0, in1=n3.out0) [link0.name="A", link1.name="B"]
+  n7 = Divide(in0=n4.out0, in1=n6.out0) [link0.name="A", link1.name="B"]
+  n8 = Saturate(in0=n7.out0) [link0.name="Input"]
+  n9 = LinearInterpolate(in0=n0.out0.rgb, in1=n1.out0.rgb, in2=n8.out0) [link0.name="A", link1.name="B", link2.name="Alpha"]
+  n10 = TextureSampleParameter2D(in0=n2.out0) [ParameterName=Paint, Texture=obj'/Engine/EngineResources/WhiteSquareTexture.WhiteSquareTexture', link0.name="Coordinates"]
+  n11 = Multiply(in0=n9.out0, in1=n10.out0.rgb) [link0.name="A", link1.name="B"]
+  n12 = VectorParameter() [DefaultValue=(R=1.0,G=1.0,B=1.0,A=1.0), ParameterName=Tint]
+  n13 = Multiply(in0=n11.out0, in1=n12.out0.rgb) [link0.name="A", link1.name="B"]
+  n14 = ScalarParameter() [DefaultValue=0.55, ParameterName=EdgeTone]
+  n15 = Multiply(in0=n2.out0.r) [ConstB=2.0, link0.name="A"]
+  n16 = Subtract(in0=n15.out0) [link0.name="A"]
+  n17 = Abs(in0=n16.out0) [link0.name="Input"]
+  n18 = Multiply(in0=n17.out0, in1=n17.out0) [link0.name="A", link1.name="B"]
+  n19 = Multiply(in0=n18.out0, in1=n17.out0) [link0.name="A", link1.name="B"]
+  n20 = LinearInterpolate(in1=n14.out0, in2=n19.out0) [ConstA=1.0, link1.name="B", link2.name="Alpha"]
+  n21 = Multiply(in0=n13.out0, in1=n20.out0) [link0.name="A", link1.name="B"]
+  n22 = VertexColor()
+  n23 = Subtract(in0=n22.out0.b) [ConstB=0.5, link0.name="A"]
+  n24 = ScalarParameter() [DefaultValue=0.2, ParameterName=CardVariation]
+  n25 = Multiply(in0=n23.out0, in1=n24.out0) [link0.name="A", link1.name="B"]
+  n26 = Add(in0=n25.out0) [link0.name="A"]
+  n27 = Multiply(in0=n21.out0, in1=n26.out0) [link0.name="A", link1.name="B"]
+  n28 = ScalarParameter() [DefaultValue=0.25, ParameterName=Fill]
+  n29 = Multiply(in0=n27.out0, in1=n28.out0) [link0.name="A", link1.name="B"]
+  n30 = ScalarParameter() [DefaultValue=0.5, ParameterName=Specular]
+  n31 = ScalarParameter() [DefaultValue=0.35, ParameterName=Roughness]
+  n32 = VertexNormalWS()
+  n33 = VertexTangentWS()
+  n34 = ScalarParameter() [DefaultValue=0.6, ParameterName=ProxyBlend]
+  n35 = LinearInterpolate(in0=n32.out0, in1=n33.out0, in2=n34.out0) [link0.name="A", link1.name="B", link2.name="Alpha"]
+  n36 = Normalize(in0=n35.out0) [link0.name="VectorInput"]
+  result = MaterialResult(EmissiveColor=n29.out0, BaseColor=n27.out0, Specular=n30.out0, Roughness=n31.out0, Normal=n36.out0)
+}
+
+comments {
+}

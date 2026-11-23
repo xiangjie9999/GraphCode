@@ -1,0 +1,5147 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "generator": "strip_cloth_cantilever_controls.py",
+  "source_sha256": "e905655d1a43f577ab0141c14c0c18f871c9061ad77feadb0c37a7c52c283465",
+  "shared_helper_sha256": "5c3d41d630c698b3c8752e5a582dfa87e1a91fd36c937fdc7a08e9aaac28724c",
+  "contract": {
+    "units": "cm, gram, second",
+    "model": "Hard per-face F-column lengths; shear energy 0.5*mu*A*(normalized F1 dot F2)^2; interior hinge energy 0.5*G*rest_edge^2/(A1+A2)*theta^2; nodal selfweight from rest-area/3.",
+    "reference_method": "SLSQP constrained minimization followed by local KKT Newton refinement; two starting states; central FD energy gradient and constrained Hessian stability check.",
+    "sampling": "8x2 and 16x4 free quads plus one held backing column. Root uses two fixed rows, not a half-cell virtual beam tangent.",
+    "helper_hashes": {
+      "strip_hinge_controls.py": "c192c7980ae7900cfa3c9ee9eb6a493748f025594f2a103c0aefc68abd955d0c"
+    },
+    "limitations": "Discrete-model targets, not continuum exact cloth or native XPBD proof. Zero thickness, contact disabled, isotropic rigidity, prescribed shear modulus; no artist calibration claimed."
+  },
+  "cases": [
+    {
+      "id": "E3b_loaded_cloth_8x2",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            -0.5,
+            0.0
+          ],
+          "position": [
+            -0.5,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            -0.5,
+            0.5
+          ],
+          "position": [
+            -0.5,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            -0.5,
+            1.0
+          ],
+          "position": [
+            -0.5,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 4,
+          "cut": [
+            0.0,
+            0.5
+          ],
+          "position": [
+            0.0,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 5,
+          "cut": [
+            0.0,
+            1.0
+          ],
+          "position": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 6,
+          "cut": [
+            0.5,
+            0.0
+          ],
+          "position": [
+            0.5,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 7,
+          "cut": [
+            0.5,
+            0.5
+          ],
+          "position": [
+            0.5,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 8,
+          "cut": [
+            0.5,
+            1.0
+          ],
+          "position": [
+            0.5,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 9,
+          "cut": [
+            1.0,
+            0.0
+          ],
+          "position": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 10,
+          "cut": [
+            1.0,
+            0.5
+          ],
+          "position": [
+            1.0,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 150.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 11,
+          "cut": [
+            1.0,
+            1.0
+          ],
+          "position": [
+            1.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 12,
+          "cut": [
+            1.5,
+            0.0
+          ],
+          "position": [
+            1.5,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 13,
+          "cut": [
+            1.5,
+            0.5
+          ],
+          "position": [
+            1.5,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 14,
+          "cut": [
+            1.5,
+            1.0
+          ],
+          "position": [
+            1.5,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 15,
+          "cut": [
+            2.0,
+            0.0
+          ],
+          "position": [
+            2.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 16,
+          "cut": [
+            2.0,
+            0.5
+          ],
+          "position": [
+            2.0,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 150.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 17,
+          "cut": [
+            2.0,
+            1.0
+          ],
+          "position": [
+            2.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 18,
+          "cut": [
+            2.5,
+            0.0
+          ],
+          "position": [
+            2.5,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 19,
+          "cut": [
+            2.5,
+            0.5
+          ],
+          "position": [
+            2.5,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 20,
+          "cut": [
+            2.5,
+            1.0
+          ],
+          "position": [
+            2.5,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 21,
+          "cut": [
+            3.0,
+            0.0
+          ],
+          "position": [
+            3.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 22,
+          "cut": [
+            3.0,
+            0.5
+          ],
+          "position": [
+            3.0,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 150.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 23,
+          "cut": [
+            3.0,
+            1.0
+          ],
+          "position": [
+            3.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 24,
+          "cut": [
+            3.5,
+            0.0
+          ],
+          "position": [
+            3.5,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 25,
+          "cut": [
+            3.5,
+            0.5
+          ],
+          "position": [
+            3.5,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 26,
+          "cut": [
+            3.5,
+            1.0
+          ],
+          "position": [
+            3.5,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 27,
+          "cut": [
+            4.0,
+            0.0
+          ],
+          "position": [
+            4.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 28,
+          "cut": [
+            4.0,
+            0.5
+          ],
+          "position": [
+            4.0,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 300.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 29,
+          "cut": [
+            4.0,
+            1.0
+          ],
+          "position": [
+            4.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            0,
+            3,
+            4
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            0,
+            4,
+            1
+          ]
+        },
+        {
+          "id": 2,
+          "vertices": [
+            1,
+            4,
+            2
+          ]
+        },
+        {
+          "id": 3,
+          "vertices": [
+            4,
+            5,
+            2
+          ]
+        },
+        {
+          "id": 4,
+          "vertices": [
+            3,
+            6,
+            4
+          ]
+        },
+        {
+          "id": 5,
+          "vertices": [
+            6,
+            7,
+            4
+          ]
+        },
+        {
+          "id": 6,
+          "vertices": [
+            4,
+            7,
+            8
+          ]
+        },
+        {
+          "id": 7,
+          "vertices": [
+            4,
+            8,
+            5
+          ]
+        },
+        {
+          "id": 8,
+          "vertices": [
+            6,
+            9,
+            10
+          ]
+        },
+        {
+          "id": 9,
+          "vertices": [
+            6,
+            10,
+            7
+          ]
+        },
+        {
+          "id": 10,
+          "vertices": [
+            7,
+            10,
+            8
+          ]
+        },
+        {
+          "id": 11,
+          "vertices": [
+            10,
+            11,
+            8
+          ]
+        },
+        {
+          "id": 12,
+          "vertices": [
+            9,
+            12,
+            10
+          ]
+        },
+        {
+          "id": 13,
+          "vertices": [
+            12,
+            13,
+            10
+          ]
+        },
+        {
+          "id": 14,
+          "vertices": [
+            10,
+            13,
+            14
+          ]
+        },
+        {
+          "id": 15,
+          "vertices": [
+            10,
+            14,
+            11
+          ]
+        },
+        {
+          "id": 16,
+          "vertices": [
+            12,
+            15,
+            16
+          ]
+        },
+        {
+          "id": 17,
+          "vertices": [
+            12,
+            16,
+            13
+          ]
+        },
+        {
+          "id": 18,
+          "vertices": [
+            13,
+            16,
+            14
+          ]
+        },
+        {
+          "id": 19,
+          "vertices": [
+            16,
+            17,
+            14
+          ]
+        },
+        {
+          "id": 20,
+          "vertices": [
+            15,
+            18,
+            16
+          ]
+        },
+        {
+          "id": 21,
+          "vertices": [
+            18,
+            19,
+            16
+          ]
+        },
+        {
+          "id": 22,
+          "vertices": [
+            16,
+            19,
+            20
+          ]
+        },
+        {
+          "id": 23,
+          "vertices": [
+            16,
+            20,
+            17
+          ]
+        },
+        {
+          "id": 24,
+          "vertices": [
+            18,
+            21,
+            22
+          ]
+        },
+        {
+          "id": 25,
+          "vertices": [
+            18,
+            22,
+            19
+          ]
+        },
+        {
+          "id": 26,
+          "vertices": [
+            19,
+            22,
+            20
+          ]
+        },
+        {
+          "id": 27,
+          "vertices": [
+            22,
+            23,
+            20
+          ]
+        },
+        {
+          "id": 28,
+          "vertices": [
+            21,
+            24,
+            22
+          ]
+        },
+        {
+          "id": 29,
+          "vertices": [
+            24,
+            25,
+            22
+          ]
+        },
+        {
+          "id": 30,
+          "vertices": [
+            22,
+            25,
+            26
+          ]
+        },
+        {
+          "id": 31,
+          "vertices": [
+            22,
+            26,
+            23
+          ]
+        },
+        {
+          "id": 32,
+          "vertices": [
+            24,
+            27,
+            28
+          ]
+        },
+        {
+          "id": 33,
+          "vertices": [
+            24,
+            28,
+            25
+          ]
+        },
+        {
+          "id": 34,
+          "vertices": [
+            25,
+            28,
+            26
+          ]
+        },
+        {
+          "id": 35,
+          "vertices": [
+            28,
+            29,
+            26
+          ]
+        }
+      ],
+      "segments": [],
+      "settings": {
+        "length_cm": 4.0,
+        "width_cm": 1.0,
+        "held_backing_length_cm": 0.5,
+        "pinned_vertices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "area_density_g_per_cm2": 0.02,
+        "gravity": [
+          0.0,
+          0.0,
+          -981.0
+        ],
+        "G": 156.96,
+        "surface_shear_modulus": 4000.0,
+        "nodal_masses": [
+          0.0016666666666666668,
+          0.0016666666666666668,
+          0.0016666666666666668,
+          0.0016666666666666668,
+          0.006666666666666667,
+          0.0016666666666666668,
+          0.0033333333333333335,
+          0.0033333333333333335,
+          0.0033333333333333335,
+          0.0016666666666666668,
+          0.006666666666666667,
+          0.0016666666666666668,
+          0.0033333333333333335,
+          0.0033333333333333335,
+          0.0033333333333333335,
+          0.0016666666666666668,
+          0.006666666666666667,
+          0.0016666666666666668,
+          0.0033333333333333335,
+          0.0033333333333333335,
+          0.0033333333333333335,
+          0.0016666666666666668,
+          0.006666666666666667,
+          0.0016666666666666668,
+          0.0033333333333333335,
+          0.0033333333333333335,
+          0.0033333333333333335,
+          0.0008333333333333334,
+          0.0033333333333333335,
+          0.0008333333333333334
+        ],
+        "hard_yarn_edge_pairs": [
+          [
+            3,
+            6
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            5,
+            8
+          ],
+          [
+            6,
+            9
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            7,
+            10
+          ],
+          [
+            7,
+            8
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            9,
+            12
+          ],
+          [
+            9,
+            10
+          ],
+          [
+            10,
+            13
+          ],
+          [
+            10,
+            11
+          ],
+          [
+            11,
+            14
+          ],
+          [
+            12,
+            15
+          ],
+          [
+            12,
+            13
+          ],
+          [
+            13,
+            16
+          ],
+          [
+            13,
+            14
+          ],
+          [
+            14,
+            17
+          ],
+          [
+            15,
+            18
+          ],
+          [
+            15,
+            16
+          ],
+          [
+            16,
+            19
+          ],
+          [
+            16,
+            17
+          ],
+          [
+            17,
+            20
+          ],
+          [
+            18,
+            21
+          ],
+          [
+            18,
+            19
+          ],
+          [
+            19,
+            22
+          ],
+          [
+            19,
+            20
+          ],
+          [
+            20,
+            23
+          ],
+          [
+            21,
+            24
+          ],
+          [
+            21,
+            22
+          ],
+          [
+            22,
+            25
+          ],
+          [
+            22,
+            23
+          ],
+          [
+            23,
+            26
+          ],
+          [
+            24,
+            27
+          ],
+          [
+            24,
+            25
+          ],
+          [
+            25,
+            28
+          ],
+          [
+            25,
+            26
+          ],
+          [
+            26,
+            29
+          ],
+          [
+            27,
+            28
+          ],
+          [
+            28,
+            29
+          ]
+        ],
+        "hard_yarn_rest_lengths": [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        "rest_hinge_angle": 0.0,
+        "contact": false,
+        "thickness": 0.0,
+        "grain": [
+          1.0,
+          0.0
+        ],
+        "boundary": "All coordinates fixed at rows x=-dx and x=0. No symmetry/planarity/transverse rails; all remaining coordinates free."
+      },
+      "expected": {
+        "status": "StaticReference",
+        "positions": [
+          [
+            -0.5,
+            0.0,
+            0.0
+          ],
+          [
+            -0.5,
+            0.5,
+            0.0
+          ],
+          [
+            -0.5,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.5,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.47001468284811565,
+            0.0002199653888736999,
+            -0.17054661979181204
+          ],
+          [
+            0.4647502794092668,
+            0.5,
+            -0.18441035163192018
+          ],
+          [
+            0.4700146828481157,
+            0.9997800346111263,
+            -0.17054661979181202
+          ],
+          [
+            0.8624480666781172,
+            0.0001903824484161812,
+            -0.4803788943866067
+          ],
+          [
+            0.8735917617212127,
+            0.5,
+            -0.47224475253106707
+          ],
+          [
+            0.8624480666781174,
+            0.9998096175515838,
+            -0.48037889438660675
+          ],
+          [
+            1.2007282999656863,
+            3.3084723156863595e-06,
+            -0.8485723880420967
+          ],
+          [
+            1.2007083571856831,
+            0.49999999999999994,
+            -0.8503911963484512
+          ],
+          [
+            1.2007282999656863,
+            0.9999966915276842,
+            -0.8485723880420967
+          ],
+          [
+            1.4812739207604178,
+            6.319561505098561e-05,
+            -1.2624493638047367
+          ],
+          [
+            1.4885432071186917,
+            0.4999999999999999,
+            -1.2592323625292094
+          ],
+          [
+            1.4812739207604178,
+            0.9999368043849488,
+            -1.2624493638047367
+          ],
+          [
+            1.7362491157597655,
+            1.3433986248446028e-06,
+            -1.6925512658109334
+          ],
+          [
+            1.7373424015243542,
+            0.4999999999999999,
+            -1.69293613339487
+          ],
+          [
+            1.7362491157597655,
+            0.9999986566013749,
+            -1.6925512658109332
+          ],
+          [
+            1.969118367852918,
+            8.451745304484908e-06,
+            -2.1350124634080188
+          ],
+          [
+            1.9719736282881477,
+            0.4999999999999999,
+            -2.134465506627634
+          ],
+          [
+            1.9691183678529183,
+            0.9999915482546953,
+            -2.1350124634080188
+          ],
+          [
+            2.1956918848608584,
+            1.42331135525558e-06,
+            -2.5807303577551646
+          ],
+          [
+            2.1968424332681877,
+            0.4999999999999999,
+            -2.5810458695488543
+          ],
+          [
+            2.195691884860859,
+            0.9999985766886446,
+            -2.5807303577551646
+          ],
+          [
+            2.418866115321648,
+            1.7021733135881916e-06,
+            -3.028159975525554
+          ],
+          [
+            2.4201464660084224,
+            0.4999999999999999,
+            -3.0284107194889764
+          ],
+          [
+            2.418866115321648,
+            0.9999982978266861,
+            -3.028159975525554
+          ]
+        ],
+        "tip_average": [
+          2.4192928988839064,
+          -1.6653345369377348e-16,
+          -3.0282435568466948
+        ],
+        "tip_chord_angle_degrees": 51.37830614027711,
+        "metrics": {
+          "bend_energy": 37.9547429682555,
+          "shear_energy": 0.08147397673420914,
+          "gravity_energy": -104.78977085905993,
+          "maximum_yarn_strain": 6.661338147750939e-16,
+          "maximum_shear": 0.007352609771987501,
+          "maximum_hinge_angle": 0.34807967199451195,
+          "energy": -66.75355391407021,
+          "maximum_constraint_residual": 7.771561172376096e-16,
+          "maximum_stationarity_force": 1.4335199693960021e-12,
+          "jacobian_rank": 40,
+          "constraint_count": 40,
+          "slsqp_success": true,
+          "slsqp_message": "Optimization terminated successfully",
+          "slsqp_iterations": 58,
+          "kkt_refinements": 1,
+          "wall_seconds": 0.22158730000955984
+        },
+        "independent_start_maximum_coordinate_difference_cm": 4.440892098500626e-16,
+        "derivative_and_stability_checks": {
+          "energy_gradient_fd_maximum_error": 1.5130775743443792e-08,
+          "minimum_constrained_hessian_eigenvalue": 1.5349038772243204,
+          "tangent_space_dimension": 32,
+          "finite_difference_epsilon_cm": 1e-06
+        },
+        "independent_runs": [
+          {
+            "bend_energy": 37.9547429682555,
+            "shear_energy": 0.08147397673420914,
+            "gravity_energy": -104.78977085905993,
+            "maximum_yarn_strain": 6.661338147750939e-16,
+            "maximum_shear": 0.007352609771987501,
+            "maximum_hinge_angle": 0.34807967199451195,
+            "energy": -66.75355391407021,
+            "maximum_constraint_residual": 7.771561172376096e-16,
+            "maximum_stationarity_force": 1.4335199693960021e-12,
+            "jacobian_rank": 40,
+            "constraint_count": 40,
+            "slsqp_success": true,
+            "slsqp_message": "Optimization terminated successfully",
+            "slsqp_iterations": 58,
+            "kkt_refinements": 1,
+            "wall_seconds": 0.22158730000955984
+          },
+          {
+            "bend_energy": 37.95474296825551,
+            "shear_energy": 0.08147397673420591,
+            "gravity_energy": -104.78977085905993,
+            "maximum_yarn_strain": 4.440892098500626e-16,
+            "maximum_shear": 0.007352609771987646,
+            "maximum_hinge_angle": 0.34807967199451184,
+            "energy": -66.75355391407021,
+            "maximum_constraint_residual": 4.440892098500626e-16,
+            "maximum_stationarity_force": 1.7492673975993966e-12,
+            "jacobian_rank": 40,
+            "constraint_count": 40,
+            "slsqp_success": true,
+            "slsqp_message": "Optimization terminated successfully",
+            "slsqp_iterations": 50,
+            "kkt_refinements": 1,
+            "wall_seconds": 0.16541780001716688
+          }
+        ],
+        "hard_constraint_lagrange_multipliers": [
+          18.720843464281057,
+          -26.545421733538348,
+          18.720843464280808,
+          20.390904547833095,
+          -1.9129938557297004,
+          -23.21666575933674,
+          -1.9129938557296455,
+          20.390904547832903,
+          16.027067421941137,
+          2.4331634829589484,
+          -12.571403053234173,
+          2.433163482959004,
+          16.027067421941158,
+          12.660565249643193,
+          0.4150474807855281,
+          -7.408493278557802,
+          0.4150474807854767,
+          12.660565249643044,
+          9.678700197004321,
+          0.6234964301924842,
+          -4.607732585658661,
+          0.623496430192559,
+          9.678700197004025,
+          6.59400763516337,
+          0.10404471903398804,
+          -2.3671620086397516,
+          0.10404471903405361,
+          6.594007635162672,
+          4.216298459509676,
+          0.05905315509383659,
+          -1.8689459050088946,
+          0.05905315509357265,
+          4.216298459509294,
+          1.1631839684991392,
+          0.010824560949863778,
+          -0.13199038496225993,
+          0.010824560949793352,
+          1.1631839684992054,
+          0.7977870883663881,
+          0.7977870883665449
+        ],
+        "position_tolerance_cm": 0.001,
+        "convergence_requirement": "Also check hard yarn strain, pins, and force/stationarity or settled velocity; matching an angle alone is insufficient.",
+        "scope": "Stationary stable local minimum of this explicit discrete cloth model; not a certified global minimum or continuum calibration."
+      }
+    },
+    {
+      "id": "E3b_loaded_cloth_16x4",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            -0.25,
+            0.0
+          ],
+          "position": [
+            -0.25,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            -0.25,
+            0.25
+          ],
+          "position": [
+            -0.25,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            -0.25,
+            0.5
+          ],
+          "position": [
+            -0.25,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            -0.25,
+            0.75
+          ],
+          "position": [
+            -0.25,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 4,
+          "cut": [
+            -0.25,
+            1.0
+          ],
+          "position": [
+            -0.25,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 5,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 6,
+          "cut": [
+            0.0,
+            0.25
+          ],
+          "position": [
+            0.0,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 7,
+          "cut": [
+            0.0,
+            0.5
+          ],
+          "position": [
+            0.0,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 8,
+          "cut": [
+            0.0,
+            0.75
+          ],
+          "position": [
+            0.0,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 9,
+          "cut": [
+            0.0,
+            1.0
+          ],
+          "position": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 10,
+          "cut": [
+            0.25,
+            0.0
+          ],
+          "position": [
+            0.25,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 11,
+          "cut": [
+            0.25,
+            0.25
+          ],
+          "position": [
+            0.25,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 12,
+          "cut": [
+            0.25,
+            0.5
+          ],
+          "position": [
+            0.25,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 13,
+          "cut": [
+            0.25,
+            0.75
+          ],
+          "position": [
+            0.25,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 14,
+          "cut": [
+            0.25,
+            1.0
+          ],
+          "position": [
+            0.25,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 15,
+          "cut": [
+            0.5,
+            0.0
+          ],
+          "position": [
+            0.5,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 16,
+          "cut": [
+            0.5,
+            0.25
+          ],
+          "position": [
+            0.5,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 17,
+          "cut": [
+            0.5,
+            0.5
+          ],
+          "position": [
+            0.5,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 18,
+          "cut": [
+            0.5,
+            0.75
+          ],
+          "position": [
+            0.5,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 19,
+          "cut": [
+            0.5,
+            1.0
+          ],
+          "position": [
+            0.5,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 20,
+          "cut": [
+            0.75,
+            0.0
+          ],
+          "position": [
+            0.75,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 21,
+          "cut": [
+            0.75,
+            0.25
+          ],
+          "position": [
+            0.75,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 22,
+          "cut": [
+            0.75,
+            0.5
+          ],
+          "position": [
+            0.75,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 23,
+          "cut": [
+            0.75,
+            0.75
+          ],
+          "position": [
+            0.75,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 24,
+          "cut": [
+            0.75,
+            1.0
+          ],
+          "position": [
+            0.75,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 25,
+          "cut": [
+            1.0,
+            0.0
+          ],
+          "position": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 26,
+          "cut": [
+            1.0,
+            0.25
+          ],
+          "position": [
+            1.0,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 27,
+          "cut": [
+            1.0,
+            0.5
+          ],
+          "position": [
+            1.0,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 28,
+          "cut": [
+            1.0,
+            0.75
+          ],
+          "position": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 29,
+          "cut": [
+            1.0,
+            1.0
+          ],
+          "position": [
+            1.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 30,
+          "cut": [
+            1.25,
+            0.0
+          ],
+          "position": [
+            1.25,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 31,
+          "cut": [
+            1.25,
+            0.25
+          ],
+          "position": [
+            1.25,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 32,
+          "cut": [
+            1.25,
+            0.5
+          ],
+          "position": [
+            1.25,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 33,
+          "cut": [
+            1.25,
+            0.75
+          ],
+          "position": [
+            1.25,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 34,
+          "cut": [
+            1.25,
+            1.0
+          ],
+          "position": [
+            1.25,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 35,
+          "cut": [
+            1.5,
+            0.0
+          ],
+          "position": [
+            1.5,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 36,
+          "cut": [
+            1.5,
+            0.25
+          ],
+          "position": [
+            1.5,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 37,
+          "cut": [
+            1.5,
+            0.5
+          ],
+          "position": [
+            1.5,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 38,
+          "cut": [
+            1.5,
+            0.75
+          ],
+          "position": [
+            1.5,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 39,
+          "cut": [
+            1.5,
+            1.0
+          ],
+          "position": [
+            1.5,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 40,
+          "cut": [
+            1.75,
+            0.0
+          ],
+          "position": [
+            1.75,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 41,
+          "cut": [
+            1.75,
+            0.25
+          ],
+          "position": [
+            1.75,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 42,
+          "cut": [
+            1.75,
+            0.5
+          ],
+          "position": [
+            1.75,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 43,
+          "cut": [
+            1.75,
+            0.75
+          ],
+          "position": [
+            1.75,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 44,
+          "cut": [
+            1.75,
+            1.0
+          ],
+          "position": [
+            1.75,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 45,
+          "cut": [
+            2.0,
+            0.0
+          ],
+          "position": [
+            2.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 46,
+          "cut": [
+            2.0,
+            0.25
+          ],
+          "position": [
+            2.0,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 47,
+          "cut": [
+            2.0,
+            0.5
+          ],
+          "position": [
+            2.0,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 48,
+          "cut": [
+            2.0,
+            0.75
+          ],
+          "position": [
+            2.0,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 49,
+          "cut": [
+            2.0,
+            1.0
+          ],
+          "position": [
+            2.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 50,
+          "cut": [
+            2.25,
+            0.0
+          ],
+          "position": [
+            2.25,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 51,
+          "cut": [
+            2.25,
+            0.25
+          ],
+          "position": [
+            2.25,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 52,
+          "cut": [
+            2.25,
+            0.5
+          ],
+          "position": [
+            2.25,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 53,
+          "cut": [
+            2.25,
+            0.75
+          ],
+          "position": [
+            2.25,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 54,
+          "cut": [
+            2.25,
+            1.0
+          ],
+          "position": [
+            2.25,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 55,
+          "cut": [
+            2.5,
+            0.0
+          ],
+          "position": [
+            2.5,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 56,
+          "cut": [
+            2.5,
+            0.25
+          ],
+          "position": [
+            2.5,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 57,
+          "cut": [
+            2.5,
+            0.5
+          ],
+          "position": [
+            2.5,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 58,
+          "cut": [
+            2.5,
+            0.75
+          ],
+          "position": [
+            2.5,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 59,
+          "cut": [
+            2.5,
+            1.0
+          ],
+          "position": [
+            2.5,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 60,
+          "cut": [
+            2.75,
+            0.0
+          ],
+          "position": [
+            2.75,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 61,
+          "cut": [
+            2.75,
+            0.25
+          ],
+          "position": [
+            2.75,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 62,
+          "cut": [
+            2.75,
+            0.5
+          ],
+          "position": [
+            2.75,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 63,
+          "cut": [
+            2.75,
+            0.75
+          ],
+          "position": [
+            2.75,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 64,
+          "cut": [
+            2.75,
+            1.0
+          ],
+          "position": [
+            2.75,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 65,
+          "cut": [
+            3.0,
+            0.0
+          ],
+          "position": [
+            3.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 66,
+          "cut": [
+            3.0,
+            0.25
+          ],
+          "position": [
+            3.0,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 67,
+          "cut": [
+            3.0,
+            0.5
+          ],
+          "position": [
+            3.0,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 68,
+          "cut": [
+            3.0,
+            0.75
+          ],
+          "position": [
+            3.0,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 69,
+          "cut": [
+            3.0,
+            1.0
+          ],
+          "position": [
+            3.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 70,
+          "cut": [
+            3.25,
+            0.0
+          ],
+          "position": [
+            3.25,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 71,
+          "cut": [
+            3.25,
+            0.25
+          ],
+          "position": [
+            3.25,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 72,
+          "cut": [
+            3.25,
+            0.5
+          ],
+          "position": [
+            3.25,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 73,
+          "cut": [
+            3.25,
+            0.75
+          ],
+          "position": [
+            3.25,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 74,
+          "cut": [
+            3.25,
+            1.0
+          ],
+          "position": [
+            3.25,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 75,
+          "cut": [
+            3.5,
+            0.0
+          ],
+          "position": [
+            3.5,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 76,
+          "cut": [
+            3.5,
+            0.25
+          ],
+          "position": [
+            3.5,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 77,
+          "cut": [
+            3.5,
+            0.5
+          ],
+          "position": [
+            3.5,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 78,
+          "cut": [
+            3.5,
+            0.75
+          ],
+          "position": [
+            3.5,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 79,
+          "cut": [
+            3.5,
+            1.0
+          ],
+          "position": [
+            3.5,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 80,
+          "cut": [
+            3.75,
+            0.0
+          ],
+          "position": [
+            3.75,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 81,
+          "cut": [
+            3.75,
+            0.25
+          ],
+          "position": [
+            3.75,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 82,
+          "cut": [
+            3.75,
+            0.5
+          ],
+          "position": [
+            3.75,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 600.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 83,
+          "cut": [
+            3.75,
+            0.75
+          ],
+          "position": [
+            3.75,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 84,
+          "cut": [
+            3.75,
+            1.0
+          ],
+          "position": [
+            3.75,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 85,
+          "cut": [
+            4.0,
+            0.0
+          ],
+          "position": [
+            4.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 4800.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 86,
+          "cut": [
+            4.0,
+            0.25
+          ],
+          "position": [
+            4.0,
+            0.25,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 87,
+          "cut": [
+            4.0,
+            0.5
+          ],
+          "position": [
+            4.0,
+            0.5,
+            0.0
+          ],
+          "inverse_mass": 2400.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 88,
+          "cut": [
+            4.0,
+            0.75
+          ],
+          "position": [
+            4.0,
+            0.75,
+            0.0
+          ],
+          "inverse_mass": 1200.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 89,
+          "cut": [
+            4.0,
+            1.0
+          ],
+          "position": [
+            4.0,
+            1.0,
+            0.0
+          ],
+          "inverse_mass": 4800.0,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            0,
+            5,
+            6
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            0,
+            6,
+            1
+          ]
+        },
+        {
+          "id": 2,
+          "vertices": [
+            1,
+            6,
+            2
+          ]
+        },
+        {
+          "id": 3,
+          "vertices": [
+            6,
+            7,
+            2
+          ]
+        },
+        {
+          "id": 4,
+          "vertices": [
+            2,
+            7,
+            8
+          ]
+        },
+        {
+          "id": 5,
+          "vertices": [
+            2,
+            8,
+            3
+          ]
+        },
+        {
+          "id": 6,
+          "vertices": [
+            3,
+            8,
+            4
+          ]
+        },
+        {
+          "id": 7,
+          "vertices": [
+            8,
+            9,
+            4
+          ]
+        },
+        {
+          "id": 8,
+          "vertices": [
+            5,
+            10,
+            6
+          ]
+        },
+        {
+          "id": 9,
+          "vertices": [
+            10,
+            11,
+            6
+          ]
+        },
+        {
+          "id": 10,
+          "vertices": [
+            6,
+            11,
+            12
+          ]
+        },
+        {
+          "id": 11,
+          "vertices": [
+            6,
+            12,
+            7
+          ]
+        },
+        {
+          "id": 12,
+          "vertices": [
+            7,
+            12,
+            8
+          ]
+        },
+        {
+          "id": 13,
+          "vertices": [
+            12,
+            13,
+            8
+          ]
+        },
+        {
+          "id": 14,
+          "vertices": [
+            8,
+            13,
+            14
+          ]
+        },
+        {
+          "id": 15,
+          "vertices": [
+            8,
+            14,
+            9
+          ]
+        },
+        {
+          "id": 16,
+          "vertices": [
+            10,
+            15,
+            16
+          ]
+        },
+        {
+          "id": 17,
+          "vertices": [
+            10,
+            16,
+            11
+          ]
+        },
+        {
+          "id": 18,
+          "vertices": [
+            11,
+            16,
+            12
+          ]
+        },
+        {
+          "id": 19,
+          "vertices": [
+            16,
+            17,
+            12
+          ]
+        },
+        {
+          "id": 20,
+          "vertices": [
+            12,
+            17,
+            18
+          ]
+        },
+        {
+          "id": 21,
+          "vertices": [
+            12,
+            18,
+            13
+          ]
+        },
+        {
+          "id": 22,
+          "vertices": [
+            13,
+            18,
+            14
+          ]
+        },
+        {
+          "id": 23,
+          "vertices": [
+            18,
+            19,
+            14
+          ]
+        },
+        {
+          "id": 24,
+          "vertices": [
+            15,
+            20,
+            16
+          ]
+        },
+        {
+          "id": 25,
+          "vertices": [
+            20,
+            21,
+            16
+          ]
+        },
+        {
+          "id": 26,
+          "vertices": [
+            16,
+            21,
+            22
+          ]
+        },
+        {
+          "id": 27,
+          "vertices": [
+            16,
+            22,
+            17
+          ]
+        },
+        {
+          "id": 28,
+          "vertices": [
+            17,
+            22,
+            18
+          ]
+        },
+        {
+          "id": 29,
+          "vertices": [
+            22,
+            23,
+            18
+          ]
+        },
+        {
+          "id": 30,
+          "vertices": [
+            18,
+            23,
+            24
+          ]
+        },
+        {
+          "id": 31,
+          "vertices": [
+            18,
+            24,
+            19
+          ]
+        },
+        {
+          "id": 32,
+          "vertices": [
+            20,
+            25,
+            26
+          ]
+        },
+        {
+          "id": 33,
+          "vertices": [
+            20,
+            26,
+            21
+          ]
+        },
+        {
+          "id": 34,
+          "vertices": [
+            21,
+            26,
+            22
+          ]
+        },
+        {
+          "id": 35,
+          "vertices": [
+            26,
+            27,
+            22
+          ]
+        },
+        {
+          "id": 36,
+          "vertices": [
+            22,
+            27,
+            28
+          ]
+        },
+        {
+          "id": 37,
+          "vertices": [
+            22,
+            28,
+            23
+          ]
+        },
+        {
+          "id": 38,
+          "vertices": [
+            23,
+            28,
+            24
+          ]
+        },
+        {
+          "id": 39,
+          "vertices": [
+            28,
+            29,
+            24
+          ]
+        },
+        {
+          "id": 40,
+          "vertices": [
+            25,
+            30,
+            26
+          ]
+        },
+        {
+          "id": 41,
+          "vertices": [
+            30,
+            31,
+            26
+          ]
+        },
+        {
+          "id": 42,
+          "vertices": [
+            26,
+            31,
+            32
+          ]
+        },
+        {
+          "id": 43,
+          "vertices": [
+            26,
+            32,
+            27
+          ]
+        },
+        {
+          "id": 44,
+          "vertices": [
+            27,
+            32,
+            28
+          ]
+        },
+        {
+          "id": 45,
+          "vertices": [
+            32,
+            33,
+            28
+          ]
+        },
+        {
+          "id": 46,
+          "vertices": [
+            28,
+            33,
+            34
+          ]
+        },
+        {
+          "id": 47,
+          "vertices": [
+            28,
+            34,
+            29
+          ]
+        },
+        {
+          "id": 48,
+          "vertices": [
+            30,
+            35,
+            36
+          ]
+        },
+        {
+          "id": 49,
+          "vertices": [
+            30,
+            36,
+            31
+          ]
+        },
+        {
+          "id": 50,
+          "vertices": [
+            31,
+            36,
+            32
+          ]
+        },
+        {
+          "id": 51,
+          "vertices": [
+            36,
+            37,
+            32
+          ]
+        },
+        {
+          "id": 52,
+          "vertices": [
+            32,
+            37,
+            38
+          ]
+        },
+        {
+          "id": 53,
+          "vertices": [
+            32,
+            38,
+            33
+          ]
+        },
+        {
+          "id": 54,
+          "vertices": [
+            33,
+            38,
+            34
+          ]
+        },
+        {
+          "id": 55,
+          "vertices": [
+            38,
+            39,
+            34
+          ]
+        },
+        {
+          "id": 56,
+          "vertices": [
+            35,
+            40,
+            36
+          ]
+        },
+        {
+          "id": 57,
+          "vertices": [
+            40,
+            41,
+            36
+          ]
+        },
+        {
+          "id": 58,
+          "vertices": [
+            36,
+            41,
+            42
+          ]
+        },
+        {
+          "id": 59,
+          "vertices": [
+            36,
+            42,
+            37
+          ]
+        },
+        {
+          "id": 60,
+          "vertices": [
+            37,
+            42,
+            38
+          ]
+        },
+        {
+          "id": 61,
+          "vertices": [
+            42,
+            43,
+            38
+          ]
+        },
+        {
+          "id": 62,
+          "vertices": [
+            38,
+            43,
+            44
+          ]
+        },
+        {
+          "id": 63,
+          "vertices": [
+            38,
+            44,
+            39
+          ]
+        },
+        {
+          "id": 64,
+          "vertices": [
+            40,
+            45,
+            46
+          ]
+        },
+        {
+          "id": 65,
+          "vertices": [
+            40,
+            46,
+            41
+          ]
+        },
+        {
+          "id": 66,
+          "vertices": [
+            41,
+            46,
+            42
+          ]
+        },
+        {
+          "id": 67,
+          "vertices": [
+            46,
+            47,
+            42
+          ]
+        },
+        {
+          "id": 68,
+          "vertices": [
+            42,
+            47,
+            48
+          ]
+        },
+        {
+          "id": 69,
+          "vertices": [
+            42,
+            48,
+            43
+          ]
+        },
+        {
+          "id": 70,
+          "vertices": [
+            43,
+            48,
+            44
+          ]
+        },
+        {
+          "id": 71,
+          "vertices": [
+            48,
+            49,
+            44
+          ]
+        },
+        {
+          "id": 72,
+          "vertices": [
+            45,
+            50,
+            46
+          ]
+        },
+        {
+          "id": 73,
+          "vertices": [
+            50,
+            51,
+            46
+          ]
+        },
+        {
+          "id": 74,
+          "vertices": [
+            46,
+            51,
+            52
+          ]
+        },
+        {
+          "id": 75,
+          "vertices": [
+            46,
+            52,
+            47
+          ]
+        },
+        {
+          "id": 76,
+          "vertices": [
+            47,
+            52,
+            48
+          ]
+        },
+        {
+          "id": 77,
+          "vertices": [
+            52,
+            53,
+            48
+          ]
+        },
+        {
+          "id": 78,
+          "vertices": [
+            48,
+            53,
+            54
+          ]
+        },
+        {
+          "id": 79,
+          "vertices": [
+            48,
+            54,
+            49
+          ]
+        },
+        {
+          "id": 80,
+          "vertices": [
+            50,
+            55,
+            56
+          ]
+        },
+        {
+          "id": 81,
+          "vertices": [
+            50,
+            56,
+            51
+          ]
+        },
+        {
+          "id": 82,
+          "vertices": [
+            51,
+            56,
+            52
+          ]
+        },
+        {
+          "id": 83,
+          "vertices": [
+            56,
+            57,
+            52
+          ]
+        },
+        {
+          "id": 84,
+          "vertices": [
+            52,
+            57,
+            58
+          ]
+        },
+        {
+          "id": 85,
+          "vertices": [
+            52,
+            58,
+            53
+          ]
+        },
+        {
+          "id": 86,
+          "vertices": [
+            53,
+            58,
+            54
+          ]
+        },
+        {
+          "id": 87,
+          "vertices": [
+            58,
+            59,
+            54
+          ]
+        },
+        {
+          "id": 88,
+          "vertices": [
+            55,
+            60,
+            56
+          ]
+        },
+        {
+          "id": 89,
+          "vertices": [
+            60,
+            61,
+            56
+          ]
+        },
+        {
+          "id": 90,
+          "vertices": [
+            56,
+            61,
+            62
+          ]
+        },
+        {
+          "id": 91,
+          "vertices": [
+            56,
+            62,
+            57
+          ]
+        },
+        {
+          "id": 92,
+          "vertices": [
+            57,
+            62,
+            58
+          ]
+        },
+        {
+          "id": 93,
+          "vertices": [
+            62,
+            63,
+            58
+          ]
+        },
+        {
+          "id": 94,
+          "vertices": [
+            58,
+            63,
+            64
+          ]
+        },
+        {
+          "id": 95,
+          "vertices": [
+            58,
+            64,
+            59
+          ]
+        },
+        {
+          "id": 96,
+          "vertices": [
+            60,
+            65,
+            66
+          ]
+        },
+        {
+          "id": 97,
+          "vertices": [
+            60,
+            66,
+            61
+          ]
+        },
+        {
+          "id": 98,
+          "vertices": [
+            61,
+            66,
+            62
+          ]
+        },
+        {
+          "id": 99,
+          "vertices": [
+            66,
+            67,
+            62
+          ]
+        },
+        {
+          "id": 100,
+          "vertices": [
+            62,
+            67,
+            68
+          ]
+        },
+        {
+          "id": 101,
+          "vertices": [
+            62,
+            68,
+            63
+          ]
+        },
+        {
+          "id": 102,
+          "vertices": [
+            63,
+            68,
+            64
+          ]
+        },
+        {
+          "id": 103,
+          "vertices": [
+            68,
+            69,
+            64
+          ]
+        },
+        {
+          "id": 104,
+          "vertices": [
+            65,
+            70,
+            66
+          ]
+        },
+        {
+          "id": 105,
+          "vertices": [
+            70,
+            71,
+            66
+          ]
+        },
+        {
+          "id": 106,
+          "vertices": [
+            66,
+            71,
+            72
+          ]
+        },
+        {
+          "id": 107,
+          "vertices": [
+            66,
+            72,
+            67
+          ]
+        },
+        {
+          "id": 108,
+          "vertices": [
+            67,
+            72,
+            68
+          ]
+        },
+        {
+          "id": 109,
+          "vertices": [
+            72,
+            73,
+            68
+          ]
+        },
+        {
+          "id": 110,
+          "vertices": [
+            68,
+            73,
+            74
+          ]
+        },
+        {
+          "id": 111,
+          "vertices": [
+            68,
+            74,
+            69
+          ]
+        },
+        {
+          "id": 112,
+          "vertices": [
+            70,
+            75,
+            76
+          ]
+        },
+        {
+          "id": 113,
+          "vertices": [
+            70,
+            76,
+            71
+          ]
+        },
+        {
+          "id": 114,
+          "vertices": [
+            71,
+            76,
+            72
+          ]
+        },
+        {
+          "id": 115,
+          "vertices": [
+            76,
+            77,
+            72
+          ]
+        },
+        {
+          "id": 116,
+          "vertices": [
+            72,
+            77,
+            78
+          ]
+        },
+        {
+          "id": 117,
+          "vertices": [
+            72,
+            78,
+            73
+          ]
+        },
+        {
+          "id": 118,
+          "vertices": [
+            73,
+            78,
+            74
+          ]
+        },
+        {
+          "id": 119,
+          "vertices": [
+            78,
+            79,
+            74
+          ]
+        },
+        {
+          "id": 120,
+          "vertices": [
+            75,
+            80,
+            76
+          ]
+        },
+        {
+          "id": 121,
+          "vertices": [
+            80,
+            81,
+            76
+          ]
+        },
+        {
+          "id": 122,
+          "vertices": [
+            76,
+            81,
+            82
+          ]
+        },
+        {
+          "id": 123,
+          "vertices": [
+            76,
+            82,
+            77
+          ]
+        },
+        {
+          "id": 124,
+          "vertices": [
+            77,
+            82,
+            78
+          ]
+        },
+        {
+          "id": 125,
+          "vertices": [
+            82,
+            83,
+            78
+          ]
+        },
+        {
+          "id": 126,
+          "vertices": [
+            78,
+            83,
+            84
+          ]
+        },
+        {
+          "id": 127,
+          "vertices": [
+            78,
+            84,
+            79
+          ]
+        },
+        {
+          "id": 128,
+          "vertices": [
+            80,
+            85,
+            86
+          ]
+        },
+        {
+          "id": 129,
+          "vertices": [
+            80,
+            86,
+            81
+          ]
+        },
+        {
+          "id": 130,
+          "vertices": [
+            81,
+            86,
+            82
+          ]
+        },
+        {
+          "id": 131,
+          "vertices": [
+            86,
+            87,
+            82
+          ]
+        },
+        {
+          "id": 132,
+          "vertices": [
+            82,
+            87,
+            88
+          ]
+        },
+        {
+          "id": 133,
+          "vertices": [
+            82,
+            88,
+            83
+          ]
+        },
+        {
+          "id": 134,
+          "vertices": [
+            83,
+            88,
+            84
+          ]
+        },
+        {
+          "id": 135,
+          "vertices": [
+            88,
+            89,
+            84
+          ]
+        }
+      ],
+      "segments": [],
+      "settings": {
+        "length_cm": 4.0,
+        "width_cm": 1.0,
+        "held_backing_length_cm": 0.25,
+        "pinned_vertices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "area_density_g_per_cm2": 0.02,
+        "gravity": [
+          0.0,
+          0.0,
+          -981.0
+        ],
+        "G": 156.96,
+        "surface_shear_modulus": 4000.0,
+        "nodal_masses": [
+          0.0004166666666666667,
+          0.0004166666666666667,
+          0.0008333333333333334,
+          0.0004166666666666667,
+          0.0004166666666666667,
+          0.0004166666666666667,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0004166666666666667,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0004166666666666667,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0004166666666666667,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0004166666666666667,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0004166666666666667,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0004166666666666667,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0004166666666666667,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0004166666666666667,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0004166666666666667,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0004166666666666667,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0004166666666666667,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0004166666666666667,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0004166666666666667,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0004166666666666667,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0004166666666666667,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.0016666666666666668,
+          0.0008333333333333334,
+          0.0008333333333333334,
+          0.00020833333333333335,
+          0.0008333333333333334,
+          0.0004166666666666667,
+          0.0008333333333333334,
+          0.00020833333333333335
+        ],
+        "hard_yarn_edge_pairs": [
+          [
+            5,
+            10
+          ],
+          [
+            6,
+            11
+          ],
+          [
+            7,
+            12
+          ],
+          [
+            8,
+            13
+          ],
+          [
+            9,
+            14
+          ],
+          [
+            10,
+            15
+          ],
+          [
+            10,
+            11
+          ],
+          [
+            11,
+            16
+          ],
+          [
+            11,
+            12
+          ],
+          [
+            12,
+            17
+          ],
+          [
+            12,
+            13
+          ],
+          [
+            13,
+            18
+          ],
+          [
+            13,
+            14
+          ],
+          [
+            14,
+            19
+          ],
+          [
+            15,
+            20
+          ],
+          [
+            15,
+            16
+          ],
+          [
+            16,
+            21
+          ],
+          [
+            16,
+            17
+          ],
+          [
+            17,
+            22
+          ],
+          [
+            17,
+            18
+          ],
+          [
+            18,
+            23
+          ],
+          [
+            18,
+            19
+          ],
+          [
+            19,
+            24
+          ],
+          [
+            20,
+            25
+          ],
+          [
+            20,
+            21
+          ],
+          [
+            21,
+            26
+          ],
+          [
+            21,
+            22
+          ],
+          [
+            22,
+            27
+          ],
+          [
+            22,
+            23
+          ],
+          [
+            23,
+            28
+          ],
+          [
+            23,
+            24
+          ],
+          [
+            24,
+            29
+          ],
+          [
+            25,
+            30
+          ],
+          [
+            25,
+            26
+          ],
+          [
+            26,
+            31
+          ],
+          [
+            26,
+            27
+          ],
+          [
+            27,
+            32
+          ],
+          [
+            27,
+            28
+          ],
+          [
+            28,
+            33
+          ],
+          [
+            28,
+            29
+          ],
+          [
+            29,
+            34
+          ],
+          [
+            30,
+            35
+          ],
+          [
+            30,
+            31
+          ],
+          [
+            31,
+            36
+          ],
+          [
+            31,
+            32
+          ],
+          [
+            32,
+            37
+          ],
+          [
+            32,
+            33
+          ],
+          [
+            33,
+            38
+          ],
+          [
+            33,
+            34
+          ],
+          [
+            34,
+            39
+          ],
+          [
+            35,
+            40
+          ],
+          [
+            35,
+            36
+          ],
+          [
+            36,
+            41
+          ],
+          [
+            36,
+            37
+          ],
+          [
+            37,
+            42
+          ],
+          [
+            37,
+            38
+          ],
+          [
+            38,
+            43
+          ],
+          [
+            38,
+            39
+          ],
+          [
+            39,
+            44
+          ],
+          [
+            40,
+            45
+          ],
+          [
+            40,
+            41
+          ],
+          [
+            41,
+            46
+          ],
+          [
+            41,
+            42
+          ],
+          [
+            42,
+            47
+          ],
+          [
+            42,
+            43
+          ],
+          [
+            43,
+            48
+          ],
+          [
+            43,
+            44
+          ],
+          [
+            44,
+            49
+          ],
+          [
+            45,
+            50
+          ],
+          [
+            45,
+            46
+          ],
+          [
+            46,
+            51
+          ],
+          [
+            46,
+            47
+          ],
+          [
+            47,
+            52
+          ],
+          [
+            47,
+            48
+          ],
+          [
+            48,
+            53
+          ],
+          [
+            48,
+            49
+          ],
+          [
+            49,
+            54
+          ],
+          [
+            50,
+            55
+          ],
+          [
+            50,
+            51
+          ],
+          [
+            51,
+            56
+          ],
+          [
+            51,
+            52
+          ],
+          [
+            52,
+            57
+          ],
+          [
+            52,
+            53
+          ],
+          [
+            53,
+            58
+          ],
+          [
+            53,
+            54
+          ],
+          [
+            54,
+            59
+          ],
+          [
+            55,
+            60
+          ],
+          [
+            55,
+            56
+          ],
+          [
+            56,
+            61
+          ],
+          [
+            56,
+            57
+          ],
+          [
+            57,
+            62
+          ],
+          [
+            57,
+            58
+          ],
+          [
+            58,
+            63
+          ],
+          [
+            58,
+            59
+          ],
+          [
+            59,
+            64
+          ],
+          [
+            60,
+            65
+          ],
+          [
+            60,
+            61
+          ],
+          [
+            61,
+            66
+          ],
+          [
+            61,
+            62
+          ],
+          [
+            62,
+            67
+          ],
+          [
+            62,
+            63
+          ],
+          [
+            63,
+            68
+          ],
+          [
+            63,
+            64
+          ],
+          [
+            64,
+            69
+          ],
+          [
+            65,
+            70
+          ],
+          [
+            65,
+            66
+          ],
+          [
+            66,
+            71
+          ],
+          [
+            66,
+            67
+          ],
+          [
+            67,
+            72
+          ],
+          [
+            67,
+            68
+          ],
+          [
+            68,
+            73
+          ],
+          [
+            68,
+            69
+          ],
+          [
+            69,
+            74
+          ],
+          [
+            70,
+            75
+          ],
+          [
+            70,
+            71
+          ],
+          [
+            71,
+            76
+          ],
+          [
+            71,
+            72
+          ],
+          [
+            72,
+            77
+          ],
+          [
+            72,
+            73
+          ],
+          [
+            73,
+            78
+          ],
+          [
+            73,
+            74
+          ],
+          [
+            74,
+            79
+          ],
+          [
+            75,
+            80
+          ],
+          [
+            75,
+            76
+          ],
+          [
+            76,
+            81
+          ],
+          [
+            76,
+            77
+          ],
+          [
+            77,
+            82
+          ],
+          [
+            77,
+            78
+          ],
+          [
+            78,
+            83
+          ],
+          [
+            78,
+            79
+          ],
+          [
+            79,
+            84
+          ],
+          [
+            80,
+            85
+          ],
+          [
+            80,
+            81
+          ],
+          [
+            81,
+            86
+          ],
+          [
+            81,
+            82
+          ],
+          [
+            82,
+            87
+          ],
+          [
+            82,
+            83
+          ],
+          [
+            83,
+            88
+          ],
+          [
+            83,
+            84
+          ],
+          [
+            84,
+            89
+          ],
+          [
+            85,
+            86
+          ],
+          [
+            86,
+            87
+          ],
+          [
+            87,
+            88
+          ],
+          [
+            88,
+            89
+          ]
+        ],
+        "hard_yarn_rest_lengths": [
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "rest_hinge_angle": 0.0,
+        "contact": false,
+        "thickness": 0.0,
+        "grain": [
+          1.0,
+          0.0
+        ],
+        "boundary": "All coordinates fixed at rows x=-dx and x=0. No symmetry/planarity/transverse rails; all remaining coordinates free."
+      },
+      "expected": {
+        "status": "StaticReference",
+        "positions": [
+          [
+            -0.25,
+            0.0,
+            0.0
+          ],
+          [
+            -0.25,
+            0.25,
+            0.0
+          ],
+          [
+            -0.25,
+            0.5,
+            0.0
+          ],
+          [
+            -0.25,
+            0.75,
+            0.0
+          ],
+          [
+            -0.25,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.25,
+            0.0
+          ],
+          [
+            0.0,
+            0.5,
+            0.0
+          ],
+          [
+            0.0,
+            0.75,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.2458602274639161,
+            0.00010403951058066817,
+            -0.04530714874246303
+          ],
+          [
+            0.24491258187666687,
+            0.25005478965707056,
+            -0.05017792579011641
+          ],
+          [
+            0.24590933030516823,
+            0.5,
+            -0.045039996323974894
+          ],
+          [
+            0.24491258187666687,
+            0.7499452103429294,
+            -0.05017792579011642
+          ],
+          [
+            0.24586022746391611,
+            0.9998959604894193,
+            -0.045307148742463055
+          ],
+          [
+            0.4768939029347113,
+            6.224353988210557e-05,
+            -0.1408238438881397
+          ],
+          [
+            0.47942228240412493,
+            0.2500172398579766,
+            -0.13681047711197525
+          ],
+          [
+            0.477550960891319,
+            0.5,
+            -0.13907272987665462
+          ],
+          [
+            0.479422282404125,
+            0.7499827601420234,
+            -0.13681047711197528
+          ],
+          [
+            0.4768939029347113,
+            0.9999377564601178,
+            -0.1408238438881397
+          ],
+          [
+            0.6944564738605988,
+            1.9537194222385394e-05,
+            -0.2639762937553112
+          ],
+          [
+            0.6942046949913129,
+            0.250018213238701,
+            -0.26474997547850593
+          ],
+          [
+            0.6952801104731594,
+            0.5,
+            -0.2619304419763374
+          ],
+          [
+            0.6942046949913129,
+            0.749981786761299,
+            -0.26474997547850593
+          ],
+          [
+            0.6944564738605988,
+            0.9999804628057776,
+            -0.26397629375531123
+          ],
+          [
+            0.8915895425779298,
+            5.7118836003244026e-05,
+            -0.41772463295189655
+          ],
+          [
+            0.8947745904823248,
+            0.25000888669768756,
+            -0.41398709196009775
+          ],
+          [
+            0.8929321181714844,
+            0.5,
+            -0.4150110869084166
+          ],
+          [
+            0.8947745904823248,
+            0.7499911133023124,
+            -0.41398709196009775
+          ],
+          [
+            0.8915895425779298,
+            0.9999428811639968,
+            -0.41772463295189655
+          ],
+          [
+            1.0755881710230517,
+            1.1532004788865479e-05,
+            -0.5869715019100985
+          ],
+          [
+            1.075830077702274,
+            0.25001071244027445,
+            -0.5863788276791092
+          ],
+          [
+            1.0768779648701554,
+            0.5,
+            -0.5843153263187426
+          ],
+          [
+            1.0758300777022738,
+            0.7499892875597256,
+            -0.5863788276791092
+          ],
+          [
+            1.0755881710230517,
+            0.9999884679952111,
+            -0.5869715019100985
+          ],
+          [
+            1.2422479190095295,
+            3.518446027550691e-05,
+            -0.7733166865584954
+          ],
+          [
+            1.2450047640970818,
+            0.25000347546104024,
+            -0.7704438309547034
+          ],
+          [
+            1.2436890435093693,
+            0.5,
+            -0.7705250576520488
+          ],
+          [
+            1.2450047640970818,
+            0.7499965245389598,
+            -0.7704438309547034
+          ],
+          [
+            1.2422479190095292,
+            0.9999648155397245,
+            -0.7733166865584954
+          ],
+          [
+            1.3990048529744104,
+            8.86094249715232e-06,
+            -0.9680659175223232
+          ],
+          [
+            1.3994115073438917,
+            0.2500065129960827,
+            -0.9670616267685287
+          ],
+          [
+            1.40022586242045,
+            0.5,
+            -0.9654512599061313
+          ],
+          [
+            1.3994115073438917,
+            0.7499934870039173,
+            -0.9670616267685287
+          ],
+          [
+            1.3990048529744101,
+            0.9999911390575029,
+            -0.9680659175223232
+          ],
+          [
+            1.5435622879692583,
+            1.883011129240326e-05,
+            -1.1720344148162092
+          ],
+          [
+            1.545549448570654,
+            0.25000182670332943,
+            -1.1699007307698086
+          ],
+          [
+            1.5446877366923746,
+            0.5,
+            -1.16948745003387
+          ],
+          [
+            1.545549448570654,
+            0.7499981732966706,
+            -1.1699007307698086
+          ],
+          [
+            1.5435622879692583,
+            0.9999811698887077,
+            -1.1720344148162092
+          ],
+          [
+            1.6816487743128676,
+            6.391567242932909e-06,
+            -1.3804381627061135
+          ],
+          [
+            1.6820146168161305,
+            0.25000384073722925,
+            -1.3793697209609046
+          ],
+          [
+            1.6825008672259476,
+            0.5,
+            -1.3780720636863066
+          ],
+          [
+            1.6820146168161305,
+            0.7499961592627707,
+            -1.3793697209609046
+          ],
+          [
+            1.6816487743128676,
+            0.9999936084327571,
+            -1.3804381627061135
+          ],
+          [
+            1.8122450773441139,
+            9.475358997841144e-06,
+            -1.5936155668207643
+          ],
+          [
+            1.8134571615644044,
+            0.25000148594723226,
+            -1.5920263865619457
+          ],
+          [
+            1.8128941465766337,
+            0.5,
+            -1.5913737108908559
+          ],
+          [
+            1.8134571615644044,
+            0.7499985140527677,
+            -1.5920263865619457
+          ],
+          [
+            1.8122450773441139,
+            0.9999905246410021,
+            -1.5936155668207643
+          ],
+          [
+            1.9391814615656555,
+            4.550106445898952e-06,
+            -1.808992339794321
+          ],
+          [
+            1.9394139247235744,
+            0.2500023823171118,
+            -1.8079775241224163
+          ],
+          [
+            1.9395787973042888,
+            0.5,
+            -1.8068986497494761
+          ],
+          [
+            1.9394139247235744,
+            0.7499976176828882,
+            -1.8079775241224163
+          ],
+          [
+            1.9391814615656555,
+            0.9999954498935542,
+            -1.8089923397943213
+          ],
+          [
+            2.062238446740032,
+            5.076047672970916e-06,
+            -2.026608925558175
+          ],
+          [
+            2.062817013195001,
+            0.2500014740226909,
+            -2.0253980331708688
+          ],
+          [
+            2.0624254627673984,
+            0.5,
+            -2.024634032231504
+          ],
+          [
+            2.062817013195001,
+            0.7499985259773091,
+            -2.0253980331708688
+          ],
+          [
+            2.062238446740032,
+            0.999994923952327,
+            -2.026608925558175
+          ],
+          [
+            2.1836495468979398,
+            3.5430866006845247e-06,
+            -2.2451480404920843
+          ],
+          [
+            2.183740719673462,
+            0.2500017561428165,
+            -2.2442072130775435
+          ],
+          [
+            2.1836546283863134,
+            0.5,
+            -2.2432741232563242
+          ],
+          [
+            2.183740719673462,
+            0.7499982438571836,
+            -2.2442072130775435
+          ],
+          [
+            2.1836495468979398,
+            0.9999964569133993,
+            -2.2451480404920843
+          ],
+          [
+            2.303582195287691,
+            3.4896545817446505e-06,
+            -2.464502000680218
+          ],
+          [
+            2.30374785025618,
+            0.2500015078149473,
+            -2.463520433402358
+          ],
+          [
+            2.30343988192882,
+            0.5,
+            -2.4627086078610856
+          ],
+          [
+            2.30374785025618,
+            0.7499984921850528,
+            -2.463520433402358
+          ],
+          [
+            2.303582195287691,
+            0.9999965103454183,
+            -2.4645020006802185
+          ],
+          [
+            2.4230729630855996,
+            3.1678615089240447e-06,
+            -2.6840969833436725
+          ],
+          [
+            2.423076170602863,
+            0.25000157204219436,
+            -2.6832037326384066
+          ],
+          [
+            2.422853427663536,
+            0.5,
+            -2.6823455926679776
+          ],
+          [
+            2.423076170602863,
+            0.7499984279578056,
+            -2.6832037326384066
+          ],
+          [
+            2.4230729630855996,
+            0.9999968321384911,
+            -2.6840969833436725
+          ],
+          [
+            2.5422914864007566,
+            3.1307430389490966e-06,
+            -2.903839886980063
+          ],
+          [
+            2.5423032483403545,
+            0.25000151804104104,
+            -2.9029419949737933
+          ],
+          [
+            2.542012578414809,
+            0.5,
+            -2.9021206977009073
+          ],
+          [
+            2.5423032483403545,
+            0.749998481958959,
+            -2.902941994973794
+          ],
+          [
+            2.5422914864007566,
+            0.9999968692569611,
+            -2.903839886980063
+          ]
+        ],
+        "tip_average": [
+          2.5422404095794064,
+          0.0,
+          -2.903136892321724
+        ],
+        "tip_chord_angle_degrees": 48.791775676179704,
+        "metrics": {
+          "bend_energy": 36.44884440704181,
+          "shear_energy": 0.06391818418215248,
+          "gravity_energy": -98.12088854914863,
+          "maximum_yarn_strain": 1.5543122344752192e-15,
+          "maximum_shear": 0.003532002482038707,
+          "maximum_hinge_angle": 0.18223560558880128,
+          "energy": -61.60812595792467,
+          "maximum_constraint_residual": 1.5543122344752192e-15,
+          "maximum_stationarity_force": 1.1497025553808271e-11,
+          "jacobian_rank": 144,
+          "constraint_count": 144,
+          "slsqp_success": true,
+          "slsqp_message": "Optimization terminated successfully",
+          "slsqp_iterations": 137,
+          "kkt_refinements": 1,
+          "wall_seconds": 4.316288000030909
+        },
+        "independent_start_maximum_coordinate_difference_cm": 8.881784197001252e-16,
+        "derivative_and_stability_checks": {
+          "energy_gradient_fd_maximum_error": 3.70300057284112e-08,
+          "minimum_constrained_hessian_eigenvalue": 0.5340072076064383,
+          "tangent_space_dimension": 96,
+          "finite_difference_epsilon_cm": 1e-06
+        },
+        "independent_runs": [
+          {
+            "bend_energy": 36.44884440704181,
+            "shear_energy": 0.06391818418215248,
+            "gravity_energy": -98.12088854914863,
+            "maximum_yarn_strain": 1.5543122344752192e-15,
+            "maximum_shear": 0.003532002482038707,
+            "maximum_hinge_angle": 0.18223560558880128,
+            "energy": -61.60812595792467,
+            "maximum_constraint_residual": 1.5543122344752192e-15,
+            "maximum_stationarity_force": 1.1497025553808271e-11,
+            "jacobian_rank": 144,
+            "constraint_count": 144,
+            "slsqp_success": true,
+            "slsqp_message": "Optimization terminated successfully",
+            "slsqp_iterations": 137,
+            "kkt_refinements": 1,
+            "wall_seconds": 4.316288000030909
+          },
+          {
+            "bend_energy": 36.44884440704178,
+            "shear_energy": 0.06391818418215388,
+            "gravity_energy": -98.1208885491486,
+            "maximum_yarn_strain": 1.3322676295501878e-15,
+            "maximum_shear": 0.003532002482038516,
+            "maximum_hinge_angle": 0.18223560558880114,
+            "energy": -61.60812595792466,
+            "maximum_constraint_residual": 1.4432899320127035e-15,
+            "maximum_stationarity_force": 2.617728256382179e-11,
+            "jacobian_rank": 144,
+            "constraint_count": 144,
+            "slsqp_success": true,
+            "slsqp_message": "Optimization terminated successfully",
+            "slsqp_iterations": 118,
+            "kkt_refinements": 1,
+            "wall_seconds": 3.278157700027805
+          }
+        ],
+        "hard_constraint_lagrange_multipliers": [
+          -7.89594020164026,
+          -2.6253055332601507,
+          23.05597139562377,
+          -2.6253055332602835,
+          -7.895940201640491,
+          -6.656979525952659,
+          0.41332628289887374,
+          -3.184035353142221,
+          0.4578137755477618,
+          24.648127648279395,
+          0.4578137755477467,
+          -3.184035353142387,
+          0.413326282898804,
+          -6.656979525952923,
+          -6.553766649680309,
+          0.27649699313002113,
+          -1.684818113625739,
+          0.43712907732705764,
+          23.805732714269414,
+          0.4371290773270671,
+          -1.684818113625778,
+          0.2764969931300172,
+          -6.553766649680665,
+          -6.387012729773413,
+          0.3707097829039192,
+          -0.7833215146720658,
+          0.48423567319346716,
+          22.956492225233028,
+          0.4842356731934725,
+          -0.7833215146721466,
+          0.3707097829040018,
+          -6.387012729773774,
+          -6.323180697840842,
+          0.23036418506012213,
+          0.19802181701743926,
+          0.41887494751771404,
+          21.450521382821833,
+          0.4188749475177307,
+          0.1980218170174659,
+          0.23036418506004885,
+          -6.323180697841272,
+          -6.0617389709086495,
+          0.20454967140286962,
+          0.7017847690398487,
+          0.3072285416096678,
+          19.981208780915114,
+          0.3072285416096331,
+          0.7017847690395485,
+          0.2045496714028603,
+          -6.061738970908854,
+          -5.705878624160689,
+          0.12360771097016032,
+          1.025955695186017,
+          0.24070269030406666,
+          18.30679255417002,
+          0.24070269030404767,
+          1.0259556951857056,
+          0.1236077109702112,
+          -5.705878624160888,
+          -5.26445777780946,
+          0.09636807769303202,
+          1.1919186141634777,
+          0.15865497895177727,
+          16.522961616244555,
+          0.15865497895180702,
+          1.1919186141633396,
+          0.09636807769302091,
+          -5.264457777809804,
+          -4.710708572040463,
+          0.0559026822570905,
+          1.1579556572346004,
+          0.11290702514516948,
+          14.73357879718147,
+          0.11290702514516525,
+          1.1579556572345326,
+          0.055902682257086944,
+          -4.710708572040849,
+          -4.164586652853034,
+          0.03979239112930766,
+          1.1542909665295253,
+          0.06917769173203614,
+          12.777858092308215,
+          0.06917769173204902,
+          1.1542909665294943,
+          0.03979239112928923,
+          -4.164586652853462,
+          -3.5163887471683557,
+          0.021821046127082244,
+          0.9578427071374165,
+          0.04462496180226416,
+          10.920327664665287,
+          0.044624961802291585,
+          0.9578427071374118,
+          0.021821046127088017,
+          -3.5163887471687607,
+          -2.927230383081579,
+          0.014386403030901218,
+          0.8839484574097136,
+          0.025320802711624957,
+          8.881592509910837,
+          0.025320802711624957,
+          0.8839484574095491,
+          0.01438640303086336,
+          -2.9272303830818025,
+          -2.2439532333326415,
+          0.0076711574621274314,
+          0.6237370507886943,
+          0.014950968253180541,
+          6.992648551551049,
+          0.014950968253186314,
+          0.6237370507885873,
+          0.007671157462151523,
+          -2.2439532333328738,
+          -1.642222393769936,
+          0.005160662497576407,
+          0.5262972921706126,
+          0.008332483512771938,
+          4.921147148022056,
+          0.008332483512775823,
+          0.526297292170518,
+          0.005160662497749158,
+          -1.642222393770135,
+          -0.9496004902220321,
+          0.0033152461375745013,
+          0.2467115630905532,
+          0.005133471472596796,
+          3.0218618612048003,
+          0.0051334714725863595,
+          0.24671156309008824,
+          0.003315246137612471,
+          -0.9496004902218531,
+          -0.345686834381033,
+          0.0028413714989996564,
+          0.14415979353533603,
+          0.0037622414113493985,
+          0.9420236626005734,
+          0.003762241411153666,
+          0.1441597935349015,
+          0.002841371498584877,
+          -0.3456868343808288,
+          -0.39055392396537725,
+          -1.2122989353001503,
+          -1.2122989352999758,
+          -0.39055392396513655
+        ],
+        "position_tolerance_cm": 0.001,
+        "convergence_requirement": "Also check hard yarn strain, pins, and force/stationarity or settled velocity; matching an angle alone is insufficient.",
+        "scope": "Stationary stable local minimum of this explicit discrete cloth model; not a certified global minimum or continuum calibration."
+      }
+    }
+  ]
+}

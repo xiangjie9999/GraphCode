@@ -1,0 +1,158 @@
+{
+ "_why": [
+  "GraphCode's envelope parser and block scanner exist twice: GraphCodeSidecarReader.cpp, which",
+  "the save hook, GcCheck and gc_apply use, and gc-sidecar.js, which is what lets gc_read answer",
+  "with the editor closed. Two implementations of a grammar is how a language drifts. Neither of",
+  "these understands a STATEMENT - both only split named blocks and hand the bytes on - but the",
+  "split itself still has to agree, byte for byte, or a block edited through one and applied",
+  "through the other is a half-applied asset rather than a parse error.",
+  "",
+  "So both suites assert against this file. A change to either scanner that moves a boundary",
+  "fails on both sides at once, which is the only arrangement in which 'they agree' is a fact",
+  "rather than a hope.",
+  "",
+  "The fixtures deliberately carry the cases that break a naive brace counter: a designer label",
+  "whose text is '{ not a block }', a backtick identifier ending in '}', an '# UNSUPPORTED:'",
+  "note containing '}', and nested braces three deep.",
+  "",
+  "legacy_flat_struct.gc is the other shape entirely: a flat body with no blocks at all and an",
+  "ir: token no current build emits. NOTHING PROJECTS LIKE THIS ANY MORE - a user struct now",
+  "writes schemacode/1 blocks - and that is exactly why it is kept. A reader that only handles",
+  "what today's writer emits cannot read a repository's own history, and these files are",
+  "committed, so history is the normal case. Both scanners drive the block/no-block decision off",
+  "the TEXT rather than off the asset kind, which is what makes one scanner honest for both.",
+  "",
+  "sig: is NOT part of this contract. It is BLAKE3 over the body and the JS side has no BLAKE3,",
+  "so it carries the token instead of checking it. What both sides do promise is the envelope",
+  "fields and the block split, and that is what is written down here."
+ ],
+ "fixtures": [
+  {
+   "file": "widget_blueprint.gc",
+   "format_version": 1,
+   "kind": "widget_blueprint",
+   "asset": "/Game/UI/WBP_FixtureScreen",
+   "sig": "3f9a1c7e",
+   "bin": "9c4e17ab",
+   "parent": "/Script/UMG.UserWidget",
+   "omits": [
+    "components",
+    "cdo_defaults",
+    "timelines",
+    "delegate_signatures"
+   ],
+   "source_name": "OraStudio",
+   "source_version": "5.7.4",
+   "ir": [
+    "widgetir/2",
+    "blueprintir/2"
+   ],
+   "blocks": [
+    {
+     "name": "defaults",
+     "first_line": 6,
+     "last_line": 9,
+     "body_lines": 2
+    },
+    {
+     "name": "properties",
+     "first_line": 11,
+     "last_line": 16,
+     "body_lines": 4
+    },
+    {
+     "name": "widgets",
+     "first_line": 18,
+     "last_line": 33,
+     "body_lines": 14
+    },
+    {
+     "name": "graph",
+     "first_line": 35,
+     "last_line": 48,
+     "body_lines": 12
+    },
+    {
+     "name": "functions",
+     "first_line": 50,
+     "last_line": 62,
+     "body_lines": 11
+    }
+   ],
+   "unblocked": "",
+   "body_first_line_of": {
+    "widgets": "  design DesignTimeSize=(X=1920.000000,Y=1080.000000)",
+    "graph": "  eventgraph EventGraph  sig:8f3ac21b {",
+    "functions": "  function CalculateHealth  sig:1a2b3c4d {"
+   }
+  },
+  {
+   "file": "legacy_flat_struct.gc",
+   "format_version": 1,
+   "kind": "user_struct",
+   "asset": "/Game/Data/S_FixtureRow",
+   "sig": "5b1d0042",
+   "bin": "77aa10be",
+   "parent": "",
+   "omits": [
+    "none"
+   ],
+   "source_name": "OraStudio",
+   "source_version": "5.7.4",
+   "ir": [
+    "blueprintir-schema/1"
+   ],
+   "blocks": [],
+   "unblocked_starts_with": "struct /Game/Data/S_FixtureRow ir:1",
+   "unblocked_ends_with": "member 2 Tags: array<name>"
+  },
+  {
+   "file": "labelled_block.gc",
+   "_why": [
+    "A LABELLED BLOCK: `behaviortree BTGraph  sig:<digest> {` — three tokens before the brace,",
+    "where every other block is one. GraphCodeSidecarReader.cpp learned this shape on 2026-08-18",
+    "and gc-sidecar.js had not, so the bridge refused every behavior tree and every EQS query with",
+    "\"Expected a block name before '{' ... found 'sig:...'\" — on gc_read's DEFAULT saved source.",
+    "Neither existing fixture labels a block, which is why the shared suite could not see it.",
+    "",
+    "It also carries `blackboard:` and `baseline:`, two of the four envelope lines the JS parser",
+    "refused outright until the same day. 92 of this project's 407 sidecars state `baseline:`."
+   ],
+   "format_version": 1,
+   "kind": "behavior_tree",
+   "asset": "/Game/AI/BT_FixtureGuard",
+   "sig": "7c31de90",
+   "bin": "2b6f04aa",
+   "parent": "/Script/AIModule.BehaviorTree",
+   "blackboard": "/Game/AI/BB_FixtureGuard",
+   "baseline": "default",
+   "omits": [
+    "transient"
+   ],
+   "source_name": "OraStudio",
+   "source_version": "5.7.4",
+   "ir": [
+    "btir/1",
+    "valueir/1"
+   ],
+   "blocks": [
+    {
+     "name": "behaviortree",
+     "first_line": 8,
+     "last_line": 20,
+     "body_lines": 11
+    },
+    {
+     "name": "settings",
+     "first_line": 22,
+     "last_line": 24,
+     "body_lines": 1
+    }
+   ],
+   "body_first_line_of": {
+    "behaviortree": "  Guard = Selector() {"
+   },
+   "unblocked": ""
+  }
+ ]
+}

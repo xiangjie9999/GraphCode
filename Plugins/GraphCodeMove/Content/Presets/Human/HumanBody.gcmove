@@ -1,0 +1,1253 @@
+gcmove 1 fps:30
+build {
+}
+# GRAPHCODE MOVE: THE HUMAN BODY'S POSE PRESETS, shipped with the Move plugin. Do not build this file: name it from your own
+# file's header with  presets:/GraphCodeMove/Presets/Human/HumanBody  and call its presets ($Stance(...), $Back(...), ...) in your
+# clips. Your file keeps its own character:, part:, ik_rig:, controls:, physics_asset: and into: lines. The bone names are a
+# MetaHuman body's; the rig_ numbers were measured on the MetaHuman ClothedReference body, and another body passes its own.
+# README.md beside this file says how to start; the guide is Plugins/GraphCode/Docs/Guides/MOVE-PARAMETRIC-POSES.md.
+#
+# A preset is a parameterised pose for one body part: Name = pose(value=default, ...) { lines }, called $Name(value=...).
+# A value not written is none: its lines are not written (each optional fact sits in its own if ($x != none) { }); a default
+# that is a formula follows the values it reads, and is none when one of them is. Degrees count from the figure: raise 0 straight
+# down, 90 level, 180 up; azimuth 0 ahead, 90 out to the limb's own side, 180 behind, below 0 across; tipped forward, to the
+# right and turned to the right are positive (lean, nod; side, tilt, chest_tilt; turn, twist). A sided preset takes left=true,
+# right=true; a side written false writes none of its lines, so uneven sides are two calls. Every number of this skeleton is a
+# rig_ value with its default; another skeleton overrides those. Helpers (marked) only carry arithmetic for the preset above them.
+# RANGES: every value an author writes carries its range
+# beside it as two parameters, x_min and x_max: a number outside is refused by name, x=max / x=min mean the end, and a call may
+# widen an end ($Back(lean=75, lean_max=75)). An end is this body's measured stop where one was found, a formula where the end
+# follows another value (Back's lean grows with the hunch), else the value's own scale.
+
+# What the presets aim from (each bone along its length; the face is the head bone's +Y, its up +X).
+Face = frame(bone=head, toward=+Y, up=+X)
+# Three names for the neck and head: the build holds one aim per name, and Head's two aims and its look are separate holds.
+LookH = bones(neck_01, neck_02, head)
+LookL = bones(neck_01, neck_02, head)
+Look = bones(neck_01, neck_02, head)
+UpperArmR = frame(bone=upperarm_r, toward=lowerarm_r)
+UpperArmL = frame(bone=upperarm_l, toward=lowerarm_l)
+# a forearm's frame: along the forearm, its up the PALM's normal (lowerarm +Z on the right, -Z on the left)
+ForeR = frame(bone=lowerarm_r, toward=-X, up=Z)
+ForeL = frame(bone=lowerarm_l, toward=X, up=-Z)
+ThighR = frame(bone=thigh_r, toward=calf_r)
+ThighL = frame(bone=thigh_l, toward=calf_l)
+ShinR = frame(bone=calf_r, toward=foot_r)
+ShinL = frame(bone=calf_l, toward=foot_l)
+FootR = frame(bone=foot_r, toward=ball_r)
+FootL = frame(bone=foot_l, toward=ball_l)
+ToesR = frame(bone=ball_r, toward=indextoe_02_r)
+ToesL = frame(bone=ball_l, toward=indextoe_02_l)
+
+# =====================================================================================================================
+# BACK (first layer, not sided): the hinge at the hips (the pelvis's forward tilt) and the spine's shape (spine_01..05: fold,
+# side, twist). Plain swings, no aim. The legs and arms are not Back's: a standing pose writes Stance, and a side lean writes
+# the arms (a hanging hand meets the thigh at a side lean of about 10).
+#  lean        degrees, 0 = the line from the middle of the two hip joints to neck_01 VERTICAL; positive tipped forward,
+#              below 0 back. Not written: no hinge, unless the back's shape is written (round, lumbar or thoracic): then the
+#              line keeps its rest tilt (rig_rest_tilt, -3.8: it stands a little back) and the pelvis tucks under the curve.
+#              The line tips by lean for any shape (the hinge is lean less the curve's own tip). Measured range: see below.
+#  round       -1..1, 0 = the rest shape: 1 every spine joint at its forward stop (curled), -1 at its back stop (arched).
+#              Not written, follows lean: forward 0.95 * (1 - (1 - lean/100)^1.74), backward -0.62 * |lean| / 19, clamped -1..1
+#              (lean 45 -> 0.62; 25 -> 0.37; -10 -> -0.33). round=0 written is a straight back on purpose (a formal bow).
+#  lumbar      -1..1, the lower back's shape alone: spine_01, spine_02, spine_03. Not written, follows round.
+#  thoracic    -1..1, the upper back's shape alone: spine_04, spine_05. Not written, follows round.
+#              Why that split: the rig's own twist room is 3 / 3 / 3 / 12.5 / 12.5 (a lumbar spine barely turns, a thoracic one
+#              does), and at rest spine_01..03 stand at 99, 106, 114 cm, below the ribs, spine_04 and 05 at 123 and 136 cm.
+#  side        degrees, the line tipped to the figure's RIGHT (below 0 left), by the spine alone, counted from the pelvis (a
+#              Hips.hike tips the pelvis under it). Not written: not asked (0 when chest_tilt alone is written).
+#  chest_tilt  degrees, the shoulder line rolled to the RIGHT against the pelvis. Not written, follows side * rig_chest_ratio
+#              (1.558: the five joints bent alike); written, the lower and upper back share the bend so the line still tips
+#              by side. The rig gives the upper back 6 a joint (rig_side_room), so the shoulders' roll against the line is held
+#              there: chest_tilt alone reaches about 6; side=8, chest_tilt=0 keeps the line at 8 and the roll stops at about 4.
+#  twist       degrees, the shoulders turned to the figure's RIGHT against the hips (left shoulder forward), shared as the
+#              rig's twist room is. Not written: not asked.
+#  rig_flex, rig_extend   each spine joint's room from rest forward / back (18, 6); rig_twist1..5 their twist room;
+#  rig_l0..5, rig_b0..5   the six segments hip-middle -> spine_01 -> ... -> spine_05 -> neck_01: length cm, rest tilt forward
+#              degrees, read at rest; rig_rest_tilt the line's rest tilt (-3.80, back); rig_chest_ratio as above.
+#  Measured (feet held, dry runs of 17 Nov): lean -33.8 .. 100 built exact to 0.06 (the hip's extension ends it near -38
+#              from vertical; forward the corrected pelvis (135) lets the thigh decide, not built past 100); round -1 .. 1 at
+#              lean 30 (the line 30.06 / 30.00); at lean 0 a round past about 0.65 lifts held feet (hip extension); side
+#              -18.81 .. 18.81 (each joint's 6, the build names it past); twist -33.67 .. 33.67; chest_tilt about -6 .. 6 at side 0.
+#  Worked values (built): a lean that rounds as it goes $Back(lean=45) -> line 45.00, round 0.614; a hunch
+#              $Back(lean=45, round=0.8, side=8) -> 45.11 / 8.01; a slouch $Back(round=0.5) -> the line stays -3.80, the pelvis
+#              tucks 29.05; a sway-back $Back(lean=20, lumbar=-0.7, thoracic=0.6) -> 20.00.
+Back = pose(lean=none, lean_min=$rig_hinge_back + $rig_rest_tilt + (atan2($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1 + (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend)) + $rig_l2 * sin($rig_b2 + 2 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend)) + $rig_l3 * sin($rig_b3 + 3 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend)) + $rig_l4 * sin($rig_b4 + 3 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend) + (max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend)) + $rig_l5 * sin($rig_b5 + 3 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend) + 2 * (max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend)), $rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1 + (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend)) + $rig_l2 * cos($rig_b2 + 2 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend)) + $rig_l3 * cos($rig_b3 + 3 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend)) + $rig_l4 * cos($rig_b4 + 3 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend) + (max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend)) + $rig_l5 * cos($rig_b5 + 3 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend) + 2 * (max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend))) - atan2($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1) + $rig_l2 * sin($rig_b2) + $rig_l3 * sin($rig_b3) + $rig_l4 * sin($rig_b4) + $rig_l5 * sin($rig_b5), $rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5))), lean_max=min($rig_hinge_forward + $rig_rest_tilt + (atan2($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1 + (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend)) + $rig_l2 * sin($rig_b2 + 2 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend)) + $rig_l3 * sin($rig_b3 + 3 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend)) + $rig_l4 * sin($rig_b4 + 3 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend) + (max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend)) + $rig_l5 * sin($rig_b5 + 3 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend) + 2 * (max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend)), $rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1 + (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend)) + $rig_l2 * cos($rig_b2 + 2 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend)) + $rig_l3 * cos($rig_b3 + 3 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend)) + $rig_l4 * cos($rig_b4 + 3 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend) + (max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend)) + $rig_l5 * cos($rig_b5 + 3 * (max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend) + 2 * (max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend))) - atan2($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1) + $rig_l2 * sin($rig_b2) + $rig_l3 * sin($rig_b3) + $rig_l4 * sin($rig_b4) + $rig_l5 * sin($rig_b5), $rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5))), 180), round=clamp(0.95 * (1 - pow(max(1 - max($lean, 0) / 100, 0), 1.74)) - 0.62 * max(-$lean, 0) / 19, -1, 1), round_min=-1, round_max=1, lumbar=$round, lumbar_min=-1, lumbar_max=1, thoracic=$round, thoracic_min=-1, thoracic_max=1, side=none, side_min=-$rig_side_room * 5 / $rig_chest_ratio, side_max=$rig_side_room * 5 / $rig_chest_ratio, chest_tilt=$side * $rig_chest_ratio, chest_tilt_min=-5 * $rig_side_room, chest_tilt_max=5 * $rig_side_room, twist=none, twist_min=-($rig_twist1 + $rig_twist2 + $rig_twist3 + $rig_twist4 + $rig_twist5), twist_max=$rig_twist1 + $rig_twist2 + $rig_twist3 + $rig_twist4 + $rig_twist5, rig_flex=18.0, rig_extend=6.0, rig_twist1=3.0, rig_twist2=3.0, rig_twist3=3.0, rig_twist4=12.5, rig_twist5=12.5, rig_l0=4.293, rig_l1=7.455, rig_l2=7.551, rig_l3=9.226, rig_l4=13.841, rig_l5=17.242, rig_b0=-2.911, rig_b1=13.007, rig_b2=5.677, rig_b3=-3.822, rig_b4=-12.357, rig_b5=-8.482, rig_rest_tilt=-3.8047, rig_chest_ratio=1.558, rig_side_room=6.0, rig_hinge_back=-35.0, rig_hinge_forward=132.4) {
+  if ($lumbar != none) {
+    swing(spine_01, axis=fold, by=(max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend))
+    swing(spine_02, axis=fold, by=(max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend))
+    swing(spine_03, axis=fold, by=(max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend))
+  }
+  if ($thoracic != none) {
+    swing(spine_04, axis=fold, by=(max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend))
+    swing(spine_05, axis=fold, by=(max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend))
+  }
+  if ($lean != none) {
+    if ($lumbar != none) {
+      if ($thoracic != none) {
+        $BackHinge(lean=$lean, bl=(max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend), bt=(max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend), rig_rest_tilt=$rig_rest_tilt, rig_l0=$rig_l0, rig_l1=$rig_l1, rig_l2=$rig_l2, rig_l3=$rig_l3, rig_l4=$rig_l4, rig_l5=$rig_l5, rig_b0=$rig_b0, rig_b1=$rig_b1, rig_b2=$rig_b2, rig_b3=$rig_b3, rig_b4=$rig_b4, rig_b5=$rig_b5)
+      } else {
+        $BackHinge(lean=$lean, bl=(max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend), bt=0, rig_rest_tilt=$rig_rest_tilt, rig_l0=$rig_l0, rig_l1=$rig_l1, rig_l2=$rig_l2, rig_l3=$rig_l3, rig_l4=$rig_l4, rig_l5=$rig_l5, rig_b0=$rig_b0, rig_b1=$rig_b1, rig_b2=$rig_b2, rig_b3=$rig_b3, rig_b4=$rig_b4, rig_b5=$rig_b5)
+      }
+    } else {
+      if ($thoracic != none) {
+        $BackHinge(lean=$lean, bl=0, bt=(max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend), rig_rest_tilt=$rig_rest_tilt, rig_l0=$rig_l0, rig_l1=$rig_l1, rig_l2=$rig_l2, rig_l3=$rig_l3, rig_l4=$rig_l4, rig_l5=$rig_l5, rig_b0=$rig_b0, rig_b1=$rig_b1, rig_b2=$rig_b2, rig_b3=$rig_b3, rig_b4=$rig_b4, rig_b5=$rig_b5)
+      } else {
+        $BackHinge(lean=$lean, bl=0, bt=0, rig_rest_tilt=$rig_rest_tilt, rig_l0=$rig_l0, rig_l1=$rig_l1, rig_l2=$rig_l2, rig_l3=$rig_l3, rig_l4=$rig_l4, rig_l5=$rig_l5, rig_b0=$rig_b0, rig_b1=$rig_b1, rig_b2=$rig_b2, rig_b3=$rig_b3, rig_b4=$rig_b4, rig_b5=$rig_b5)
+      }
+    }
+  } else {
+    if ($lumbar != none) {
+      if ($thoracic != none) {
+        $BackHinge(lean=$rig_rest_tilt, bl=(max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend), bt=(max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend), rig_rest_tilt=$rig_rest_tilt, rig_l0=$rig_l0, rig_l1=$rig_l1, rig_l2=$rig_l2, rig_l3=$rig_l3, rig_l4=$rig_l4, rig_l5=$rig_l5, rig_b0=$rig_b0, rig_b1=$rig_b1, rig_b2=$rig_b2, rig_b3=$rig_b3, rig_b4=$rig_b4, rig_b5=$rig_b5)
+      } else {
+        $BackHinge(lean=$rig_rest_tilt, bl=(max($lumbar, 0) * $rig_flex + min($lumbar, 0) * $rig_extend), bt=0, rig_rest_tilt=$rig_rest_tilt, rig_l0=$rig_l0, rig_l1=$rig_l1, rig_l2=$rig_l2, rig_l3=$rig_l3, rig_l4=$rig_l4, rig_l5=$rig_l5, rig_b0=$rig_b0, rig_b1=$rig_b1, rig_b2=$rig_b2, rig_b3=$rig_b3, rig_b4=$rig_b4, rig_b5=$rig_b5)
+      }
+    } else {
+      if ($thoracic != none) {
+        $BackHinge(lean=$rig_rest_tilt, bl=0, bt=(max($thoracic, 0) * $rig_flex + min($thoracic, 0) * $rig_extend), rig_rest_tilt=$rig_rest_tilt, rig_l0=$rig_l0, rig_l1=$rig_l1, rig_l2=$rig_l2, rig_l3=$rig_l3, rig_l4=$rig_l4, rig_l5=$rig_l5, rig_b0=$rig_b0, rig_b1=$rig_b1, rig_b2=$rig_b2, rig_b3=$rig_b3, rig_b4=$rig_b4, rig_b5=$rig_b5)
+      }
+    }
+  }
+  if ($side != none) {
+    if ($chest_tilt != none) {
+      $BackSide(side=$side, chest=$chest_tilt, rig_side_room=$rig_side_room, rig_l0=$rig_l0, rig_l1=$rig_l1, rig_l2=$rig_l2, rig_l3=$rig_l3, rig_l4=$rig_l4, rig_l5=$rig_l5, rig_b0=$rig_b0, rig_b1=$rig_b1, rig_b2=$rig_b2, rig_b3=$rig_b3, rig_b4=$rig_b4, rig_b5=$rig_b5)
+    } else {
+      $BackSide(side=$side, chest=$side * $rig_chest_ratio, rig_side_room=$rig_side_room, rig_l0=$rig_l0, rig_l1=$rig_l1, rig_l2=$rig_l2, rig_l3=$rig_l3, rig_l4=$rig_l4, rig_l5=$rig_l5, rig_b0=$rig_b0, rig_b1=$rig_b1, rig_b2=$rig_b2, rig_b3=$rig_b3, rig_b4=$rig_b4, rig_b5=$rig_b5)
+    }
+  } else {
+    if ($chest_tilt != none) {
+      $BackSide(side=0, chest=$chest_tilt, rig_side_room=$rig_side_room, rig_l0=$rig_l0, rig_l1=$rig_l1, rig_l2=$rig_l2, rig_l3=$rig_l3, rig_l4=$rig_l4, rig_l5=$rig_l5, rig_b0=$rig_b0, rig_b1=$rig_b1, rig_b2=$rig_b2, rig_b3=$rig_b3, rig_b4=$rig_b4, rig_b5=$rig_b5)
+    }
+  }
+  if ($twist != none) {
+    swing(spine_01, axis=twist, by=$twist * $rig_twist1 / ($rig_twist1 + $rig_twist2 + $rig_twist3 + $rig_twist4 + $rig_twist5))
+    swing(spine_02, axis=twist, by=$twist * $rig_twist2 / ($rig_twist1 + $rig_twist2 + $rig_twist3 + $rig_twist4 + $rig_twist5))
+    swing(spine_03, axis=twist, by=$twist * $rig_twist3 / ($rig_twist1 + $rig_twist2 + $rig_twist3 + $rig_twist4 + $rig_twist5))
+    swing(spine_04, axis=twist, by=$twist * $rig_twist4 / ($rig_twist1 + $rig_twist2 + $rig_twist3 + $rig_twist4 + $rig_twist5))
+    swing(spine_05, axis=twist, by=$twist * $rig_twist5 / ($rig_twist1 + $rig_twist2 + $rig_twist3 + $rig_twist4 + $rig_twist5))
+  }
+}
+# (helper of Back, not listed) the hinge: the pelvis folds lean less the tilt the curve alone gives the line (each segment turned
+# by the bends below it, the line re-measured), counted from the rest tilt.
+BackHinge = pose(lean=0.0, bl=0.0, bt=0.0, rig_rest_tilt=0.0, rig_l0=1.0, rig_l1=1.0, rig_l2=1.0, rig_l3=1.0, rig_l4=1.0, rig_l5=1.0, rig_b0=0.0, rig_b1=0.0, rig_b2=0.0, rig_b3=0.0, rig_b4=0.0, rig_b5=0.0) {
+  swing(pelvis, axis=fold, by=$lean - $rig_rest_tilt - (atan2($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1 + $bl) + $rig_l2 * sin($rig_b2 + 2 * $bl) + $rig_l3 * sin($rig_b3 + 3 * $bl) + $rig_l4 * sin($rig_b4 + 3 * $bl + $bt) + $rig_l5 * sin($rig_b5 + 3 * $bl + 2 * $bt), $rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1 + $bl) + $rig_l2 * cos($rig_b2 + 2 * $bl) + $rig_l3 * cos($rig_b3 + 3 * $bl) + $rig_l4 * cos($rig_b4 + 3 * $bl + $bt) + $rig_l5 * cos($rig_b5 + 3 * $bl + 2 * $bt)) - atan2($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1) + $rig_l2 * sin($rig_b2) + $rig_l3 * sin($rig_b3) + $rig_l4 * sin($rig_b4) + $rig_l5 * sin($rig_b5), $rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5))))
+}
+# (helper of Back, not listed) the side bend: a per joint on spine_01..03 and c on spine_04..05 with 3a + 2c = chest and the line
+# tipped by side (a * the heights above the lower joints + c * those above the upper = side * the line's length, small angles);
+# c is held to the upper joints' side room (rig_side_room) and a re-solved, so past that room the line keeps side and the
+# shoulders' roll stops where the rig stops it (without the hold the upper joints' clamp turned chest_tilt=15 into -3.3);
+# the rig's side axis leans LEFT, so the swings carry the flip.
+BackSide = pose(side=0.0, chest=0.0, rig_side_room=6.0, rig_l0=1.0, rig_l1=1.0, rig_l2=1.0, rig_l3=1.0, rig_l4=1.0, rig_l5=1.0, rig_b0=0.0, rig_b1=0.0, rig_b2=0.0, rig_b3=0.0, rig_b4=0.0, rig_b5=0.0) {
+  swing(spine_01, axis=side, by=-(($side * sqrt(pow($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1) + $rig_l2 * sin($rig_b2) + $rig_l3 * sin($rig_b3) + $rig_l4 * sin($rig_b4) + $rig_l5 * sin($rig_b5), 2) + pow($rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5), 2)) - clamp(($chest - 3 * (($side * sqrt(pow($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1) + $rig_l2 * sin($rig_b2) + $rig_l3 * sin($rig_b3) + $rig_l4 * sin($rig_b4) + $rig_l5 * sin($rig_b5), 2) + pow($rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5), 2)) - $chest * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5))) / 2) / ((($rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5))) - 1.5 * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5)))))) / 2, -$rig_side_room, $rig_side_room) * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5)))) / (($rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)))))
+  swing(spine_02, axis=side, by=-(($side * sqrt(pow($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1) + $rig_l2 * sin($rig_b2) + $rig_l3 * sin($rig_b3) + $rig_l4 * sin($rig_b4) + $rig_l5 * sin($rig_b5), 2) + pow($rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5), 2)) - clamp(($chest - 3 * (($side * sqrt(pow($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1) + $rig_l2 * sin($rig_b2) + $rig_l3 * sin($rig_b3) + $rig_l4 * sin($rig_b4) + $rig_l5 * sin($rig_b5), 2) + pow($rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5), 2)) - $chest * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5))) / 2) / ((($rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5))) - 1.5 * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5)))))) / 2, -$rig_side_room, $rig_side_room) * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5)))) / (($rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)))))
+  swing(spine_03, axis=side, by=-(($side * sqrt(pow($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1) + $rig_l2 * sin($rig_b2) + $rig_l3 * sin($rig_b3) + $rig_l4 * sin($rig_b4) + $rig_l5 * sin($rig_b5), 2) + pow($rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5), 2)) - clamp(($chest - 3 * (($side * sqrt(pow($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1) + $rig_l2 * sin($rig_b2) + $rig_l3 * sin($rig_b3) + $rig_l4 * sin($rig_b4) + $rig_l5 * sin($rig_b5), 2) + pow($rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5), 2)) - $chest * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5))) / 2) / ((($rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5))) - 1.5 * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5)))))) / 2, -$rig_side_room, $rig_side_room) * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5)))) / (($rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)))))
+  swing(spine_04, axis=side, by=-(clamp(($chest - 3 * (($side * sqrt(pow($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1) + $rig_l2 * sin($rig_b2) + $rig_l3 * sin($rig_b3) + $rig_l4 * sin($rig_b4) + $rig_l5 * sin($rig_b5), 2) + pow($rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5), 2)) - $chest * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5))) / 2) / ((($rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5))) - 1.5 * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5)))))) / 2, -$rig_side_room, $rig_side_room)))
+  swing(spine_05, axis=side, by=-(clamp(($chest - 3 * (($side * sqrt(pow($rig_l0 * sin($rig_b0) + $rig_l1 * sin($rig_b1) + $rig_l2 * sin($rig_b2) + $rig_l3 * sin($rig_b3) + $rig_l4 * sin($rig_b4) + $rig_l5 * sin($rig_b5), 2) + pow($rig_l0 * cos($rig_b0) + $rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5), 2)) - $chest * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5))) / 2) / ((($rig_l1 * cos($rig_b1) + $rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l2 * cos($rig_b2) + $rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l3 * cos($rig_b3) + $rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5))) - 1.5 * (($rig_l4 * cos($rig_b4) + $rig_l5 * cos($rig_b5)) + ($rig_l5 * cos($rig_b5)))))) / 2, -$rig_side_room, $rig_side_room)))
+}
+
+# =====================================================================================================================
+# HEAD (first layer, not sided): neck_01, neck_02, head on fold, side, twist, and the look. Counted against the CHEST
+# (spine_05): over a leaning or rounded Back the head follows the chest bone unless level is written.
+#  turn      degrees, the face turned to the figure's RIGHT against the chest (below 0 left). Measured -75.5 .. 75.5.
+#  nod       degrees, chin DOWN against the chest (below 0 chin up). Measured -84.4 .. 55.7.
+#  tilt      degrees, the ear toward the RIGHT shoulder against the chest. Measured -50.3 .. 50.3 alone, about 21 at turn 70
+#            with nod 40 (the side joints' stops; the build names them).
+#            Any one of turn, nod, tilt, level written asks the face's direction; then the others not written are 0.
+#  level     0..1, how far the face rights itself in the figure's frame (character), pitch, yaw and roll: 0 it rides the chest,
+#            1 turn/nod/tilt count in the figure's frame, so a leaning back no longer tips the face; held exactly between.
+#            Not written: the head follows the chest (level 0).
+#  jut       -1..1, the head carried forward of the chest with the face's direction kept: 1 as far forward as the neck goes
+#            (+3.2 cm on this rig), -1 tucked back as far as it goes (-2.6 cm). Not written: not asked.
+#  look_at   a place ($Place) the face turns to, written last, so it takes the face's direction over turn/nod/tilt (a look
+#            and turn/nod do not add: the later line wins). Not written: not asked.
+#  rig_tw_*, rig_sd_*   what twist and side each neck joint needs for a pure turn and tilt (this rig couples them: 10 of twist
+#            also tilts 5.8, 10 of side also turns 4.0); rig_tilt_per_turn_nod the tilt a turn and nod together add;
+#            rig_share_*   the three joints' shares (the rig gives them equal room); rig_jut_forward / rig_jut_back the
+#            head's counter-fold at jut 1 / -1 (27.9 = neck_01's forward room 18.6 over its 2/3 share; 18.6 the head's
+#            forward room); rig_jut_neck_01 the neck_01's share of that fold (2/3; neck_02 takes the rest).
+#  Worked values (built): a turned, nodded, tilted head $Head(turn=70, nod=40, tilt=30) -> 70.04 / 40.06 / 21.06 (the
+#              side joints' stop, said); a chin tuck $Head(jut=-1) -> the head 2.57 cm back, face unchanged; over a hunch
+#              (Back lean 45, round 0.8: the chest 74.2 down) $Head(level=1) -> face 0.00 in the room, level=0.5 -> 37.10.
+Head = pose(turn=none, turn_min=-75.5, turn_max=75.5, nod=none, nod_min=-84.4, nod_max=55.7, tilt=none, tilt_min=-50.3, tilt_max=50.3, level=none, level_min=0, level_max=1, jut=none, jut_min=-1, jut_max=1, look_at=none, rig_tw_turn=0.9964, rig_tw_tilt=-0.1362, rig_sd_turn=-0.1958, rig_sd_tilt=-0.9882, rig_tilt_per_turn_nod=0.0055, rig_share_neck_01=0.3333, rig_share_neck_02=0.3333, rig_share_head=0.3334, rig_jut_forward=27.9, rig_jut_back=18.6, rig_jut_neck_01=0.6667) {
+  if ($turn != none) {
+    if ($nod != none) {
+      if ($tilt != none) {
+        if ($level != none) {
+          $HeadDir(turn=$turn, nod=$nod, tilt=$tilt, level=$level, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        } else {
+          $HeadDir(turn=$turn, nod=$nod, tilt=$tilt, level=0, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        }
+      } else {
+        if ($level != none) {
+          $HeadDir(turn=$turn, nod=$nod, tilt=0, level=$level, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        } else {
+          $HeadDir(turn=$turn, nod=$nod, tilt=0, level=0, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        }
+      }
+    } else {
+      if ($tilt != none) {
+        if ($level != none) {
+          $HeadDir(turn=$turn, nod=0, tilt=$tilt, level=$level, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        } else {
+          $HeadDir(turn=$turn, nod=0, tilt=$tilt, level=0, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        }
+      } else {
+        if ($level != none) {
+          $HeadDir(turn=$turn, nod=0, tilt=0, level=$level, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        } else {
+          $HeadDir(turn=$turn, nod=0, tilt=0, level=0, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        }
+      }
+    }
+  } else {
+    if ($nod != none) {
+      if ($tilt != none) {
+        if ($level != none) {
+          $HeadDir(turn=0, nod=$nod, tilt=$tilt, level=$level, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        } else {
+          $HeadDir(turn=0, nod=$nod, tilt=$tilt, level=0, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        }
+      } else {
+        if ($level != none) {
+          $HeadDir(turn=0, nod=$nod, tilt=0, level=$level, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        } else {
+          $HeadDir(turn=0, nod=$nod, tilt=0, level=0, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        }
+      }
+    } else {
+      if ($tilt != none) {
+        if ($level != none) {
+          $HeadDir(turn=0, nod=0, tilt=$tilt, level=$level, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        } else {
+          $HeadDir(turn=0, nod=0, tilt=$tilt, level=0, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        }
+      } else {
+        if ($level != none) {
+          $HeadDir(turn=0, nod=0, tilt=0, level=$level, rig_tw_turn=$rig_tw_turn, rig_tw_tilt=$rig_tw_tilt, rig_sd_turn=$rig_sd_turn, rig_sd_tilt=$rig_sd_tilt, rig_tilt_per_turn_nod=$rig_tilt_per_turn_nod, rig_share_neck_01=$rig_share_neck_01, rig_share_neck_02=$rig_share_neck_02, rig_share_head=$rig_share_head)
+        }
+      }
+    }
+  }
+  if ($jut != none) {
+    swing(neck_01, axis=fold, by=(max($jut, 0) * $rig_jut_forward + min($jut, 0) * $rig_jut_back) * $rig_jut_neck_01)
+    swing(neck_02, axis=fold, by=(max($jut, 0) * $rig_jut_forward + min($jut, 0) * $rig_jut_back) * (1 - $rig_jut_neck_01))
+    swing(head, axis=fold, by=-(max($jut, 0) * $rig_jut_forward + min($jut, 0) * $rig_jut_back))
+  }
+  if ($look_at != none) {
+    aim($Look, from=$Face, at=$look_at)
+  }
+}
+# (helper of Head, not listed) the face's direction: swings with the couplings undone, then an aim against the chest
+# (weight 1 - level) and one in the figure's frame (weight level) that also holds the roll.
+HeadDir = pose(turn=0.0, nod=0.0, tilt=0.0, level=0.0, rig_tw_turn=1.0, rig_tw_tilt=0.0, rig_sd_turn=0.0, rig_sd_tilt=-1.0, rig_tilt_per_turn_nod=0.0, rig_share_neck_01=0.3333, rig_share_neck_02=0.3333, rig_share_head=0.3333) {
+  swing(neck_01, axis=twist, by=($turn * $rig_tw_turn + ($tilt + $rig_tilt_per_turn_nod * $turn * $nod) * $rig_tw_tilt) * $rig_share_neck_01)
+  swing(neck_01, axis=fold, by=$nod * $rig_share_neck_01)
+  swing(neck_01, axis=side, by=($turn * $rig_sd_turn + ($tilt + $rig_tilt_per_turn_nod * $turn * $nod) * $rig_sd_tilt) * $rig_share_neck_01)
+  swing(neck_02, axis=twist, by=($turn * $rig_tw_turn + ($tilt + $rig_tilt_per_turn_nod * $turn * $nod) * $rig_tw_tilt) * $rig_share_neck_02)
+  swing(neck_02, axis=fold, by=$nod * $rig_share_neck_02)
+  swing(neck_02, axis=side, by=($turn * $rig_sd_turn + ($tilt + $rig_tilt_per_turn_nod * $turn * $nod) * $rig_sd_tilt) * $rig_share_neck_02)
+  swing(head, axis=twist, by=($turn * $rig_tw_turn + ($tilt + $rig_tilt_per_turn_nod * $turn * $nod) * $rig_tw_tilt) * $rig_share_head)
+  swing(head, axis=fold, by=$nod * $rig_share_head)
+  swing(head, axis=side, by=($turn * $rig_sd_turn + ($tilt + $rig_tilt_per_turn_nod * $turn * $nod) * $rig_sd_tilt) * $rig_share_head)
+  aim($LookH, from=$Face, toward=(forward, right=$turn, down=$nod), relative=spine_05, weight=1 - $level)
+  aim($LookL, from=$Face, toward=(forward, right=$turn, down=$nod), up=(up, right=$tilt), relative=character, weight=$level)
+}
+
+# =====================================================================================================================
+# UPPERARM (first layer, sided): the collar bone (clavicle fold and side) and where the upper arm points (upperarm aim). The upper
+# arm's own turn is fixed by its direction and the forearm's (no roll).
+#  raise, azimuth  where the upper arm (shoulder to elbow) points: raise 0 straight down, 90 level, 180 up; azimuth 0 ahead, 90
+#            out to its own side, 180 behind, below 0 across; counted in frame. Either one written asks the direction: raise
+#            alone takes azimuth 0, azimuth alone takes the rig's rest raise (rig_rest_raise 12.67). Neither: not asked, the arm
+#            rides the chest. Measured: every built direction exact (0.0); forward to 175, to the side to 170 with the collar
+#            bone following (162 without); behind the side (azimuth 130) the shoulder's stop names the shortfall.
+#  shrug     -1..1, the shoulder joint raised (1 = the collar's 45 up, 12.7 cm), below 0 pressed down (its 15). Not written,
+#            follows raise: 0.13 * (raise - rest) / (120 - rest), rising on past 120 (0.19 at 170) and faded to 0 between 170 and 180
+#            (rig_fade_start/end: past 172 the shoulder's stop is met sooner with the collar raised). A shrug above 0 eases the
+#            arm out by rig_shrug_ease (10) * shrug^2 * cos(raise) degrees, so a hanging arm clears the ribs under a full
+#            shrug (the shrug that follows raise eases it 0.03 at most: raise reads exact).
+#  shoulder_forward  -1..1, the shoulder joint rolled forward (the collar's 17.5, 5.3 cm), below 0 drawn back. Not written,
+#            follows raise and azimuth: -0.91 * (the same share as shrug) * (0.5 + azimuth / 90), azimuth held to 0..90 (the
+#            source gives no factor outside it), held to -1..1 and faded as shrug.
+#  frame     what the directions count from: character (default; a leaning back does not tip them) or a bone (spine_05 = the
+#            chest).   left, right   sides.
+#  rig_up_deg, rig_down_deg, rig_forward_deg, rig_back_deg   the collar bone's room from rest (45, 15, 17.5, 17.5).
+#  Worked values (built): arms out level $UpperArm(raise=90, azimuth=90) -> 90.00 / 90.00, collar 4.07 up; one arm up to
+#              the side $UpperArm(raise=170, azimuth=90) -> 170.00 (the collar 8.29 up, 17.5 back; without it 162.22); a forward
+#              raise $UpperArm(raise=60) -> 60.02 / 0.00. Uneven: $UpperArm(raise=90, azimuth=90, right=false)
+#              $UpperArm(raise=30, azimuth=45, left=false). Worst: raise 175 to the side reads 161.1 (the collar's fade).
+UpperArm = pose(raise=none, raise_min=0, raise_max=175, azimuth=0 * $raise, azimuth_min=-180, azimuth_max=180, shrug=0.13 * max($raise - $rig_rest_raise, 0) / (120 - $rig_rest_raise) * (clamp(($rig_fade_end - $raise) / ($rig_fade_end - $rig_fade_start), 0, 1)), shrug_min=-1, shrug_max=1, shoulder_forward=clamp(-0.91 * (clamp(($raise - $rig_rest_raise) / (120 - $rig_rest_raise), 0, 1)) * (0.5 + clamp($azimuth, 0, 90) / 90), -1, 1) * (clamp(($rig_fade_end - $raise) / ($rig_fade_end - $rig_fade_start), 0, 1)), shoulder_forward_min=-1, shoulder_forward_max=1, frame=character, left=true, right=true, rig_rest_raise=12.67, rig_up_deg=45.0, rig_down_deg=15.0, rig_forward_deg=17.5, rig_back_deg=17.5, rig_fade_start=170.0, rig_fade_end=180.0, rig_shrug_ease=10.0) {
+  if ($shrug != none) {
+    if ($right) { swing(clavicle_r, axis=fold, by=(max($shrug, 0) * $rig_up_deg + min($shrug, 0) * $rig_down_deg)) }
+    if ($left) { swing(clavicle_l, axis=fold, by=(max($shrug, 0) * $rig_up_deg + min($shrug, 0) * $rig_down_deg)) }
+  }
+  if ($shoulder_forward != none) {
+    if ($right) { swing(clavicle_r, axis=side, by=(max($shoulder_forward, 0) * $rig_forward_deg + min($shoulder_forward, 0) * $rig_back_deg)) }
+    if ($left) { swing(clavicle_l, axis=side, by=(max($shoulder_forward, 0) * $rig_forward_deg + min($shoulder_forward, 0) * $rig_back_deg)) }
+  }
+  if ($raise != none) {
+    if ($azimuth != none) {
+      if ($shrug != none) {
+        $UpperArmDir(raise=$raise, azimuth=$azimuth, lift=$shrug, frame=$frame, left=$left, right=$right, rig_shrug_ease=$rig_shrug_ease)
+      } else {
+        $UpperArmDir(raise=$raise, azimuth=$azimuth, lift=0, frame=$frame, left=$left, right=$right, rig_shrug_ease=$rig_shrug_ease)
+      }
+    } else {
+      if ($shrug != none) {
+        $UpperArmDir(raise=$raise, azimuth=0, lift=$shrug, frame=$frame, left=$left, right=$right, rig_shrug_ease=$rig_shrug_ease)
+      } else {
+        $UpperArmDir(raise=$raise, azimuth=0, lift=0, frame=$frame, left=$left, right=$right, rig_shrug_ease=$rig_shrug_ease)
+      }
+    }
+  } else {
+    if ($azimuth != none) {
+      if ($shrug != none) {
+        $UpperArmDir(raise=$rig_rest_raise, azimuth=$azimuth, lift=$shrug, frame=$frame, left=$left, right=$right, rig_shrug_ease=$rig_shrug_ease)
+      } else {
+        $UpperArmDir(raise=$rig_rest_raise, azimuth=$azimuth, lift=0, frame=$frame, left=$left, right=$right, rig_shrug_ease=$rig_shrug_ease)
+      }
+    }
+  }
+}
+# (helper of UpperArm, not listed) the aim, each side in its own block; the left line carries the flip (left=).
+UpperArmDir = pose(raise=0.0, azimuth=0.0, lift=0.0, frame=character, left=true, right=true, rig_shrug_ease=0.0) {
+  if ($right) { aim(upperarm_r, from=$UpperArmR, toward=(down, forward=atan2(sin(($raise + $rig_shrug_ease * pow(max($lift, 0), 2) * max(cos($raise), 0))) * cos($azimuth), cos(($raise + $rig_shrug_ease * pow(max($lift, 0), 2) * max(cos($raise), 0)))), right=asin(sin(($raise + $rig_shrug_ease * pow(max($lift, 0), 2) * max(cos($raise), 0))) * sin($azimuth))), relative=$frame) }
+  if ($left) { aim(upperarm_l, from=$UpperArmL, toward=(down, forward=atan2(sin(($raise + $rig_shrug_ease * pow(max($lift, 0), 2) * max(cos($raise), 0))) * cos($azimuth), cos(($raise + $rig_shrug_ease * pow(max($lift, 0), 2) * max(cos($raise), 0)))), left=asin(sin(($raise + $rig_shrug_ease * pow(max($lift, 0), 2) * max(cos($raise), 0))) * sin($azimuth))), relative=$frame) }
+}
+
+# FOREARM (first layer, sided): where the forearm points and where its palm faces (lowerarm aim; its turn about its length
+# comes from the palm). The wrist and fingers are the Hand's.
+#  raise, azimuth  where the forearm (elbow to wrist) points, ABSOLUTE in frame (not counted from the upper arm); the pair rule
+#            as UpperArm's (azimuth alone takes rig_rest_raise 18.05). Neither: the forearm rides the upper arm. Met within 0.3
+#            wherever the elbow (0 to 150 bent) and the shoulder's twist (+-73.8) can bring it; elsewhere the build says
+#            "'lowerarm_r' could not be turned ... N short".
+#  palm_raise, palm_azimuth  where the PALM faces, in the same two-angle language and the same numbers on both arms: raise 0
+#            the palm faces down, 180 up; 90 with azimuth -90 faces in (toward the body's middle), 90 out, 0 ahead. The pair rule
+#            as above (palm_azimuth alone takes rig_rest_palm_raise). A palm facing along the forearm has no meaning (the aim's
+#            up is taken square to the forearm). Neither written: the forearm's turn is not asked. A palm written with no
+#            forearm direction holds the forearm at its rest direction (rig_rest_raise, rig_rest_azimuth 44.11) in frame:
+#            the build takes a palm only with a direction ("aim(up=) ... needs toward= as well").
+#  frame, left, right  as UpperArm's.
+#  Measured: the palm is held exactly where the forearm's twist (+-90.6) can turn it; past it the build says "'lowerarm_r'
+#              is turned N short of its up=". Worked values (built), the upper arm at (45, 45) unless said: forearm level ahead,
+#              palm down $Forearm(raise=90, azimuth=0, palm_raise=0) -> 90.03 / 0.04, palm 0.03; palm in and 45 down
+#              $Forearm(raise=90, azimuth=0, palm_raise=45, palm_azimuth=-90) -> palm 45.00 / -89.93; arms out, palms forward
+#              $UpperArm(raise=90, azimuth=90) $Forearm(raise=90, azimuth=90, palm_raise=90, palm_azimuth=0) -> palm 90.00 / 0.00.
+Forearm = pose(raise=none, raise_min=0, raise_max=180, azimuth=0 * $raise, azimuth_min=-180, azimuth_max=180, palm_raise=none, palm_raise_min=0, palm_raise_max=180, palm_azimuth=0 * $palm_raise, palm_azimuth_min=-180, palm_azimuth_max=180, frame=character, left=true, right=true, rig_rest_raise=18.05, rig_rest_azimuth=44.11, rig_rest_palm_raise=77.76) {
+  if ($raise != none) {
+    if ($azimuth != none) {
+      if ($palm_raise != none) {
+        if ($palm_azimuth != none) {
+          $ForearmAimPalm(raise=$raise, azimuth=$azimuth, palm_raise=$palm_raise, palm_azimuth=$palm_azimuth, frame=$frame, left=$left, right=$right)
+        } else {
+          $ForearmAimPalm(raise=$raise, azimuth=$azimuth, palm_raise=$palm_raise, palm_azimuth=0, frame=$frame, left=$left, right=$right)
+        }
+      } else {
+        if ($palm_azimuth != none) {
+          $ForearmAimPalm(raise=$raise, azimuth=$azimuth, palm_raise=$rig_rest_palm_raise, palm_azimuth=$palm_azimuth, frame=$frame, left=$left, right=$right)
+        } else {
+          $ForearmAim(raise=$raise, azimuth=$azimuth, frame=$frame, left=$left, right=$right)
+        }
+      }
+    } else {
+      if ($palm_raise != none) {
+        if ($palm_azimuth != none) {
+          $ForearmAimPalm(raise=$raise, azimuth=0, palm_raise=$palm_raise, palm_azimuth=$palm_azimuth, frame=$frame, left=$left, right=$right)
+        } else {
+          $ForearmAimPalm(raise=$raise, azimuth=0, palm_raise=$palm_raise, palm_azimuth=0, frame=$frame, left=$left, right=$right)
+        }
+      } else {
+        if ($palm_azimuth != none) {
+          $ForearmAimPalm(raise=$raise, azimuth=0, palm_raise=$rig_rest_palm_raise, palm_azimuth=$palm_azimuth, frame=$frame, left=$left, right=$right)
+        } else {
+          $ForearmAim(raise=$raise, azimuth=0, frame=$frame, left=$left, right=$right)
+        }
+      }
+    }
+  } else {
+    if ($azimuth != none) {
+      if ($palm_raise != none) {
+        if ($palm_azimuth != none) {
+          $ForearmAimPalm(raise=$rig_rest_raise, azimuth=$azimuth, palm_raise=$palm_raise, palm_azimuth=$palm_azimuth, frame=$frame, left=$left, right=$right)
+        } else {
+          $ForearmAimPalm(raise=$rig_rest_raise, azimuth=$azimuth, palm_raise=$palm_raise, palm_azimuth=0, frame=$frame, left=$left, right=$right)
+        }
+      } else {
+        if ($palm_azimuth != none) {
+          $ForearmAimPalm(raise=$rig_rest_raise, azimuth=$azimuth, palm_raise=$rig_rest_palm_raise, palm_azimuth=$palm_azimuth, frame=$frame, left=$left, right=$right)
+        } else {
+          $ForearmAim(raise=$rig_rest_raise, azimuth=$azimuth, frame=$frame, left=$left, right=$right)
+        }
+      }
+    } else {
+      if ($palm_raise != none) {
+        if ($palm_azimuth != none) {
+          $ForearmAimPalm(raise=$rig_rest_raise, azimuth=$rig_rest_azimuth, palm_raise=$palm_raise, palm_azimuth=$palm_azimuth, frame=$frame, left=$left, right=$right)
+        } else {
+          $ForearmAimPalm(raise=$rig_rest_raise, azimuth=$rig_rest_azimuth, palm_raise=$palm_raise, palm_azimuth=0, frame=$frame, left=$left, right=$right)
+        }
+      } else {
+        if ($palm_azimuth != none) {
+          $ForearmAimPalm(raise=$rig_rest_raise, azimuth=$rig_rest_azimuth, palm_raise=$rig_rest_palm_raise, palm_azimuth=$palm_azimuth, frame=$frame, left=$left, right=$right)
+        }
+      }
+    }
+  }
+}
+# (helpers of Forearm, not listed) the aim with a direction, and with a direction and the palm.
+ForearmAim = pose(raise=0.0, azimuth=0.0, frame=character, left=true, right=true) {
+  if ($right) { aim(lowerarm_r, from=$ForeR, toward=(down, forward=atan2(sin($raise) * cos($azimuth), cos($raise)), right=asin(sin($raise) * sin($azimuth))), relative=$frame) }
+  if ($left) { aim(lowerarm_l, from=$ForeL, toward=(down, forward=atan2(sin($raise) * cos($azimuth), cos($raise)), left=asin(sin($raise) * sin($azimuth))), relative=$frame) }
+}
+ForearmAimPalm = pose(raise=0.0, azimuth=0.0, palm_raise=90.0, palm_azimuth=0.0, frame=character, left=true, right=true) {
+  if ($right) { aim(lowerarm_r, from=$ForeR, toward=(down, forward=atan2(sin($raise) * cos($azimuth), cos($raise)), right=asin(sin($raise) * sin($azimuth))), up=(down, forward=atan2(sin($palm_raise) * cos($palm_azimuth), cos($palm_raise)), right=asin(sin($palm_raise) * sin($palm_azimuth))), relative=$frame) }
+  if ($left) { aim(lowerarm_l, from=$ForeL, toward=(down, forward=atan2(sin($raise) * cos($azimuth), cos($raise)), left=asin(sin($raise) * sin($azimuth))), up=(down, forward=atan2(sin($palm_raise) * cos($palm_azimuth), cos($palm_raise)), left=asin(sin($palm_raise) * sin($palm_azimuth))), relative=$frame) }
+}
+
+# ARMREACH (second layer, sided: calls only UpperArm and Forearm): the arm along a line from the shoulder and how far out.
+#  raise, azimuth  the direction from the shoulder joint to the wrist (hand joint), as UpperArm's; the pair rule (azimuth alone
+#            takes rig_rest_raise 14.72, the rest line's). Neither written: no line asked (the palm still passes on).
+#  reach     the wrist's distance along that line as a share of rig_upper_len + rig_fore_len (55.8 cm): 1 (default) the arm
+#            straight. Measured 0.259 (the elbow's 150 stop) to 1; above 1 refused by the arithmetic ("sqrt() ... needs a value
+#            of zero or more").
+#  swivel    degrees the elbow is swung round that line from its LOWEST place, + out then up; default 0. A bent arm near the
+#            trunk needs it written (the guard built only from 30 up: 0 and 20 put the forearm in the chest).
+#  palm_raise, palm_azimuth  passed on to Forearm.   frame, left, right   as UpperArm's.
+#  shoulder_forward  -1..1, how open the shoulder is: below 0 the shoulder drawn back (the chest opens), above 0 rolled
+#            forward, about 5 cm each way at the ends. Not written: it follows the arm's raise and azimuth as UpperArm's does.
+#  shrug     -1..1, the shoulder raised (above 0) or pressed down (below 0). Not written: it follows the raise as UpperArm's.
+#            Both are passed to UpperArm; they act with a direction written (raise or azimuth), as the rest of the arm does.
+#  Arithmetic: the elbow's direction u = ca * D + sqrt(1 - ca^2) * n (D the line, ca by the law of cosines from reach and the two
+#  lengths, n the lowest perpendicular swung by swivel); the forearm is the line from the elbow to the wrist.
+#  Worked values (built): a T pose $ArmReach(raise=90, azimuth=90) -> line 90.00 / 90.00, reach 1.003; a zombie's reach
+#              $ArmReach(raise=80, azimuth=5, reach=0.95) -> 80.10 / 4.98, reach 0.953; a bent arm $ArmReach(raise=90,
+#              azimuth=30, reach=0.4) -> 90.62 / 30.22, reach 0.401.
+ArmReach = pose(raise=none, raise_min=0, raise_max=180, azimuth=0 * $raise, azimuth_min=-180, azimuth_max=180, reach=1.0, reach_min=0.26, reach_max=1, swivel=0.0, swivel_min=-60, swivel_max=150, palm_raise=none, palm_raise_min=0, palm_raise_max=180, palm_azimuth=0 * $palm_raise, palm_azimuth_min=-180, palm_azimuth_max=180, shrug=none, shrug_min=-1, shrug_max=1, shoulder_forward=none, shoulder_forward_min=-1, shoulder_forward_max=1, frame=character, left=true, right=true, rig_upper_len=28.4, rig_fore_len=27.4, rig_rest_raise=14.72) {
+  if ($raise != none) {
+    if ($azimuth != none) {
+      $ArmReachElbow(raise=$raise, azimuth=$azimuth, swivel=$swivel, d=$reach * ($rig_upper_len + $rig_fore_len), ca=($rig_upper_len * $rig_upper_len + pow($reach * ($rig_upper_len + $rig_fore_len), 2) - $rig_fore_len * $rig_fore_len) / (2 * $rig_upper_len * $reach * ($rig_upper_len + $rig_fore_len)), rig_upper_len=$rig_upper_len, palm_raise=$palm_raise, palm_azimuth=$palm_azimuth, shrug=$shrug, shoulder_forward=$shoulder_forward, frame=$frame, left=$left, right=$right)
+    } else {
+      $ArmReachElbow(raise=$raise, azimuth=0, swivel=$swivel, d=$reach * ($rig_upper_len + $rig_fore_len), ca=($rig_upper_len * $rig_upper_len + pow($reach * ($rig_upper_len + $rig_fore_len), 2) - $rig_fore_len * $rig_fore_len) / (2 * $rig_upper_len * $reach * ($rig_upper_len + $rig_fore_len)), rig_upper_len=$rig_upper_len, palm_raise=$palm_raise, palm_azimuth=$palm_azimuth, shrug=$shrug, shoulder_forward=$shoulder_forward, frame=$frame, left=$left, right=$right)
+    }
+  } else {
+    if ($azimuth != none) {
+      $ArmReachElbow(raise=$rig_rest_raise, azimuth=$azimuth, swivel=$swivel, d=$reach * ($rig_upper_len + $rig_fore_len), ca=($rig_upper_len * $rig_upper_len + pow($reach * ($rig_upper_len + $rig_fore_len), 2) - $rig_fore_len * $rig_fore_len) / (2 * $rig_upper_len * $reach * ($rig_upper_len + $rig_fore_len)), rig_upper_len=$rig_upper_len, palm_raise=$palm_raise, palm_azimuth=$palm_azimuth, shrug=$shrug, shoulder_forward=$shoulder_forward, frame=$frame, left=$left, right=$right)
+    } else {
+      $Forearm(palm_raise=$palm_raise, palm_azimuth=$palm_azimuth, frame=$frame, left=$left, right=$right)
+    }
+  }
+}
+# (helper of ArmReach, not listed) the elbow's direction u (side-local: out, forward, up) and the wrist's place w from the shoulder.
+ArmReachElbow = pose(raise=90.0, azimuth=0.0, swivel=0.0, d=40.0, ca=0.7, rig_upper_len=28.4, palm_raise=none, palm_azimuth=none, shrug=none, shoulder_forward=none, frame=character, left=true, right=true) {
+  $ArmReachAim(ux=$ca * sin($raise) * sin($azimuth) + sqrt(1 - $ca * $ca + 0.000000001) * (sin($swivel) * cos($azimuth) - cos($swivel) * cos($raise) * sin($azimuth)), uy=$ca * sin($raise) * cos($azimuth) - sqrt(1 - $ca * $ca + 0.000000001) * (sin($swivel) * sin($azimuth) + cos($swivel) * cos($raise) * cos($azimuth)), uz=-$ca * cos($raise) - sqrt(1 - $ca * $ca + 0.000000001) * cos($swivel) * sin($raise), wx=$d * sin($raise) * sin($azimuth), wy=$d * sin($raise) * cos($azimuth), wz=-$d * cos($raise), rig_upper_len=$rig_upper_len, palm_raise=$palm_raise, palm_azimuth=$palm_azimuth, shrug=$shrug, shoulder_forward=$shoulder_forward, frame=$frame, left=$left, right=$right)
+}
+# (helper of ArmReach, not listed) the two directions back into raise/azimuth, handed to the first layer.
+ArmReachAim = pose(ux=0.0, uy=0.7, uz=-0.7, wx=0.0, wy=40.0, wz=0.0, rig_upper_len=28.4, palm_raise=none, palm_azimuth=none, shrug=none, shoulder_forward=none, frame=character, left=true, right=true) {
+  if ($shrug != none) {
+    if ($shoulder_forward != none) {
+      $UpperArm(raise=atan2(sqrt($ux * $ux + $uy * $uy), -$uz), azimuth=atan2($ux, $uy), shrug=$shrug, shoulder_forward=$shoulder_forward, frame=$frame, left=$left, right=$right)
+    } else {
+      $UpperArm(raise=atan2(sqrt($ux * $ux + $uy * $uy), -$uz), azimuth=atan2($ux, $uy), shrug=$shrug, frame=$frame, left=$left, right=$right)
+    }
+  } else {
+    if ($shoulder_forward != none) {
+      $UpperArm(raise=atan2(sqrt($ux * $ux + $uy * $uy), -$uz), azimuth=atan2($ux, $uy), shoulder_forward=$shoulder_forward, frame=$frame, left=$left, right=$right)
+    } else {
+      $UpperArm(raise=atan2(sqrt($ux * $ux + $uy * $uy), -$uz), azimuth=atan2($ux, $uy), frame=$frame, left=$left, right=$right)
+    }
+  }
+  $Forearm(raise=atan2(sqrt(pow($wx - $rig_upper_len * $ux, 2) + pow($wy - $rig_upper_len * $uy, 2)), $rig_upper_len * $uz - $wz), azimuth=atan2($wx - $rig_upper_len * $ux, $wy - $rig_upper_len * $uy), palm_raise=$palm_raise, palm_azimuth=$palm_azimuth, frame=$frame, left=$left, right=$right)
+}
+
+# HANG (second layer, sided: calls UpperArm and Forearm): the arms hanging at the rig's rest directions in the figure's frame, so a
+# bow or a slump says "the arms hang" without the rest numbers, and the shoulders' values pass down.
+#  shrug, shoulder_forward   passed to UpperArm (not written: the collar bone follows the arm's raise, which at rest is 0).
+#  left, right   sides.   rig_rest_raise/azimuth (12.67, 77.17), rig_fore_rest_raise/azimuth (18.05, 44.11): the rest hang.
+#  Worked values (built): $Hang -> rest exactly; under $Back(lean=45) the arms keep 12.67 / 77.17 in the room (the wrist
+#              moves with the shoulder, 39.3 cm); a full shrug $Hang(shrug=1) builds: collar 43.87 up, the upper arm eased out to
+#              22.43, nothing in the ribs (as two presets it was refused, the forearm 2.2 cm into spine_03).
+Hang = pose(shrug=none, shrug_min=-1, shrug_max=1, shoulder_forward=none, shoulder_forward_min=-1, shoulder_forward_max=1, left=true, right=true, rig_rest_raise=12.67, rig_rest_azimuth=77.17, rig_fore_rest_raise=18.05, rig_fore_rest_azimuth=44.11) {
+  if ($shrug != none) {
+    if ($shoulder_forward != none) {
+      $UpperArm(raise=$rig_rest_raise, azimuth=$rig_rest_azimuth, shrug=$shrug, shoulder_forward=$shoulder_forward, left=$left, right=$right)
+    } else {
+      $UpperArm(raise=$rig_rest_raise, azimuth=$rig_rest_azimuth, shrug=$shrug, left=$left, right=$right)
+    }
+  } else {
+    if ($shoulder_forward != none) {
+      $UpperArm(raise=$rig_rest_raise, azimuth=$rig_rest_azimuth, shoulder_forward=$shoulder_forward, left=$left, right=$right)
+    } else {
+      $UpperArm(raise=$rig_rest_raise, azimuth=$rig_rest_azimuth, left=$left, right=$right)
+    }
+  }
+  $Forearm(raise=$rig_fore_rest_raise, azimuth=$rig_fore_rest_azimuth, left=$left, right=$right)
+}
+
+# =====================================================================================================================
+# HIPS (first layer, not sided): the pelvis only: lowered, moved, turned and hiked. A standing pose gets these from Stance, which
+# works them out from the feet; written alone, the feet go with the pelvis (nothing holds them).
+#  drop      of leg length (rig_leg 86.2 cm): the pelvis lowered; below 0 raised. Not written: not asked.
+#  shift_right, shift_forward   cm: the pelvis moved to the figure's right / forward. Not written: not asked.
+#  hike      degrees: the RIGHT hip higher (about the figure's front-to-back axis). Not written: not asked.
+#  turn      degrees: the pelvis turned to the figure's right about the vertical. Not written: not asked.
+#  rig_pelvis_yaw   the pelvis bone's rest turn off the figure's axes (2.06): the two swing axes are worked from it.
+#  Worked values (built): $Hips -> writes nothing; $Hips(drop=0.1) alone -> the pelvis 8.62 cm down and the feet with it
+#              (write Stance); through Stance: turn 30 -> the hip line 30.00, hike 6 -> 6.00.
+Hips = pose(drop=none, drop_min=-0.169, drop_max=0.5, shift_right=none, shift_right_min=-54, shift_right_max=54, shift_forward=none, shift_forward_min=-129.7, shift_forward_max=127.9, hike=none, hike_min=-30, hike_max=30, turn=none, turn_min=-60, turn_max=60, rig_leg=86.2, rig_pelvis_yaw=2.06) {
+  if ($drop != none) { shift(pelvis, toward=down, by=$drop * $rig_leg) }
+  if ($shift_right != none) { shift(pelvis, toward=right, by=$shift_right) }
+  if ($shift_forward != none) { shift(pelvis, toward=forward, by=$shift_forward) }
+  if ($turn != none) { swing(pelvis, axis=(cos($rig_pelvis_yaw), -sin($rig_pelvis_yaw), 0), by=$turn) }
+  if ($hike != none) { swing(pelvis, axis=(sin($rig_pelvis_yaw), cos($rig_pelvis_yaw), 0), by=$hike) }
+}
+
+# FOOTAT (first layer, sided): a planted foot, POSED (no plant, reach or balance): thigh, calf, foot and ball of that leg, each
+# turned by an aim worked out from where the foot stands and where the pelvis is. Calling it stands the foot: a value not written
+# is the rest place (forward, out) or 0 (turnout, knee_out, heel), as a planted foot needs a place.
+#  forward   of leg length: the ankle ahead of its hip as it stands at rest; below 0 behind. Rest rig_rest_forward -0.0293.
+#  out       of hip width (rig_hip_width 20.04 cm): the ankle out to its own side from under its hip; below 0 across. Rest
+#            rig_rest_out 0.1954.
+#  turnout   degrees: the toes out to its own side; below 0 in. 0 the rest heading.
+#  knee_out  degrees: the knee swung out round the hip-to-ankle line; 0 the knee over the foot's line.
+#  heel      degrees, the sole's angle from the floor: above 0 the heel lifted (the foot turns about its ball, the ankle rises by
+#            what that lifts); below 0 on the heel, toes up. The heel ALSO lifts by itself where the ankle runs out of room (the
+#            shin past rig_ankle_room over the foot) or the leg out of length: written as the case it is (FootAtBend1).
+#  px, py, pz, hike, turn   the pelvis's place (cm: x left, y forward, z up) and turns, as Hips was given them: passed by Stance;
+#            0 = the rest pelvis.   left, right   sides.
+#  rig_*_r / rig_*_l   each leg's rest measures (thigh, shin, the ankle's height, the ankle-to-ball run and drop, the foot's rest
+#            heading, the heel point, the ankle's rest angle, the toes' rest direction); the common rig_ values the hip joints'
+#            place on the pelvis, the leg's length and the ankle's room (37 = the rig's 39 less 2).
+#  Nothing holds the foot: it stands where the arithmetic puts it, given the pelvis Stance passes; a foot out of reach FLOATS
+#  and nothing says so.
+#  Worked values (built): $FootAt -> rest (knees 0.05 / 0.09, soles 0.00); a step and a turned foot as two calls
+#              $FootAt(right=false, forward=0.1) $FootAt(left=false, out=0.5, turnout=20) (under the rest pelvis the legs are
+#              0.5-0.7 cm short: heels 0.56 / 0.68 up); a raised heel through Stance(heel_r=20).
+FootAt = pose(forward=$rig_rest_forward, forward_min=-1, forward_max=1, out=$rig_rest_out, out_min=-0.5, out_max=1.5, turnout=0.0, turnout_min=-35, turnout_max=60, knee_out=0.0, knee_out_min=-35, knee_out_max=25, heel=0.0, heel_min=-25, heel_max=53.5, px=0.0, px_min=-54, px_max=54, py=0.0, py_min=-129.7, py_max=127.9, pz=0.0, pz_min=-43.1, pz_max=14.5, hike=0.0, hike_min=-30, hike_max=30, turn=0.0, turn_min=-60, turn_max=60, left=true, right=true, rig_rest_forward=-0.0293, rig_rest_out=0.1954, rig_thigh_r=44.157, rig_shin_r=41.954, rig_ankle_z_r=8.612, rig_hl_r=14.414, rig_vd_r=7.748, rig_heading_r=10.05, rig_he_r=5.02, rig_hv_r=7.762, rig_ankle_rest_r=63.51, rig_toe_raise_r=104.1, rig_toe_azimuth_r=11.77, rig_thigh_l=44.312, rig_shin_l=41.974, rig_ankle_z_l=8.437, rig_hl_l=14.348, rig_vd_l=7.606, rig_heading_l=10.07, rig_he_l=5.02, rig_hv_l=7.587, rig_ankle_rest_l=63.84, rig_toe_raise_l=103.9, rig_toe_azimuth_l=11.42, rig_leg=86.2, rig_hip_width=20.04, rig_hip_x=10.022, rig_hip_y=2.796, rig_pelvis_y=2.507, rig_pelvis_z=94.452, rig_hip_up=0.141, rig_hip_fwd=0.289, rig_ankle_room=37) {
+  if ($right) { $FootAtCalc1(forward=$forward, out=$out, turnout=$turnout, knee_out=$knee_out, heel=$heel, px=$px, py=$py, pz=$pz, hike=$hike, turn=$turn, rig_s=-1, rig_thigh=$rig_thigh_r, rig_shin=$rig_shin_r, rig_ankle_z=$rig_ankle_z_r, rig_hl=$rig_hl_r, rig_vd=$rig_vd_r, rig_heading=$rig_heading_r, rig_he=$rig_he_r, rig_hv=$rig_hv_r, rig_ankle_rest=$rig_ankle_rest_r, rig_toe_raise=$rig_toe_raise_r, rig_toe_azimuth=$rig_toe_azimuth_r, rig_side=1, rig_leg=$rig_leg, rig_hip_width=$rig_hip_width, rig_hip_x=$rig_hip_x, rig_hip_y=$rig_hip_y, rig_pelvis_y=$rig_pelvis_y, rig_pelvis_z=$rig_pelvis_z, rig_hip_up=$rig_hip_up, rig_hip_fwd=$rig_hip_fwd, rig_ankle_room=$rig_ankle_room) }
+  if ($left) { $FootAtCalc1(forward=$forward, out=$out, turnout=$turnout, knee_out=$knee_out, heel=$heel, px=$px, py=$py, pz=$pz, hike=$hike, turn=$turn, rig_s=1, rig_thigh=$rig_thigh_l, rig_shin=$rig_shin_l, rig_ankle_z=$rig_ankle_z_l, rig_hl=$rig_hl_l, rig_vd=$rig_vd_l, rig_heading=$rig_heading_l, rig_he=$rig_he_l, rig_hv=$rig_hv_l, rig_ankle_rest=$rig_ankle_rest_l, rig_toe_raise=$rig_toe_raise_l, rig_toe_azimuth=$rig_toe_azimuth_l, rig_side=0, rig_leg=$rig_leg, rig_hip_width=$rig_hip_width, rig_hip_x=$rig_hip_x, rig_hip_y=$rig_hip_y, rig_pelvis_y=$rig_pelvis_y, rig_pelvis_z=$rig_pelvis_z, rig_hip_up=$rig_hip_up, rig_hip_fwd=$rig_hip_fwd, rig_ankle_room=$rig_ankle_room) }
+}
+
+# (helper of FootAt, pass 1, not listed) the ankle's place (the foot turned about its ball or heel by heel) and the hip joint's
+# (the pelvis moved and turned as passed); the foot's heading.
+FootAtCalc1 = pose(forward=0.0, out=0.2, turnout=0.0, knee_out=0.0, heel=0.0, px=0.0, py=0.0, pz=0.0, hike=0.0, turn=0.0, rig_s=-1, rig_thigh=44.157, rig_shin=41.954, rig_ankle_z=8.612, rig_hl=14.414, rig_vd=7.748, rig_heading=10.05, rig_he=5.02, rig_hv=7.762, rig_ankle_rest=63.51, rig_toe_raise=104.1, rig_toe_azimuth=11.77, rig_side=1, rig_leg=86.2, rig_hip_width=20.04, rig_hip_x=10.022, rig_hip_y=2.796, rig_pelvis_y=2.507, rig_pelvis_z=94.452, rig_hip_up=0.141, rig_hip_fwd=0.289, rig_ankle_room=37) {
+  $FootAtLine1(vx=($rig_s * ($rig_hip_x + $out * $rig_hip_width) + (($rig_hl - sqrt($rig_hl * $rig_hl + $rig_vd * $rig_vd) * cos(atan2($rig_vd, $rig_hl) + max($heel, 0))) + (sqrt($rig_he * $rig_he + $rig_hv * $rig_hv) * cos(atan2($rig_hv, $rig_he) - min($heel, 0)) - $rig_he)) * ($rig_s * sin(($rig_heading + $turnout)))) - ($px + ($rig_s * $rig_hip_x * cos($hike) + $rig_hip_up * sin($hike)) * cos($turn) - $rig_hip_fwd * sin($turn)), vy=($rig_hip_y + $forward * $rig_leg + (($rig_hl - sqrt($rig_hl * $rig_hl + $rig_vd * $rig_vd) * cos(atan2($rig_vd, $rig_hl) + max($heel, 0))) + (sqrt($rig_he * $rig_he + $rig_hv * $rig_hv) * cos(atan2($rig_hv, $rig_he) - min($heel, 0)) - $rig_he)) * cos(($rig_heading + $turnout))) - ($rig_pelvis_y + $py + ($rig_s * $rig_hip_x * cos($hike) + $rig_hip_up * sin($hike)) * sin($turn) + $rig_hip_fwd * cos($turn)), vz=($rig_ankle_z + ((sqrt($rig_hl * $rig_hl + $rig_vd * $rig_vd) * sin(atan2($rig_vd, $rig_hl) + max($heel, 0)) - $rig_vd) + (sqrt($rig_he * $rig_he + $rig_hv * $rig_hv) * sin(atan2($rig_hv, $rig_he) - min($heel, 0)) - $rig_hv))) - ($rig_pelvis_z + $pz + (-$rig_s * $rig_hip_x * sin($hike) + $rig_hip_up * cos($hike))), hdx=($rig_s * sin(($rig_heading + $turnout))), hdy=cos(($rig_heading + $turnout)), forward=$forward, out=$out, turnout=$turnout, knee_out=$knee_out, heel=$heel, px=$px, py=$py, pz=$pz, hike=$hike, turn=$turn, rig_s=$rig_s, rig_thigh=$rig_thigh, rig_shin=$rig_shin, rig_ankle_z=$rig_ankle_z, rig_hl=$rig_hl, rig_vd=$rig_vd, rig_heading=$rig_heading, rig_he=$rig_he, rig_hv=$rig_hv, rig_ankle_rest=$rig_ankle_rest, rig_toe_raise=$rig_toe_raise, rig_toe_azimuth=$rig_toe_azimuth, rig_side=$rig_side, rig_leg=$rig_leg, rig_hip_width=$rig_hip_width, rig_hip_x=$rig_hip_x, rig_hip_y=$rig_hip_y, rig_pelvis_y=$rig_pelvis_y, rig_pelvis_z=$rig_pelvis_z, rig_hip_up=$rig_hip_up, rig_hip_fwd=$rig_hip_fwd, rig_ankle_room=$rig_ankle_room)
+}
+# (helper of FootAt, pass 1, not listed) the knee's side: the foot's heading square to the hip-to-ankle line.
+FootAtLine1 = pose(vx=-3.9, vy=-2.5, vz=-86.0, hdx=-0.17, hdy=0.98, forward=0.0, out=0.2, turnout=0.0, knee_out=0.0, heel=0.0, px=0.0, py=0.0, pz=0.0, hike=0.0, turn=0.0, rig_s=-1, rig_thigh=44.157, rig_shin=41.954, rig_ankle_z=8.612, rig_hl=14.414, rig_vd=7.748, rig_heading=10.05, rig_he=5.02, rig_hv=7.762, rig_ankle_rest=63.51, rig_toe_raise=104.1, rig_toe_azimuth=11.77, rig_side=1, rig_leg=86.2, rig_hip_width=20.04, rig_hip_x=10.022, rig_hip_y=2.796, rig_pelvis_y=2.507, rig_pelvis_z=94.452, rig_hip_up=0.141, rig_hip_fwd=0.289, rig_ankle_room=37) {
+  $FootAtBend1(ux=($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)), uy=($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz)), uz=($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz)), d=sqrt($vx * $vx + $vy * $vy + $vz * $vz), kx=($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) / sqrt(($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) + ($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) + (-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * (-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz)))), ky=($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) / sqrt(($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) + ($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) + (-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * (-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz)))), kz=(-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) / sqrt(($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) + ($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) + (-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * (-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz)))), hdx=$hdx, hdy=$hdy, forward=$forward, out=$out, turnout=$turnout, knee_out=$knee_out, heel=$heel, px=$px, py=$py, pz=$pz, hike=$hike, turn=$turn, rig_s=$rig_s, rig_thigh=$rig_thigh, rig_shin=$rig_shin, rig_ankle_z=$rig_ankle_z, rig_hl=$rig_hl, rig_vd=$rig_vd, rig_heading=$rig_heading, rig_he=$rig_he, rig_hv=$rig_hv, rig_ankle_rest=$rig_ankle_rest, rig_toe_raise=$rig_toe_raise, rig_toe_azimuth=$rig_toe_azimuth, rig_side=$rig_side, rig_leg=$rig_leg, rig_hip_width=$rig_hip_width, rig_hip_x=$rig_hip_x, rig_hip_y=$rig_hip_y, rig_pelvis_y=$rig_pelvis_y, rig_pelvis_z=$rig_pelvis_z, rig_hip_up=$rig_hip_up, rig_hip_fwd=$rig_hip_fwd, rig_ankle_room=$rig_ankle_room)
+}
+# (helper of FootAt, pass 1, not listed) the knee turned by knee_out about the line; the thigh's and shin's directions;
+# the case: where the ankle runs out of room (the shin past rig_ankle_room over the foot) or the leg out of length, the
+# heel lifts by what that needs and the leg is worked out again (pass 2); otherwise the aims.
+FootAtBend1 = pose(ux=-0.045, uy=-0.029, uz=-0.998, d=86.1, kx=-0.17, ky=0.98, kz=0.0, hdx=-0.17, hdy=0.98, forward=0.0, out=0.2, turnout=0.0, knee_out=0.0, heel=0.0, px=0.0, py=0.0, pz=0.0, hike=0.0, turn=0.0, rig_s=-1, rig_thigh=44.157, rig_shin=41.954, rig_ankle_z=8.612, rig_hl=14.414, rig_vd=7.748, rig_heading=10.05, rig_he=5.02, rig_hv=7.762, rig_ankle_rest=63.51, rig_toe_raise=104.1, rig_toe_azimuth=11.77, rig_side=1, rig_leg=86.2, rig_hip_width=20.04, rig_hip_x=10.022, rig_hip_y=2.796, rig_pelvis_y=2.507, rig_pelvis_z=94.452, rig_hip_up=0.141, rig_hip_fwd=0.289, rig_ankle_room=37) {
+  if ((max((acos(clamp(((($d * $ux - $rig_thigh * ($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) * (cos((atan2($rig_vd, $rig_hl) + $heel)) * $hdx) + (($d * $uy - $rig_thigh * ($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) * (cos((atan2($rig_vd, $rig_hl) + $heel)) * $hdy) + (($d * $uz - $rig_thigh * ($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) * (-sin((atan2($rig_vd, $rig_hl) + $heel)))) / sqrt((($d * $ux - $rig_thigh * ($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) * (($d * $ux - $rig_thigh * ($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) + (($d * $uy - $rig_thigh * ($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) * (($d * $uy - $rig_thigh * ($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) + (($d * $uz - $rig_thigh * ($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) * (($d * $uz - $rig_thigh * ($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin)), -1, 1)) - $rig_ankle_rest - $rig_ankle_room + max($heel, 0)), (asin(clamp(($rig_vd + (max($d - ($rig_thigh + $rig_shin), 0) / max(abs($uz), 0.2))) / sqrt($rig_hl * $rig_hl + $rig_vd * $rig_vd), -1, 1)) - atan2($rig_vd, $rig_hl))) - max($heel, 0)) > 0) {
+    $FootAtCalc2(forward=$forward, out=$out, turnout=$turnout, knee_out=$knee_out, heel=$heel + (max((acos(clamp(((($d * $ux - $rig_thigh * ($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) * (cos((atan2($rig_vd, $rig_hl) + $heel)) * $hdx) + (($d * $uy - $rig_thigh * ($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) * (cos((atan2($rig_vd, $rig_hl) + $heel)) * $hdy) + (($d * $uz - $rig_thigh * ($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) * (-sin((atan2($rig_vd, $rig_hl) + $heel)))) / sqrt((($d * $ux - $rig_thigh * ($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) * (($d * $ux - $rig_thigh * ($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) + (($d * $uy - $rig_thigh * ($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) * (($d * $uy - $rig_thigh * ($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) + (($d * $uz - $rig_thigh * ($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin) * (($d * $uz - $rig_thigh * ($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin)), -1, 1)) - $rig_ankle_rest - $rig_ankle_room + max($heel, 0)), (asin(clamp(($rig_vd + (max($d - ($rig_thigh + $rig_shin), 0) / max(abs($uz), 0.2))) / sqrt($rig_hl * $rig_hl + $rig_vd * $rig_vd), -1, 1)) - atan2($rig_vd, $rig_hl))) - max($heel, 0)), px=$px, py=$py, pz=$pz, hike=$hike, turn=$turn, rig_s=$rig_s, rig_thigh=$rig_thigh, rig_shin=$rig_shin, rig_ankle_z=$rig_ankle_z, rig_hl=$rig_hl, rig_vd=$rig_vd, rig_heading=$rig_heading, rig_he=$rig_he, rig_hv=$rig_hv, rig_toe_raise=$rig_toe_raise, rig_toe_azimuth=$rig_toe_azimuth, rig_side=$rig_side, rig_leg=$rig_leg, rig_hip_width=$rig_hip_width, rig_hip_x=$rig_hip_x, rig_hip_y=$rig_hip_y, rig_pelvis_y=$rig_pelvis_y, rig_pelvis_z=$rig_pelvis_z, rig_hip_up=$rig_hip_up, rig_hip_fwd=$rig_hip_fwd)
+  } else {
+    if ($rig_side > 0) { $FootAtAimR(tx=($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1)))), ty=($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1)))), tz=($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1)))), sx=(($d * $ux - $rig_thigh * ($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin), sy=(($d * $uy - $rig_thigh * ($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin), sz=(($d * $uz - $rig_thigh * ($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin), fx=(cos((atan2($rig_vd, $rig_hl) + $heel)) * $hdx), fy=(cos((atan2($rig_vd, $rig_hl) + $heel)) * $hdy), fz=(-sin((atan2($rig_vd, $rig_hl) + $heel))), bx=$rig_s * sin($rig_toe_raise - min($heel, 0)) * sin($rig_toe_azimuth + $turnout), by=sin($rig_toe_raise - min($heel, 0)) * cos($rig_toe_azimuth + $turnout), bz=-cos($rig_toe_raise - min($heel, 0))) } else { $FootAtAimL(tx=($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1)))), ty=($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1)))), tz=($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1)))), sx=(($d * $ux - $rig_thigh * ($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin), sy=(($d * $uy - $rig_thigh * ($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin), sz=(($d * $uz - $rig_thigh * ($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin), fx=(cos((atan2($rig_vd, $rig_hl) + $heel)) * $hdx), fy=(cos((atan2($rig_vd, $rig_hl) + $heel)) * $hdy), fz=(-sin((atan2($rig_vd, $rig_hl) + $heel))), bx=$rig_s * sin($rig_toe_raise - min($heel, 0)) * sin($rig_toe_azimuth + $turnout), by=sin($rig_toe_raise - min($heel, 0)) * cos($rig_toe_azimuth + $turnout), bz=-cos($rig_toe_raise - min($heel, 0))) }
+  }
+}
+
+# (helper of FootAt, pass 2, not listed) the ankle's place (the foot turned about its ball or heel by heel) and the hip joint's
+# (the pelvis moved and turned as passed); the foot's heading.
+FootAtCalc2 = pose(forward=0.0, out=0.2, turnout=0.0, knee_out=0.0, heel=0.0, px=0.0, py=0.0, pz=0.0, hike=0.0, turn=0.0, rig_s=-1, rig_thigh=44.157, rig_shin=41.954, rig_ankle_z=8.612, rig_hl=14.414, rig_vd=7.748, rig_heading=10.05, rig_he=5.02, rig_hv=7.762, rig_toe_raise=104.1, rig_toe_azimuth=11.77, rig_side=1, rig_leg=86.2, rig_hip_width=20.04, rig_hip_x=10.022, rig_hip_y=2.796, rig_pelvis_y=2.507, rig_pelvis_z=94.452, rig_hip_up=0.141, rig_hip_fwd=0.289) {
+  $FootAtLine2(vx=($rig_s * ($rig_hip_x + $out * $rig_hip_width) + (($rig_hl - sqrt($rig_hl * $rig_hl + $rig_vd * $rig_vd) * cos(atan2($rig_vd, $rig_hl) + max($heel, 0))) + (sqrt($rig_he * $rig_he + $rig_hv * $rig_hv) * cos(atan2($rig_hv, $rig_he) - min($heel, 0)) - $rig_he)) * ($rig_s * sin(($rig_heading + $turnout)))) - ($px + ($rig_s * $rig_hip_x * cos($hike) + $rig_hip_up * sin($hike)) * cos($turn) - $rig_hip_fwd * sin($turn)), vy=($rig_hip_y + $forward * $rig_leg + (($rig_hl - sqrt($rig_hl * $rig_hl + $rig_vd * $rig_vd) * cos(atan2($rig_vd, $rig_hl) + max($heel, 0))) + (sqrt($rig_he * $rig_he + $rig_hv * $rig_hv) * cos(atan2($rig_hv, $rig_he) - min($heel, 0)) - $rig_he)) * cos(($rig_heading + $turnout))) - ($rig_pelvis_y + $py + ($rig_s * $rig_hip_x * cos($hike) + $rig_hip_up * sin($hike)) * sin($turn) + $rig_hip_fwd * cos($turn)), vz=($rig_ankle_z + ((sqrt($rig_hl * $rig_hl + $rig_vd * $rig_vd) * sin(atan2($rig_vd, $rig_hl) + max($heel, 0)) - $rig_vd) + (sqrt($rig_he * $rig_he + $rig_hv * $rig_hv) * sin(atan2($rig_hv, $rig_he) - min($heel, 0)) - $rig_hv))) - ($rig_pelvis_z + $pz + (-$rig_s * $rig_hip_x * sin($hike) + $rig_hip_up * cos($hike))), hdx=($rig_s * sin(($rig_heading + $turnout))), hdy=cos(($rig_heading + $turnout)), turnout=$turnout, knee_out=$knee_out, heel=$heel, rig_s=$rig_s, rig_thigh=$rig_thigh, rig_shin=$rig_shin, rig_toe_raise=$rig_toe_raise, rig_toe_azimuth=$rig_toe_azimuth, rig_hl=$rig_hl, rig_vd=$rig_vd, rig_side=$rig_side)
+}
+# (helper of FootAt, pass 2, not listed) the knee's side: the foot's heading square to the hip-to-ankle line.
+FootAtLine2 = pose(vx=-3.9, vy=-2.5, vz=-86.0, hdx=-0.17, hdy=0.98, turnout=0.0, knee_out=0.0, heel=0.0, rig_s=-1, rig_thigh=44.157, rig_shin=41.954, rig_toe_raise=104.1, rig_toe_azimuth=11.77, rig_hl=14.414, rig_vd=7.748, rig_side=1) {
+  $FootAtBend2(ux=($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)), uy=($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz)), uz=($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz)), d=sqrt($vx * $vx + $vy * $vy + $vz * $vz), kx=($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) / sqrt(($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) + ($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) + (-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * (-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz)))), ky=($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) / sqrt(($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) + ($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) + (-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * (-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz)))), kz=(-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) / sqrt(($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($hdx - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) + ($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($hdy - ($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) + (-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * (-($hdx * ($vx / sqrt($vx * $vx + $vy * $vy + $vz * $vz)) + $hdy * ($vy / sqrt($vx * $vx + $vy * $vy + $vz * $vz))) * ($vz / sqrt($vx * $vx + $vy * $vy + $vz * $vz)))), hdx=$hdx, hdy=$hdy, turnout=$turnout, knee_out=$knee_out, heel=$heel, rig_s=$rig_s, rig_thigh=$rig_thigh, rig_shin=$rig_shin, rig_toe_raise=$rig_toe_raise, rig_toe_azimuth=$rig_toe_azimuth, rig_hl=$rig_hl, rig_vd=$rig_vd, rig_side=$rig_side)
+}
+# (helper of FootAt, pass 2, not listed) the knee turned by knee_out about the line; the thigh's and shin's directions;
+# the aims.
+FootAtBend2 = pose(ux=-0.045, uy=-0.029, uz=-0.998, d=86.1, kx=-0.17, ky=0.98, kz=0.0, hdx=-0.17, hdy=0.98, turnout=0.0, knee_out=0.0, heel=0.0, rig_s=-1, rig_thigh=44.157, rig_shin=41.954, rig_toe_raise=104.1, rig_toe_azimuth=11.77, rig_hl=14.414, rig_vd=7.748, rig_side=1) {
+  if ($rig_side > 0) { $FootAtAimR(tx=($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1)))), ty=($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1)))), tz=($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1)))), sx=(($d * $ux - $rig_thigh * ($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin), sy=(($d * $uy - $rig_thigh * ($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin), sz=(($d * $uz - $rig_thigh * ($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin), fx=(cos((atan2($rig_vd, $rig_hl) + $heel)) * $hdx), fy=(cos((atan2($rig_vd, $rig_hl) + $heel)) * $hdy), fz=(-sin((atan2($rig_vd, $rig_hl) + $heel))), bx=$rig_s * sin($rig_toe_raise - min($heel, 0)) * sin($rig_toe_azimuth + $turnout), by=sin($rig_toe_raise - min($heel, 0)) * cos($rig_toe_azimuth + $turnout), bz=-cos($rig_toe_raise - min($heel, 0))) } else { $FootAtAimL(tx=($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1)))), ty=($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1)))), tz=($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1)))), sx=(($d * $ux - $rig_thigh * ($ux * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kx * cos($knee_out) + $rig_s * ($uy * $kz - $uz * $ky) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin), sy=(($d * $uy - $rig_thigh * ($uy * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($ky * cos($knee_out) + $rig_s * ($uz * $kx - $ux * $kz) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin), sz=(($d * $uz - $rig_thigh * ($uz * cos(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))) + ($kz * cos($knee_out) + $rig_s * ($ux * $ky - $uy * $kx) * sin($knee_out)) * sin(acos(clamp(($rig_thigh * $rig_thigh + min($d, ($rig_thigh + $rig_shin) * 0.99999) * min($d, ($rig_thigh + $rig_shin) * 0.99999) - $rig_shin * $rig_shin) / (2 * $rig_thigh * min($d, ($rig_thigh + $rig_shin) * 0.99999)), -1, 1))))) / $rig_shin), fx=(cos((atan2($rig_vd, $rig_hl) + $heel)) * $hdx), fy=(cos((atan2($rig_vd, $rig_hl) + $heel)) * $hdy), fz=(-sin((atan2($rig_vd, $rig_hl) + $heel))), bx=$rig_s * sin($rig_toe_raise - min($heel, 0)) * sin($rig_toe_azimuth + $turnout), by=sin($rig_toe_raise - min($heel, 0)) * cos($rig_toe_azimuth + $turnout), bz=-cos($rig_toe_raise - min($heel, 0))) }
+}
+
+# (helper of FootAt, right, not listed) the four bones in the figure's frame; the toes' aim also rolls the foot flat (the toe
+# joint is a hinge).
+FootAtAimR = pose(tx=0.0, ty=0.0, tz=-1.0, sx=0.0, sy=0.0, sz=-1.0, fx=0.0, fy=0.88, fz=-0.47, bx=0.0, by=0.97, bz=0.24) {
+  aim(thigh_r, from=$ThighR, toward=(down, forward=atan2($ty, -$tz), right=asin(clamp(-$tx, -1, 1))))
+  aim(calf_r, from=$ShinR, toward=(down, forward=atan2($sy, -$sz), right=asin(clamp(-$sx, -1, 1))))
+  aim(foot_r, from=$FootR, toward=(down, forward=atan2($fy, -$fz), right=asin(clamp(-$fx, -1, 1))))
+  aim(ball_r, from=$ToesR, toward=(down, forward=atan2($by, -$bz), right=asin(clamp(-$bx, -1, 1))))
+}
+
+# (helper of FootAt, left, not listed) the four bones in the figure's frame; the toes' aim also rolls the foot flat (the toe
+# joint is a hinge).
+FootAtAimL = pose(tx=0.0, ty=0.0, tz=-1.0, sx=0.0, sy=0.0, sz=-1.0, fx=0.0, fy=0.88, fz=-0.47, bx=0.0, by=0.97, bz=0.24) {
+  aim(thigh_l, from=$ThighL, toward=(down, forward=atan2($ty, -$tz), right=asin(clamp(-$tx, -1, 1))))
+  aim(calf_l, from=$ShinL, toward=(down, forward=atan2($sy, -$sz), right=asin(clamp(-$sx, -1, 1))))
+  aim(foot_l, from=$FootL, toward=(down, forward=atan2($fy, -$fz), right=asin(clamp(-$fx, -1, 1))))
+  aim(ball_l, from=$ToesL, toward=(down, forward=atan2($by, -$bz), right=asin(clamp(-$bx, -1, 1))))
+}
+
+# STANCE (second layer, not sided): the first line of a standing pose. Works out where the pelvis stands over the feet and passes
+# it to Hips and to each FootAt; no plant, no balance. Called with nothing written it stands both feet at rest (the pose is
+# rest, the legs held by their aims, so a Back hinge no longer swings them).
+#  forward_r/_l, out_r/_l, turnout_r/_l, knee_out_r/_l, heel_r/_l   each foot, as FootAt's (rest: rig_rest_forward/out, 0).
+#  drop      of leg length: the hips lowered. Not written, follows knees: 1 - cos(knees / 2).
+#  knees     degrees, the knees' bend: the same fact as drop in degrees (10 is drop 0.004). Rest 0.
+#  weight_side  -1 over the left foot's centre .. 1 over the right's: the pelvis between where the feet ACTUALLY stand. Rest 0.
+#  weight_fore  -1 .. 1 toward the rear foot's centre / the front's, or the heels / balls when the feet are side by side. Rest 0.
+#  hike, turn   as Hips' (the right hip up; turned to the right). Rest 0.
+#  lean      degrees: the trunk's lean (write Back's lean here too): the hips go back by rig_lean_share (0.28) * leg * sin(lean),
+#            which keeps a 45 degree lean standing (the centre of mass 1.5 cm inside the feet, 16.1 cm ahead without). Rest 0.
+#  rig_gain_side, rig_gain_fore   the centre of mass's travel per cm of the pelvis (0.84, 0.82, read); rig_heel_ball 9.55 cm;
+#  rig_centre_along / _out / rig_heading   the foot's centre from the ankle (4.6 along the foot's heading, 0.9 out; 10.06).
+#  Measured: ankles within 0.12 cm of asked, soles within 0.05 cm of the floor in flat stances; worst the lunge's rear ball
+#              0.50 cm into the floor (its heel lifted by itself). A share past where a leg reaches leaves that foot floating (not said).
+#  Worked values (built): a crouch $Stance(out_r=0.8, out_l=0.8, turnout_r=25, turnout_l=25, drop=0.3) -> ankles 15.89 out,
+#              turned 25.05, knees 87, soles -0.04; a fighter's stance $Stance(forward_l=0.25, out_l=0.3, turnout_l=-5,
+#              forward_r=-0.25, out_r=0.5, turnout_r=40, drop=0.08) -> 21.55 / 5.95 / -5.00 and -21.53 / 10.00 / 40.03; on tiptoe
+#              $Stance(heel_r=40, heel_l=40) -> heels 12.5 cm up, balls 0.00, hips 7.05 up.
+#  rig_base_px, rig_base_py, rig_base_pz (cm), rig_base_turn, rig_base_hike (deg)   the key's BASE pose's pelvis off its rest (a key on a
+#            source= frame): passed to each FootAt beside what Stance passes it, so the legs are worked out from the pelvis as it stands (Hips adds
+#            to the base's pelvis). 0 on the reference pose. Convert to presets writes them (CODER-NOTES-17).
+#  forward_r/_l -1..1 (a leg length each way; the accepted slash's back foot -0.65) and out_r/_l -0.5..1.5 (-0.5: the ankle under the body's
+#            centre line, feet on one line), knee_out_r/_l -35..25 (-35: the hip's internal rotation, HUMAN-JOINT-RANGES.md; the slash's back
+#            knee reads -25) since 19 Nov (CODER-NOTES-17); the old -0.35..0.5, 0 and -10 were the records' poses (-10 where a narrow stance's
+#            thighs meet, a collision the build reports), not stops.
+Stance = pose(forward_r=$rig_rest_forward, forward_r_min=-1, forward_r_max=1, forward_l=$rig_rest_forward, forward_l_min=-1, forward_l_max=1, out_r=$rig_rest_out, out_r_min=-0.5, out_r_max=1.5, out_l=$rig_rest_out, out_l_min=-0.5, out_l_max=1.5, turnout_r=0.0, turnout_r_min=-35, turnout_r_max=60, turnout_l=0.0, turnout_l_min=-35, turnout_l_max=60, knee_out_r=0.0, knee_out_r_min=-35, knee_out_r_max=25, knee_out_l=0.0, knee_out_l_min=-35, knee_out_l_max=25, heel_r=0.0, heel_r_min=-25, heel_r_max=53.5, heel_l=0.0, heel_l_min=-25, heel_l_max=53.5, knees=0.0, knees_min=0, knees_max=120, drop=1 - cos($knees / 2), drop_min=-0.08, drop_max=0.5, weight_side=0.0, weight_side_min=-1, weight_side_max=1, weight_fore=0.0, weight_fore_min=-1, weight_fore_max=1, hike=0.0, hike_min=-30, hike_max=30, turn=0.0, turn_min=-60, turn_max=60, lean=0.0, lean_min=-58.2, lean_max=180, rig_leg=86.2, rig_hip_width=20.04, rig_hip_x=10.022, rig_hip_y=2.796, rig_rest_forward=-0.0293, rig_rest_out=0.1954, rig_heading=10.06, rig_centre_along=4.6, rig_centre_out=0.9, rig_gain_side=0.84, rig_gain_fore=0.82, rig_heel_ball=9.55, rig_lean_share=0.28, rig_hl_r=14.414, rig_vd_r=7.748, rig_hl_l=14.348, rig_vd_l=7.606, rig_base_px=0.0, rig_base_py=0.0, rig_base_pz=0.0, rig_base_turn=0.0, rig_base_hike=0.0) {
+  $Hips(drop=$drop - max(min((sqrt($rig_hl_r * $rig_hl_r + $rig_vd_r * $rig_vd_r) * sin(atan2($rig_vd_r, $rig_hl_r) + max($heel_r, 0)) - $rig_vd_r - pow($rig_hl_r - sqrt($rig_hl_r * $rig_hl_r + $rig_vd_r * $rig_vd_r) * cos(atan2($rig_vd_r, $rig_hl_r) + max($heel_r, 0)), 2) / (2 * $rig_leg)), (sqrt($rig_hl_l * $rig_hl_l + $rig_vd_l * $rig_vd_l) * sin(atan2($rig_vd_l, $rig_hl_l) + max($heel_l, 0)) - $rig_vd_l - pow($rig_hl_l - sqrt($rig_hl_l * $rig_hl_l + $rig_vd_l * $rig_vd_l) * cos(atan2($rig_vd_l, $rig_hl_l) + max($heel_l, 0)), 2) / (2 * $rig_leg))), 0) / $rig_leg, shift_right=-((((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) + (1 * ($rig_hip_x + $out_l * $rig_hip_width + $rig_centre_out) + $rig_centre_along * 1 * sin($rig_heading + $turnout_l))) / 2) + $weight_side * ((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) - (((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) + (1 * ($rig_hip_x + $out_l * $rig_hip_width + $rig_centre_out) + $rig_centre_along * 1 * sin($rig_heading + $turnout_l))) / 2)) / $rig_gain_side), shift_forward=(((($rig_hip_y + $forward_r * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_r)) + ($rig_hip_y + $forward_l * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_l))) / 2) - ($rig_hip_y + $rig_rest_forward * $rig_leg + $rig_centre_along * cos($rig_heading)) + $weight_fore * max(abs(($rig_hip_y + $forward_r * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_r)) - ($rig_hip_y + $forward_l * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_l))) / 2, $rig_heel_ball) / $rig_gain_fore - $rig_lean_share * $rig_leg * sin($lean)), hike=$hike, turn=$turn, rig_leg=$rig_leg)
+  $FootAt(left=false, forward=$forward_r, out=$out_r, turnout=$turnout_r, knee_out=$knee_out_r, heel=$heel_r, px=(((((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) + (1 * ($rig_hip_x + $out_l * $rig_hip_width + $rig_centre_out) + $rig_centre_along * 1 * sin($rig_heading + $turnout_l))) / 2) + $weight_side * ((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) - (((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) + (1 * ($rig_hip_x + $out_l * $rig_hip_width + $rig_centre_out) + $rig_centre_along * 1 * sin($rig_heading + $turnout_l))) / 2)) / $rig_gain_side)) * cos($rig_base_turn) - ((((($rig_hip_y + $forward_r * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_r)) + ($rig_hip_y + $forward_l * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_l))) / 2) - ($rig_hip_y + $rig_rest_forward * $rig_leg + $rig_centre_along * cos($rig_heading)) + $weight_fore * max(abs(($rig_hip_y + $forward_r * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_r)) - ($rig_hip_y + $forward_l * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_l))) / 2, $rig_heel_ball) / $rig_gain_fore - $rig_lean_share * $rig_leg * sin($lean))) * sin($rig_base_turn) + $rig_base_px, py=(((((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) + (1 * ($rig_hip_x + $out_l * $rig_hip_width + $rig_centre_out) + $rig_centre_along * 1 * sin($rig_heading + $turnout_l))) / 2) + $weight_side * ((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) - (((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) + (1 * ($rig_hip_x + $out_l * $rig_hip_width + $rig_centre_out) + $rig_centre_along * 1 * sin($rig_heading + $turnout_l))) / 2)) / $rig_gain_side)) * sin($rig_base_turn) + ((((($rig_hip_y + $forward_r * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_r)) + ($rig_hip_y + $forward_l * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_l))) / 2) - ($rig_hip_y + $rig_rest_forward * $rig_leg + $rig_centre_along * cos($rig_heading)) + $weight_fore * max(abs(($rig_hip_y + $forward_r * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_r)) - ($rig_hip_y + $forward_l * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_l))) / 2, $rig_heel_ball) / $rig_gain_fore - $rig_lean_share * $rig_leg * sin($lean))) * cos($rig_base_turn) + $rig_base_py, pz=max(min((sqrt($rig_hl_r * $rig_hl_r + $rig_vd_r * $rig_vd_r) * sin(atan2($rig_vd_r, $rig_hl_r) + max($heel_r, 0)) - $rig_vd_r - pow($rig_hl_r - sqrt($rig_hl_r * $rig_hl_r + $rig_vd_r * $rig_vd_r) * cos(atan2($rig_vd_r, $rig_hl_r) + max($heel_r, 0)), 2) / (2 * $rig_leg)), (sqrt($rig_hl_l * $rig_hl_l + $rig_vd_l * $rig_vd_l) * sin(atan2($rig_vd_l, $rig_hl_l) + max($heel_l, 0)) - $rig_vd_l - pow($rig_hl_l - sqrt($rig_hl_l * $rig_hl_l + $rig_vd_l * $rig_vd_l) * cos(atan2($rig_vd_l, $rig_hl_l) + max($heel_l, 0)), 2) / (2 * $rig_leg))), 0) - $drop * $rig_leg + $rig_base_pz, hike=$hike + $rig_base_hike, turn=$turn + $rig_base_turn, rig_leg=$rig_leg, rig_hip_width=$rig_hip_width, rig_hip_x=$rig_hip_x, rig_hip_y=$rig_hip_y, rig_rest_forward=$rig_rest_forward, rig_rest_out=$rig_rest_out)
+  $FootAt(right=false, forward=$forward_l, out=$out_l, turnout=$turnout_l, knee_out=$knee_out_l, heel=$heel_l, px=(((((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) + (1 * ($rig_hip_x + $out_l * $rig_hip_width + $rig_centre_out) + $rig_centre_along * 1 * sin($rig_heading + $turnout_l))) / 2) + $weight_side * ((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) - (((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) + (1 * ($rig_hip_x + $out_l * $rig_hip_width + $rig_centre_out) + $rig_centre_along * 1 * sin($rig_heading + $turnout_l))) / 2)) / $rig_gain_side)) * cos($rig_base_turn) - ((((($rig_hip_y + $forward_r * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_r)) + ($rig_hip_y + $forward_l * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_l))) / 2) - ($rig_hip_y + $rig_rest_forward * $rig_leg + $rig_centre_along * cos($rig_heading)) + $weight_fore * max(abs(($rig_hip_y + $forward_r * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_r)) - ($rig_hip_y + $forward_l * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_l))) / 2, $rig_heel_ball) / $rig_gain_fore - $rig_lean_share * $rig_leg * sin($lean))) * sin($rig_base_turn) + $rig_base_px, py=(((((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) + (1 * ($rig_hip_x + $out_l * $rig_hip_width + $rig_centre_out) + $rig_centre_along * 1 * sin($rig_heading + $turnout_l))) / 2) + $weight_side * ((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) - (((-1 * ($rig_hip_x + $out_r * $rig_hip_width + $rig_centre_out) + $rig_centre_along * -1 * sin($rig_heading + $turnout_r)) + (1 * ($rig_hip_x + $out_l * $rig_hip_width + $rig_centre_out) + $rig_centre_along * 1 * sin($rig_heading + $turnout_l))) / 2)) / $rig_gain_side)) * sin($rig_base_turn) + ((((($rig_hip_y + $forward_r * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_r)) + ($rig_hip_y + $forward_l * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_l))) / 2) - ($rig_hip_y + $rig_rest_forward * $rig_leg + $rig_centre_along * cos($rig_heading)) + $weight_fore * max(abs(($rig_hip_y + $forward_r * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_r)) - ($rig_hip_y + $forward_l * $rig_leg + $rig_centre_along * cos($rig_heading + $turnout_l))) / 2, $rig_heel_ball) / $rig_gain_fore - $rig_lean_share * $rig_leg * sin($lean))) * cos($rig_base_turn) + $rig_base_py, pz=max(min((sqrt($rig_hl_r * $rig_hl_r + $rig_vd_r * $rig_vd_r) * sin(atan2($rig_vd_r, $rig_hl_r) + max($heel_r, 0)) - $rig_vd_r - pow($rig_hl_r - sqrt($rig_hl_r * $rig_hl_r + $rig_vd_r * $rig_vd_r) * cos(atan2($rig_vd_r, $rig_hl_r) + max($heel_r, 0)), 2) / (2 * $rig_leg)), (sqrt($rig_hl_l * $rig_hl_l + $rig_vd_l * $rig_vd_l) * sin(atan2($rig_vd_l, $rig_hl_l) + max($heel_l, 0)) - $rig_vd_l - pow($rig_hl_l - sqrt($rig_hl_l * $rig_hl_l + $rig_vd_l * $rig_vd_l) * cos(atan2($rig_vd_l, $rig_hl_l) + max($heel_l, 0)), 2) / (2 * $rig_leg))), 0) - $drop * $rig_leg + $rig_base_pz, hike=$hike + $rig_base_hike, turn=$turn + $rig_base_turn, rig_leg=$rig_leg, rig_hip_width=$rig_hip_width, rig_hip_x=$rig_hip_x, rig_hip_y=$rig_hip_y, rig_rest_forward=$rig_rest_forward, rig_rest_out=$rig_rest_out)
+}
+
+# THIGH (first layer, sided): where the thigh (hip to knee) points, for a leg OFF the ground (an alternative per side to FootAt: one
+# aim per bone). Directions as the arm's: raise 0 straight down, 90 level, 180 up; azimuth 0 ahead, 90 out to its own side, 180
+# behind, below 0 across; in frame. Either one written asks the direction (raise alone: azimuth 0; azimuth alone: rig_rest_raise
+# 2.9). Neither: not asked, the thigh (hip to knee) rides its parent.
+#  turnout   degrees, the thigh turned about its own length, the toes out to its own side (below 0 in): the free leg's turnout
+#            (rev 5 box A3). Not written: not asked. Range +-53.5 (the thigh's twist). The rig's twist turns the right toes IN
+#            (+20 moved the right ball 4.8 cm inward), so the right line carries the flip.
+#  Worked values (built, arms held out): a kick's chamber $Thigh(raise=90) $Shin(raise=0) -> thigh 90.00 / 0.00, shin 0.24;
+#              a thigh out to the side $Thigh(raise=45, azimuth=90) -> 42.11 / 90.13 (the side stop 38.8: "2.9 short");
+#              $Thigh(raise=30, turnout=30) -> 30.00 / 0.00, the foot turned out 23 in the floor plane. Behind the body the
+#              thigh stops near 36 (its -35 extension): an arabesque line of 100 reads 67, said ("64.1 short").
+Thigh = pose(raise=none, raise_min=0, raise_max=180, azimuth=0 * $raise, azimuth_min=-180, azimuth_max=180, turnout=none, turnout_min=-53.5, turnout_max=53.5, frame=character, left=true, right=true, rig_rest_raise=2.9) {
+  if ($raise != none) {
+    if ($azimuth != none) {
+      $ThighDir(raise=$raise, azimuth=$azimuth, frame=$frame, left=$left, right=$right)
+    } else {
+      $ThighDir(raise=$raise, azimuth=0, frame=$frame, left=$left, right=$right)
+    }
+  } else {
+    if ($azimuth != none) {
+      $ThighDir(raise=$rig_rest_raise, azimuth=$azimuth, frame=$frame, left=$left, right=$right)
+    }
+  }
+  if ($turnout != none) {
+    if ($right) { swing(thigh_r, axis=twist, by=-$turnout) }
+    if ($left) { swing(thigh_l, axis=twist, by=$turnout) }
+  }
+}
+# (helper of Thigh, not listed) the aim, a block per side; the left line carries the flip.
+ThighDir = pose(raise=0.0, azimuth=0.0, frame=character, left=true, right=true) {
+  if ($right) { aim(thigh_r, from=$ThighR, toward=(down, forward=atan2(sin($raise) * cos($azimuth), cos($raise)), right=asin(sin($raise) * sin($azimuth))), relative=$frame) }
+  if ($left) { aim(thigh_l, from=$ThighL, toward=(down, forward=atan2(sin($raise) * cos($azimuth), cos($raise)), left=asin(sin($raise) * sin($azimuth))), relative=$frame) }
+}
+
+# SHIN (first layer, sided): where the shin (knee to ankle) points, for a leg OFF the ground (an alternative per side to FootAt: one
+# aim per bone). Directions as the arm's: raise 0 straight down, 90 level, 180 up; azimuth 0 ahead, 90 out to its own side, 180
+# behind, below 0 across; in frame. Either one written asks the direction (raise alone: azimuth 0; azimuth alone: rig_rest_raise
+# 3.4). Neither: not asked, the shin (knee to ankle) rides its parent.
+#  Alone, Shin follows azimuth 0, not the thigh's (one preset cannot read another's value): say a whole leg with LegReach.
+#  Worked values (built): $Shin(raise=0) under a level thigh -> 0.24; one knee up beside a planted foot
+#              $FootAt(right=false) $Thigh(left=false, raise=90) $Shin(left=false, raise=0) -> the standing sole 0.00.
+#              REFUSED on collision: $Thigh(raise=10, azimuth=180) $Shin(raise=170 or 150, azimuth=180) (the calf into the thigh,
+#              "intersects ... by 0.995226 cm" / 2.25 cm): a quad stretch is not said by two directions on this body.
+Shin = pose(raise=none, raise_min=0, raise_max=180, azimuth=0 * $raise, azimuth_min=-180, azimuth_max=180, frame=character, left=true, right=true, rig_rest_raise=3.4) {
+  if ($raise != none) {
+    if ($azimuth != none) {
+      $ShinDir(raise=$raise, azimuth=$azimuth, frame=$frame, left=$left, right=$right)
+    } else {
+      $ShinDir(raise=$raise, azimuth=0, frame=$frame, left=$left, right=$right)
+    }
+  } else {
+    if ($azimuth != none) {
+      $ShinDir(raise=$rig_rest_raise, azimuth=$azimuth, frame=$frame, left=$left, right=$right)
+    }
+  }
+}
+# (helper of Shin, not listed) the aim, a block per side; the left line carries the flip.
+ShinDir = pose(raise=0.0, azimuth=0.0, frame=character, left=true, right=true) {
+  if ($right) { aim(calf_r, from=$ShinR, toward=(down, forward=atan2(sin($raise) * cos($azimuth), cos($raise)), right=asin(sin($raise) * sin($azimuth))), relative=$frame) }
+  if ($left) { aim(calf_l, from=$ShinL, toward=(down, forward=atan2(sin($raise) * cos($azimuth), cos($raise)), left=asin(sin($raise) * sin($azimuth))), relative=$frame) }
+}
+
+# LEGREACH (second layer, sided: calls only Thigh and Shin): a free leg along a line from the hip joint and how far out.
+#  raise, azimuth  the direction from the hip joint to the ankle; the pair rule (azimuth alone takes rig_rest_raise 3.1, the
+#            rest line's). Neither written: nothing asked.
+#  reach     the ankle's distance along that line as a share of rig_thigh_len + rig_shin_len (86.2 cm): 1 (default) straight;
+#            the knee's 141.9 stop ends it near 0.33 (inferred); above 1 refused by the arithmetic.
+#  swivel    degrees the knee is swung round the line from AHEAD (its natural fold side; for a raised leg: up), + out; default 0.
+#  turnout   passed to Thigh.   frame, left, right   as Thigh's.
+#  Arithmetic: ArmReach's, with the knee's zero half a turn from the elbow's (swivel 180 - swivel).
+#  Worked values (built): a walking swing $LegReach(raise=15, azimuth=0, reach=0.8) -> line 14.97 / -0.39, reach 0.799,
+#              knee ahead; $LegReach(raise=60, azimuth=0, reach=0.7, swivel=30) -> 59.91 / 0.09, 0.699, the knee 20.6 out; a tuck
+#              $LegReach(raise=110, azimuth=0, reach=0.4) -> 87.2 / 11.2, 0.687: the thigh's 133.8 stop, said ("short"). reach's
+#              end 0.4 is the calf meeting the thigh on a line of 45 (0.38 refused there); the tuck asked 0.38 before ranges.
+LegReach = pose(raise=none, raise_min=0, raise_max=180, azimuth=0 * $raise, azimuth_min=-180, azimuth_max=180, reach=1.0, reach_min=0.4, reach_max=1, swivel=0.0, swivel_min=-30, swivel_max=30, turnout=none, turnout_min=-53.5, turnout_max=53.5, frame=character, left=true, right=true, rig_thigh_len=44.23, rig_shin_len=41.96, rig_rest_raise=3.1) {
+  if ($raise != none) {
+    if ($azimuth != none) {
+      $LegReachKnee(raise=$raise, azimuth=$azimuth, swivel=180 - $swivel, d=$reach * ($rig_thigh_len + $rig_shin_len), ca=($rig_thigh_len * $rig_thigh_len + pow($reach * ($rig_thigh_len + $rig_shin_len), 2) - $rig_shin_len * $rig_shin_len) / (2 * $rig_thigh_len * $reach * ($rig_thigh_len + $rig_shin_len)), rig_thigh_len=$rig_thigh_len, frame=$frame, left=$left, right=$right)
+    } else {
+      $LegReachKnee(raise=$raise, azimuth=0, swivel=180 - $swivel, d=$reach * ($rig_thigh_len + $rig_shin_len), ca=($rig_thigh_len * $rig_thigh_len + pow($reach * ($rig_thigh_len + $rig_shin_len), 2) - $rig_shin_len * $rig_shin_len) / (2 * $rig_thigh_len * $reach * ($rig_thigh_len + $rig_shin_len)), rig_thigh_len=$rig_thigh_len, frame=$frame, left=$left, right=$right)
+    }
+  } else {
+    if ($azimuth != none) {
+      $LegReachKnee(raise=$rig_rest_raise, azimuth=$azimuth, swivel=180 - $swivel, d=$reach * ($rig_thigh_len + $rig_shin_len), ca=($rig_thigh_len * $rig_thigh_len + pow($reach * ($rig_thigh_len + $rig_shin_len), 2) - $rig_shin_len * $rig_shin_len) / (2 * $rig_thigh_len * $reach * ($rig_thigh_len + $rig_shin_len)), rig_thigh_len=$rig_thigh_len, frame=$frame, left=$left, right=$right)
+    }
+  }
+  if ($turnout != none) { $Thigh(turnout=$turnout, left=$left, right=$right) }
+}
+# (helper of LegReach, not listed) the knee's direction and the ankle's place from the hip (ArmReachElbow's arithmetic).
+LegReachKnee = pose(raise=90.0, azimuth=0.0, swivel=0.0, d=40.0, ca=0.7, rig_thigh_len=44.23, frame=character, left=true, right=true) {
+  $LegReachAim(ux=$ca * sin($raise) * sin($azimuth) + sqrt(1 - $ca * $ca + 0.000000001) * (sin($swivel) * cos($azimuth) - cos($swivel) * cos($raise) * sin($azimuth)), uy=$ca * sin($raise) * cos($azimuth) - sqrt(1 - $ca * $ca + 0.000000001) * (sin($swivel) * sin($azimuth) + cos($swivel) * cos($raise) * cos($azimuth)), uz=-$ca * cos($raise) - sqrt(1 - $ca * $ca + 0.000000001) * cos($swivel) * sin($raise), wx=$d * sin($raise) * sin($azimuth), wy=$d * sin($raise) * cos($azimuth), wz=-$d * cos($raise), rig_thigh_len=$rig_thigh_len, frame=$frame, left=$left, right=$right)
+}
+# (helper of LegReach, not listed) the two directions back into raise/azimuth, handed to Thigh and Shin.
+LegReachAim = pose(ux=0.0, uy=0.7, uz=-0.7, wx=0.0, wy=40.0, wz=0.0, rig_thigh_len=44.23, frame=character, left=true, right=true) {
+  $Thigh(raise=atan2(sqrt($ux * $ux + $uy * $uy), -$uz), azimuth=atan2($ux, $uy), frame=$frame, left=$left, right=$right)
+  $Shin(raise=atan2(sqrt(pow($wx - $rig_thigh_len * $ux, 2) + pow($wy - $rig_thigh_len * $uy, 2)), $rig_thigh_len * $uz - $wz), azimuth=atan2($wx - $rig_thigh_len * $ux, $wy - $rig_thigh_len * $uy), frame=$frame, left=$left, right=$right)
+}
+
+# FOOT (first layer, sided): the FREE foot's ankle and toes (foot fold and twist, ball fold), as offsets from where the leg leaves
+# it. A planted foot's heel is FootAt.heel; Foot and FootAt do not both write one foot.
+#  point       degrees, the foot pointed (toes down); below 0 flexed (toes up). Not written: not asked. Room: 61.8 down, 39 up.
+#  toes_up     degrees, the toes bent up at the ball; below 0 curled down. Not written: not asked.
+#  ankle_roll  degrees, the sole turned IN (inversion); below 0 out. Not written: not asked. Room +-27.7. The rig's twist turns
+#              the right sole OUT, so the right line carries the flip.
+#  Worked values (built, toes read against the ankle): pointed $Foot(point=40) -> toes 7.3 cm down; flexed
+#              $Foot(point=-15, toes_up=30) -> toes 3.7 up; $Foot(ankle_roll=15) -> big toe 0.65 up, little toe 1.16 down (both
+#              sides alike).
+Foot = pose(point=none, point_min=-39, point_max=61.8, toes_up=none, toes_up_min=-35, toes_up_max=65.6, ankle_roll=none, ankle_roll_min=-27.7, ankle_roll_max=27.7, left=true, right=true) {
+  if ($point != none) {
+    if ($right) { swing(foot_r, axis=fold, by=-$point) }
+    if ($left) { swing(foot_l, axis=fold, by=-$point) }
+  }
+  if ($toes_up != none) {
+    if ($right) { swing(ball_r, axis=fold, by=-$toes_up) }
+    if ($left) { swing(ball_l, axis=fold, by=-$toes_up) }
+  }
+  if ($ankle_roll != none) {
+    if ($right) { swing(foot_r, axis=twist, by=-$ankle_roll) }
+    if ($left) { swing(foot_l, axis=twist, by=$ankle_roll) }
+  }
+}
+
+# ---- the hand preset (the same text as the Hand library) ----
+# HAND (MOVE-PARAM1, 17 Nov 2026, author move-hand2; every reading behind it: Saved/Research/MOVE-PARAM1/STEP2-HAND2.md).
+# The wrist, four fingers and the thumb of one or both hands, POSED: plain arithmetic to numbers found once, no solver.
+# Values (-1..1 with 0 the rest hand, except where degrees are said). A value not written is not asked: its lines are not
+# written, so $Hand alone writes no line and the hand stays at rest.
+#   curl          the one coarse number: -1 flat, 1 closed, the thumb with it; below -1 the fingers bend back past flat,
+#                 to the joints' stops at -2. knuckle (the fingers' first joints) and tip (second and third) follow it.
+#   index, middle, ring, little   one finger's knuckle, REPLACING the hand's; index_tip .. little_tip follow the finger's
+#                 own value when that is written, else the hand's tip. "Two" is $Hand(curl=1, index=-1, middle=-1).
+#   fan           (-1..1) each finger a little more closed than the one before (0, 1/6, 1/3, 1/2 of it); feeds only the
+#                 fingers not written.
+#   spread        -1 pressed together, 1 splayed; index_side .. little_side in degrees, + toward the little finger, exact
+#                 when written; spread's share fades as a finger closes.
+#   thumb         its base lifted out from the hand 1, laid along it -1 (the base's FOLD). When written it REPLACES the
+#                 lift the across sweep would add.
+#   thumb_across  (0..1) swept across the palm (the base's SIDE and ROLL); follows max(curl, 0), so a closed hand is a fist
+#                 with the thumb locked over the index and middle fingers; thumb_across=0 keeps it out.
+#   thumb_tip     -1 straight, 1 closed; follows thumb_across.
+#   wrist         degrees toward the palm (below 0 cocked back); wrist_side degrees toward the little finger.
+#   left, right   which hands.
+# How it closes: each finger joint's closed end is a rig_ number found ONCE by touch (a collision form closing the hand;
+# where each joint stopped), reached here by arithmetic: fast, the same every build. Where the thumb lies across depends on
+# which fingers are closed in front of the palm, so the middle and ring fingers carry shares of its lift, sweep and curl
+# (all open: across the palm, "four"; ring and little closed: on the ring, "two"; the middle closed too: its pad over the
+# index and middle second bones, the fist). The build's own collision check refuses anything inside anything.
+# Moving between shapes (the build refuses the straight path; measured 17 Nov): out of a closed hand a finger opens
+#   knuckle first, then its tips ((curl=1, index=-1, index_tip=1) between the fist and "one"), or its end slides
+#   through its closed neighbour; and the thumb leaves a finger before that finger opens ("two" to "three": thumb out
+#   with thumb_across=0, thumb=1, the ring opens, the thumb comes back onto the little finger). See the Count clip.
+# Rig: the presets' body PoseBody (corrected wrist and thumb base). Every skeleton number is a rig_ parameter.
+Hand = pose(curl=none, curl_min=-2, curl_max=1, knuckle=$curl, knuckle_min=-2, knuckle_max=1, tip=$curl, tip_min=-2, tip_max=1,
+            index=none, index_min=-2, index_max=1, index_tip=$index, index_tip_min=-2, index_tip_max=1, middle=none, middle_min=-2,
+            middle_max=1, middle_tip=$middle, middle_tip_min=-2, middle_tip_max=1, ring=none, ring_min=-2, ring_max=1,
+            ring_tip=$ring, ring_tip_min=-2, ring_tip_max=1, little=none, little_min=-2, little_max=1, little_tip=$little,
+            little_tip_min=-2, little_tip_max=1, fan=0.0, fan_min=-1, fan_max=1, spread=none, spread_min=-1, spread_max=1,
+            index_side=none, index_side_min=-15, index_side_max=11, middle_side=none, middle_side_min=-8, middle_side_max=15,
+            ring_side=none, ring_side_min=-15, ring_side_max=15, little_side=none, little_side_min=-15, little_side_max=15,
+            thumb=none, thumb_min=-1, thumb_max=1, thumb_across=max($curl, 0), thumb_across_min=0, thumb_across_max=1,
+            thumb_tip=$thumb_across, thumb_tip_min=-1, thumb_tip_max=1, wrist=none, wrist_min=-71, wrist_max=83, wrist_side=none,
+            wrist_side_min=-16.8, wrist_side_max=38.5, left=true, right=true, rig_index_close1=56.5, rig_index_close2=60,
+            rig_index_close3=36, rig_index_rest1=28.4, rig_index_rest2=25.5, rig_index_rest3=13.1, rig_index_splay=-15,
+            rig_index_press=11, rig_middle_close1=52.1, rig_middle_close2=65.2, rig_middle_close3=45.6, rig_middle_rest1=32.8,
+            rig_middle_rest2=30.1, rig_middle_rest3=12.7, rig_ring_close1=60.2, rig_ring_close2=60.8, rig_ring_close3=42.5,
+            rig_ring_rest1=24.7, rig_ring_rest2=34.5, rig_ring_rest3=11.7, rig_ring_splay=7.5, rig_ring_press=-14,
+            rig_little_close1=58.5, rig_little_close2=53.6, rig_little_close3=37.4, rig_little_rest1=16.6, rig_little_rest2=32.1,
+            rig_little_rest3=15.6, rig_little_splay=15, rig_little_press=-15, rig_back1=26.3, rig_back2=16.2, rig_back3=8.4,
+            rig_fan=0.5, rig_thumb_out=40.0, rig_thumb_in=10.0, rig_thumb_give=20.0, rig_thumb_side=-45.0,
+            rig_thumb_side_middle=7.0, rig_thumb_roll=5.0, rig_thumb_lift_middle=6.0, rig_thumb_lift_ring=33.0, rig_thumb_lift=5.0,
+            rig_thumb_mcp=13.9, rig_thumb_ip=79.0, rig_thumb_mcp_ring=-13.9, rig_thumb_ip_middle=-7.0, rig_thumb_ip_ring=-44.0,
+            rig_thumb_rest2=46.1, rig_thumb_rest3=8.5, rig_wrist_palm=1.012, rig_wrist_back=1.028, rig_wrist_fold_palm=0.15,
+            rig_wrist_side=0.99, rig_wrist_a1=0.1017, rig_wrist_a2=0.001056, rig_wrist_b1=0.0533, rig_wrist_b2=0.00378) {
+  if ($left) {
+    if ($index != none) {
+      if ($index_side != none) {
+        swing(index_01_l, axis=side, by=-$index_side)
+      } else {
+        if ($spread != none) {
+          swing(index_01_l, axis=side, by=-(max($spread, 0) * $rig_index_splay - min($spread, 0) * $rig_index_press) * (1 - max(min($index, 1), 0)))
+        }
+      }
+      swing(index_01_l, axis=fold, by=max(min($index, 1), 0) * $rig_index_close1 + min(max($index, -1), 0) * $rig_index_rest1 + min($index + 1, 0) * $rig_back1)
+      if ($thumb == none) {
+        if ($thumb_across != none) {
+          swing(thumb_01_l, axis=fold, by=$rig_thumb_give * max(min($index, 1), 0) * (1 - $thumb_across))
+        } else {
+          swing(thumb_01_l, axis=fold, by=$rig_thumb_give * max(min($index, 1), 0))
+        }
+      }
+    } else {
+      if ($knuckle != none) {
+        if ($index_side != none) {
+          swing(index_01_l, axis=side, by=-$index_side)
+        } else {
+          if ($spread != none) {
+            swing(index_01_l, axis=side, by=-(max($spread, 0) * $rig_index_splay - min($spread, 0) * $rig_index_press) * (1 - max(min($knuckle, 1), 0)))
+          }
+        }
+        swing(index_01_l, axis=fold, by=max(min($knuckle, 1), 0) * $rig_index_close1 + min(max($knuckle, -1), 0) * $rig_index_rest1 + min($knuckle + 1, 0) * $rig_back1)
+        if ($thumb == none) {
+          if ($thumb_across != none) {
+            swing(thumb_01_l, axis=fold, by=$rig_thumb_give * max(min($knuckle, 1), 0) * (1 - $thumb_across))
+          } else {
+            swing(thumb_01_l, axis=fold, by=$rig_thumb_give * max(min($knuckle, 1), 0))
+          }
+        }
+      } else {
+        if ($index_side != none) {
+          swing(index_01_l, axis=side, by=-$index_side)
+        } else {
+          if ($spread != none) {
+            swing(index_01_l, axis=side, by=-(max($spread, 0) * $rig_index_splay - min($spread, 0) * $rig_index_press))
+          }
+        }
+      }
+    }
+    if ($index_tip != none) {
+      swing(index_02_l, axis=fold, by=max(min($index_tip, 1), 0) * $rig_index_close2 + min(max($index_tip, -1), 0) * $rig_index_rest2 + min($index_tip + 1, 0) * $rig_back2)
+      swing(index_03_l, axis=fold, by=max(min($index_tip, 1), 0) * $rig_index_close3 + min(max($index_tip, -1), 0) * $rig_index_rest3 + min($index_tip + 1, 0) * $rig_back3)
+    } else {
+      if ($tip != none) {
+        swing(index_02_l, axis=fold, by=max(min($tip, 1), 0) * $rig_index_close2 + min(max($tip, -1), 0) * $rig_index_rest2 + min($tip + 1, 0) * $rig_back2)
+        swing(index_03_l, axis=fold, by=max(min($tip, 1), 0) * $rig_index_close3 + min(max($tip, -1), 0) * $rig_index_rest3 + min($tip + 1, 0) * $rig_back3)
+      }
+    }
+    if ($middle != none) {
+      if ($middle_side != none) {
+        swing(middle_01_l, axis=side, by=-$middle_side)
+      }
+      swing(middle_01_l, axis=fold, by=max(min($middle, 1), 0) * $rig_middle_close1 + min(max($middle, -1), 0) * $rig_middle_rest1 + min($middle + 1, 0) * $rig_back1)
+      if ($thumb == none) {
+        if ($thumb_across != none) {
+          swing(thumb_01_l, axis=fold, by=$thumb_across * $rig_thumb_lift_middle * max(min($middle, 1), 0))
+        }
+      }
+      if ($thumb_tip != none) {
+        swing(thumb_03_l, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_ip_middle * max(min($middle, 1), 0))
+      }
+    } else {
+      if ($knuckle != none) {
+        if ($middle_side != none) {
+          swing(middle_01_l, axis=side, by=-$middle_side)
+        }
+        swing(middle_01_l, axis=fold, by=max(min(($knuckle + $fan * $rig_fan * 0.333), 1), 0) * $rig_middle_close1 + min(max(($knuckle + $fan * $rig_fan * 0.333), -1), 0) * $rig_middle_rest1 + min(($knuckle + $fan * $rig_fan * 0.333) + 1, 0) * $rig_back1)
+        if ($thumb == none) {
+          if ($thumb_across != none) {
+            swing(thumb_01_l, axis=fold, by=$thumb_across * $rig_thumb_lift_middle * max(min(($knuckle + $fan * $rig_fan * 0.333), 1), 0))
+          }
+        }
+        if ($thumb_tip != none) {
+          swing(thumb_03_l, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_ip_middle * max(min(($knuckle + $fan * $rig_fan * 0.333), 1), 0))
+        }
+      } else {
+        if ($middle_side != none) {
+          swing(middle_01_l, axis=side, by=-$middle_side)
+        }
+      }
+    }
+    if ($middle_tip != none) {
+      swing(middle_02_l, axis=fold, by=max(min($middle_tip, 1), 0) * $rig_middle_close2 + min(max($middle_tip, -1), 0) * $rig_middle_rest2 + min($middle_tip + 1, 0) * $rig_back2)
+      swing(middle_03_l, axis=fold, by=max(min($middle_tip, 1), 0) * $rig_middle_close3 + min(max($middle_tip, -1), 0) * $rig_middle_rest3 + min($middle_tip + 1, 0) * $rig_back3)
+    } else {
+      if ($tip != none) {
+        swing(middle_02_l, axis=fold, by=max(min(($tip + $fan * $rig_fan * 0.333), 1), 0) * $rig_middle_close2 + min(max(($tip + $fan * $rig_fan * 0.333), -1), 0) * $rig_middle_rest2 + min(($tip + $fan * $rig_fan * 0.333) + 1, 0) * $rig_back2)
+        swing(middle_03_l, axis=fold, by=max(min(($tip + $fan * $rig_fan * 0.333), 1), 0) * $rig_middle_close3 + min(max(($tip + $fan * $rig_fan * 0.333), -1), 0) * $rig_middle_rest3 + min(($tip + $fan * $rig_fan * 0.333) + 1, 0) * $rig_back3)
+      }
+    }
+    if ($ring != none) {
+      if ($ring_side != none) {
+        swing(ring_01_l, axis=side, by=-$ring_side)
+      } else {
+        if ($spread != none) {
+          swing(ring_01_l, axis=side, by=-(max($spread, 0) * $rig_ring_splay - min($spread, 0) * $rig_ring_press) * (1 - max(min($ring, 1), 0)))
+        }
+      }
+      swing(ring_01_l, axis=fold, by=max(min($ring, 1), 0) * $rig_ring_close1 + min(max($ring, -1), 0) * $rig_ring_rest1 + min($ring + 1, 0) * $rig_back1)
+      if ($thumb == none) {
+        if ($thumb_across != none) {
+          swing(thumb_01_l, axis=fold, by=$thumb_across * $rig_thumb_lift_ring * max(min($ring, 1), 0))
+        }
+      }
+      if ($thumb_tip != none) {
+        swing(thumb_02_l, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_mcp_ring * max(min($ring, 1), 0))
+        swing(thumb_03_l, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_ip_ring * max(min($ring, 1), 0))
+      }
+    } else {
+      if ($knuckle != none) {
+        if ($ring_side != none) {
+          swing(ring_01_l, axis=side, by=-$ring_side)
+        } else {
+          if ($spread != none) {
+            swing(ring_01_l, axis=side, by=-(max($spread, 0) * $rig_ring_splay - min($spread, 0) * $rig_ring_press) * (1 - max(min(($knuckle + $fan * $rig_fan * 0.667), 1), 0)))
+          }
+        }
+        swing(ring_01_l, axis=fold, by=max(min(($knuckle + $fan * $rig_fan * 0.667), 1), 0) * $rig_ring_close1 + min(max(($knuckle + $fan * $rig_fan * 0.667), -1), 0) * $rig_ring_rest1 + min(($knuckle + $fan * $rig_fan * 0.667) + 1, 0) * $rig_back1)
+        if ($thumb == none) {
+          if ($thumb_across != none) {
+            swing(thumb_01_l, axis=fold, by=$thumb_across * $rig_thumb_lift_ring * max(min(($knuckle + $fan * $rig_fan * 0.667), 1), 0))
+          }
+        }
+        if ($thumb_tip != none) {
+          swing(thumb_02_l, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_mcp_ring * max(min(($knuckle + $fan * $rig_fan * 0.667), 1), 0))
+          swing(thumb_03_l, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_ip_ring * max(min(($knuckle + $fan * $rig_fan * 0.667), 1), 0))
+        }
+      } else {
+        if ($ring_side != none) {
+          swing(ring_01_l, axis=side, by=-$ring_side)
+        } else {
+          if ($spread != none) {
+            swing(ring_01_l, axis=side, by=-(max($spread, 0) * $rig_ring_splay - min($spread, 0) * $rig_ring_press))
+          }
+        }
+      }
+    }
+    if ($ring_tip != none) {
+      swing(ring_02_l, axis=fold, by=max(min($ring_tip, 1), 0) * $rig_ring_close2 + min(max($ring_tip, -1), 0) * $rig_ring_rest2 + min($ring_tip + 1, 0) * $rig_back2)
+      swing(ring_03_l, axis=fold, by=max(min($ring_tip, 1), 0) * $rig_ring_close3 + min(max($ring_tip, -1), 0) * $rig_ring_rest3 + min($ring_tip + 1, 0) * $rig_back3)
+    } else {
+      if ($tip != none) {
+        swing(ring_02_l, axis=fold, by=max(min(($tip + $fan * $rig_fan * 0.667), 1), 0) * $rig_ring_close2 + min(max(($tip + $fan * $rig_fan * 0.667), -1), 0) * $rig_ring_rest2 + min(($tip + $fan * $rig_fan * 0.667) + 1, 0) * $rig_back2)
+        swing(ring_03_l, axis=fold, by=max(min(($tip + $fan * $rig_fan * 0.667), 1), 0) * $rig_ring_close3 + min(max(($tip + $fan * $rig_fan * 0.667), -1), 0) * $rig_ring_rest3 + min(($tip + $fan * $rig_fan * 0.667) + 1, 0) * $rig_back3)
+      }
+    }
+    if ($little != none) {
+      if ($little_side != none) {
+        swing(pinky_01_l, axis=side, by=-$little_side)
+      } else {
+        if ($spread != none) {
+          swing(pinky_01_l, axis=side, by=-(max($spread, 0) * $rig_little_splay - min($spread, 0) * $rig_little_press) * (1 - max(min($little, 1), 0)))
+        }
+      }
+      swing(pinky_01_l, axis=fold, by=max(min($little, 1), 0) * $rig_little_close1 + min(max($little, -1), 0) * $rig_little_rest1 + min($little + 1, 0) * $rig_back1)
+    } else {
+      if ($knuckle != none) {
+        if ($little_side != none) {
+          swing(pinky_01_l, axis=side, by=-$little_side)
+        } else {
+          if ($spread != none) {
+            swing(pinky_01_l, axis=side, by=-(max($spread, 0) * $rig_little_splay - min($spread, 0) * $rig_little_press) * (1 - max(min(($knuckle + $fan * $rig_fan * 1), 1), 0)))
+          }
+        }
+        swing(pinky_01_l, axis=fold, by=max(min(($knuckle + $fan * $rig_fan * 1), 1), 0) * $rig_little_close1 + min(max(($knuckle + $fan * $rig_fan * 1), -1), 0) * $rig_little_rest1 + min(($knuckle + $fan * $rig_fan * 1) + 1, 0) * $rig_back1)
+      } else {
+        if ($little_side != none) {
+          swing(pinky_01_l, axis=side, by=-$little_side)
+        } else {
+          if ($spread != none) {
+            swing(pinky_01_l, axis=side, by=-(max($spread, 0) * $rig_little_splay - min($spread, 0) * $rig_little_press))
+          }
+        }
+      }
+    }
+    if ($little_tip != none) {
+      swing(pinky_02_l, axis=fold, by=max(min($little_tip, 1), 0) * $rig_little_close2 + min(max($little_tip, -1), 0) * $rig_little_rest2 + min($little_tip + 1, 0) * $rig_back2)
+      swing(pinky_03_l, axis=fold, by=max(min($little_tip, 1), 0) * $rig_little_close3 + min(max($little_tip, -1), 0) * $rig_little_rest3 + min($little_tip + 1, 0) * $rig_back3)
+    } else {
+      if ($tip != none) {
+        swing(pinky_02_l, axis=fold, by=max(min(($tip + $fan * $rig_fan * 1), 1), 0) * $rig_little_close2 + min(max(($tip + $fan * $rig_fan * 1), -1), 0) * $rig_little_rest2 + min(($tip + $fan * $rig_fan * 1) + 1, 0) * $rig_back2)
+        swing(pinky_03_l, axis=fold, by=max(min(($tip + $fan * $rig_fan * 1), 1), 0) * $rig_little_close3 + min(max(($tip + $fan * $rig_fan * 1), -1), 0) * $rig_little_rest3 + min(($tip + $fan * $rig_fan * 1) + 1, 0) * $rig_back3)
+      }
+    }
+    if ($thumb != none) {
+      swing(thumb_01_l, axis=fold, by=max($thumb, 0) * $rig_thumb_out + min($thumb, 0) * $rig_thumb_in)
+    } else {
+      if ($thumb_across != none) {
+        swing(thumb_01_l, axis=fold, by=$thumb_across * $rig_thumb_lift)
+      }
+    }
+    if ($thumb_across != none) {
+      if ($middle != none) {
+        swing(thumb_01_l, axis=side, by=$thumb_across * $rig_thumb_side_middle * max(min($middle, 1), 0))
+      } else {
+        if ($knuckle != none) {
+          swing(thumb_01_l, axis=side, by=$thumb_across * $rig_thumb_side_middle * max(min(($knuckle + $fan * $rig_fan * 0.333), 1), 0))
+        }
+      }
+      swing(thumb_01_l, axis=side, by=$thumb_across * $rig_thumb_side)
+      swing(thumb_01_l, axis=twist, by=-$thumb_across * $rig_thumb_roll)
+    }
+    if ($thumb_tip != none) {
+      swing(thumb_02_l, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_mcp + min($thumb_tip, 0) * $rig_thumb_rest2)
+      swing(thumb_03_l, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_ip + min($thumb_tip, 0) * $rig_thumb_rest3)
+    }
+    if ($wrist != none) {
+      if ($wrist_side != none) {
+        swing(hand_l, axis=fold, by=$rig_wrist_side * $wrist_side + (-$rig_wrist_a1 * max($wrist, 0) - $rig_wrist_a2 * max($wrist, 0) * max($wrist, 0) + $rig_wrist_b1 * max(-$wrist, 0) + $rig_wrist_b2 * max(-$wrist, 0) * max(-$wrist, 0)))
+        swing(hand_l, axis=side, by=-($rig_wrist_palm * max($wrist, 0) + $rig_wrist_back * min($wrist, 0)) - $rig_wrist_fold_palm * ($rig_wrist_side * $wrist_side + (-$rig_wrist_a1 * max($wrist, 0) - $rig_wrist_a2 * max($wrist, 0) * max($wrist, 0) + $rig_wrist_b1 * max(-$wrist, 0) + $rig_wrist_b2 * max(-$wrist, 0) * max(-$wrist, 0))))
+      } else {
+        swing(hand_l, axis=fold, by=(-$rig_wrist_a1 * max($wrist, 0) - $rig_wrist_a2 * max($wrist, 0) * max($wrist, 0) + $rig_wrist_b1 * max(-$wrist, 0) + $rig_wrist_b2 * max(-$wrist, 0) * max(-$wrist, 0)))
+        swing(hand_l, axis=side, by=-($rig_wrist_palm * max($wrist, 0) + $rig_wrist_back * min($wrist, 0)) - $rig_wrist_fold_palm * (-$rig_wrist_a1 * max($wrist, 0) - $rig_wrist_a2 * max($wrist, 0) * max($wrist, 0) + $rig_wrist_b1 * max(-$wrist, 0) + $rig_wrist_b2 * max(-$wrist, 0) * max(-$wrist, 0)))
+      }
+    } else {
+      if ($wrist_side != none) {
+        swing(hand_l, axis=fold, by=$rig_wrist_side * $wrist_side)
+        swing(hand_l, axis=side, by=-$rig_wrist_fold_palm * $rig_wrist_side * $wrist_side)
+      }
+    }
+  }
+  if ($right) {
+    if ($index != none) {
+      if ($index_side != none) {
+        swing(index_01_r, axis=side, by=-$index_side)
+      } else {
+        if ($spread != none) {
+          swing(index_01_r, axis=side, by=-(max($spread, 0) * $rig_index_splay - min($spread, 0) * $rig_index_press) * (1 - max(min($index, 1), 0)))
+        }
+      }
+      swing(index_01_r, axis=fold, by=max(min($index, 1), 0) * $rig_index_close1 + min(max($index, -1), 0) * $rig_index_rest1 + min($index + 1, 0) * $rig_back1)
+      if ($thumb == none) {
+        if ($thumb_across != none) {
+          swing(thumb_01_r, axis=fold, by=$rig_thumb_give * max(min($index, 1), 0) * (1 - $thumb_across))
+        } else {
+          swing(thumb_01_r, axis=fold, by=$rig_thumb_give * max(min($index, 1), 0))
+        }
+      }
+    } else {
+      if ($knuckle != none) {
+        if ($index_side != none) {
+          swing(index_01_r, axis=side, by=-$index_side)
+        } else {
+          if ($spread != none) {
+            swing(index_01_r, axis=side, by=-(max($spread, 0) * $rig_index_splay - min($spread, 0) * $rig_index_press) * (1 - max(min($knuckle, 1), 0)))
+          }
+        }
+        swing(index_01_r, axis=fold, by=max(min($knuckle, 1), 0) * $rig_index_close1 + min(max($knuckle, -1), 0) * $rig_index_rest1 + min($knuckle + 1, 0) * $rig_back1)
+        if ($thumb == none) {
+          if ($thumb_across != none) {
+            swing(thumb_01_r, axis=fold, by=$rig_thumb_give * max(min($knuckle, 1), 0) * (1 - $thumb_across))
+          } else {
+            swing(thumb_01_r, axis=fold, by=$rig_thumb_give * max(min($knuckle, 1), 0))
+          }
+        }
+      } else {
+        if ($index_side != none) {
+          swing(index_01_r, axis=side, by=-$index_side)
+        } else {
+          if ($spread != none) {
+            swing(index_01_r, axis=side, by=-(max($spread, 0) * $rig_index_splay - min($spread, 0) * $rig_index_press))
+          }
+        }
+      }
+    }
+    if ($index_tip != none) {
+      swing(index_02_r, axis=fold, by=max(min($index_tip, 1), 0) * $rig_index_close2 + min(max($index_tip, -1), 0) * $rig_index_rest2 + min($index_tip + 1, 0) * $rig_back2)
+      swing(index_03_r, axis=fold, by=max(min($index_tip, 1), 0) * $rig_index_close3 + min(max($index_tip, -1), 0) * $rig_index_rest3 + min($index_tip + 1, 0) * $rig_back3)
+    } else {
+      if ($tip != none) {
+        swing(index_02_r, axis=fold, by=max(min($tip, 1), 0) * $rig_index_close2 + min(max($tip, -1), 0) * $rig_index_rest2 + min($tip + 1, 0) * $rig_back2)
+        swing(index_03_r, axis=fold, by=max(min($tip, 1), 0) * $rig_index_close3 + min(max($tip, -1), 0) * $rig_index_rest3 + min($tip + 1, 0) * $rig_back3)
+      }
+    }
+    if ($middle != none) {
+      if ($middle_side != none) {
+        swing(middle_01_r, axis=side, by=-$middle_side)
+      }
+      swing(middle_01_r, axis=fold, by=max(min($middle, 1), 0) * $rig_middle_close1 + min(max($middle, -1), 0) * $rig_middle_rest1 + min($middle + 1, 0) * $rig_back1)
+      if ($thumb == none) {
+        if ($thumb_across != none) {
+          swing(thumb_01_r, axis=fold, by=$thumb_across * $rig_thumb_lift_middle * max(min($middle, 1), 0))
+        }
+      }
+      if ($thumb_tip != none) {
+        swing(thumb_03_r, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_ip_middle * max(min($middle, 1), 0))
+      }
+    } else {
+      if ($knuckle != none) {
+        if ($middle_side != none) {
+          swing(middle_01_r, axis=side, by=-$middle_side)
+        }
+        swing(middle_01_r, axis=fold, by=max(min(($knuckle + $fan * $rig_fan * 0.333), 1), 0) * $rig_middle_close1 + min(max(($knuckle + $fan * $rig_fan * 0.333), -1), 0) * $rig_middle_rest1 + min(($knuckle + $fan * $rig_fan * 0.333) + 1, 0) * $rig_back1)
+        if ($thumb == none) {
+          if ($thumb_across != none) {
+            swing(thumb_01_r, axis=fold, by=$thumb_across * $rig_thumb_lift_middle * max(min(($knuckle + $fan * $rig_fan * 0.333), 1), 0))
+          }
+        }
+        if ($thumb_tip != none) {
+          swing(thumb_03_r, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_ip_middle * max(min(($knuckle + $fan * $rig_fan * 0.333), 1), 0))
+        }
+      } else {
+        if ($middle_side != none) {
+          swing(middle_01_r, axis=side, by=-$middle_side)
+        }
+      }
+    }
+    if ($middle_tip != none) {
+      swing(middle_02_r, axis=fold, by=max(min($middle_tip, 1), 0) * $rig_middle_close2 + min(max($middle_tip, -1), 0) * $rig_middle_rest2 + min($middle_tip + 1, 0) * $rig_back2)
+      swing(middle_03_r, axis=fold, by=max(min($middle_tip, 1), 0) * $rig_middle_close3 + min(max($middle_tip, -1), 0) * $rig_middle_rest3 + min($middle_tip + 1, 0) * $rig_back3)
+    } else {
+      if ($tip != none) {
+        swing(middle_02_r, axis=fold, by=max(min(($tip + $fan * $rig_fan * 0.333), 1), 0) * $rig_middle_close2 + min(max(($tip + $fan * $rig_fan * 0.333), -1), 0) * $rig_middle_rest2 + min(($tip + $fan * $rig_fan * 0.333) + 1, 0) * $rig_back2)
+        swing(middle_03_r, axis=fold, by=max(min(($tip + $fan * $rig_fan * 0.333), 1), 0) * $rig_middle_close3 + min(max(($tip + $fan * $rig_fan * 0.333), -1), 0) * $rig_middle_rest3 + min(($tip + $fan * $rig_fan * 0.333) + 1, 0) * $rig_back3)
+      }
+    }
+    if ($ring != none) {
+      if ($ring_side != none) {
+        swing(ring_01_r, axis=side, by=-$ring_side)
+      } else {
+        if ($spread != none) {
+          swing(ring_01_r, axis=side, by=-(max($spread, 0) * $rig_ring_splay - min($spread, 0) * $rig_ring_press) * (1 - max(min($ring, 1), 0)))
+        }
+      }
+      swing(ring_01_r, axis=fold, by=max(min($ring, 1), 0) * $rig_ring_close1 + min(max($ring, -1), 0) * $rig_ring_rest1 + min($ring + 1, 0) * $rig_back1)
+      if ($thumb == none) {
+        if ($thumb_across != none) {
+          swing(thumb_01_r, axis=fold, by=$thumb_across * $rig_thumb_lift_ring * max(min($ring, 1), 0))
+        }
+      }
+      if ($thumb_tip != none) {
+        swing(thumb_02_r, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_mcp_ring * max(min($ring, 1), 0))
+        swing(thumb_03_r, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_ip_ring * max(min($ring, 1), 0))
+      }
+    } else {
+      if ($knuckle != none) {
+        if ($ring_side != none) {
+          swing(ring_01_r, axis=side, by=-$ring_side)
+        } else {
+          if ($spread != none) {
+            swing(ring_01_r, axis=side, by=-(max($spread, 0) * $rig_ring_splay - min($spread, 0) * $rig_ring_press) * (1 - max(min(($knuckle + $fan * $rig_fan * 0.667), 1), 0)))
+          }
+        }
+        swing(ring_01_r, axis=fold, by=max(min(($knuckle + $fan * $rig_fan * 0.667), 1), 0) * $rig_ring_close1 + min(max(($knuckle + $fan * $rig_fan * 0.667), -1), 0) * $rig_ring_rest1 + min(($knuckle + $fan * $rig_fan * 0.667) + 1, 0) * $rig_back1)
+        if ($thumb == none) {
+          if ($thumb_across != none) {
+            swing(thumb_01_r, axis=fold, by=$thumb_across * $rig_thumb_lift_ring * max(min(($knuckle + $fan * $rig_fan * 0.667), 1), 0))
+          }
+        }
+        if ($thumb_tip != none) {
+          swing(thumb_02_r, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_mcp_ring * max(min(($knuckle + $fan * $rig_fan * 0.667), 1), 0))
+          swing(thumb_03_r, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_ip_ring * max(min(($knuckle + $fan * $rig_fan * 0.667), 1), 0))
+        }
+      } else {
+        if ($ring_side != none) {
+          swing(ring_01_r, axis=side, by=-$ring_side)
+        } else {
+          if ($spread != none) {
+            swing(ring_01_r, axis=side, by=-(max($spread, 0) * $rig_ring_splay - min($spread, 0) * $rig_ring_press))
+          }
+        }
+      }
+    }
+    if ($ring_tip != none) {
+      swing(ring_02_r, axis=fold, by=max(min($ring_tip, 1), 0) * $rig_ring_close2 + min(max($ring_tip, -1), 0) * $rig_ring_rest2 + min($ring_tip + 1, 0) * $rig_back2)
+      swing(ring_03_r, axis=fold, by=max(min($ring_tip, 1), 0) * $rig_ring_close3 + min(max($ring_tip, -1), 0) * $rig_ring_rest3 + min($ring_tip + 1, 0) * $rig_back3)
+    } else {
+      if ($tip != none) {
+        swing(ring_02_r, axis=fold, by=max(min(($tip + $fan * $rig_fan * 0.667), 1), 0) * $rig_ring_close2 + min(max(($tip + $fan * $rig_fan * 0.667), -1), 0) * $rig_ring_rest2 + min(($tip + $fan * $rig_fan * 0.667) + 1, 0) * $rig_back2)
+        swing(ring_03_r, axis=fold, by=max(min(($tip + $fan * $rig_fan * 0.667), 1), 0) * $rig_ring_close3 + min(max(($tip + $fan * $rig_fan * 0.667), -1), 0) * $rig_ring_rest3 + min(($tip + $fan * $rig_fan * 0.667) + 1, 0) * $rig_back3)
+      }
+    }
+    if ($little != none) {
+      if ($little_side != none) {
+        swing(pinky_01_r, axis=side, by=-$little_side)
+      } else {
+        if ($spread != none) {
+          swing(pinky_01_r, axis=side, by=-(max($spread, 0) * $rig_little_splay - min($spread, 0) * $rig_little_press) * (1 - max(min($little, 1), 0)))
+        }
+      }
+      swing(pinky_01_r, axis=fold, by=max(min($little, 1), 0) * $rig_little_close1 + min(max($little, -1), 0) * $rig_little_rest1 + min($little + 1, 0) * $rig_back1)
+    } else {
+      if ($knuckle != none) {
+        if ($little_side != none) {
+          swing(pinky_01_r, axis=side, by=-$little_side)
+        } else {
+          if ($spread != none) {
+            swing(pinky_01_r, axis=side, by=-(max($spread, 0) * $rig_little_splay - min($spread, 0) * $rig_little_press) * (1 - max(min(($knuckle + $fan * $rig_fan * 1), 1), 0)))
+          }
+        }
+        swing(pinky_01_r, axis=fold, by=max(min(($knuckle + $fan * $rig_fan * 1), 1), 0) * $rig_little_close1 + min(max(($knuckle + $fan * $rig_fan * 1), -1), 0) * $rig_little_rest1 + min(($knuckle + $fan * $rig_fan * 1) + 1, 0) * $rig_back1)
+      } else {
+        if ($little_side != none) {
+          swing(pinky_01_r, axis=side, by=-$little_side)
+        } else {
+          if ($spread != none) {
+            swing(pinky_01_r, axis=side, by=-(max($spread, 0) * $rig_little_splay - min($spread, 0) * $rig_little_press))
+          }
+        }
+      }
+    }
+    if ($little_tip != none) {
+      swing(pinky_02_r, axis=fold, by=max(min($little_tip, 1), 0) * $rig_little_close2 + min(max($little_tip, -1), 0) * $rig_little_rest2 + min($little_tip + 1, 0) * $rig_back2)
+      swing(pinky_03_r, axis=fold, by=max(min($little_tip, 1), 0) * $rig_little_close3 + min(max($little_tip, -1), 0) * $rig_little_rest3 + min($little_tip + 1, 0) * $rig_back3)
+    } else {
+      if ($tip != none) {
+        swing(pinky_02_r, axis=fold, by=max(min(($tip + $fan * $rig_fan * 1), 1), 0) * $rig_little_close2 + min(max(($tip + $fan * $rig_fan * 1), -1), 0) * $rig_little_rest2 + min(($tip + $fan * $rig_fan * 1) + 1, 0) * $rig_back2)
+        swing(pinky_03_r, axis=fold, by=max(min(($tip + $fan * $rig_fan * 1), 1), 0) * $rig_little_close3 + min(max(($tip + $fan * $rig_fan * 1), -1), 0) * $rig_little_rest3 + min(($tip + $fan * $rig_fan * 1) + 1, 0) * $rig_back3)
+      }
+    }
+    if ($thumb != none) {
+      swing(thumb_01_r, axis=fold, by=max($thumb, 0) * $rig_thumb_out + min($thumb, 0) * $rig_thumb_in)
+    } else {
+      if ($thumb_across != none) {
+        swing(thumb_01_r, axis=fold, by=$thumb_across * $rig_thumb_lift)
+      }
+    }
+    if ($thumb_across != none) {
+      if ($middle != none) {
+        swing(thumb_01_r, axis=side, by=$thumb_across * $rig_thumb_side_middle * max(min($middle, 1), 0))
+      } else {
+        if ($knuckle != none) {
+          swing(thumb_01_r, axis=side, by=$thumb_across * $rig_thumb_side_middle * max(min(($knuckle + $fan * $rig_fan * 0.333), 1), 0))
+        }
+      }
+      swing(thumb_01_r, axis=side, by=$thumb_across * $rig_thumb_side)
+      swing(thumb_01_r, axis=twist, by=$thumb_across * $rig_thumb_roll)
+    }
+    if ($thumb_tip != none) {
+      swing(thumb_02_r, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_mcp + min($thumb_tip, 0) * $rig_thumb_rest2)
+      swing(thumb_03_r, axis=fold, by=max($thumb_tip, 0) * $rig_thumb_ip + min($thumb_tip, 0) * $rig_thumb_rest3)
+    }
+    if ($wrist != none) {
+      if ($wrist_side != none) {
+        swing(hand_r, axis=fold, by=$rig_wrist_side * $wrist_side + (-$rig_wrist_a1 * max($wrist, 0) - $rig_wrist_a2 * max($wrist, 0) * max($wrist, 0) + $rig_wrist_b1 * max(-$wrist, 0) + $rig_wrist_b2 * max(-$wrist, 0) * max(-$wrist, 0)))
+        swing(hand_r, axis=side, by=-($rig_wrist_palm * max($wrist, 0) + $rig_wrist_back * min($wrist, 0)) - $rig_wrist_fold_palm * ($rig_wrist_side * $wrist_side + (-$rig_wrist_a1 * max($wrist, 0) - $rig_wrist_a2 * max($wrist, 0) * max($wrist, 0) + $rig_wrist_b1 * max(-$wrist, 0) + $rig_wrist_b2 * max(-$wrist, 0) * max(-$wrist, 0))))
+      } else {
+        swing(hand_r, axis=fold, by=(-$rig_wrist_a1 * max($wrist, 0) - $rig_wrist_a2 * max($wrist, 0) * max($wrist, 0) + $rig_wrist_b1 * max(-$wrist, 0) + $rig_wrist_b2 * max(-$wrist, 0) * max(-$wrist, 0)))
+        swing(hand_r, axis=side, by=-($rig_wrist_palm * max($wrist, 0) + $rig_wrist_back * min($wrist, 0)) - $rig_wrist_fold_palm * (-$rig_wrist_a1 * max($wrist, 0) - $rig_wrist_a2 * max($wrist, 0) * max($wrist, 0) + $rig_wrist_b1 * max(-$wrist, 0) + $rig_wrist_b2 * max(-$wrist, 0) * max(-$wrist, 0)))
+      }
+    } else {
+      if ($wrist_side != none) {
+        swing(hand_r, axis=fold, by=$rig_wrist_side * $wrist_side)
+        swing(hand_r, axis=side, by=-$rig_wrist_fold_palm * $rig_wrist_side * $wrist_side)
+      }
+    }
+  }
+}
+
+# =====================================================================================================================
+# FASTESTAT (timing, a clip: call it on a build line, A_Claw = $FastestAt(poses=$ClawKeys, at=$Contact, point=$MClaw, effort=200)):
+# your poses played at ONE effort across, the point fastest at the pose you name, then the stop. It writes only the engine's words.
+#  poses   your pose(steps) list.  at   the pose passed at top speed (not the first or last: a rest).  point   your point() timed.
+#  effort  % of the reference speed, one across (20 the Starter's slow end, 600 the claw's fast end).  stop   the speed curve:
+#          Preset.FastStop (top late, a hard stop), Preset.Even, Preset.FastStart.
+FastestAt = clip(frames=300, poses=none, at=none, point=none, effort=100, effort_min=20, effort_max=600, stop=Preset.FastStop) {
+  if ($poses != none) {
+    $poses [effort=$effort%, pace=$stop, point=$point, peak_at=$at]
+  }
+}

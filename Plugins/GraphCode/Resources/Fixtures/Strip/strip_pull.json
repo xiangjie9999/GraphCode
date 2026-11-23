@@ -1,0 +1,4794 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "generator": "strip_pull_controls.py",
+  "source_sha256": "71bef40f33a282da387c56ece11c42ab08dc50ddc62189deefffbd6b29a16bde",
+  "shared_helper_sha256": "5c3d41d630c698b3c8752e5a582dfa87e1a91fd36c937fdc7a08e9aaac28724c",
+  "contract": {
+    "units": "cm, gram, second",
+    "taut_certificate": "For a material run between held anchors, L=sum rest lengths; prove a geometric LOWER bound D on every admissible route. Insufficient length iff D > L*(1+hard_strain_tolerance)+absolute_length_tolerance.",
+    "always_valid_bound": "Euclidean anchor distance, irrespective of obstacles. This may be too weak to establish tautness around an obstacle.",
+    "obstacle_bound": "Exact convex-prism route in this fixture, or a certified inner obstacle approximation with a proved routing/escape condition. A sampled shortest polyline or outer obstacle approximation is generally an UPPER bound, not a proof.",
+    "no_general_mesh_oracle": "For general knot/cloth mesh obstacles where no stronger certified lower bound is available, a failed solve is Unresolved. These controls do not supply a universal 3D shortest-path oracle.",
+    "solver_acceptance": "A geometric bound below L is necessary, not sufficient. Require converged material constraints AND full contact certificate before committing; otherwise roll back complete state.",
+    "handle_boundary": "All moving/waiting/arrived/stopped handle positions remain held through every solve and final relaxation; move only the selected handle target for each candidate.",
+    "threshold": "1e-4 is only an illustrative separator for .25cm coarse steps and solver strain tolerance1e-6. It cannot be used as the taut proof; off-grid and small-bound-excess controls show why.",
+    "scope": "Geometry and injected transaction controls; no claim that native Pull or friction/thick-cord contact has passed."
+  },
+  "cases": [
+    {
+      "id": "E8_smooth_drum_analytic_reference",
+      "vertices": [],
+      "faces": [],
+      "segments": [],
+      "settings": {
+        "radius_cm": 1.0,
+        "left_endpoint": [
+          -3.0,
+          0.0,
+          0.0
+        ],
+        "initial_right_endpoint": [
+          2.0,
+          0.0,
+          0.0
+        ],
+        "cord_length_cm": 6.336528068400624,
+        "model": "Continuous zero-thickness flexible cord around an infinite circular cylinder; reference only, not a finite chord chain."
+      },
+      "expected": {
+        "taut_right_endpoint": [
+          3.0,
+          0.0,
+          0.0
+        ],
+        "handle_travel_cm": 1.0,
+        "left_tangent": [
+          -0.3333333333333333,
+          0.0,
+          0.9428090415820634
+        ],
+        "right_tangent": [
+          0.3333333333333333,
+          0.0,
+          0.9428090415820634
+        ],
+        "straight_run_length_cm": 2.8284271247461903,
+        "wrapped_arc_radians": 0.6796738189082436,
+        "total_length_cm": 6.336528068400624,
+        "length_formula": "sqrt(a^2-R^2)+sqrt(b^2-R^2)+R*(pi-acos(R/a)-acos(R/b))",
+        "actual_mesh_target": false,
+        "reason": "Finite face drum and finite straight cord chords have different exact geometry."
+      }
+    },
+    {
+      "id": "E8_faceted_drum_exact_taut",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -3.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            2.7746138948875467,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322565,
+            0.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            3.1724386296468627,
+            0.0
+          ],
+          "position": [
+            6.243195241693798e-17,
+            0.0,
+            1.0195911582083184
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            3.5702633644061788,
+            0.0
+          ],
+          "position": [
+            0.3901806440322566,
+            0.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 4,
+          "cut": [
+            4.957570311849953,
+            0.0
+          ],
+          "position": [
+            1.7138086527572927,
+            0.0,
+            1.3574664191755035
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 5,
+          "cut": [
+            6.3448772592937255,
+            0.0
+          ],
+          "position": [
+            2.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 6,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            1.0195911582083184,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 7,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            0.9419794025981426,
+            10.0,
+            0.39018064403225655
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 8,
+          "cut": [
+            0.00791166096507738,
+            0.3977460561804401
+          ],
+          "position": [
+            0.9419794025981426,
+            -10.0,
+            0.39018064403225655
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 9,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            1.0195911582083184,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 10,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            1.0195911582083184,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 11,
+          "cut": [
+            20.0,
+            0.397824734759316
+          ],
+          "position": [
+            0.9419794025981426,
+            10.0,
+            0.39018064403225655
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 12,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.9419794025981426,
+            -10.0,
+            0.39018064403225655
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 13,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            0.720959822006948,
+            10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 14,
+          "cut": [
+            0.007911660965077382,
+            0.3977460561804401
+          ],
+          "position": [
+            0.720959822006948,
+            -10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 15,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.9419794025981426,
+            -10.0,
+            0.39018064403225655
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 16,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            0.9419794025981426,
+            10.0,
+            0.39018064403225655
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 17,
+          "cut": [
+            20.0,
+            0.397824734759316
+          ],
+          "position": [
+            0.720959822006948,
+            10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 18,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.720959822006948,
+            -10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 19,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            0.3901806440322566,
+            10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 20,
+          "cut": [
+            0.00791166096507738,
+            0.3977460561804401
+          ],
+          "position": [
+            0.3901806440322566,
+            -10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 21,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.720959822006948,
+            -10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 22,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            0.720959822006948,
+            10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 23,
+          "cut": [
+            20.0,
+            0.397824734759316
+          ],
+          "position": [
+            0.3901806440322566,
+            10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 24,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.3901806440322566,
+            -10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 25,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            6.243195241693798e-17,
+            10.0,
+            1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 26,
+          "cut": [
+            0.00791166096507738,
+            0.3977460561804401
+          ],
+          "position": [
+            6.243195241693798e-17,
+            -10.0,
+            1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 27,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.3901806440322566,
+            -10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 28,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            0.3901806440322566,
+            10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 29,
+          "cut": [
+            20.0,
+            0.397824734759316
+          ],
+          "position": [
+            6.243195241693798e-17,
+            10.0,
+            1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 30,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            6.243195241693798e-17,
+            -10.0,
+            1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 31,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322565,
+            10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 32,
+          "cut": [
+            0.00791166096507738,
+            0.3977460561804401
+          ],
+          "position": [
+            -0.3901806440322565,
+            -10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 33,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            6.243195241693798e-17,
+            -10.0,
+            1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 34,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            6.243195241693798e-17,
+            10.0,
+            1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 35,
+          "cut": [
+            20.0,
+            0.397824734759316
+          ],
+          "position": [
+            -0.3901806440322565,
+            10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 36,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322565,
+            -10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 37,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069479,
+            10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 38,
+          "cut": [
+            0.00791166096507738,
+            0.3977460561804401
+          ],
+          "position": [
+            -0.7209598220069479,
+            -10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 39,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322565,
+            -10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 40,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322565,
+            10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 41,
+          "cut": [
+            20.0,
+            0.397824734759316
+          ],
+          "position": [
+            -0.7209598220069479,
+            10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 42,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069479,
+            -10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 43,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981426,
+            10.0,
+            0.39018064403225666
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 44,
+          "cut": [
+            0.00791166096507738,
+            0.3977460561804401
+          ],
+          "position": [
+            -0.9419794025981426,
+            -10.0,
+            0.39018064403225666
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 45,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069479,
+            -10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 46,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069479,
+            10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 47,
+          "cut": [
+            20.0,
+            0.397824734759316
+          ],
+          "position": [
+            -0.9419794025981426,
+            10.0,
+            0.39018064403225666
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 48,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981426,
+            -10.0,
+            0.39018064403225666
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 49,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            -1.0195911582083184,
+            10.0,
+            1.2486390483387596e-16
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 50,
+          "cut": [
+            0.00791166096507738,
+            0.3977460561804401
+          ],
+          "position": [
+            -1.0195911582083184,
+            -10.0,
+            1.2486390483387596e-16
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 51,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981426,
+            -10.0,
+            0.39018064403225666
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 52,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981426,
+            10.0,
+            0.39018064403225666
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 53,
+          "cut": [
+            20.0,
+            0.397824734759316
+          ],
+          "position": [
+            -1.0195911582083184,
+            10.0,
+            1.2486390483387596e-16
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 54,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -1.0195911582083184,
+            -10.0,
+            1.2486390483387596e-16
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 55,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981427,
+            10.0,
+            -0.39018064403225644
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 56,
+          "cut": [
+            0.00791166096507738,
+            0.3977460561804401
+          ],
+          "position": [
+            -0.9419794025981427,
+            -10.0,
+            -0.39018064403225644
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 57,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -1.0195911582083184,
+            -10.0,
+            1.2486390483387596e-16
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 58,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            -1.0195911582083184,
+            10.0,
+            1.2486390483387596e-16
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 59,
+          "cut": [
+            20.0,
+            0.397824734759316
+          ],
+          "position": [
+            -0.9419794025981427,
+            10.0,
+            -0.39018064403225644
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 60,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981427,
+            -10.0,
+            -0.39018064403225644
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 61,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069481,
+            10.0,
+            -0.7209598220069479
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 62,
+          "cut": [
+            0.007911660965077382,
+            0.3977460561804401
+          ],
+          "position": [
+            -0.7209598220069481,
+            -10.0,
+            -0.7209598220069479
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 63,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981427,
+            -10.0,
+            -0.39018064403225644
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 64,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981427,
+            10.0,
+            -0.39018064403225644
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 65,
+          "cut": [
+            20.0,
+            0.397824734759316
+          ],
+          "position": [
+            -0.7209598220069481,
+            10.0,
+            -0.7209598220069479
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 66,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069481,
+            -10.0,
+            -0.7209598220069479
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 67,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322571,
+            10.0,
+            -0.9419794025981424
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 68,
+          "cut": [
+            0.007911660965077363,
+            0.3977460561804397
+          ],
+          "position": [
+            -0.3901806440322571,
+            -10.0,
+            -0.9419794025981424
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 69,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069481,
+            -10.0,
+            -0.7209598220069479
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 70,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069481,
+            10.0,
+            -0.7209598220069479
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 71,
+          "cut": [
+            20.0,
+            0.3978247347593156
+          ],
+          "position": [
+            -0.3901806440322571,
+            10.0,
+            -0.9419794025981424
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 72,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322571,
+            -10.0,
+            -0.9419794025981424
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 73,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            -1.8729585725081394e-16,
+            10.0,
+            -1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 74,
+          "cut": [
+            0.007911660965077397,
+            0.39774605618044057
+          ],
+          "position": [
+            -1.8729585725081394e-16,
+            -10.0,
+            -1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 75,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322571,
+            -10.0,
+            -0.9419794025981424
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 76,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322571,
+            10.0,
+            -0.9419794025981424
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 77,
+          "cut": [
+            20.0,
+            0.39782473475931646
+          ],
+          "position": [
+            -1.8729585725081394e-16,
+            10.0,
+            -1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 78,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -1.8729585725081394e-16,
+            -10.0,
+            -1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 79,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            0.3901806440322568,
+            10.0,
+            -0.9419794025981425
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 80,
+          "cut": [
+            0.007911660965077396,
+            0.3977460561804405
+          ],
+          "position": [
+            0.3901806440322568,
+            -10.0,
+            -0.9419794025981425
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 81,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -1.8729585725081394e-16,
+            -10.0,
+            -1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 82,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            -1.8729585725081394e-16,
+            10.0,
+            -1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 83,
+          "cut": [
+            20.0,
+            0.3978247347593164
+          ],
+          "position": [
+            0.3901806440322568,
+            10.0,
+            -0.9419794025981425
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 84,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.3901806440322568,
+            -10.0,
+            -0.9419794025981425
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 85,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            0.7209598220069477,
+            10.0,
+            -0.7209598220069481
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 86,
+          "cut": [
+            0.007911660965077361,
+            0.3977460561804396
+          ],
+          "position": [
+            0.7209598220069477,
+            -10.0,
+            -0.7209598220069481
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 87,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.3901806440322568,
+            -10.0,
+            -0.9419794025981425
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 88,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            0.3901806440322568,
+            10.0,
+            -0.9419794025981425
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 89,
+          "cut": [
+            20.0,
+            0.39782473475931557
+          ],
+          "position": [
+            0.7209598220069477,
+            10.0,
+            -0.7209598220069481
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 90,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.7209598220069477,
+            -10.0,
+            -0.7209598220069481
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 91,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            0.9419794025981424,
+            10.0,
+            -0.39018064403225716
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 92,
+          "cut": [
+            0.007911660965077364,
+            0.39774605618043973
+          ],
+          "position": [
+            0.9419794025981424,
+            -10.0,
+            -0.39018064403225716
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 93,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.7209598220069477,
+            -10.0,
+            -0.7209598220069481
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 94,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            0.7209598220069477,
+            10.0,
+            -0.7209598220069481
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 95,
+          "cut": [
+            20.0,
+            0.3978247347593156
+          ],
+          "position": [
+            0.9419794025981424,
+            10.0,
+            -0.39018064403225716
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 96,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.9419794025981424,
+            -10.0,
+            -0.39018064403225716
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 97,
+          "cut": [
+            20.003956221697404,
+            0.0
+          ],
+          "position": [
+            1.0195911582083184,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 98,
+          "cut": [
+            0.007911660965077404,
+            0.39774605618044073
+          ],
+          "position": [
+            1.0195911582083184,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 99,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.9419794025981424,
+            -10.0,
+            -0.39018064403225716
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 100,
+          "cut": [
+            20.0,
+            0.0
+          ],
+          "position": [
+            0.9419794025981424,
+            10.0,
+            -0.39018064403225716
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 101,
+          "cut": [
+            20.0,
+            0.3978247347593167
+          ],
+          "position": [
+            1.0195911582083184,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 102,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 103,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            1.0195911582083184,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 104,
+          "cut": [
+            0.9419794025981426,
+            0.39018064403225655
+          ],
+          "position": [
+            0.9419794025981426,
+            -10.0,
+            0.39018064403225655
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 105,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 106,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            0.9419794025981426,
+            -10.0,
+            0.39018064403225655
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 107,
+          "cut": [
+            0.9419794025981426,
+            0.39018064403225655
+          ],
+          "position": [
+            0.720959822006948,
+            -10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 108,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 109,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            0.720959822006948,
+            -10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 110,
+          "cut": [
+            0.9419794025981427,
+            0.39018064403225655
+          ],
+          "position": [
+            0.3901806440322566,
+            -10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 111,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 112,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            0.3901806440322566,
+            -10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 113,
+          "cut": [
+            0.9419794025981426,
+            0.39018064403225655
+          ],
+          "position": [
+            6.243195241693798e-17,
+            -10.0,
+            1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 114,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 115,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            6.243195241693798e-17,
+            -10.0,
+            1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 116,
+          "cut": [
+            0.9419794025981426,
+            0.39018064403225655
+          ],
+          "position": [
+            -0.3901806440322565,
+            -10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 117,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 118,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322565,
+            -10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 119,
+          "cut": [
+            0.9419794025981425,
+            0.3901806440322565
+          ],
+          "position": [
+            -0.7209598220069479,
+            -10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 120,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 121,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069479,
+            -10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 122,
+          "cut": [
+            0.9419794025981427,
+            0.3901806440322566
+          ],
+          "position": [
+            -0.9419794025981426,
+            -10.0,
+            0.39018064403225666
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 123,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 124,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981426,
+            -10.0,
+            0.39018064403225666
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 125,
+          "cut": [
+            0.9419794025981426,
+            0.39018064403225655
+          ],
+          "position": [
+            -1.0195911582083184,
+            -10.0,
+            1.2486390483387596e-16
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 126,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 127,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            -1.0195911582083184,
+            -10.0,
+            1.2486390483387596e-16
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 128,
+          "cut": [
+            0.9419794025981427,
+            0.39018064403225655
+          ],
+          "position": [
+            -0.9419794025981427,
+            -10.0,
+            -0.39018064403225644
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 129,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 130,
+          "cut": [
+            1.0195911582083186,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981427,
+            -10.0,
+            -0.39018064403225644
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 131,
+          "cut": [
+            0.9419794025981425,
+            0.3901806440322566
+          ],
+          "position": [
+            -0.7209598220069481,
+            -10.0,
+            -0.7209598220069479
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 132,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 133,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069481,
+            -10.0,
+            -0.7209598220069479
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 134,
+          "cut": [
+            0.9419794025981428,
+            0.39018064403225616
+          ],
+          "position": [
+            -0.3901806440322571,
+            -10.0,
+            -0.9419794025981424
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 135,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 136,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322571,
+            -10.0,
+            -0.9419794025981424
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 137,
+          "cut": [
+            0.9419794025981424,
+            0.390180644032257
+          ],
+          "position": [
+            -1.8729585725081394e-16,
+            -10.0,
+            -1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 138,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 139,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            -1.8729585725081394e-16,
+            -10.0,
+            -1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 140,
+          "cut": [
+            0.9419794025981424,
+            0.39018064403225694
+          ],
+          "position": [
+            0.3901806440322568,
+            -10.0,
+            -0.9419794025981425
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 141,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 142,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            0.3901806440322568,
+            -10.0,
+            -0.9419794025981425
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 143,
+          "cut": [
+            0.9419794025981427,
+            0.39018064403225605
+          ],
+          "position": [
+            0.7209598220069477,
+            -10.0,
+            -0.7209598220069481
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 144,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 145,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            0.7209598220069477,
+            -10.0,
+            -0.7209598220069481
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 146,
+          "cut": [
+            0.9419794025981427,
+            0.3901806440322561
+          ],
+          "position": [
+            0.9419794025981424,
+            -10.0,
+            -0.39018064403225716
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 147,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 148,
+          "cut": [
+            1.0195911582083184,
+            0.0
+          ],
+          "position": [
+            0.9419794025981424,
+            -10.0,
+            -0.39018064403225716
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 149,
+          "cut": [
+            0.9419794025981424,
+            0.39018064403225716
+          ],
+          "position": [
+            1.0195911582083184,
+            -10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 150,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.9419794025981426,
+            10.0,
+            0.39018064403225655
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 151,
+          "cut": [
+            0.397824734759316,
+            0.0
+          ],
+          "position": [
+            1.0195911582083184,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 152,
+          "cut": [
+            0.19891236737965814,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 153,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.720959822006948,
+            10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 154,
+          "cut": [
+            0.397824734759316,
+            0.0
+          ],
+          "position": [
+            0.9419794025981426,
+            10.0,
+            0.39018064403225655
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 155,
+          "cut": [
+            0.19891236737965814,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 156,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.3901806440322566,
+            10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 157,
+          "cut": [
+            0.397824734759316,
+            0.0
+          ],
+          "position": [
+            0.720959822006948,
+            10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 158,
+          "cut": [
+            0.19891236737965795,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 159,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            6.243195241693798e-17,
+            10.0,
+            1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 160,
+          "cut": [
+            0.397824734759316,
+            0.0
+          ],
+          "position": [
+            0.3901806440322566,
+            10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 161,
+          "cut": [
+            0.19891236737965787,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 162,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322565,
+            10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 163,
+          "cut": [
+            0.397824734759316,
+            0.0
+          ],
+          "position": [
+            6.243195241693798e-17,
+            10.0,
+            1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 164,
+          "cut": [
+            0.1989123673796581,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 165,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069479,
+            10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 166,
+          "cut": [
+            0.397824734759316,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322565,
+            10.0,
+            0.9419794025981426
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 167,
+          "cut": [
+            0.198912367379658,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 168,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981426,
+            10.0,
+            0.39018064403225666
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 169,
+          "cut": [
+            0.397824734759316,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069479,
+            10.0,
+            0.720959822006948
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 170,
+          "cut": [
+            0.1989123673796583,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 171,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -1.0195911582083184,
+            10.0,
+            1.2486390483387596e-16
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 172,
+          "cut": [
+            0.397824734759316,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981426,
+            10.0,
+            0.39018064403225666
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 173,
+          "cut": [
+            0.1989123673796578,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 174,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981427,
+            10.0,
+            -0.39018064403225644
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 175,
+          "cut": [
+            0.397824734759316,
+            0.0
+          ],
+          "position": [
+            -1.0195911582083184,
+            10.0,
+            1.2486390483387596e-16
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 176,
+          "cut": [
+            0.19891236737965826,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 177,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069481,
+            10.0,
+            -0.7209598220069479
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 178,
+          "cut": [
+            0.397824734759316,
+            0.0
+          ],
+          "position": [
+            -0.9419794025981427,
+            10.0,
+            -0.39018064403225644
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 179,
+          "cut": [
+            0.19891236737965798,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 180,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322571,
+            10.0,
+            -0.9419794025981424
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 181,
+          "cut": [
+            0.3978247347593156,
+            0.0
+          ],
+          "position": [
+            -0.7209598220069481,
+            10.0,
+            -0.7209598220069479
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 182,
+          "cut": [
+            0.1989123673796578,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 183,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -1.8729585725081394e-16,
+            10.0,
+            -1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 184,
+          "cut": [
+            0.39782473475931646,
+            0.0
+          ],
+          "position": [
+            -0.3901806440322571,
+            10.0,
+            -0.9419794025981424
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 185,
+          "cut": [
+            0.1989123673796581,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 186,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.3901806440322568,
+            10.0,
+            -0.9419794025981425
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 187,
+          "cut": [
+            0.3978247347593164,
+            0.0
+          ],
+          "position": [
+            -1.8729585725081394e-16,
+            10.0,
+            -1.0195911582083184
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 188,
+          "cut": [
+            0.1989123673796583,
+            0.9999999999999999
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 189,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.7209598220069477,
+            10.0,
+            -0.7209598220069481
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 190,
+          "cut": [
+            0.39782473475931557,
+            0.0
+          ],
+          "position": [
+            0.3901806440322568,
+            10.0,
+            -0.9419794025981425
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 191,
+          "cut": [
+            0.19891236737965765,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 192,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.9419794025981424,
+            10.0,
+            -0.39018064403225716
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 193,
+          "cut": [
+            0.3978247347593156,
+            0.0
+          ],
+          "position": [
+            0.7209598220069477,
+            10.0,
+            -0.7209598220069481
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 194,
+          "cut": [
+            0.19891236737965803,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 195,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            1.0195911582083184,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 196,
+          "cut": [
+            0.3978247347593167,
+            0.0
+          ],
+          "position": [
+            0.9419794025981424,
+            10.0,
+            -0.39018064403225716
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 197,
+          "cut": [
+            0.19891236737965817,
+            1.0
+          ],
+          "position": [
+            0.0,
+            10.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            6,
+            7,
+            8
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "id": 2,
+          "vertices": [
+            12,
+            13,
+            14
+          ]
+        },
+        {
+          "id": 3,
+          "vertices": [
+            15,
+            16,
+            17
+          ]
+        },
+        {
+          "id": 4,
+          "vertices": [
+            18,
+            19,
+            20
+          ]
+        },
+        {
+          "id": 5,
+          "vertices": [
+            21,
+            22,
+            23
+          ]
+        },
+        {
+          "id": 6,
+          "vertices": [
+            24,
+            25,
+            26
+          ]
+        },
+        {
+          "id": 7,
+          "vertices": [
+            27,
+            28,
+            29
+          ]
+        },
+        {
+          "id": 8,
+          "vertices": [
+            30,
+            31,
+            32
+          ]
+        },
+        {
+          "id": 9,
+          "vertices": [
+            33,
+            34,
+            35
+          ]
+        },
+        {
+          "id": 10,
+          "vertices": [
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "id": 11,
+          "vertices": [
+            39,
+            40,
+            41
+          ]
+        },
+        {
+          "id": 12,
+          "vertices": [
+            42,
+            43,
+            44
+          ]
+        },
+        {
+          "id": 13,
+          "vertices": [
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "id": 14,
+          "vertices": [
+            48,
+            49,
+            50
+          ]
+        },
+        {
+          "id": 15,
+          "vertices": [
+            51,
+            52,
+            53
+          ]
+        },
+        {
+          "id": 16,
+          "vertices": [
+            54,
+            55,
+            56
+          ]
+        },
+        {
+          "id": 17,
+          "vertices": [
+            57,
+            58,
+            59
+          ]
+        },
+        {
+          "id": 18,
+          "vertices": [
+            60,
+            61,
+            62
+          ]
+        },
+        {
+          "id": 19,
+          "vertices": [
+            63,
+            64,
+            65
+          ]
+        },
+        {
+          "id": 20,
+          "vertices": [
+            66,
+            67,
+            68
+          ]
+        },
+        {
+          "id": 21,
+          "vertices": [
+            69,
+            70,
+            71
+          ]
+        },
+        {
+          "id": 22,
+          "vertices": [
+            72,
+            73,
+            74
+          ]
+        },
+        {
+          "id": 23,
+          "vertices": [
+            75,
+            76,
+            77
+          ]
+        },
+        {
+          "id": 24,
+          "vertices": [
+            78,
+            79,
+            80
+          ]
+        },
+        {
+          "id": 25,
+          "vertices": [
+            81,
+            82,
+            83
+          ]
+        },
+        {
+          "id": 26,
+          "vertices": [
+            84,
+            85,
+            86
+          ]
+        },
+        {
+          "id": 27,
+          "vertices": [
+            87,
+            88,
+            89
+          ]
+        },
+        {
+          "id": 28,
+          "vertices": [
+            90,
+            91,
+            92
+          ]
+        },
+        {
+          "id": 29,
+          "vertices": [
+            93,
+            94,
+            95
+          ]
+        },
+        {
+          "id": 30,
+          "vertices": [
+            96,
+            97,
+            98
+          ]
+        },
+        {
+          "id": 31,
+          "vertices": [
+            99,
+            100,
+            101
+          ]
+        },
+        {
+          "id": 32,
+          "vertices": [
+            102,
+            103,
+            104
+          ]
+        },
+        {
+          "id": 33,
+          "vertices": [
+            105,
+            106,
+            107
+          ]
+        },
+        {
+          "id": 34,
+          "vertices": [
+            108,
+            109,
+            110
+          ]
+        },
+        {
+          "id": 35,
+          "vertices": [
+            111,
+            112,
+            113
+          ]
+        },
+        {
+          "id": 36,
+          "vertices": [
+            114,
+            115,
+            116
+          ]
+        },
+        {
+          "id": 37,
+          "vertices": [
+            117,
+            118,
+            119
+          ]
+        },
+        {
+          "id": 38,
+          "vertices": [
+            120,
+            121,
+            122
+          ]
+        },
+        {
+          "id": 39,
+          "vertices": [
+            123,
+            124,
+            125
+          ]
+        },
+        {
+          "id": 40,
+          "vertices": [
+            126,
+            127,
+            128
+          ]
+        },
+        {
+          "id": 41,
+          "vertices": [
+            129,
+            130,
+            131
+          ]
+        },
+        {
+          "id": 42,
+          "vertices": [
+            132,
+            133,
+            134
+          ]
+        },
+        {
+          "id": 43,
+          "vertices": [
+            135,
+            136,
+            137
+          ]
+        },
+        {
+          "id": 44,
+          "vertices": [
+            138,
+            139,
+            140
+          ]
+        },
+        {
+          "id": 45,
+          "vertices": [
+            141,
+            142,
+            143
+          ]
+        },
+        {
+          "id": 46,
+          "vertices": [
+            144,
+            145,
+            146
+          ]
+        },
+        {
+          "id": 47,
+          "vertices": [
+            147,
+            148,
+            149
+          ]
+        },
+        {
+          "id": 48,
+          "vertices": [
+            150,
+            151,
+            152
+          ]
+        },
+        {
+          "id": 49,
+          "vertices": [
+            153,
+            154,
+            155
+          ]
+        },
+        {
+          "id": 50,
+          "vertices": [
+            156,
+            157,
+            158
+          ]
+        },
+        {
+          "id": 51,
+          "vertices": [
+            159,
+            160,
+            161
+          ]
+        },
+        {
+          "id": 52,
+          "vertices": [
+            162,
+            163,
+            164
+          ]
+        },
+        {
+          "id": 53,
+          "vertices": [
+            165,
+            166,
+            167
+          ]
+        },
+        {
+          "id": 54,
+          "vertices": [
+            168,
+            169,
+            170
+          ]
+        },
+        {
+          "id": 55,
+          "vertices": [
+            171,
+            172,
+            173
+          ]
+        },
+        {
+          "id": 56,
+          "vertices": [
+            174,
+            175,
+            176
+          ]
+        },
+        {
+          "id": 57,
+          "vertices": [
+            177,
+            178,
+            179
+          ]
+        },
+        {
+          "id": 58,
+          "vertices": [
+            180,
+            181,
+            182
+          ]
+        },
+        {
+          "id": 59,
+          "vertices": [
+            183,
+            184,
+            185
+          ]
+        },
+        {
+          "id": 60,
+          "vertices": [
+            186,
+            187,
+            188
+          ]
+        },
+        {
+          "id": 61,
+          "vertices": [
+            189,
+            190,
+            191
+          ]
+        },
+        {
+          "id": 62,
+          "vertices": [
+            192,
+            193,
+            194
+          ]
+        },
+        {
+          "id": 63,
+          "vertices": [
+            195,
+            196,
+            197
+          ]
+        }
+      ],
+      "segments": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "handles": [
+        {
+          "point_id": 5,
+          "target": [
+            3.5,
+            0.0,
+            0.0
+          ],
+          "active": true
+        }
+      ],
+      "settings": {
+        "step_cm": 0.25,
+        "cord_length_cm": 6.344877259293725,
+        "rest_segment_lengths": [
+          2.7746138948875467,
+          0.397824734759316,
+          0.397824734759316,
+          1.3873069474437734,
+          1.3873069474437731
+        ],
+        "bend": 0.0,
+        "friction": 0.0,
+        "half_thickness": 0.0,
+        "hold_all_handles_through_final_relax": true,
+        "obstacle": "Closed regular16 prism, apothem1cm, y=-10..10cm",
+        "obstacle_vertex_start": 6,
+        "obstacle_outline_xz": [
+          [
+            1.0195911582083184,
+            0.0
+          ],
+          [
+            0.9419794025981426,
+            0.39018064403225655
+          ],
+          [
+            0.720959822006948,
+            0.720959822006948
+          ],
+          [
+            0.3901806440322566,
+            0.9419794025981426
+          ],
+          [
+            6.243195241693798e-17,
+            1.0195911582083184
+          ],
+          [
+            -0.3901806440322565,
+            0.9419794025981426
+          ],
+          [
+            -0.7209598220069479,
+            0.720959822006948
+          ],
+          [
+            -0.9419794025981426,
+            0.39018064403225666
+          ],
+          [
+            -1.0195911582083184,
+            1.2486390483387596e-16
+          ],
+          [
+            -0.9419794025981427,
+            -0.39018064403225644
+          ],
+          [
+            -0.7209598220069481,
+            -0.7209598220069479
+          ],
+          [
+            -0.3901806440322571,
+            -0.9419794025981424
+          ],
+          [
+            -1.8729585725081394e-16,
+            -1.0195911582083184
+          ],
+          [
+            0.3901806440322568,
+            -0.9419794025981425
+          ],
+          [
+            0.7209598220069477,
+            -0.7209598220069481
+          ],
+          [
+            0.9419794025981424,
+            -0.39018064403225716
+          ]
+        ],
+        "independent_held_triangles": true,
+        "obstacle_semantics": "Declared closed convex solid; triangle winding and supplied normals face outward.",
+        "obstacle_face_outward_normals": [
+          [
+            7.803612880645131,
+            0.0,
+            1.552235112203515
+          ],
+          [
+            7.803612880645131,
+            -0.0,
+            1.552235112203515
+          ],
+          [
+            6.615583559493828,
+            0.0,
+            4.420391611823893
+          ],
+          [
+            6.615583559493828,
+            -0.0,
+            4.420391611823893
+          ],
+          [
+            4.420391611823893,
+            0.0,
+            6.615583559493827
+          ],
+          [
+            4.420391611823893,
+            -0.0,
+            6.615583559493827
+          ],
+          [
+            1.552235112203515,
+            0.0,
+            7.803612880645131
+          ],
+          [
+            1.552235112203515,
+            -0.0,
+            7.803612880645131
+          ],
+          [
+            -1.552235112203515,
+            0.0,
+            7.803612880645131
+          ],
+          [
+            -1.552235112203515,
+            0.0,
+            7.803612880645131
+          ],
+          [
+            -4.420391611823893,
+            0.0,
+            6.615583559493827
+          ],
+          [
+            -4.420391611823893,
+            0.0,
+            6.615583559493827
+          ],
+          [
+            -6.615583559493826,
+            0.0,
+            4.420391611823895
+          ],
+          [
+            -6.615583559493826,
+            0.0,
+            4.420391611823895
+          ],
+          [
+            -7.803612880645131,
+            0.0,
+            1.552235112203515
+          ],
+          [
+            -7.803612880645131,
+            0.0,
+            1.552235112203515
+          ],
+          [
+            -7.803612880645131,
+            0.0,
+            -1.5522351122035127
+          ],
+          [
+            -7.803612880645131,
+            0.0,
+            -1.5522351122035127
+          ],
+          [
+            -6.615583559493828,
+            0.0,
+            -4.420391611823893
+          ],
+          [
+            -6.615583559493828,
+            0.0,
+            -4.420391611823893
+          ],
+          [
+            -4.420391611823891,
+            0.0,
+            -6.615583559493819
+          ],
+          [
+            -4.420391611823891,
+            0.0,
+            -6.615583559493819
+          ],
+          [
+            -1.5522351122035194,
+            0.0,
+            -7.803612880645138
+          ],
+          [
+            -1.5522351122035194,
+            0.0,
+            -7.803612880645138
+          ],
+          [
+            1.5522351122035172,
+            0.0,
+            -7.803612880645138
+          ],
+          [
+            1.5522351122035172,
+            0.0,
+            -7.803612880645138
+          ],
+          [
+            4.420391611823888,
+            0.0,
+            -6.615583559493819
+          ],
+          [
+            4.420391611823888,
+            0.0,
+            -6.615583559493819
+          ],
+          [
+            6.615583559493818,
+            0.0,
+            -4.420391611823893
+          ],
+          [
+            6.615583559493818,
+            0.0,
+            -4.420391611823893
+          ],
+          [
+            7.803612880645144,
+            0.0,
+            -1.5522351122035194
+          ],
+          [
+            7.803612880645144,
+            0.0,
+            -1.5522351122035194
+          ],
+          [
+            0.0,
+            -0.397824734759316,
+            0.0
+          ],
+          [
+            0.0,
+            -0.397824734759316,
+            0.0
+          ],
+          [
+            0.0,
+            -0.397824734759316,
+            0.0
+          ],
+          [
+            0.0,
+            -0.397824734759316,
+            0.0
+          ],
+          [
+            0.0,
+            -0.397824734759316,
+            0.0
+          ],
+          [
+            0.0,
+            -0.39782473475931596,
+            0.0
+          ],
+          [
+            0.0,
+            -0.397824734759316,
+            0.0
+          ],
+          [
+            0.0,
+            -0.39782473475931607,
+            0.0
+          ],
+          [
+            -0.0,
+            -0.397824734759316,
+            0.0
+          ],
+          [
+            0.0,
+            -0.39782473475931607,
+            0.0
+          ],
+          [
+            0.0,
+            -0.3978247347593157,
+            0.0
+          ],
+          [
+            0.0,
+            -0.39782473475931646,
+            0.0
+          ],
+          [
+            0.0,
+            -0.39782473475931646,
+            -0.0
+          ],
+          [
+            0.0,
+            -0.3978247347593156,
+            0.0
+          ],
+          [
+            0.0,
+            -0.3978247347593157,
+            0.0
+          ],
+          [
+            0.0,
+            -0.3978247347593167,
+            0.0
+          ],
+          [
+            0.0,
+            0.397824734759316,
+            0.0
+          ],
+          [
+            0.0,
+            0.39782473475931607,
+            0.0
+          ],
+          [
+            0.0,
+            0.397824734759316,
+            0.0
+          ],
+          [
+            0.0,
+            0.397824734759316,
+            0.0
+          ],
+          [
+            -0.0,
+            0.397824734759316,
+            0.0
+          ],
+          [
+            -0.0,
+            0.397824734759316,
+            0.0
+          ],
+          [
+            -0.0,
+            0.39782473475931607,
+            0.0
+          ],
+          [
+            -0.0,
+            0.397824734759316,
+            0.0
+          ],
+          [
+            0.0,
+            0.397824734759316,
+            -0.0
+          ],
+          [
+            0.0,
+            0.3978247347593161,
+            -0.0
+          ],
+          [
+            0.0,
+            0.3978247347593157,
+            -0.0
+          ],
+          [
+            0.0,
+            0.39782473475931646,
+            -0.0
+          ],
+          [
+            0.0,
+            0.3978247347593164,
+            0.0
+          ],
+          [
+            0.0,
+            0.39782473475931557,
+            0.0
+          ],
+          [
+            0.0,
+            0.3978247347593157,
+            0.0
+          ],
+          [
+            0.0,
+            0.3978247347593167,
+            0.0
+          ]
+        ],
+        "obstacle_face_supports": [
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186321,
+          7.95649469518632,
+          7.95649469518632,
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186321,
+          7.956494695186322,
+          7.956494695186322,
+          7.956494695186313,
+          7.956494695186313,
+          7.956494695186328,
+          7.956494695186328,
+          7.956494695186328,
+          7.956494695186328,
+          7.956494695186311,
+          7.956494695186311,
+          7.956494695186314,
+          7.956494695186314,
+          7.956494695186334,
+          7.956494695186334,
+          3.97824734759316,
+          3.97824734759316,
+          3.97824734759316,
+          3.97824734759316,
+          3.97824734759316,
+          3.9782473475931597,
+          3.97824734759316,
+          3.9782473475931606,
+          3.97824734759316,
+          3.9782473475931606,
+          3.9782473475931566,
+          3.9782473475931646,
+          3.9782473475931646,
+          3.978247347593156,
+          3.9782473475931566,
+          3.978247347593167,
+          3.97824734759316,
+          3.9782473475931606,
+          3.97824734759316,
+          3.97824734759316,
+          3.97824734759316,
+          3.97824734759316,
+          3.9782473475931606,
+          3.97824734759316,
+          3.97824734759316,
+          3.978247347593161,
+          3.9782473475931566,
+          3.9782473475931646,
+          3.978247347593164,
+          3.9782473475931557,
+          3.9782473475931566,
+          3.978247347593167
+        ],
+        "route_side": "upper z route, preserve by CCD",
+        "geometric_length_absolute_tolerance_cm": 1e-06,
+        "hard_strain_tolerance": 1e-06,
+        "illustrative_taut_strain": 0.0001,
+        "taut_requires_independent_bound": true
+      },
+      "expected": {
+        "handle_travel_cm": 1.0,
+        "handle_position": [
+          3.0,
+          0.0,
+          0.0
+        ],
+        "handle_stop": "Taut",
+        "final_cord_positions": [
+          [
+            -3.0,
+            0.0,
+            0.0
+          ],
+          [
+            -0.3901806440322565,
+            0.0,
+            0.9419794025981426
+          ],
+          [
+            6.243195241693798e-17,
+            0.0,
+            1.0195911582083184
+          ],
+          [
+            0.3901806440322566,
+            0.0,
+            0.9419794025981426
+          ],
+          [
+            1.6950903220161284,
+            0.0,
+            0.4709897012990713
+          ],
+          [
+            3.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "polyline_route_corner_indices": [
+          5,
+          4,
+          3
+        ],
+        "taut_length_formula": "|A-v5|+|v5-v4|+|v4-v3|+|v3-E|",
+        "step_geometry": [
+          {
+            "candidate_handle": [
+              2.25,
+              0.0,
+              0.0
+            ],
+            "shortest_route_length_cm": 5.655030313432238,
+            "proven_minimum_maximum_tensile_strain": 0.0,
+            "geometry": "Feasible",
+            "accept": true
+          },
+          {
+            "candidate_handle": [
+              2.5,
+              0.0,
+              0.0
+            ],
+            "shortest_route_length_cm": 5.880818040178925,
+            "proven_minimum_maximum_tensile_strain": 0.0,
+            "geometry": "Feasible",
+            "accept": true
+          },
+          {
+            "candidate_handle": [
+              2.75,
+              0.0,
+              0.0
+            ],
+            "shortest_route_length_cm": 6.111143642522243,
+            "proven_minimum_maximum_tensile_strain": 0.0,
+            "geometry": "Feasible",
+            "accept": true
+          },
+          {
+            "candidate_handle": [
+              3.0,
+              0.0,
+              0.0
+            ],
+            "shortest_route_length_cm": 6.344877259293725,
+            "proven_minimum_maximum_tensile_strain": 0.0,
+            "geometry": "Feasible",
+            "accept": true
+          },
+          {
+            "candidate_handle": [
+              3.25,
+              0.0,
+              0.0
+            ],
+            "shortest_route_length_cm": 6.5812253275812225,
+            "proven_minimum_maximum_tensile_strain": 0.03725021913407467,
+            "geometry": "ProvenInsufficientLength",
+            "accept": false
+          }
+        ],
+        "shape_tolerance_cm": 0.004486506857469203,
+        "geodesic_shape_bounds": {
+          "point_tolerances_cm": [
+            0.0,
+            0.004451091392532962,
+            0.004486506857469203,
+            0.004451091392532962,
+            0.0037088206144019133,
+            0.0
+          ],
+          "material_fractions": [
+            0.0,
+            0.43729985333024407,
+            0.5000000000000001,
+            0.5627001466697561,
+            0.7813500733348782,
+            1.0000000000000002
+          ],
+          "conditions": "Whole final polyline outside the prism, z>=0, |y|<10, exact endpoint pins. Necessary only: individual edge, pin, static-contact and sweep gates remain mandatory.",
+          "formula": "sqrt(s*(L-s)*(2epsilon+epsilon^2)); CAT(0) comparison about the unique upper geodesic at material fraction s/L.",
+          "reference_controls": "controls/drum_shape.json"
+        },
+        "initial_length_error_cm": 0.0,
+        "scope": "Exact zero-thickness piecewise-linear geometry. Contacting initial/final states must support tangential motion; CCD stalling at a valid touch is unresolved contact, not taut."
+      }
+    },
+    {
+      "id": "E8_two_handles_taut",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.0,
+            0.0
+          ],
+          "position": [
+            -0.5,
+            0.0,
+            0.8660254037844386
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            2.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            3.0,
+            0.0
+          ],
+          "position": [
+            0.5,
+            0.0,
+            0.8660254037844386
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 4,
+          "cut": [
+            4.0,
+            0.0
+          ],
+          "position": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [],
+      "segments": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "handles": [
+        {
+          "point_id": 0,
+          "target": [
+            -3.0,
+            0.0,
+            0.0
+          ],
+          "active": true
+        },
+        {
+          "point_id": 4,
+          "target": [
+            3.0,
+            0.0,
+            0.0
+          ],
+          "active": true
+        }
+      ],
+      "settings": {
+        "step_cm": 0.25,
+        "rest_segment_lengths": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "cord_length_cm": 4.0,
+        "bend": 0.0,
+        "contact": false,
+        "hold_all_handles_through_final_relax": true,
+        "handle_order": [
+          0,
+          4
+        ],
+        "hard_strain_tolerance": 1e-06,
+        "geometric_length_absolute_tolerance_cm": 1e-06,
+        "illustrative_taut_strain": 0.0001,
+        "advance_rule": "If the exact geometric limit is inside a step, clip/bracket it to length tolerance; do not call the last coarse accepted point exact taut."
+      },
+      "expected": {
+        "handle_travel_cm": [
+          1.0,
+          1.0
+        ],
+        "handle_stops": [
+          "Taut",
+          "Taut"
+        ],
+        "final_handle_positions": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "final_positions": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "shape_tolerance_cm": 0.002828427831852883,
+        "straight_shape_bounds": {
+          "reference_positions": [
+            [
+              -2.0,
+              0.0,
+              0.0
+            ],
+            [
+              -1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              2.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "point_tolerances_cm": [
+            0.0,
+            0.0024494903551555373,
+            0.002828427831852883,
+            0.0024494903551555373,
+            0.0
+          ],
+          "shape_tolerance_cm": 0.002828427831852883,
+          "axial_error_bounds_cm": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              -3e-06,
+              1e-06
+            ],
+            [
+              -2e-06,
+              2e-06
+            ],
+            [
+              -1e-06,
+              3e-06
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          "endpoint_span_cm": 4.0,
+          "rest_length_cm": 4.0,
+          "admitted_total_length_cm": 4.000004
+        },
+        "feasible_witness_positions": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "minimum_required_length_cm": 4.0,
+        "geometry_rule": "Euclidean endpoint distance is a valid lower bound on every curve connecting held handles.",
+        "first_rejected_full_step_minimum_strain": 0.0625,
+        "coarse_step_countercontrol": null,
+        "shape_scope": "Exact zero-strain taut chain is unique. With admitted edge strain, use the derived straight_shape_bounds and still check every edge and pin. Recompute about actual endpoints if pins differ; add their interpolated reference error when comparing to ideal coordinates. Reachable slack witness is not mandatory solver coordinates."
+      }
+    },
+    {
+      "id": "E8_reachable_targets",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.0,
+            0.0
+          ],
+          "position": [
+            -0.5,
+            0.0,
+            0.8660254037844386
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            2.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            3.0,
+            0.0
+          ],
+          "position": [
+            0.5,
+            0.0,
+            0.8660254037844386
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 4,
+          "cut": [
+            4.0,
+            0.0
+          ],
+          "position": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [],
+      "segments": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "handles": [
+        {
+          "point_id": 0,
+          "target": [
+            -1.25,
+            0.0,
+            0.0
+          ],
+          "active": true
+        },
+        {
+          "point_id": 4,
+          "target": [
+            1.25,
+            0.0,
+            0.0
+          ],
+          "active": true
+        }
+      ],
+      "settings": {
+        "step_cm": 0.25,
+        "rest_segment_lengths": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "cord_length_cm": 4.0,
+        "bend": 0.0,
+        "contact": false,
+        "hold_all_handles_through_final_relax": true,
+        "handle_order": [
+          0,
+          4
+        ],
+        "hard_strain_tolerance": 1e-06,
+        "geometric_length_absolute_tolerance_cm": 1e-06,
+        "illustrative_taut_strain": 0.0001,
+        "advance_rule": "If the exact geometric limit is inside a step, clip/bracket it to length tolerance; do not call the last coarse accepted point exact taut."
+      },
+      "expected": {
+        "handle_travel_cm": [
+          0.25,
+          0.25
+        ],
+        "handle_stops": [
+          "Arrived",
+          "Arrived"
+        ],
+        "final_handle_positions": [
+          [
+            -1.25,
+            0.0,
+            0.0
+          ],
+          [
+            1.25,
+            0.0,
+            0.0
+          ]
+        ],
+        "final_positions": null,
+        "shape_tolerance_cm": null,
+        "straight_shape_bounds": null,
+        "feasible_witness_positions": [
+          [
+            -1.25,
+            0.0,
+            0.0
+          ],
+          [
+            -0.625,
+            0.0,
+            0.7806247497997998
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.625,
+            0.0,
+            0.7806247497997998
+          ],
+          [
+            1.25,
+            0.0,
+            0.0
+          ]
+        ],
+        "minimum_required_length_cm": 2.5,
+        "geometry_rule": "Euclidean endpoint distance is a valid lower bound on every curve connecting held handles.",
+        "first_rejected_full_step_minimum_strain": null,
+        "coarse_step_countercontrol": null,
+        "shape_scope": "Exact zero-strain taut chain is unique. With admitted edge strain, use the derived straight_shape_bounds and still check every edge and pin. Recompute about actual endpoints if pins differ; add their interpolated reference error when comparing to ideal coordinates. Reachable slack witness is not mandatory solver coordinates."
+      }
+    },
+    {
+      "id": "E8_off_grid_taut_requires_clipping",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.025,
+            0.0
+          ],
+          "position": [
+            -0.5,
+            0.0,
+            0.894776508408664
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            2.05,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            3.0749999999999997,
+            0.0
+          ],
+          "position": [
+            0.5,
+            0.0,
+            0.894776508408664
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 4,
+          "cut": [
+            4.1,
+            0.0
+          ],
+          "position": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [],
+      "segments": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "handles": [
+        {
+          "point_id": 0,
+          "target": [
+            -3.0,
+            0.0,
+            0.0
+          ],
+          "active": true
+        },
+        {
+          "point_id": 4,
+          "target": [
+            3.0,
+            0.0,
+            0.0
+          ],
+          "active": true
+        }
+      ],
+      "settings": {
+        "step_cm": 0.25,
+        "rest_segment_lengths": [
+          1.025,
+          1.025,
+          1.025,
+          1.025
+        ],
+        "cord_length_cm": 4.1,
+        "bend": 0.0,
+        "contact": false,
+        "hold_all_handles_through_final_relax": true,
+        "handle_order": [
+          0,
+          4
+        ],
+        "hard_strain_tolerance": 1e-06,
+        "geometric_length_absolute_tolerance_cm": 1e-06,
+        "illustrative_taut_strain": 0.0001,
+        "advance_rule": "If the exact geometric limit is inside a step, clip/bracket it to length tolerance; do not call the last coarse accepted point exact taut."
+      },
+      "expected": {
+        "handle_travel_cm": [
+          1.0999999999999996,
+          1.0
+        ],
+        "handle_stops": [
+          "Taut",
+          "Taut"
+        ],
+        "final_handle_positions": [
+          [
+            -2.0999999999999996,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "final_positions": [
+          [
+            -2.0999999999999996,
+            0.0,
+            0.0
+          ],
+          [
+            -1.0749999999999997,
+            0.0,
+            0.0
+          ],
+          [
+            -0.04999999999999982,
+            0.0,
+            0.0
+          ],
+          [
+            0.9750000000000001,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "shape_tolerance_cm": 0.0028991385276492046,
+        "straight_shape_bounds": {
+          "reference_positions": [
+            [
+              -2.0999999999999996,
+              0.0,
+              0.0
+            ],
+            [
+              -1.0749999999999997,
+              0.0,
+              0.0
+            ],
+            [
+              -0.04999999999999982,
+              0.0,
+              0.0
+            ],
+            [
+              0.9750000000000001,
+              0.0,
+              0.0
+            ],
+            [
+              2.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "point_tolerances_cm": [
+            0.0,
+            0.0025107276140344257,
+            0.0028991385276492046,
+            0.0025107276140344257,
+            0.0
+          ],
+          "shape_tolerance_cm": 0.0028991385276492046,
+          "axial_error_bounds_cm": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              -3.0749999999999998e-06,
+              1.025e-06
+            ],
+            [
+              -2.05e-06,
+              2.05e-06
+            ],
+            [
+              -1.025e-06,
+              3.0749999999999998e-06
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          "endpoint_span_cm": 4.1,
+          "rest_length_cm": 4.1,
+          "admitted_total_length_cm": 4.1000041
+        },
+        "feasible_witness_positions": [
+          [
+            -2.0999999999999996,
+            0.0,
+            0.0
+          ],
+          [
+            -1.0749999999999997,
+            0.0,
+            0.0
+          ],
+          [
+            -0.04999999999999982,
+            0.0,
+            0.0
+          ],
+          [
+            0.9750000000000001,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "minimum_required_length_cm": 4.1,
+        "geometry_rule": "Euclidean endpoint distance is a valid lower bound on every curve connecting held handles.",
+        "first_rejected_full_step_minimum_strain": 0.03658536585365854,
+        "coarse_step_countercontrol": {
+          "travel": [
+            1.0,
+            1.0
+          ],
+          "span": 4.0,
+          "remaining_slack": 0.09999999999999964,
+          "cannot_claim_exact_taut": true
+        },
+        "shape_scope": "Exact zero-strain taut chain is unique. With admitted edge strain, use the derived straight_shape_bounds and still check every edge and pin. Recompute about actual endpoints if pins differ; add their interpolated reference error when comparing to ideal coordinates. Reachable slack witness is not mandatory solver coordinates."
+      }
+    },
+    {
+      "id": "E8_feasible_capped_relax_is_unresolved",
+      "vertices": [],
+      "faces": [],
+      "segments": [],
+      "settings": {
+        "candidate_endpoint_distance_cm": 2.0,
+        "rest_length_cm": 4.0,
+        "injected_relax_status": "IterationLimit",
+        "injected_worst_strain": 0.2,
+        "illustrative_taut_strain": 0.0001,
+        "sweep_status": "Converged",
+        "sweep_fraction": 1.0
+      },
+      "expected": {
+        "handle_stop": "Unresolved",
+        "rollback_entire_state": true,
+        "taut": false,
+        "reason": "An explicitly bendable chain has two cm of slack; a large capped numerical strain is not an infeasibility certificate."
+      }
+    },
+    {
+      "id": "E8_small_bound_excess_ignores_large_residual_threshold",
+      "vertices": [],
+      "faces": [],
+      "segments": [],
+      "settings": {
+        "endpoint_distance_cm": 4.0001,
+        "rest_length_cm": 4.0,
+        "hard_strain_tolerance": 1e-06,
+        "geometric_length_absolute_tolerance_cm": 1e-06,
+        "illustrative_taut_strain": 0.0001
+      },
+      "expected": {
+        "proven_minimum_maximum_tensile_strain": 2.5e-05,
+        "allowed_length_cm": 4.000005,
+        "geometry": "ProvenInsufficientLength",
+        "residual_threshold_would_miss": true,
+        "reason": "Endpoint lower bound exceeds L*(1+strain_tol)+absolute_tol, even though the fractional excess is below TautStrain."
+      }
+    }
+  ]
+}

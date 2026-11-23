@@ -1,0 +1,130 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.1  shade:42
+
+# PROFILES — the SHAPE of a variation, with no size of its own. Layer L1 of the
+# preset library (`Docs/GC-SHAPE-PRESET-LIBRARY.md` §1): the values every other
+# file takes as arguments, and not one triangle among them.
+#
+#   Profiles = shape('/GraphCodeShape/Presets/Profiles')
+#   Column   = mesh() { circle(radius=20) extrude(height=300, to=$Profiles.Bulge) }
+#
+# A PROFILE IS A CURVE OF PERCENTAGES OVER t FROM 0 TO 1, and WHERE t runs is
+# decided by the argument that reads it — up an `extrude`, along a `loft`, down a
+# stroke — so one entry serves every one of them.
+#
+# THESE ARE PERCENTAGES AND THEY CANNOT BE LENGTHS. That is the format's own
+# refusal and not a choice made here — measured 2026-09-11:
+#
+#   'roughen(by=)' is how far a vertex moves, in centimetres, and a percentage
+#   has nothing here to be a fraction of
+#
+# `extrude(to=)`, `loft(profile=)`, `sweep(to=)`, `taper(to=)` and `scale=` read
+# this file. `roughen(by=)`, `raise(by=)`, `displace(by=)`, `widen(by=)` and
+# `extrude(height=)` are CENTIMETRES and cannot, and no import can fix that: a
+# profile's values are literal numbers — no `$name`, no arithmetic — so nothing
+# can hand this file an amplitude. A varying LENGTH is still typed where it is
+# used.
+#
+# THREE FAMILIES, AND THE FORMAT ITSELF ENFORCES THE FIRST DIVISION — measured
+# 2026-09-11, not decided here:
+#
+#   'loft(profile=)' has to run from 0 to 1: `to=` is where the transition ENDS,
+#   and this one starts at 0 and ends at 0, so the far ring would not be the
+#   outline it names
+#
+# RAMPS — `Linear` `EaseIn` `EaseOut` `SCurve` `Plateau` — run 0% to 100%. They
+# are the only family a `loft(profile=)` accepts, because a loft has to ARRIVE.
+# HUMPS — `Bell` `Soft` `Sharp` `Tooth` `Wave` — go up and come back to 0%. A
+# loft refuses them by name; they are for amounts that peak and let go.
+# SILHOUETTES — `Taper` `Bulge` — start AND end at full width, and are the only
+# family that leaves a solid with a real footprint at both ends.
+#
+# Every one of them is legal at `extrude(to=)`, which is why the chart below can
+# draw all twelve the same way: a ramp starts at a point, a hump is pointed at
+# both ends, a silhouette is a post.
+
+build {
+  SM_Profiles_Chart = $Chart [pivot=(0,0,0), bounds=(282.0, 19.0, 40.5)]
+}
+
+# A straight ramp, nothing to full. `[linear]` is the entry's whole point —
+# smooth interpolation is the default everywhere else in this file.
+Linear = profile(0.0 = 0%, 1.0 = 100%) [linear]
+
+# Slow to leave, arriving fast. The one to reach for when a shape should hold
+# still near its root and do all its work at the end.
+EaseIn = profile(0.0 = 0%, 0.35 = 12%, 0.70 = 46%, 1.0 = 100%)
+
+# Away fast, settling in. `EaseIn` read from the other end.
+EaseOut = profile(0.0 = 0%, 0.30 = 54%, 0.65 = 88%, 1.0 = 100%)
+
+# Slow at both ends and quick through the middle — the smoothstep. The default
+# choice for a transition that should not show where it started or stopped.
+SCurve = profile(0.0 = 0%, 0.25 = 10%, 0.50 = 50%, 0.75 = 90%, 1.0 = 100%)
+
+# Up, then held to the end: a terrace rather than a hump. Arrives at 55% of the
+# way along and does nothing after.
+Plateau = profile(0.0 = 0%, 0.55 = 100%, 1.0 = 100%)
+
+# One hump, nothing at either end. The middle of a stroke, the belly of a swell,
+# the centre of a patch.
+Bell = profile(0.0 = 0%, 0.50 = 100%, 1.0 = 0%)
+
+# `Bell` with broad shoulders — full across most of its span and only letting go
+# at the very ends. A pad, a worn ridge, a wide contact.
+Soft = profile(0.0 = 0%, 0.25 = 82%, 0.50 = 100%, 0.75 = 82%, 1.0 = 0%)
+
+# `Bell` drawn to a point — nearly nothing until the middle, then all of it. A
+# spike, a crease, a single deep mark.
+Sharp = profile(0.0 = 0%, 0.42 = 18%, 0.50 = 100%, 0.58 = 18%, 1.0 = 0%)
+
+# A saw tooth: a straight climb and a wall back down at three quarters. The step
+# is written across 0.75/0.76 rather than at one t, which is how this format
+# spells a deliberate discontinuity.
+Tooth = profile(0.0 = 0%, 0.75 = 100%, 0.76 = 0%, 1.0 = 0%) [linear]
+
+# Two crests and a trough between them, ending where it started — so it is also
+# the one hump family entry that is safe around a closed loop, where t=0 and t=1
+# are the same point.
+Wave = profile(0.0 = 0%, 0.25 = 100%, 0.50 = 0%, 0.75 = 100%, 1.0 = 0%)
+
+# SILHOUETTE — full width at the start, drawn steadily in to a bit over half. A
+# post, a leg, a stalk: the shape that is not a cone.
+Taper = profile(0.0 = 100%, 0.50 = 80%, 1.0 = 55%)
+
+# SILHOUETTE — full at both ends with a swell through the middle. A barrel, a
+# cask, a muscle; at a few percent it is entasis and a column stops reading as a
+# tube.
+Bulge = profile(0.0 = 100%, 0.50 = 115%, 1.0 = 100%)
+
+# ONE SAMPLE, AND EVERY ENTRY IS DRAWN ON IT — a 16 cm square extruded 40 cm
+# with the profile as its whole side view, so the tower's silhouette IS the
+# curve. Pass the entry you want to look at: `add($Sample, shape=$Profiles.Bell)`.
+# The three families are legible in the chart without a label: a RAMP starts at
+# a point, a HUMP is pointed at both ends, a SILHOUETTE is a post.
+Sample = mesh(shape = profile(0.0 = 100%, 1.0 = 100%)) {
+  rect(w=16.0, h=16.0)
+  extrude(height=40.0, to=$shape)
+}
+
+# THE SHOP WINDOW AND THIS FILE'S OWN SELF-CHECK — every entry above, once, left
+# to right in the order they are declared. The `[bounds=]` contract on the build
+# line is what makes a profile that silently changes stop building rather than
+# quietly ship wrong: measured 281.2 x 18.4 x 40.0, contracted a little above it.
+#
+# TWELVE SEPARATE SHELLS ON PURPOSE — the build line reports `parts 12` and a
+# not-touching note per tower, which is a chart of twelve things and not a defect
+# to weld away.
+Chart = mesh() {
+  add($Sample, shape=$Linear,  at=(0, 0, 0))
+  add($Sample, shape=$EaseIn,  at=(24.0, 0, 0))
+  add($Sample, shape=$EaseOut, at=(48.0, 0, 0))
+  add($Sample, shape=$SCurve,  at=(72.0, 0, 0))
+  add($Sample, shape=$Plateau, at=(96.0, 0, 0))
+  add($Sample, shape=$Bell,    at=(120.0, 0, 0))
+  add($Sample, shape=$Soft,    at=(144.0, 0, 0))
+  add($Sample, shape=$Sharp,   at=(168.0, 0, 0))
+  add($Sample, shape=$Tooth,   at=(192.0, 0, 0))
+  add($Sample, shape=$Wave,    at=(216.0, 0, 0))
+  add($Sample, shape=$Taper,   at=(240.0, 0, 0))
+  add($Sample, shape=$Bulge,   at=(264.0, 0, 0))
+}

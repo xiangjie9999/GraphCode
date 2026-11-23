@@ -1,0 +1,372 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "generator": "strip_controls.py",
+  "source_sha256": "5c3d41d630c698b3c8752e5a582dfa87e1a91fd36c937fdc7a08e9aaac28724c",
+  "shared_helper_sha256": "5c3d41d630c698b3c8752e5a582dfa87e1a91fd36c937fdc7a08e9aaac28724c",
+  "contract": {
+    "units": "cm, gram, second",
+    "gravity": 980.0,
+    "predictor": "x_pred=x+exp(-3*h)*v*h+h*h*g; radial projection to length 5; v=(x_new-x_old)/h",
+    "status": "Converged means the single hard length is solved at each step; equilibrium is a separate final check",
+    "scope": "Reproduces prior gravity_control. The plan must carry/rollback velocity to implement this model."
+  },
+  "cases": [
+    {
+      "id": "E7_one_link_h_1_60",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            5.0,
+            0.0
+          ],
+          "position": [
+            5.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [],
+      "segments": [
+        [
+          0,
+          1
+        ]
+      ],
+      "initial_velocities": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "settings": {
+        "h": 0.016666666666666666,
+        "gravity": [
+          0.0,
+          0.0,
+          -980.0
+        ],
+        "velocity_damping_per_second": 3.0,
+        "steps": 300,
+        "stretch_compliance": 0.0,
+        "bend": false,
+        "shear": false,
+        "contact": false
+      },
+      "expected": {
+        "status": "Converged",
+        "status_scope": "Each single-link projection step; final equilibrium checked separately",
+        "checkpoints": [
+          {
+            "step": 1,
+            "time": 0.016666666666666666,
+            "position": [
+              4.9926059402086995,
+              0.0,
+              -0.2718196567446958
+            ],
+            "velocity": [
+              -0.4436435874780287,
+              0.0,
+              -16.30917940468175
+            ],
+            "speed_cm_per_second": 16.315212302841964
+          },
+          {
+            "step": 60,
+            "time": 1.0,
+            "position": [
+              0.22920564215377454,
+              0.0,
+              -4.994743714506769
+            ],
+            "velocity": [
+              -2.3617273915291026,
+              0.0,
+              -0.11770734150205797
+            ],
+            "speed_cm_per_second": 2.364658810514181
+          },
+          {
+            "step": 120,
+            "time": 2.0,
+            "position": [
+              -0.0010626258149149552,
+              0.0,
+              -4.9999998870826365
+            ],
+            "velocity": [
+              -0.17230886948864968,
+              0.0,
+              -1.2863940845875277e-05
+            ],
+            "speed_cm_per_second": 0.1723088699688367
+          },
+          {
+            "step": 180,
+            "time": 3.0,
+            "position": [
+              -0.0005173914628469835,
+              0.0,
+              -4.999999973230607
+            ],
+            "velocity": [
+              -0.0021267868885033224,
+              0.0,
+              2.1253761417483474e-07
+            ],
+            "speed_cm_per_second": 0.002126786899123154
+          },
+          {
+            "step": 240,
+            "time": 4.0,
+            "position": [
+              -1.8858090646145163e-05,
+              0.0,
+              -4.999999999964437
+            ],
+            "velocity": [
+              0.00026989855836350053,
+              0.0,
+              -1.1393552767913206e-09
+            ],
+            "speed_cm_per_second": 0.0002698985583659054
+          },
+          {
+            "step": 300,
+            "time": 5.0,
+            "position": [
+              3.0285127345265965e-07,
+              0.0,
+              -4.99999999999999
+            ],
+            "velocity": [
+              1.5383728122008333e-05,
+              0.0,
+              5.861977570020827e-13
+            ],
+            "speed_cm_per_second": 1.5383728122008347e-05
+          }
+        ],
+        "maximum_length_error_cm": 8.881784197001252e-16,
+        "position_tolerance_cm": 1e-08,
+        "velocity_tolerance_cm_per_second": 1e-07,
+        "equilibrium_tolerance": {
+          "horizontal_tip_cm": 0.001,
+          "final_speed_cm_per_second": 0.001
+        }
+      },
+      "countercontrol": {
+        "model": "position-only x+h*h*g without velocity",
+        "final_position": [
+          1.2159316751379326e-06,
+          0.0,
+          -4.999999999999852
+        ],
+        "not_expected_to_match": true
+      }
+    },
+    {
+      "id": "E7_one_link_h_1_120",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            5.0,
+            0.0
+          ],
+          "position": [
+            5.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [],
+      "segments": [
+        [
+          0,
+          1
+        ]
+      ],
+      "initial_velocities": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "settings": {
+        "h": 0.008333333333333333,
+        "gravity": [
+          0.0,
+          0.0,
+          -980.0
+        ],
+        "velocity_damping_per_second": 3.0,
+        "steps": 600,
+        "stretch_compliance": 0.0,
+        "bend": false,
+        "shear": false,
+        "contact": false
+      },
+      "expected": {
+        "status": "Converged",
+        "status_scope": "Each single-link projection step; final equilibrium checked separately",
+        "checkpoints": [
+          {
+            "step": 1,
+            "time": 0.008333333333333333,
+            "position": [
+              4.999536908479875,
+              0.0,
+              -0.06804925236542052
+            ],
+            "velocity": [
+              -0.055570982414963055,
+              0.0,
+              -8.165910283850462
+            ],
+            "speed_cm_per_second": 8.16609936860808
+          },
+          {
+            "step": 120,
+            "time": 1.0,
+            "position": [
+              0.48316599809036265,
+              0.0,
+              -4.976600307266934
+            ],
+            "velocity": [
+              -6.1837064384979445,
+              0.0,
+              -0.6327111787127038
+            ],
+            "speed_cm_per_second": 6.215991373320024
+          },
+          {
+            "step": 240,
+            "time": 2.0,
+            "position": [
+              -0.023548671542811095,
+              0.0,
+              -4.999944545699339
+            ],
+            "velocity": [
+              -0.7636704108087429,
+              0.0,
+              0.0031107174239153323
+            ],
+            "speed_cm_per_second": 0.7636767463447381
+          },
+          {
+            "step": 360,
+            "time": 3.0,
+            "position": [
+              -0.0060503166058026425,
+              0.0,
+              -4.999996339365556
+            ],
+            "velocity": [
+              0.018843449645782155,
+              0.0,
+              -2.3097680887929073e-05
+            ],
+            "speed_cm_per_second": 0.01884346380196566
+          },
+          {
+            "step": 480,
+            "time": 4.0,
+            "position": [
+              -0.00010096757355497852,
+              0.0,
+              -4.999999998980555
+            ],
+            "velocity": [
+              0.008542327783127057,
+              0.0,
+              -2.333090520778569e-07
+            ],
+            "speed_cm_per_second": 0.008542327786313138
+          },
+          {
+            "step": 600,
+            "time": 5.0,
+            "position": [
+              5.392694302796645e-05,
+              0.0,
+              -4.999999999709189
+            ],
+            "velocity": [
+              0.00028412278805004486,
+              0.0,
+              2.9970692594361026e-09
+            ],
+            "speed_cm_per_second": 0.00028412278806585215
+          }
+        ],
+        "maximum_length_error_cm": 8.881784197001252e-16,
+        "position_tolerance_cm": 1e-08,
+        "velocity_tolerance_cm_per_second": 1e-07,
+        "equilibrium_tolerance": {
+          "horizontal_tip_cm": 0.001,
+          "final_speed_cm_per_second": 0.001
+        }
+      },
+      "countercontrol": {
+        "model": "position-only x+h*h*g without velocity",
+        "final_position": [
+          0.002986396962863643,
+          0.0,
+          -4.999999108143238
+        ],
+        "not_expected_to_match": true
+      }
+    }
+  ]
+}

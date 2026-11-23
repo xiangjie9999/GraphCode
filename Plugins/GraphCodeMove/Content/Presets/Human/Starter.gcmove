@@ -1,0 +1,34 @@
+gcmove 1 character:/Game/GraphCodeExamples/MetaHumanStrike_20261025/BP_StrikeStage part:Body worn:SkeletalMesh
+         ik_rig:/Game/GraphCodeExamples/ParamPoses_20261116/IKR_PoseBody
+         controls:/Game/GraphCodeExamples/ParamPoses_20261116/PoseBody
+         physics_asset:/Game/GraphCodeExamples/MetaHumanBody_20261009/PHAT_ClothedReferenceBody
+         presets:/GraphCodeMove/Presets/Human/HumanBody
+         into:/Game/HumanStarter fps:120
+build {
+  A_Starter_Hook = $Hook
+}
+# STARTER, THE ACTION: the keys built by Starter_Keys.gcmove, played in order as one right hook. Build the keys first.
+# Your own character: change the same header lines as in Starter_Keys.gcmove (character:, part:, ik_rig:, controls:,
+# physics_asset:, into:), and point the source= lines below at the folder your keys were built into.
+
+Floor = ground(z=0.85)
+# The point the timing is measured on: the right fist (the middle finger's last bone).
+MFist = point(bone=middle_03_r)
+
+# The keys, read back from the built animations (each one's single frame is the pose).
+Stance0K = pose(source=/Game/HumanStarter/A_Starter_Stance, from=reference) { }
+Windup1K = pose(source=/Game/HumanStarter/A_Starter_Windup, from=reference) { }
+Contact2K = pose(source=/Game/HumanStarter/A_Starter_Contact, from=reference) { }
+Follow3K = pose(source=/Game/HumanStarter/A_Starter_Follow, from=reference) { }
+Stance4K = pose(source=/Game/HumanStarter/A_Starter_Stance, from=reference) { }
+Keys = pose(steps) { $Stance0K, $Windup1K, $Contact2K, $Follow3K, $Stance4K }
+
+# The hook, two and a half seconds. accel= is how hard each move into the next key speeds up, in per cent, one value per
+# move (into the wind-up, into the contact, into the follow-through, back to the guard): effort sets the two that matter,
+# and its range (20 to 200) makes it a slider in the pose tab. point= is the bone whose path is timed, strike= the key the
+# fist passes through fastest. The feet stay on the floor.
+Hook = clip(frames=300, effort=60, effort_min=20, effort_max=200) {
+  $Keys [accel=(30%, $effort%, $effort%, 30%), point=$MFist, strike=$Contact2K]
+  plant(leg_l, on=$Floor)
+  plant(leg_r, on=$Floor)
+}

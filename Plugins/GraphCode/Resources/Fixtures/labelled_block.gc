@@ -1,0 +1,24 @@
+gc 1  kind:behavior_tree  asset:/Game/AI/BT_FixtureGuard  sig:7c31de90  bin:2b6f04aa
+parent: /Script/AIModule.BehaviorTree
+blackboard: /Game/AI/BB_FixtureGuard
+baseline: default
+omits: transient
+source: OraStudio 5.7.4  projector:18  ir: btir/1 valueir/1
+
+behaviortree BTGraph  sig:41a0ce77-3 {
+  Guard = Selector() {
+    Blackboard(BlackboardKey=IsAlerted) -> Chase = Sequence() {
+      MoveTo(AcceptableRadius=50.0)
+      Wait(WaitTime=1.5)
+    }
+    Patrol = Sequence() {
+      services { /Game/AI/BTS_Sight.BTS_Sight_C(Interval=0.5) }
+      MoveTo(BlackboardKey=PatrolLocation)
+    }
+  }
+  c0 = comment("A label with { a brace } in it") [covers=(Guard)]
+}
+
+settings {
+  bAutoStart = true
+}

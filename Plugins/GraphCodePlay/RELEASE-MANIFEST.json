@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "phase": "binary-only-product",
+  "readyToSend": false,
+  "plugin": "GraphCodePlay",
+  "version": "0.1.13",
+  "engine": "5.7.4",
+  "engineBuildId": "47537391",
+  "platform": "Win64",
+  "sourceRevision": "e44faa157107a616824141c235ec6148885216af",
+  "sourceWasDirty": true,
+  "packagedAtUtc": "2026-11-13T18:36:18.8667987Z",
+  "fileCount": 94,
+  "privateImplementationIncluded": false
+}

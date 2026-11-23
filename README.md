@@ -151,33 +151,36 @@ help and source:
 | A write breaks a Blueprint that compiled | Not saved (unless you pass `allow_broken`): *"this write left a Blueprint that compiled before it with compile errors, so it was NOT saved … the file on disk is still the version that compiled."* |
 | A partial payload would silently drop entries | Leaving an entry out keeps it (`patch`, the default). Four blocks (actors, rows, components, widgets) refuse a partial write rather than guess; removal is always an explicit `delete` line. |
 | The AI asks for something that does not exist | It is refused by name, with the valid choices: *"'editor' is not a section of unreal_info."* followed by the list of sections. |
-| The AI deletes an asset | It moves to `/Game/__MCPTrash`, which GraphCode never empties. Referenced assets refuse unless the exact impact is accepted. |
-| You want yesterday's version back | `gc_versions` keeps the previous text on every changing save and restores through a plan you confirm (`plan_sig`). The plan lists anything the restore would remove. |
+| The AI deletes an asset | It moves to `/Game/__MCPTrash`, which GraphCode never empties. Referenced assets refuse unless the exact impact is accepted; `gc_search` shows what depends on an asset first. |
+| You want yesterday's version back | `gc_versions` keeps the previous text on every changing save and restores one asset or the whole project through a plan you confirm (`plan_sig`). Name versions as you say them: `HEAD`, `saved`, `yesterday 3pm`. The plan lists anything the restore would remove. |
 | You need to see the result, not the text | `gc_render` renders materials, meshes, Actor Blueprints, effects and the level from named views. For widgets it paints several screen sizes and reports overlap, clipping and contrast. `gc_play` drives Play-in-Editor and captures the world to text. |
 
 Epic's [experimental MCP plugin in Unreal Engine 5.8](https://engadget.com/2196807/epic-games-details-how-its-embracing-gen-ai-in-unreal-engine) and the community MCP servers let an AI operate
-the editor step by step. GraphCode works on whole documents with the checks above. Try both on the
-same task; that comparison is what the trial is for.
+the editor step by step. GraphCode works on whole documents with the checks above, and authors far
+beyond the editor's own operations: terrain, meshes, motion, rigs, hair and clothing from readable
+recipes. Try both on the same task; that comparison is what the trial is for.
 
 ## What you can make
 
-Ten products, one package, one trial. Full detail for each is in [docs/PRODUCTS.md](docs/PRODUCTS.md)
-and on its graphcode.dev page.
+Ten products, one package, one trial. Every capability, grammar word, preset and example is in
+[docs/PRODUCTS.md](docs/PRODUCTS.md), and each product has a page on graphcode.dev.
 
-| | Product | You write | You get | Worth knowing |
+| | Product | You write | You get | Highlights |
 |---|---|---|---|---|
-| **Worlds** | [Core: levels](docs/PRODUCTS.md#graphcode-core-levels) | The level's `.gc`: actors, components, volumes, splines, Level Blueprint | The level, changed only where the text changed | Place by intent (`@anchor`, `@surface`, `@facing`). World Partition and HLOD partly covered |
-| | [World](docs/PRODUCTS.md#graphcode-world) | `.gcw` regions, terrain, water, navigation, populate rules; PCG graphs | Landscape, Water, foliage, navigation, PCG | `gcw_ask` answers "can this agent walk there". Render and walk the result |
-| | [Shape](docs/PRODUCTS.md#graphcode-shape) | `.gcshape` recipes: outlines, lofts, cuts, joins, profiles, edge finishes, LODs | Ordinary Static Meshes | One number changes every part built from it. Geometry only: surfaces come from your materials |
-| | [Market](docs/PRODUCTS.md#graphcode-market-free) | Nothing: search and install | 36 free signed packs: walls, timber, roofs, rope, gears, vegetation, pose libraries | Updating a pack does not yet update its dependencies |
-| **Characters** | [Move](docs/PRODUCTS.md#graphcode-move) | `.gcmove` motion programs; Niagara, sequences, behaviour and state trees as `.gc` | Animation Sequences, montages, blend spaces, effects, cinematics | Motion is measured, not guaranteed natural. Long clips take minutes |
-| | [Rig](docs/PRODUCTS.md#graphcode-rig) | `.gcrig`: where a mesh bends, ranges, contacts, grips | Skeleton, skin weights, physics bodies, IK rig, Control Rig | Deep folds can still show artefacts |
-| | [Groom](docs/PRODUCTS.md#graphcode-groom) | `.gcgroom`: layers, zones, combing, braids, cards, feathers | Unreal Groom assets and bindings | Needs the Groom plugin; judge on a GPU render |
-| | [Garment](docs/PRODUCTS.md#graphcode-garment) | `.gcgarment`: how a garment is cut, sewn and hangs | Static, skinned or MetaHuman clothing | The newest product: of the 19 examples only the T-shirt has been render-checked so far, and Dress and Button Shirt may fail to build |
-| | [Core Extension](docs/PRODUCTS.md#graphcode-core-extension) | `.gchuman` identities; MetaSounds, EQS, vegetation graphs | MetaHumans, audio graphs, queries, trees | MetaHuman rigging uses Epic's services |
-| **Gameplay, UI, data** | [Core](docs/PRODUCTS.md#graphcode-core-blueprints-widgets-materials-data) | Blueprints, widgets, materials, data tables, curves, input as `.gc` | The same assets, written back | Each kind declares what it omits ([KINDS.md](docs/KINDS.md)) |
-| | [Play](docs/PRODUCTS.md#graphcode-play) | Steps for `gc_play`: inputs, calls, waits | A driven Play session and `.gcp` world captures you can diff | Runs the tests you write; not an autonomous tester |
-| **Bring work in** | [Integrate](docs/PRODUCTS.md#graphcode-integrate) | Nothing: pick meshes in Blender | Static meshes with materials translated to Unreal | Static meshes only, Blender only |
+| **Worlds** | [Core: levels](docs/PRODUCTS.md#graphcode-core-levels) | The level's `.gc`: actors, components, volumes, splines, sublevels, Level Blueprint | The level, changed only where the text changed | Place by intent (`@anchor`, `@surface`, `@facing`); one World Partition actor without loading the map |
+| | [World](docs/PRODUCTS.md#graphcode-world) | `.gcw` terrain instructions, water, regions, routes, planting rules; PCG graphs | Landscape (streamed tiles), water, foliage, navigation, PCG | PNG height brushes, sculpt replay, erosion; `gcw_ask` answers "can this agent walk there" |
+| | [Shape](docs/PRODUCTS.md#graphcode-shape) | `.gcshape` recipes: outlines, lofts, reshaping, joins, edge finishes, sockets, LODs | Ordinary Static Meshes | One number changes every part; presets as families; creatures from `ball()` and `limb()`; same file, same mesh |
+| | [Market](docs/MARKET.md) | Nothing: search and install | 36 free signed packs: walls, timber, roofs, concrete, rope, gears, vegetation, materials, pose libraries | Installs with dependencies, keeps your edits on update, never builds until you ask |
+| **Characters** | [Move](docs/PRODUCTS.md#graphcode-move) | `.gcmove` motion programs; Niagara, sequences, behaviour and state trees as `.gc` | Animation Sequences, montages, blend spaces, effects, cinematics | Plants, reaches, balance, props, grips, lip sync from audio; a Pose panel with sliders |
+| | [Rig](docs/PRODUCTS.md#graphcode-rig) | `.gcrig`: where a mesh bends, ranges, contacts, grips, morphs | Skeleton, skin weights, physics bodies, IK rig, Control Rig | Works on a bare mesh; joint-driven morphs; an 84-joint MetaHuman body template |
+| | [Groom](docs/PRODUCTS.md#graphcode-groom) | `.gcgroom`: layers, zones, combing, braids, gathers, cards, feathers | Unreal Groom assets and bindings | Shells for short fur, toon card hair, feather rows, LODs, hair on a MetaHuman |
+| | [Garment](docs/PRODUCTS.md#graphcode-garment) | `.gcgarment`: how a garment is cut, sewn, pressed and hangs | Static, skinned, simulated or MetaHuman clothing | Pockets sewn on as cloth, per-edge hems, curtains, layered armour; 21 worked garments |
+| | [Core Extension](docs/PRODUCTS.md#graphcode-core-extension) | `.gchuman` identities; MetaSounds, EQS, vegetation graphs | MetaHumans (rigged and assembled), audio graphs, queries, trees | 21 sculpt regions, seeded crowds, likeness from a reference |
+| **Gameplay, UI, data** | [Core](docs/PRODUCTS.md#graphcode-core-blueprints-widgets-materials-data) | Blueprints, widgets, materials, data tables, curves, input as `.gc` | The same assets, written back | 60 kinds in all ([KINDS.md](docs/KINDS.md)); widgets checked at eight screen sizes |
+| | [Play](docs/PRODUCTS.md#graphcode-play) | Steps for `gc_play`: inputs, calls, waits, shots | A driven Play session and `.gcp` world captures you can diff | HUD screenshots and presses, run logs, run-to-run comparison, restart from a captured instant |
+| **Bring work in** | [Integrate](docs/PRODUCTS.md#graphcode-integrate) | Nothing: pick meshes in Blender | Static meshes with materials translated to Unreal | Shader graphs to editable materials, branches baked to EXR, a conversion report, reimport in place |
+
+Every worked example, sample download and case study: [docs/EXAMPLES.md](docs/EXAMPLES.md).
 
 ## How it works
 
@@ -198,11 +201,11 @@ was measured by asking the shipped bridge for its tool list.
 | `gc_read` | Read an asset, level or actor as its document: `saved` on disk or `live` with unsaved edits. |
 | `gc_apply` | **The one write.** Apply a document to an asset or create a new one, with dry runs, patch or snapshot. |
 | `gc_describe` | The grammar of a kind or block, a native type, or one node of an asset. Works with the editor closed. |
-| `gc_search` | Find assets, nodes, declarations, widgets, callable functions and presets. |
 | `gc_render` | See or hear the result: renders, widget layouts, motion trails, short videos, audio, "what is at this pixel". |
-| `gc_versions` | List and compare earlier versions; restore one through a confirmed plan. |
+| `gc_versions` | List and compare earlier versions (one asset or the whole project), restore through a confirmed plan, settle a merge conflict. |
 | `gc_play` | Drive and capture the running game. |
-| `gc_sync` · `gc_asset` · `gc_import` · `gc_invoke` · `gc_open` · `gc_market` · `gcw_ask` · `unreal_info` | Sidecars; rename, move or recoverable delete; imports; press a button or call a function; show you an asset; Market packs; spatial questions; what is installed and running. |
+| `gc_search` | Find assets, nodes, declarations, widgets, callable functions and presets, and what depends on an asset. |
+| `gc_sync` · `gc_asset` · `gc_import` · `gc_invoke` · `gc_open` · `gc_market` · `gcw_ask` · `unreal_info` | Sidecars; rename, move, duplicate, export or recoverable delete; imports; press a button or call a function; open, create and save levels; Market packs; spatial questions; what is installed, running and queued. |
 
 **Each tool teaches itself**, from help generated from the code you are calling, with no editor needed:
 
@@ -211,6 +214,9 @@ was measured by asking the shipped bridge for its tool list.
 { "help": "omission" }                            // what that parameter accepts
 { "help": "omission", "omission": "snapshot" }    // what one value does and what it brings
 ```
+
+Every mode and parameter, the command-line tools (`GcCheck`, `GcRegenerate`, `GcApply`, `GcMerge` and
+more), the GraphCode panel in the editor, settings and helper scripts: [docs/TOOLS.md](docs/TOOLS.md).
 
 The package carries 96 guides and the worked examples. The AI reads them as it needs them, starting
 from [`GRAPHCODE.md`](Plugins/GraphCode/GRAPHCODE.md), and the MCP server tells every client to
@@ -241,7 +247,8 @@ are happy to experiment in (start with a copy).
    `graphcode-activation-<your email>.txt`. Save it as `%USERPROFILE%\.graphcode\activation.txt`
    (or drop it in place of `Plugins/GraphCode/activation.txt`; the first use moves it there, out of
    your project). It holds your email and the licence server address, not a password, but keep it
-   out of version control. GraphCode needs it before first use; activation starts the 14 days.
+   out of version control. GraphCode needs it before first use; the 14 days start the first time
+   GraphCode signs in on your PC, at your first write.
 5. **Connect your AI.** Opening the project writes `Saved/UnrealAIBridge/mcp-config.json`, a
    standard `mcpServers` entry named `unreal`:
 
@@ -264,13 +271,14 @@ are happy to experiment in (start with a copy).
 
 | | |
 |---|---|
-| **Trial** | 14 days of all ten products from the first activation. One trial per email and one per PC. No card. |
+| **Trial** | 14 days of all ten products from the first sign-in on your PC. One trial per email and one per PC. No card. Reinstalling or changing email does not restart it. |
 | **When it ends** | Reading, help, sidecars, search and renders keep working. Writes, restores and AI dry runs stop until you buy. Your assets are untouched. |
-| **Licence** | One-time purchase, per product or all products, for individuals or per studio seat: [pricing](https://graphcode.dev/pricing). |
-| **One PC at a time** | A licence writes from one PC at a time. Moving it can take up to 15 minutes to free the old PC. |
+| **Licence** | One-time purchase with no time limit, per product or all products, for individuals or per studio seat: [pricing](https://graphcode.dev/pricing). |
+| **One PC at a time** | A licence writes from one PC at a time. To move it, sign the old PC out; the new PC can write within 15 minutes. |
+| **Your work** | Everything you make is yours and can ship in any game, commercial or not. You can share the unmodified download; each person who uses it needs their own trial or licence. |
 | **Offline** | Reading, help, search, renders and sidecars work offline. Writes use a short-lived token from the licence server and pause, saying why, while it cannot be reached; Market downloads and MetaHuman service steps need the network too. |
 | **Clock** | Keep Windows' clock set automatically. Writes are refused while the PC clock is more than 5 minutes off. |
-| **Updates** | The editor offers a new release with a notice. Nothing installs until you click, and the previous version is kept so you can go back. |
+| **Updates** | The editor offers a new release with a notice (Update, Later, Skip this version). Nothing installs until you click, and the previous version is kept so you can go back. To update by hand, close Unreal and replace every GraphCode folder in `Plugins` together. The update swaps folders, so plugin folders under source control are checked out first. |
 
 ## Trust and privacy
 
@@ -296,27 +304,27 @@ and how to check what you downloaded.
   and it carries the archive's SHA-256. [`release/0.1.13/BUNDLE-SHA256.txt`](release/0.1.13/BUNDLE-SHA256.txt)
   lists every file. The [verify script](tools/Verify-GraphCodeRelease.ps1) checks all of it,
   prints the key's fingerprint, and flags any file that is not ours. 0.1.13 is signed with our
-  backup key, [for a reason we explain](docs/STUDIOS.md#release-signing-and-keys).
+  backup key, [for a reason we explain](docs/STUDIOS.md#release-signing-and-keys). Compare the key
+  fingerprint with the one on [graphcode.dev/trust](https://graphcode.dev/trust#keys).
 - **What you can and cannot inspect:** every public header, build rule, plugin descriptor, guide and
   example is in this repository. The implementation source is not, and we say so rather than imply otherwise.
 - [PRIVACY.md](PRIVACY.md) (draft) · [SECURITY.md](SECURITY.md) · [THIRD-PARTY-NOTICES.md](Plugins/GraphCode/THIRD-PARTY-NOTICES.md)
 
-## Known limits
+## Requirements and scope
 
-We would rather you read these now than find them in week two.
-
-- **Windows 64-bit and Unreal Engine 5.7.4 only.** A new engine version needs a matching release.
-- **Closed source**, and the binaries are not yet Authenticode-signed; use the release signature to verify them.
-- **The editor must be running** for writes, renders, searches and live reads. Saved reads, help and
-  grammar work with it closed. Renders need a GPU editor session, not a headless one.
-- **The `.uasset` is still the source of truth.** Binary assets still conflict in Git merges, and the
-  safe default is `merge=binary`. A semantic text merge is built and in validation, not enabled.
-- **Not every facet is text.** Each kind lists what it omits. Meshes, textures, sound waves,
-  skeletons, imported animations, MetaHumans and grooms are built or imported, then patched.
-- **Generated content is measured, not guaranteed.** Motion, rigs, hair and clothing come with build
-  notes and renders to judge by, and the shipped examples state their own remaining defects. Garment is the newest product.
-- **Licence:** writes need the licence server, a correct clock and one PC at a time per licence.
-- **Perforce** is not integrated or tested yet.
+- **Windows 64-bit and Unreal Engine 5.7.4.** Each release is built for one engine build; a new engine
+  version comes with a matching GraphCode release.
+- **Closed source** with public headers and build rules, verified by our release signature (the binaries
+  are not Authenticode-signed).
+- **The editor runs** for writes, renders, searches and live reads. Saved reads, help and grammar work with
+  it closed. Renders use a GPU editor session.
+- **The `.uasset` stays the source of truth**, with its `.gc` text beside it. Git uses `merge=binary` for
+  the text by default; the optional three-way `.gc` merge driver is switched on per clone.
+- **Each kind lists what its document omits** ([KINDS.md](docs/KINDS.md)). Meshes, textures, sound waves,
+  skeletons, imported animations, MetaHumans and grooms are built or imported, then patched as text.
+- **Licence:** writes use the licence server, a correct clock and one PC at a time per licence.
+- **Version control:** GraphCode does not check files out, so in Perforce check out an asset and its
+  sidecar before a write.
 
 ## For studios
 
@@ -326,7 +334,8 @@ games, version pinning and uninstalling. The short version:
 - **CI:** `UnrealEditor-Cmd.exe MyGame.uproject "-run=GraphCode.GcCheck"` checks every sidecar
   headlessly, with **no licence and no network**, and exits 1 on anything missing or stale.
 - **Packaged games:** what GraphCode makes are ordinary assets. A few small runtime modules are packaged
-  while the plugins are enabled; only Groom feature sockets and Play test nodes reference them.
+  while the plugins are enabled; only Groom feature sockets and Play test nodes reference them. Each
+  release is checked by packaging and launching Development and Shipping games.
 - **Pinning:** keep this release's archive and switch the update check off. Nothing ever installs without a click.
 - **If we disappear:** your assets and games are ordinary Unreal content and need nothing from us to open,
   build or ship. Your `.gc` documents and recipes stay readable text; rebuilding from a recipe is a GraphCode write.
@@ -338,11 +347,14 @@ The browsable half of the download. Binaries are attached to each
 
 | Path | What it is |
 |---|---|
-| `Plugins/<Product>/` | The ten plugin descriptors, every public C++ header and `.Build.cs` rule, exactly as shipped. |
+| `Plugins/<Product>/` | Everything in the download except compiled binaries, byte for byte: the ten plugin descriptors, every public C++ header and `.Build.cs` rule, per-plugin manifests and checksums. |
+| `Plugins/*/Content/` | The shipped presets: 35 Shape preset libraries, human and quadruped pose libraries, a braids library, and the GraphCode panel's widget documents. |
 | `Plugins/GraphCode/GRAPHCODE.md`, `SETUP.md` | What your AI reads first, and the project setup it follows. |
-| `Plugins/GraphCode/Docs/` | All 96 shipped guides and the worked examples. |
-| `Plugins/GraphCode/Resources/mcp-bridge/` | The capability registry and the tool catalog. |
-| `docs/` | [PRODUCTS.md](docs/PRODUCTS.md), [KINDS.md](docs/KINDS.md) (generated), [STUDIOS.md](docs/STUDIOS.md). |
+| `Plugins/GraphCode/Docs/` | All 96 shipped guides and the worked examples, with their pictures. |
+| `Plugins/GraphCode/Resources/` | The capability registry and tool catalog, the terrain examples, and test fixtures. |
+| `Plugins/GraphCode/Tools/` | The helper scripts: merge driver, image-to-SVG, seamless textures, assembly checks, the updater. |
+| `Plugins/GraphCodeIntegrate/` | The Blender add-on source and the Integrate guide. |
+| `docs/` | [PRODUCTS](docs/PRODUCTS.md), [TOOLS](docs/TOOLS.md), [MARKET](docs/MARKET.md), [EXAMPLES](docs/EXAMPLES.md), [KINDS](docs/KINDS.md) (generated), [STUDIOS](docs/STUDIOS.md). |
 | `release/` | Signed manifests, public keys and per-file checksums. |
 | `tools/` | The download verifier and the kinds generator. |
 

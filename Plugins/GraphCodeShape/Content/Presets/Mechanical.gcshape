@@ -1,0 +1,339 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.08  shade:40
+
+# MECHANICAL — L3 Parts, the hardware a machine is assembled FROM.
+# `Docs/GC-SHAPE-PRESET-LIBRARY.md` §3, L3.
+#
+#   Mech = shape('/GraphCodeShape/Presets/Mechanical')
+#   Tank = mesh() { … add($Mech.Flange, at=on()) add($Mech.Rivet, repeat=12, turn=30, around=Z, at=(9,0,0)) }
+#
+# IT EXTENDS `Fixings` RATHER THAN DUPLICATING IT. Fixings owns the ISO threaded
+# hardware — nut, bolt, washer — and nothing here re-makes one. This file owns
+# what joins, stiffens, carries and routes: rivets, flanges, collars, gussets,
+# brackets, pipework, springs, chain, grilles and handles.
+#
+# IT ALSO IMPORTS `Solids` RATHER THAN RE-DERIVING IT, which is the ladder doing
+# its job: a rivet head is `$S.Dome`, a shank is `$S.Cylinder`, and an L2 fix
+# reaches every L3 part that stands on it.
+#
+# `smooth:0.08` IS TIGHTER THAN MASONRY'S ON PURPOSE. These are small turned and
+# machined parts seen close, and a 0.4 cm rivet head under a 0.3 cm chord
+# tolerance is a triangle. Fixings sets 0.01 for the same reason at a smaller
+# size; a preset that gets this wrong ships a faceted bolt.
+#
+# NAMES AVOID THE GROUP-5 RESERVED SET — `radius`, `seed`, `scale`, `at`,
+# `repeat`, `step`, `turn`, `around`, `align`, `join`, `falloff`, `mirror`,
+# `onto`, `apart`, `jitter`, `scatter`. `Solids.gcshape`'s header explains why a
+# colliding parameter is one no caller could ever pass. Hence `r`, `wall`,
+# `thick`, `bore`, `wire`, `bolt_r`.
+#
+# WHERE A PART'S PROPORTIONS ARE FIXED BUT ITS SIZE IS NOT, the driving number is
+# a FILE-LEVEL name rather than an entry parameter — `Link_Len`, `Grip_W`. That
+# is not a compromise: a swept path is read by `sweep(along=)`, which is a
+# group-3 line and carries no parameters, so the only way to vary it is the
+# import argument the format already has:
+#
+#   BigChain = shape('/GraphCodeShape/Presets/Mechanical', Link_Len = 12.0)
+#
+# CENTIMETRES, and the family contract holds: origin-centred in X and Y, growing
+# +Z off a mounting face at z = 0.
+
+build {
+  SM_Mech_Rivet     = $Rivet     [bounds=(1.5, 1.5, 2.3),      triangles=700]
+  SM_Mech_Flange    = $Flange    [bounds=(12.5, 12.5, 1.8),    triangles=2200]
+  SM_Mech_Collar    = $Collar    [bounds=(7.5, 6.5, 4.5),      triangles=1600]
+  SM_Mech_Gusset    = $Gusset    [bounds=(16.0, 1.2, 16.0),    triangles=200]
+  SM_Mech_Bracket   = $Bracket   [bounds=(12.5, 8.5, 12.5),    triangles=1400]
+  SM_Mech_PipeElbow = $PipeElbow [bounds=(15.0, 15.0, 6.5),    triangles=3000]
+  SM_Mech_PipeTee   = $PipeTee   [bounds=(9.5, 4.5, 24.5),     triangles=2600]
+  SM_Mech_Spring    = $Spring    [bounds=(7.5, 7.5, 19.5),     triangles=9000]
+  SM_Mech_ChainLink = $ChainLink [bounds=(6.5, 9.5, 2.5),      triangles=2600]
+  SM_Mech_Grille    = $Grille    [bounds=(40.5, 3.5, 25.5),    triangles=1800]
+  SM_Mech_Handle    = $Handle    [bounds=(3.5, 19.0, 7.5),     triangles=2400]
+  SM_Mech_Boss      = $Boss      [bounds=(6.5, 6.5, 3.5),      triangles=1200]
+}
+
+# ---- imports -------------------------------------------------------------
+
+# The L2 floor. An L3 file may import L1 and L2 and nothing at its own layer or
+# above, which is what keeps the dependency graph acyclic.
+S = shape('/GraphCodeShape/Presets/Solids')
+
+# ---- material slot -------------------------------------------------------
+
+# One slot: hardware is one finish per part, and a caller who wants brass rivets
+# on a steel plate paints the ASSET, not this file.
+Metal = material()
+
+# ---- fixed proportions an importer may override --------------------------
+
+# A chain link's shape is a proportion, not a size — every link ever made is the
+# same oval — so these drive the swept path and an importer replaces them whole.
+Link_Len  = 7.0
+Link_W    = 4.0
+Link_Wire = 0.9
+
+# A grip's sweep, likewise.
+Grip_W    = 2.4
+Grip_Len  = 16.0
+Grip_Rise = 6.0
+
+# ---- joining -------------------------------------------------------------
+
+# A driven rivet: a domed head over a plain shank. The head is `$S.Dome` and the
+# shank `$S.Cylinder`, so the whole entry is two lines of geometry and neither
+# re-derives a curve.
+# THE SHANK IS SEATED INSIDE THE HEAD, not merely touching it: two closed shells
+# that only touch are a legal union whose result is both of them side by side,
+# which is the commonest way a fixing comes back as two objects.
+Rivet = mesh(r=0.35, h=1.6, head_r=0.7, head_h=0.45) {
+  add($S.Cylinder, r=$r, h=$h)
+  add($S.Dome, r=$head_r, h=$head_h, at=(0.0, 0.0, $h - 0.12))
+  material($Metal)
+}
+
+# A bolted pipe flange: a plate with a bore and a ring of bolt holes on a
+# pitch-circle diameter. THE BOLT RING IS ONE LINE — `repeat` with `turn` and
+# `around` is a ring where `step` would be a row — and the hole count drives the
+# spacing, so a six-hole and an eight-hole flange are the same entry.
+Flange_Bore = plane(bore=3.0) { circle(radius=$bore) }
+
+# THE BORE IS CUT IN 2D AND THE BOLT RING IS DRILLED IN 3D, and the pair of them
+# is worth reading as one lesson about where group 5 can stand.
+#   · A `plane()` cutter is REFUSED once the entry has depth — a flat region has
+#     no volume to take out of a solid. So the bore goes above the `extrude`.
+#   · `repeat=` is REFUSED above it — copies need a frame to sit in, and an
+#     outline stage has none. So the ring cannot go where the bore went.
+# The two rules pull opposite ways, and a ring of holes therefore has to be a
+# SOLID cutter arrayed after the depth instruction. That is `$Drill`, and it is
+# why this file carries one at all.
+Flange = mesh(r=6.0, bore=3.0, thick=1.2, holes=6, bolt_r=4.6, hole=0.45) {
+  circle(radius=$r)
+  subtract($Flange_Bore, bore=$bore)
+  extrude(height=$thick)
+  round(0.15, segments=1) [sharp]
+  subtract($Drill, hole=$hole, len=$thick * 6.0, at=($bolt_r, 0.0, $thick * 0.5), repeat=$holes, turn=360.0/$holes, around=Z)
+  material($Metal)
+}
+
+# A shaft collar: a sleeve clamped to a shaft, with the boss its grub screw goes
+# through. `wall` is the wall thickness, not an outer radius — the thing an
+# author knows.
+Collar = mesh(r=2.2, wall=1.0, h=2.4, boss_r=1.0, boss_h=1.2) {
+  add($S.Tube, r=$r + $wall, wall=$wall, h=$h)
+  add($S.Cylinder, r=$boss_r, h=$boss_h, at=($r + $wall - 0.25, 0.0, $h * 0.5), rotate=(0.0, 90.0, 0.0))
+  material($Metal)
+}
+
+# A raised boss — the machined pad a fastener seats on, so a bolt head lands on
+# something flat where a casting curves away.
+Boss = mesh(r=1.8, h=1.0, bore=0.7, fillet=0.35) {
+  circle(radius=$r)
+  subtract($Flange_Bore, bore=$bore)
+  extrude(height=$h)
+  round($fillet, segments=3) [top, sharp]
+  material($Metal)
+}
+
+# ---- stiffening ----------------------------------------------------------
+
+# A gusset: the triangular plate that stops two members hinging about their weld.
+# The triangle is the OUTLINE and the plate thickness is the extrude, so the
+# plate stands in XZ and grows +Y. THAT BREAKS THE FAMILY'S +Z HABIT AND SAYS SO:
+# a gusset is defined by the corner it fills, and authoring it upright is what
+# lets `at=corner(…)` place it without a rotation.
+# AN OUTLINE IS ALWAYS FLAT IN XY AND `extrude(along=)` NEEDS A Z COMPONENT —
+# `along=Y` is refused by name, because travelling in the outline's own plane
+# gives a sheet of zero volume that a later `subtract()` would silently miss.
+# So an upright plate is built lying down and TURNED: the triangle is drawn in
+# XY, the thickness is an ordinary +Z extrude, and the whole prism is rotated a
+# quarter turn about X to stand it up. The `at=` puts the thickness back on the
+# +Y side of the origin, which the rotation moved to -Y.
+Gusset_Face = plane(w=15.0, h=15.0) { points((0.0, 0.0), ($w, 0.0), (0.0, $h), loop=true) }
+
+# THE TURN IS `place()` AND NOT A `rotate=` ON AN `add()`, and that is the MB50
+# fix rather than a style choice. An `add()` carrying `at=` as the FIRST thing in
+# an empty mesh has its `at=` silently dropped, so the earlier spelling here —
+# a prism added with `rotate=` and `at=` together — stood a correct plate in the
+# wrong place and every metric read clean. `place()` acts on the shape the entry
+# already holds, so there is no first-`add()` case to fall into, and dropping the
+# helper entry makes the file shorter as well as right.
+Gusset = mesh(w=15.0, h=15.0, thick=0.8) {
+  add($Gusset_Face, w=$w, h=$h)
+  extrude(height=$thick)
+  place(rotate=(90.0, 0.0, 0.0), by=(0.0, $thick, 0.0))
+  material($Metal)
+}
+
+# An angle bracket. THE L IS THE OUTLINE — one `points` loop — rather than two
+# plates unioned, so there is no join to leak and no overlap to tune. The bracket
+# stands in XZ and its width is the extrude, along +Y.
+Bracket_Face = plane(w=12.0, h=12.0, thick=1.2) { points((0.0, 0.0), ($w, 0.0), ($w, $thick), ($thick, $thick), ($thick, $h), (0.0, $h), loop=true) }
+
+# A DRILL IS A SOLID, and it has to be, because these two holes are cut through
+# an L that already has depth and go in on two different axes — there is no
+# single outline stage where both could be stamped. It is centred on its own
+# length so `at=` names the hole's centre rather than one end of the cutter.
+Drill = mesh(hole=0.45, len=20.0) {
+  circle(radius=$hole)
+  extrude(height=$len)
+  place(by=(0.0, 0.0, -$len * 0.5))
+}
+
+# The L is turned upright the same way the gusset is, and for the same reason.
+# The two drilled holes go in AFTER the turn, on two different axes — which is
+# why a solid `$Drill` exists at all: there is no single outline stage where a
+# hole through the foot and a hole through the upright could both be stamped.
+Bracket = mesh(w=12.0, h=12.0, thick=1.2, d=8.0, hole=0.45) {
+  add($Bracket_Face, w=$w, h=$h, thick=$thick)
+  extrude(height=$d)
+  place(rotate=(90.0, 0.0, 0.0), by=(0.0, $d, 0.0))
+  round(0.2, segments=1) [sharp]
+  subtract($Drill, hole=$hole, len=$thick * 6.0, at=($w * 0.62, $d * 0.5, $thick * 0.5))
+  subtract($Drill, hole=$hole, len=$thick * 6.0, at=($thick * 0.5, $d * 0.5, $h * 0.62), rotate=(0.0, 90.0, 0.0))
+  material($Metal)
+}
+
+# ---- routing -------------------------------------------------------------
+
+# A 90 degree pipe bend. A REVOLVE WITH `degrees=` IS THE WHOLE ENTRY: the
+# section is an annulus, `offset=` carries it out to the bend radius, and a
+# quarter turn is the elbow. Sweeping a path would be the same shape for more
+# work and a seam to manage.
+# The bend turns in the XY plane; `place` then lifts it so the tube's underside
+# is the mounting face, keeping the family contract.
+Pipe_Bore = plane(r=2.0, wall=0.4) { circle(radius=$r - $wall) }
+
+# `revolve()` CARRIES A CROSS-SECTION OF ONE LOOP, so an annulus is refused by
+# name — a holed outline is `extrude()`'s and `fill()`'s to take, not a
+# revolve's. The bore therefore comes out AFTERWARDS, as a solid cutter swept
+# round the same arc.
+# AND THE CUTTER OVERSHOOTS BOTH ENDS. A bore revolved exactly 90 degrees ends
+# flush with the elbow's own end faces, and two coincident faces are the case
+# the contact reader calls a flush seat — legal, and exactly the shape a boolean
+# resolves least predictably. Two degrees of overshoot at each end costs nothing
+# and leaves the opening unambiguous; the `rotate=` is what buys the near end,
+# since a revolve always starts at zero.
+Elbow_Void = mesh(r=2.0, wall=0.4, bend=6.0) {
+  circle(radius=$r - $wall)
+  revolve(degrees=94.0, offset=$bend)
+}
+
+PipeElbow = mesh(r=2.0, wall=0.4, bend=6.0) {
+  circle(radius=$r)
+  revolve(degrees=90.0, offset=$bend)
+  subtract($Elbow_Void, r=$r, wall=$wall, bend=$bend, rotate=(0.0, 0.0, -2.0))
+  place(by=(0.0, 0.0, $r))
+  material($Metal)
+}
+
+# A tee. Two straight runs crossed and unioned, which is what a tee is; the
+# branch is seated INTO the run rather than butted against it.
+PipeRun = mesh(r=2.0, wall=0.4, len=12.0) {
+  circle(radius=$r)
+  subtract($Pipe_Bore, r=$r, wall=$wall)
+  extrude(height=$len)
+}
+
+# THE MAIN RUN IS THE ENTRY'S OWN GEOMETRY AND NOT A FIRST `add()`, AND THAT IS
+# LOAD-BEARING: `at=` ON THE FIRST `add()` INTO AN EMPTY MESH IS SILENTLY
+# IGNORED. Measured four ways on `/Game/__MCPTests/Probe/SM_At_*` — a box with
+# `at=(7,0,0)`, with `at=(0,0,5)`, and with a `rotate=` beside either, all come
+# back at exactly the bounds of the same `add()` with no `at=` at all. A SECOND
+# `add()` translates correctly, so the defect is the empty-mesh case alone, and
+# it reports nothing: no refusal, no warning, just a part in the wrong place.
+# Writing the run with `circle`/`subtract`/`extrude` sidesteps it entirely.
+#
+# A ROTATED PART OF LENGTH L SPANS [-L, 0] BEFORE `at=` MOVES IT, which is what
+# makes the branch one-sided rather than a cross: `at=($branch - $r)` puts its
+# inner end just inside the main bore and the rest outside. Left centred it
+# protrudes both ways and the part is a four-way, not a tee.
+Branch_Solid = mesh(r=2.0, len=9.0) {
+  circle(radius=$r)
+  extrude(height=$len)
+}
+
+# The bore is punched AFTER the union, so the branch opens into the main bore
+# instead of stopping at its wall. It reaches from the main pipe's own axis
+# outward and no further — a void centred on the axis would open a second hole
+# through the far wall, which is watertight and still wrong.
+Branch_Void = mesh(r=1.6, len=20.0) {
+  circle(radius=$r)
+  extrude(height=$len)
+}
+
+PipeTee = mesh(r=2.0, wall=0.4, len=24.0, branch=9.0) {
+  circle(radius=$r)
+  subtract($Pipe_Bore, r=$r, wall=$wall)
+  extrude(height=$len)
+  add($Branch_Solid, r=$r, len=$branch, rotate=(0.0, 90.0, 0.0), at=($branch - $r, 0.0, $len * 0.5))
+  subtract($Branch_Void, r=$r - $wall, len=20.0, rotate=(0.0, 90.0, 0.0), at=(20.0, 0.0, $len * 0.5))
+  material($Metal)
+}
+
+# A helical compression spring. `rise=` on a revolve is the spiral door, but
+# A REVOLVE TURNS BETWEEN 0 AND 360 AND A SPRING HAS SIX TURNS — `degrees=2160`
+# is refused by name, so one instruction cannot be the whole coil.
+# ONE TURN IS THE PART AND THE ARRAY IS THE SPRING. Each copy rises by exactly
+# the pitch, so turn N's last section and turn N+1's first are the same circle
+# in the same place — an exact face-to-face contact, which welds rather than
+# leaving six stacked shells. `parts 1` on the build line is what proves it.
+Coil = mesh(r=3.0, wire=0.45, pitch=3.0) {
+  circle(radius=$wire)
+  revolve(degrees=360.0, offset=$r, rise=$pitch)
+}
+
+Spring = mesh(r=3.0, wire=0.45, turns=6, pitch=3.0) {
+  add($Coil, r=$r, wire=$wire, pitch=$pitch, repeat=$turns, step=(0.0, 0.0, $pitch))
+  place(by=(0.0, 0.0, $wire))
+  material($Metal)
+}
+
+# A chain link, swept round a closed oval path. THE PATH IS A `plane()` HOLDING
+# THREE-COMPONENT POINTS, which is what makes it a route rather than an outline —
+# the tuple width is the only thing that decides which it is.
+Link_Path = plane() { curve((0.0, $Link_Len*0.5, 0.0), ($Link_W*0.5, $Link_Len*0.22, 0.0), ($Link_W*0.5, -$Link_Len*0.22, 0.0), (0.0, -$Link_Len*0.5, 0.0), (-$Link_W*0.5, -$Link_Len*0.22, 0.0), (-$Link_W*0.5, $Link_Len*0.22, 0.0), loop=true) }
+
+ChainLink = mesh() {
+  circle(radius=$Link_Wire)
+  sweep(along=$Link_Path, loop=true)
+  place(by=(0.0, 0.0, $Link_Wire))
+  material($Metal)
+}
+
+# A D-handle, swept along a rising path — the grip a hatch, a locker or a
+# firebox door is pulled by.
+Grip_Path = plane() { curve((0.0, -$Grip_Len*0.5, 0.0), (0.0, -$Grip_Len*0.42, $Grip_Rise*0.8), (0.0, 0.0, $Grip_Rise), (0.0, $Grip_Len*0.42, $Grip_Rise*0.8), (0.0, $Grip_Len*0.5, 0.0)) }
+
+Handle = mesh() {
+  circle(radius=$Grip_W * 0.5)
+  sweep(along=$Grip_Path)
+  material($Metal)
+}
+
+# ---- covering ------------------------------------------------------------
+
+# A barred grille — a vent, a cage front, a furnace guard. The bars are ONE line
+# with `repeat` and `step`, and the count drives the spacing so a coarse and a
+# fine grille are the same entry.
+Grille_Bar = mesh(thick=0.8, d=1.6, h=25.0) {
+  rect(w=$thick, h=$d)
+  extrude(height=$h)
+}
+
+Grille = mesh(w=40.0, h=25.0, d=3.0, frame=2.0, bars=9, thick=0.8) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  subtract($Grille_Void, w=$w - $frame * 2.0, h=$h - $frame * 2.0, lift=$frame)
+  add($Grille_Bar, thick=$thick, d=$d, h=$h - $frame * 2.0, at=(($w - $frame * 2.0) * -0.5, 0.0, $frame), repeat=$bars, step=(($w - $frame * 2.0)/($bars - 1.0), 0.0, 0.0))
+  material($Metal)
+}
+
+# The opening the bars sit in. A `mesh()` and not a `plane()`, because it cuts a
+# window through an upright frame rather than stamping a footprint down through
+# it — the cutter has to be as deep as the frame in Y, and a plane would be
+# extruded along the wrong axis.
+Grille_Void = mesh(w=36.0, h=21.0, d=20.0, lift=2.0) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  place(by=(0.0, 0.0, $lift))
+}

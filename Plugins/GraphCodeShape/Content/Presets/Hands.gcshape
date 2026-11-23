@@ -1,0 +1,68 @@
+gcshape 1 into:/GraphCodeShape/Presets smooth:0.012 shade:80
+
+# Hand forms built from interchangeable digit recipes. +Z goes from wrist to
+# fingers; -Y is the palm. The thumb is on -X. Size parameters are centimetres.
+# These are static rest shapes. Wrist width/depth are the common attachment
+# dimensions; the Wrist frame stays at the origin when proportions change.
+build {
+  SM_Hand_Palm = $Palm [pivot=(0,0,0), bounds=(8.3,2.9,8.6)]
+  SM_Hand_Standard = $Hand [pivot=(0,0,0), bounds=(13,4,17.5)]
+  SM_Hand_Broad = $Broad [pivot=(0,0,0), bounds=(15,5,17.5)]
+}
+
+Digits = shape('/GraphCodeShape/Presets/Digits')
+Profiles = shape('/GraphCodeShape/Presets/Profiles')
+Organic = shape('/GraphCodeShape/Presets/Organic')
+Skin = material()
+
+# The wrist-to-knuckle transition: one continuous loft between elliptical
+# sections. width/depth shape the palm independently from the wrist interface.
+Palm = mesh(length=8.5, width=8.2, depth=2.8, wristwidth=5.2, wristdepth=2.5) {
+  circle(radius=$width / 2, scale=(1,$depth / $width,1))
+  $Knuckles = plane
+  circle(radius=$width * .45, scale=(1,$depth * .65 / ($width * .9),1))
+  $Crown = plane
+  circle(radius=$wristwidth / 2, scale=(1,$wristdepth / $wristwidth,1))
+  loft(to=$Knuckles, at=(0,0,$length * .72), profile=$Profiles.SCurve)
+  loft(to=$Crown, at=(0,0,$length), profile=$Profiles.SCurve)
+  material($Skin)
+}
+
+# Finger style slot. Override this entry on shape('/GraphCodeShape/Presets/Hands',
+# Finger=$MyFinger). The replacement takes length/width/depth/detail parameters.
+Finger = mesh(length=8, width=2, depth=1.65, detail=0) {
+  add($Digits.Finger, length=$length, width=$width, depth=$depth, detail=$detail)
+}
+
+# Thumb style slot, with the same constructor contract as Finger.
+Thumb = mesh(length=5.8, width=2.1, depth=1.85, detail=0) {
+  add($Digits.Thumb, length=$length, width=$width, depth=$depth, detail=$detail)
+}
+
+# Continuous hand skin from a palm, four fingers and a thumb. Finger and Thumb
+# are recipe choices, with a shared length/width/depth/detail parameter contract.
+# Reach and root placement derive from the palm and the common dimensions.
+# Fine digit detail is deliberately deferred until after all five blend joins.
+# blend=0 derives the blend reach from palmwidth; a positive value overrides
+# it in centimetres. The default scales with the hand, including small hands.
+Hand = mesh(palmlength=8.5, palmwidth=8.2, palmdepth=2.8, fingerlength=8, wristwidth=5.2, wristdepth=2.5, blend=0) {
+  $JoinReach = $blend
+  if ($blend == 0) {
+    $JoinReach = $palmwidth / 16.4
+  }
+  palm = add($Palm, length=$palmlength, width=$palmwidth, depth=$palmdepth, wristwidth=$wristwidth, wristdepth=$wristdepth)
+  index = add($Finger, length=$fingerlength * .94, width=$palmwidth * .225, depth=$palmdepth * .59, detail=0, at=(-$palmwidth * .34,0,$palmlength * .91), join=blend, falloff=$JoinReach)
+  middle = add($Finger, length=$fingerlength, width=$palmwidth * .24, depth=$palmdepth * .61, detail=0, at=(-$palmwidth * .105,0,$palmlength * .95), join=blend, falloff=$JoinReach)
+  ring = add($Finger, length=$fingerlength * .94, width=$palmwidth * .22, depth=$palmdepth * .56, detail=0, at=($palmwidth * .13,0,$palmlength * .94), join=blend, falloff=$JoinReach)
+  little = add($Finger, length=$fingerlength * .73, width=$palmwidth * .185, depth=$palmdepth * .49, detail=0, at=($palmwidth * .335,0,$palmlength * .88), join=blend, falloff=$JoinReach)
+  thenar = add($Organic.Pad, width=$palmwidth * .38, depth=$palmdepth * .72, length=$palmlength * .64, at=(-$palmwidth * .21,-$palmdepth * .19,$palmlength * .10), join=blend, falloff=$JoinReach)
+  opposable = add($Thumb, length=$fingerlength * .78, width=$palmwidth * .255, depth=$palmdepth * .66, detail=0, rotate=(0,48,0), at=(-$palmwidth * .24,-$palmdepth * .12,$palmlength * .36), join=blend, falloff=$JoinReach)
+  material($Skin)
+  socket(Wrist, at=(0,0,0), facing=-Z, up=+X)
+}
+
+# Broad palm and stout fingers with the SAME wrist interface as Hand. This
+# example is a swap test: changing the visible body need not change the mount.
+Broad = mesh(palmlength=8.5, palmwidth=9.4, palmdepth=3.4, fingerlength=7.4, wristwidth=5.2, wristdepth=2.5) {
+  add($Hand, palmlength=$palmlength, palmwidth=$palmwidth, palmdepth=$palmdepth, fingerlength=$fingerlength, wristwidth=$wristwidth, wristdepth=$wristdepth, blend=$palmwidth * .6 / 9.4)
+}

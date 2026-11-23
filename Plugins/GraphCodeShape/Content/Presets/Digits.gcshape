@@ -1,0 +1,55 @@
+gcshape 1 into:/GraphCodeShape/Presets smooth:0.004 shade:80
+
+# Digit building blocks. +Z grows from the mounting section, -Y is the palm
+# side. All dimensions are centimetres. Use the recipe when changing shape;
+# use the built examples when the default shape is already right.
+build {
+  SM_Digit_Finger = $Finger [pivot=(0,0,0), bounds=(2.1,1.8,8.1)]
+  SM_Digit_FingerSlender = $Slender [pivot=(0,0,0), bounds=(1.8,1.5,9.1)]
+  SM_Digit_Thumb = $Thumb [pivot=(0,0,0), bounds=(2.3,2.0,5.9)]
+}
+
+Organic = shape('/GraphCodeShape/Presets/Organic')
+Skin = material()
+
+# Three phalange regions, two knuckle swells and a rounded fingertip. The
+# first 6% holds its mounting section. These are stylized design ratios, not
+# a claim of measured anatomy; replace this profile to change the silhouette.
+FingerContour = profile(0=100%, .06=100%, .18=102%, .34=93%, .43=102%, .53=90%, .65=85%, .73=92%, .83=84%, .9=77%, .95=62%, .98=42%, 1=0%)
+
+# Two phalange regions and a broader rounded tip.
+ThumbContour = profile(0=100%, .08=100%, .26=105%, .46=92%, .59=101%, .73=91%, .87=81%, .95=60%, .98=40%, 1=0%)
+
+# Flatter knuckles and a longer taper, preserving the root section.
+SlenderContour = profile(0=100%, .06=100%, .18=98%, .34=90%, .43=94%, .53=84%, .65=80%, .73=84%, .83=77%, .9=69%, .95=55%, .98=37%, 1=0%)
+
+# Parametric finger. width/depth are its root section and length is the full
+# rest length. detail=0 gives the smooth assembly input; detail=1 adds two
+# shallow palm-side creases. Mount is centred on the real root section.
+# contour can be replaced while keeping the same mounting dimensions.
+Finger = mesh(length=8, width=2, depth=1.65, detail=1, contour=$FingerContour) {
+  add($Organic.Segment, length=$length, width=$width, depth=$depth, contour=$contour)
+  if ($detail > 0) {
+    $Organic.FlexionCrease(width=$width * .06, depth=$depth * .012, start=(-$width * .31,-$depth,$length * .425), end=($width * .31,-$depth,$length * .425))
+    $Organic.FlexionCrease(width=$width * .05, depth=$depth * .009, start=(-$width * .27,-$depth,$length * .725), end=($width * .27,-$depth,$length * .725))
+  }
+  material($Skin)
+  socket(Mount, at=(0,0,0), facing=-Z, up=+X)
+}
+
+# A slender finger style using the same constructor and mounting convention.
+# This retains the same public dimensions so an assembly can exchange styles.
+Slender = mesh(length=9, width=1.65, depth=1.35, detail=1) {
+  add($Finger, length=$length, width=$width, depth=$depth, detail=$detail, contour=$SlenderContour)
+}
+
+# Parametric thumb with one flexion crease. The mounting section shares the
+# Finger convention; orient the whole thumb when attaching it to a palm.
+Thumb = mesh(length=5.8, width=2.1, depth=1.85, detail=1) {
+  add($Organic.Segment, length=$length, width=$width, depth=$depth, contour=$ThumbContour)
+  if ($detail > 0) {
+    $Organic.FlexionCrease(width=$width * .065, depth=$depth * .012, start=(-$width * .3,-$depth,$length * .59), end=($width * .3,-$depth,$length * .59))
+  }
+  material($Skin)
+  socket(Mount, at=(0,0,0), facing=-Z, up=+X)
+}

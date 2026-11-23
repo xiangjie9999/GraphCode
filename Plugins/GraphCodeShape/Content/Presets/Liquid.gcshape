@@ -1,0 +1,63 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.1  shade:40
+
+# LIQUID — what a liquid leaves on a surface, composed from GraphCode's blocks and
+# nothing else. `Docs/GC-SHAPE-BLOCKS-AND-EFFECTS.md` §8: an effect is a preset the
+# AI writes in this format, never new C++.
+#
+#   Liquid = shape('/GraphCodeShape/Presets/Liquid')
+#   Donut = mesh() {
+#     add($DoughRing)
+#     material($Icing) [above=62%]
+#     $Liquid.Drip(repeat=9, length=0.6, width=1.4, variation=0.7, seed=3) [material=$Icing]
+#     coat(by=0.15) [material=$Icing]
+#   }
+#
+# THE CALLER OWNS THE REGION, as every instruction here does: the bracket on the
+# call is the liquid, and the runs leave its edge on the side `along=` points out of.
+#
+# `drip()`'s OWN ARGUMENTS AND WORDS, so a `drip(…)` line becomes `$Liquid.Drip(…)`
+# with one change: `variation=` is a FRACTION — 0.7, not 70% — because a percentage
+# cannot enter arithmetic. `repeat=`, `seed=` and `along=` reach an instruction as
+# its own parameters (measured 2026-09-28). Without a coat after it, a drip is paint.
+#
+# TWO CALLS ON ONE REGION CAN FOLD under a coat: where one call's run starts on the
+# other's run end, the second outline crosses the first at a shallow angle. Measured
+# on the doughnut, seeds 3 then 9: 4 triangles through the surface, seen as slits
+# down a run's flank. Each call alone, and both without the coat, are clean.
+
+build {
+  SM_Liquid_Drip = $Drip_Ex [bounds=(31.0, 11.0, 11.0), triangles=400000]
+}
+
+# Runs from the region's lower edge, down the surface: every loop of that edge, each
+# run drawn on the user's range from thick-and-short to long-and-narrow holding the
+# same amount of liquid, pinched before its drop when it is long, and rounded into
+# the edge it left. The numbers are native `drip()`'s, as full widths.
+Drip = instruction(repeat=9, length=0.6, width=1.4, variation=0.5, seed=0, along=-Z) {
+  save($Wet)
+  save($Lower) [border=$Wet, toward=$along]
+  loop (repeat=$repeat, along=$Lower) {
+    $K     = random(seed = $seed * 1000 + output.index, min = -$variation, max = $variation)
+    $Long  = $length * pow(2.718281828, $K)
+    $Neck  = $width * pow(2.718281828, -$K / 2)
+    $Pinch = 0.25 * clamp(($Long / $Neck - 1.5) / 3, 0, 1)
+    $Start = 1.15 * $Neck
+    $Waist = (1.15 - $Pinch) * $Neck
+    $Drop  = 1.3 * $Neck
+    $End   = min($Drop / 2, $Long / 2)
+    save($Run) [at=output.place, flow=$along, length=$Long - $End]
+    grow(along=$Run, width=profile(0=$Start, 0.4=$Waist, 1=$Drop), end=$End, join=fillet, radius=$Start / 2)
+  }
+}
+
+# ---- the example --------------------------------------------------------------
+
+Wood  = material()
+Glaze = material()
+Log   = mesh() { circle(radius=5.0)  extrude(height=30.0)  place(rotate=(0.0, 90.0, 0.0))  material($Wood) }
+Drip_Ex = mesh() {
+  add($Log)
+  material($Glaze) [above=60%]
+  $Drip(repeat=10, length=3.0, width=0.8, variation=0.6, seed=4) [material=$Glaze]
+  coat(by=0.3) [material=$Glaze]
+}

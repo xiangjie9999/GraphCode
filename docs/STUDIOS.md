@@ -20,11 +20,11 @@ write to support@graphcode.dev.
 |---|---|
 | Platform | Windows 64-bit, Unreal Engine 5.7.4 (build 47537391) only. A new engine version needs a matching release. |
 | What you install | Precompiled editor plugins with public C++ headers and build rules. No implementation source. |
-| Code signing | Releases are signed with our own ES256 keys (see below). The DLLs and the bridge `.exe` are **not Authenticode-signed** yet, so SmartScreen or endpoint tools may ask about them. |
+| Code signing | Releases are signed with our own ES256 keys (see below). The DLLs and the bridge `.exe` are **not Authenticode-signed**, so SmartScreen or endpoint tools may ask about them. |
 | Licence | Per user, per product or all products, one PC at a time; a 14-day trial of everything first. [Pricing](https://graphcode.dev/pricing). |
 | Network | Licence tokens before writes, an update check (can be switched off), Market downloads when used. No project content, no telemetry. [Full table](../README.md#trust-and-privacy). |
 | AI | GraphCode calls no AI provider. Your AI client does, with the provider you chose. MetaHuman rigging and assembly use Epic's services. |
-| Version control | Plain-text sidecars beside each asset. Git is documented; Perforce is not integrated or tested yet. |
+| Version control | Plain-text sidecars beside each asset, with any VCS. Git has a recommended setup and an optional three-way `.gc` merge driver; in Perforce, check files out before a write. |
 | CI | `GcCheck` runs headless with no licence and no network. |
 | Legal | [EULA](../LICENSE.md) and [privacy policy](../PRIVACY.md) are drafts under legal review. |
 
@@ -86,36 +86,37 @@ UnrealEditor-Cmd.exe MyGame.uproject "-run=GraphCode.GcApply" -Asset=/Game/Path/
 
 A command-line write (`GcApply` without `-DryRun`, merges) needs a licensed PC, like a write from the
 AI. A dry run through the AI's `gc_apply` also uses a licence token; the command-line `-DryRun` above
-does not need one (per the licence-gate code). The update check never runs in commandlets, `-unattended` sessions or CI.
+does not need one. The update check never runs in commandlets, `-unattended` sessions or CI.
 
 ## Version control: Git, Perforce and others
 
 - Sidecars are plain UTF-8 text files beside the `.uasset`. Nothing in the authoring path needs Git.
 - Recommended `.gitattributes`: `*.gc text eol=lf merge=binary`. If a `.gc` conflicts, resolve the
-  binary asset and save, and the text regenerates. The Git history panel and the opt-in merge
-  driver (in validation, off by default) are Git-specific.
-- **Perforce** is not integrated or tested yet. GraphCode does not check files out for you, so a
-  read-only sidecar or asset must be checked out (or made writable) before a write. If you need
-  this, tell us. It is the most likely next VCS.
+  binary asset and save, and the text regenerates.
+- **Three-way `.gc` merge driver** (optional): register it per clone with
+  `Plugins/GraphCode/Tools/setup-merge-driver.ps1`. It combines two people's edits to one `.gc` through
+  the `GcMerge` commandlet and writes a real clash as a `conflict { }` block, which `gc_versions resolve`
+  or the GraphCode panel settles (ours, theirs or your own value).
+- The GraphCode panel in the editor lists versions, compares and restores them, and shows conflicts.
+- **Perforce and other VCS:** sidecars are ordinary files. GraphCode does not check files out, so check
+  out an asset and its sidecar (or make them writable) before a write.
 
 ## Packaged games
 
 GraphCode writes ordinary Unreal assets: Blueprints, materials, meshes, animations, Niagara
 systems. Almost all of its modules are editor-only. A few small runtime modules are packaged while their
 plugins are enabled (`GraphCodeRuntime` and `AuthoringCore` in Core, `GraphCodePlay` in Play). Only Groom
-feature sockets and the optional Play test nodes reference them from your assets. Each release is checked by packaging and launching Development and
-Shipping games with GraphCode installed. Removing GraphCode from a project that already uses those
-two features has not been tested.
+feature sockets and the optional Play test nodes reference them from your assets. Each release is
+checked by packaging and launching Development and Shipping games with GraphCode installed.
 
 ## Pinning, updates and engine upgrades
 
 - Updates never install without a person clicking. To stop the check, turn off
   **Project Settings > Plugins > GraphCode Updates > Check Automatically** (per user and project).
-  There is no project-wide policy setting yet.
 - To pin a version, keep the installed plugin folders (or this release's archive) and leave the
   check off. Every release stays downloadable here with its signature and checksums.
-- Each release targets one exact engine build. There is no announced date for 5.8, so stay on 5.7.4
-  until a matching release is published here.
+- Each release targets one exact engine build; a new engine version comes with a matching GraphCode
+  release, published here with its signature and checksums.
 
 ## If the licence server is down, or we disappear
 
@@ -124,7 +125,6 @@ two features has not been tested.
 - Reading, searching, rendering, sidecars, `GcCheck` and all normal editor work continue. AI-driven
   writes need a token from the licence server and pause until it is reachable again, with a message saying so.
 - Your `.gcshape`, `.gcmove`, `.gcrig` and other recipe files are plain text in your repository.
-- We are a small independent developer, and we would rather say so than promise what we cannot.
 
 ## Seats, onboarding and uninstalling
 

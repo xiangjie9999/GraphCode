@@ -1,0 +1,296 @@
+gcshape 1 into:/GraphCodeShape/Presets smooth:.02 shade:80
+
+# Parametric stylized hand. Centimetres; wrist at origin, +Z toward fingers,
+# -Y palmar, thumb on -X. Static rest pose, not a rig or finished anatomy.
+# Import arguments change these dimensions throughout the complete recipe.
+build {
+  SM_HandAnatomy = $Hand [pivot=(0,0,0)]
+}
+
+Anatomy = shape('/GraphCodeShape/Presets/FingerAnatomy')
+Digits = shape('/GraphCodeShape/Presets/Digits')
+Profiles = shape('/GraphCodeShape/Presets/Profiles')
+Skin = material()
+Nail = material()
+
+PalmLength = 8.5
+PalmWidth = 7.8
+PalmDepth = 2.65
+Handedness = 1
+# Optional authored volume and static rest-pose controls. Zero keeps the original
+# straight study; AnimeHand supplies a deliberately rounded/cupped silhouette.
+PalmPads = 0
+PalmCup = 0
+PalmResolution = $PalmWidth * .028205128
+PalmFinish = 0
+IndexCurl = 0
+MiddleCurl = 0
+RingCurl = 0
+LittleCurl = 0
+ThumbCurl = 0
+WristWidth = $PalmWidth * .653846154
+WristDepth = $PalmDepth * .924528302
+FingerLength = 8.3
+IndexLength = $FingerLength * .91
+IndexWidth = $PalmWidth * .237
+IndexDepth = $PalmDepth * .62
+MiddleLength = $FingerLength
+MiddleWidth = $PalmWidth * .25
+MiddleDepth = $PalmDepth * .64
+RingLength = $FingerLength * .94
+RingWidth = $PalmWidth * .231
+RingDepth = $PalmDepth * .60
+LittleLength = $FingerLength * .72
+LittleWidth = $PalmWidth * .192
+LittleDepth = $PalmDepth * .50
+ThumbLength = $FingerLength * .90
+ThumbWidth = $PalmWidth * .275
+ThumbDepth = $PalmDepth * .72
+
+# Root centres are shared by rough guides, removal volumes, sockets and nails.
+# They may be overridden in cm; the defaults follow palm proportions.
+IndexX = -$PalmWidth * .348974359 * $Handedness
+IndexY = 0
+IndexZ = $PalmLength * 1.005764706
+MiddleX = -$PalmWidth * .09 * $Handedness
+MiddleY = 0
+MiddleZ = $PalmLength * 1.023529412
+RingX = $PalmWidth * .175641026 * $Handedness
+RingY = -$PalmDepth * .015094340
+RingZ = $PalmLength * 1.011647059
+LittleX = $PalmWidth * .399230769 * $Handedness
+LittleY = -$PalmDepth * .037735849
+LittleZ = $PalmLength * .987294118
+ThumbX = -$PalmWidth * .384615385 * $Handedness
+ThumbY = -$PalmDepth * .256603774
+ThumbZ = $PalmLength * .452941176
+RootSeat = $PalmDepth * .509433962
+
+# NailLength extends the nominal end at length * NailTipEnd, in cm.
+# The cuticle/bed is fixed relative to that digit; length does not move it.
+Nails = 1
+NailLength = .15
+IndexNailLength = $NailLength
+MiddleNailLength = $NailLength
+RingNailLength = $NailLength
+LittleNailLength = $NailLength
+ThumbNailLength = $NailLength
+NailThickness = .035
+NailBedEnd = .91
+ThumbNailBedEnd = .87
+NailTipEnd = 1
+# The recess stops before the rounded pulp tip, independently of nail extension.
+NailPocketEnd = .96
+NailFinish = $NailThickness * .1
+# The pocket floor and nail underside fit the same original digit. The cutting copy
+# extends outward through the skin; it is thicker, not wider or longer.
+# Seat the thin plate just below the surrounding skin rim, rather than grazing it.
+NailSeatDepth = $NailThickness * 1.2
+NailCutterThickness = $NailThickness * 6
+# A sub-visible floor clearance accommodates the separately tessellated surfaces
+# and the capped nail-only finishing pass; it does not enlarge the pocket outline.
+NailPocketClearance = $NailFinish * 2
+IndexNailWidth = $IndexWidth * .59
+MiddleNailWidth = $MiddleWidth * .59
+RingNailWidth = $RingWidth * .59
+LittleNailWidth = $LittleWidth * .59
+ThumbNailWidth = $ThumbWidth * .58
+
+RoughFinger = mesh(width=1.3,depth=1.1) {
+  circle(radius=$width / 2,scale=(1,$depth / $width,1))
+  extrude(height=$RootSeat * 1.259259259)
+  taper(to=90%)
+  round($RootSeat * .103703704)
+  place(by=(0,0,-$RootSeat * .592592593))
+}
+RoughThumb = mesh() {
+  circle(radius=$ThumbWidth * .279720280,scale=(1,$ThumbDepth / $ThumbWidth * .989622642,1))
+  extrude(height=$RootSeat * 2.222222222)
+  taper(to=90%)
+  round($RootSeat * .103703704)
+  place(by=(0,0,-$RootSeat * .592592593))
+}
+ReplaceBox = mesh(width=1.45,depth=1.5,height=2.2,start=-.55) {
+  rect(w=$width,h=$depth)
+  extrude(height=$height,at=(0,0,$start))
+}
+
+# Fixed authored rest rotations; the corresponding socket basis is stated below.
+# A single layout also places nails, so root edits cannot leave nails behind.
+RootLayout = mesh(index=$RoughFinger,middle=$RoughFinger,ring=$RoughFinger,little=$RoughFinger,thumb=$RoughThumb) {
+  add($index,at=($IndexX,$IndexY,$IndexZ),rotate=(0,4 * $Handedness,0))
+  add($middle,at=($MiddleX,$MiddleY,$MiddleZ),join=none)
+  add($ring,at=($RingX,$RingY,$RingZ),rotate=(0,-3 * $Handedness,0),join=none)
+  add($little,at=($LittleX,$LittleY,$LittleZ),rotate=(0,-10 * $Handedness,0),join=none)
+  add($thumb,at=($ThumbX,$ThumbY,$ThumbZ),rotate=(0,46 * $Handedness,0),join=none)
+}
+RoughIndex = mesh() { add($RoughFinger,width=$IndexWidth * .67618739,depth=$IndexDepth * .65733414) }
+RoughMiddle = mesh() { add($RoughFinger,width=$MiddleWidth * .666666667,depth=$MiddleDepth * .648584906) }
+RoughRing = mesh() { add($RoughFinger,width=$RingWidth * .677100677,depth=$RingDepth * .660377358) }
+RoughLittle = mesh() { add($RoughFinger,width=$LittleWidth * .721153846,depth=$LittleDepth * .724528302) }
+RoughDigits = mesh() { add($RootLayout,index=$RoughIndex,middle=$RoughMiddle,ring=$RoughRing,little=$RoughLittle) }
+
+IndexReplace = mesh() { add($ReplaceBox,width=$IndexWidth * .784377367,depth=$IndexDepth * .912964090,height=$RootSeat * 1.629629630,start=-$RootSeat * .406666667,at=($IndexX,$IndexY,$IndexZ)) }
+MiddleReplace = mesh() { add($ReplaceBox,width=$MiddleWidth * .743589744,depth=$MiddleDepth * .884433962,height=$RootSeat * 1.629629630,start=-$RootSeat * .444444444,at=($MiddleX,$MiddleY,$MiddleZ)) }
+RingReplace = mesh() { add($ReplaceBox,width=$RingWidth * .804750805,depth=$RingDepth * .943396226,height=$RootSeat * 1.629629630,start=-$RootSeat * .443703704,at=($RingX,$RingY,$RingZ)) }
+LittleReplace = mesh() { add($ReplaceBox,width=$LittleWidth * .868055556,depth=$LittleDepth * 1.132075472,height=$RootSeat * 1.629629630,start=-$RootSeat * .438518519,at=($LittleX,$LittleY,$LittleZ)) }
+ThumbReplace = mesh() { add($ReplaceBox,width=$ThumbWidth * .629370629,depth=$ThumbDepth * .812368973,height=$RootSeat * 2,start=$RootSeat * .566666667,at=($ThumbX,$ThumbY,$ThumbZ),rotate=(0,46 * $Handedness,0)) }
+
+BoxVolume = mesh(width=10,depth=4,height=5,corner=.5) { rect(w=$width,h=$depth) round($corner) extrude(height=$height) }
+HandTransition = mesh() {
+  add($BoxVolume,width=$PalmWidth * 1.538461538,depth=$PalmDepth * 1.811320755,height=$PalmLength * .588235294,corner=$PalmWidth * .076923077,at=(0,0,$PalmLength * .682352941))
+  add($BoxVolume,width=$PalmWidth * .641025641,depth=$PalmDepth * 1.509433962,height=$PalmLength * .682352941,corner=$PalmWidth * .064102564,at=($ThumbX - $PalmWidth * .025641026 * $Handedness,0,$PalmLength * .094117647))
+  add($BoxVolume,width=$PalmWidth * .512820513,depth=$PalmDepth * 1.509433962,height=$PalmLength * .376470588,corner=$PalmWidth * .057692308,at=($ThumbX,0,$PalmLength * .647058824))
+}
+
+PalmCore = mesh() {
+  curve((-$PalmWidth * .48,0),(-$PalmWidth * .32,-$PalmDepth * .34),(0,-$PalmDepth * .40),($PalmWidth * .32,-$PalmDepth * .30),($PalmWidth * .48,0),($PalmWidth * .32,$PalmDepth * .30),(0,$PalmDepth * .40),(-$PalmWidth * .32,$PalmDepth * .30),loop=true)
+  $Knuckles = plane
+  curve((-$PalmWidth * .44,0),(-$PalmWidth * .30,-$PalmDepth * .20),(0,-$PalmDepth * .25),($PalmWidth * .30,-$PalmDepth * .19),($PalmWidth * .44,0),($PalmWidth * .30,$PalmDepth * .25),(0,$PalmDepth * .31),(-$PalmWidth * .30,$PalmDepth * .25),loop=true)
+  $Crown = plane
+  curve((-$PalmWidth * .46,0),(-$PalmWidth * .30,-$PalmDepth * (.42 + $PalmPads * .13)),(0,-$PalmDepth * (.43 - $PalmPads * .19)),($PalmWidth * .32,-$PalmDepth * (.36 + $PalmPads * .07)),($PalmWidth * .49,0),($PalmWidth * .31,$PalmDepth * .32),(0,$PalmDepth * (.40 + $PalmPads * .05)),(-$PalmWidth * .30,$PalmDepth * .32),loop=true)
+  $PalmMiddleSection = plane
+  curve((-$PalmWidth * .48,0),(-$PalmWidth * .34,-$PalmDepth * (.40 + $PalmPads * .20)),(0,-$PalmDepth * (.46 - $PalmPads * .12)),($PalmWidth * .34,-$PalmDepth * (.36 + $PalmPads * .10)),($PalmWidth * .47,0),($PalmWidth * .32,$PalmDepth * .31),(0,$PalmDepth * (.39 + $PalmPads * .06)),(-$PalmWidth * .34,$PalmDepth * .32),loop=true)
+  $Thenar = plane
+  curve((-$WristWidth * .67,0),(-$WristWidth * .49,-$WristDepth * .35),(0,-$WristDepth * .50),($WristWidth * .35,-$WristDepth * .35),($WristWidth * .50,0),($WristWidth * .35,$WristDepth * .35),(0,$WristDepth * .50),(-$WristWidth * .49,$WristDepth * .35),loop=true)
+  loft(to=$Thenar,at=(0,0,$PalmLength * .36),profile=$Profiles.SCurve)
+  loft(to=$PalmMiddleSection,at=(0,0,$PalmLength * .56),profile=$Profiles.SCurve)
+  loft(to=$Knuckles,at=(0,0,$PalmLength * .83),profile=$Profiles.SCurve)
+  loft(to=$Crown,at=(0,0,$PalmLength * .98),rotate=(0,-8,0),profile=$Profiles.SCurve)
+}
+Palm = mesh() {
+  if ($Handedness < 0) { add($PalmCore,mirror=X) } else { add($PalmCore) }
+  remesh($PalmResolution)
+  add($RoughDigits,join=blend,falloff=$PalmWidth * .041025641)
+  if ($PalmFinish > 0) { relax($PalmFinish) }
+  save($RI) [in=$IndexReplace]
+  save($RM) [in=$MiddleReplace]
+  save($RR) [in=$RingReplace]
+  save($RL) [in=$LittleReplace]
+  save($RT) [in=$ThumbReplace]
+  save($Transition) [in=$HandTransition,!$RI,!$RM,!$RR,!$RL,!$RT]
+  socket(IndexBase,at=($IndexX,$IndexY,$IndexZ),facing=(-.069756474 * $Handedness,0,.997564050),up=(.997564050,0,.069756474 * $Handedness),type='organic/digit-root@1',transition=$Transition,replace=$RI)
+  socket(MiddleBase,at=($MiddleX,$MiddleY,$MiddleZ),facing=+Z,up=+X,type='organic/digit-root@1',transition=$Transition,replace=$RM)
+  socket(RingBase,at=($RingX,$RingY,$RingZ),facing=(.052335956 * $Handedness,0,.998629535),up=(.998629535,0,-.052335956 * $Handedness),type='organic/digit-root@1',transition=$Transition,replace=$RR)
+  socket(LittleBase,at=($LittleX,$LittleY,$LittleZ),facing=(.173648178 * $Handedness,0,.984807753),up=(.984807753,0,-.173648178 * $Handedness),type='organic/digit-root@1',transition=$Transition,replace=$RL)
+  socket(ThumbBase,at=($ThumbX,$ThumbY,$ThumbZ),facing=(-.719339800 * $Handedness,0,.694658370),up=(.694658370,0,.719339800 * $Handedness),type='organic/digit-root@1',transition=$Transition,replace=$RT)
+  material($Skin)
+}
+
+DigitPose = instruction(length=8.3,curl=0) {
+  # The joint bends above the attachment collar; its base remains authored exactly.
+  if ($curl != 0) { bend(angle=-$curl,around=X,along=Z,at=(0,0,$length * .50 - $RootSeat),extent=$length * .08,fixed=base) }
+}
+PalmPose = instruction() {
+  if ($PalmCup != 0) { bend(angle=$PalmCup,around=Z,along=X,at=(0,0,0),extent=$PalmWidth / 2) }
+}
+FingerSurface = mesh(length=8.3,width=1.95,depth=1.7) {
+  add($Anatomy.SkinForm,length=$length,width=$width,depth=$depth,knuckle=1.035,pad=1.03,detail=0,with_nail=0)
+}
+BareFinger = mesh(length=8.3,width=1.95,depth=1.7) {
+  add($FingerSurface,length=$length,width=$width,depth=$depth,at=(0,0,-$RootSeat))
+}
+Finger = mesh(host=$StraightMiddle,length=8.3,width=1.95,depth=1.7,nail_width=1.15,curl=0) {
+  add($host)
+  if ($Nails > 0) { subtract($NailPocket,host=$host,length=$length,width=$width,depth=$depth,nail_width=$nail_width) }
+  $DigitPose(length=$length,curl=$curl)
+  socket(Root,at=(0,0,0),facing=-Z,up=+X,type='organic/digit-root@1')
+  material($Skin)
+}
+Index = mesh() { add($Finger,host=$StraightIndex,length=$IndexLength,width=$IndexWidth,depth=$IndexDepth,nail_width=$IndexNailWidth,curl=$IndexCurl) }
+Middle = mesh() { add($Finger,host=$StraightMiddle,length=$MiddleLength,width=$MiddleWidth,depth=$MiddleDepth,nail_width=$MiddleNailWidth,curl=$MiddleCurl) }
+Ring = mesh() { add($Finger,host=$StraightRing,length=$RingLength,width=$RingWidth,depth=$RingDepth,nail_width=$RingNailWidth,curl=$RingCurl) }
+Little = mesh() { add($Finger,host=$StraightLittle,length=$LittleLength,width=$LittleWidth,depth=$LittleDepth,nail_width=$LittleNailWidth,curl=$LittleCurl) }
+ThumbForm = mesh() {
+  add($Digits.Thumb,length=$ThumbLength,width=$ThumbWidth,depth=$ThumbDepth,detail=0)
+  remesh($ThumbWidth * .02)
+  relax($ThumbWidth * .04)
+  place(by=(0,0,-$RootSeat))
+}
+Thumb = mesh() {
+  add($ThumbForm)
+  if ($Nails > 0) { subtract($NailPocket,host=$ThumbForm,length=$ThumbLength,width=$ThumbWidth,depth=$ThumbDepth,nail_width=$ThumbNailWidth) }
+  $DigitPose(length=$ThumbLength,curl=$ThumbCurl)
+  socket(Root,at=(0,0,0),facing=-Z,up=+X,type='organic/digit-root@1')
+  material($Skin)
+}
+
+HandSkin = mesh() {
+  palm = add($Palm)
+  thumb = add($Thumb,join=organic,into=$palm.ThumbBase,using=Root,fit=frame)
+  index = add($Index,join=organic,into=$palm.IndexBase,using=Root,fit=frame)
+  middle = add($Middle,join=organic,into=$palm.MiddleBase,using=Root,fit=frame)
+  ring = add($Ring,join=organic,into=$palm.RingBase,using=Root,fit=frame)
+  little = add($Little,join=organic,into=$palm.LittleBase,using=Root,fit=frame)
+  material($Skin)
+  uv(none)
+  $PalmPose()
+  socket(Wrist,at=(0,0,0),facing=-Z,up=+X)
+}
+
+# Fitting happens on each original retained digit, never on a changing palm.
+# The plate length increases only at the distal end; bed_start/bed_end stay fixed.
+# Fit one open surface first, then give it thickness. Transporting both sides
+# of a thin closed plate independently can fold its rim on a curved nail bed.
+NailBlank = mesh(width=1.15,length=2,arch=.16) {
+  rect(w=$width,h=$length)
+  round(($width * .35,$width * .35,$width * .20,$width * .20))
+  fill()
+  bend(radius=$width * $width / (8 * $arch) + $arch / 2,around=-Y,along=X,at=(0,0,0))
+}
+PlacedNailSurface = mesh(length=8.3,width=1.95,depth=1.7,nail_width=1.15,extension=0,tip_end=$NailTipEnd) {
+  $BedStart = $length * .78 - $RootSeat
+  $Tip = $length * $tip_end - $RootSeat + $extension
+  add($NailBlank,width=$nail_width,length=$Tip - $BedStart,arch=$width * .085,rotate=(90,0,0),at=(0,$depth * .55,($BedStart + $Tip) / 2))
+}
+FittedNailSurface = mesh(host=$StraightMiddle,length=8.3,width=1.95,depth=1.7,nail_width=1.15,extension=0,bed_end=.91) {
+  $BedEnd = $length * $bed_end - $RootSeat
+  plate = add($PlacedNailSurface,length=$length,width=$width,depth=$depth,nail_width=$nail_width,extension=$extension)
+  # The fitted underside sits just above the pocket floor's finishing clearance.
+  # The free edge follows the bed but is not shrinkwrapped around the pulp.
+  conform(to=$host,within=$depth,project=-Y) [top,below=$BedEnd,carry=$plate,smooth=$width * .16]
+  place(by=(0,-$NailSeatDepth,0))
+  # Emerge from the recessed bed before extending over uncut fingertip skin.
+  # Only the distal half follows this pull; the proximal seat stays fitted.
+  save($Exit) [above=$length * (.78 + $bed_end) / 2 - $RootSeat]
+  # The free edge clears retained pulp by the same fitting allowance as the
+  # pocket floor; landing exactly on the old skin can intersect its curved rim.
+  pull(by=$NailSeatDepth + $NailPocketClearance,along=Y,slope=$Profiles.SCurve) [above=$BedEnd,carry=$Exit,smooth=$width * .16]
+  if ($NailFinish > 0) { relax($NailFinish) }
+}
+NailPocket = mesh(host=$StraightMiddle,length=8.3,width=1.95,depth=1.7,nail_width=1.15) {
+  add($PlacedNailSurface,length=$length,width=$width,depth=$depth,nail_width=$nail_width,tip_end=$NailPocketEnd)
+  # Retain the rounded tool end, terminating before the pulp turns away.
+  # A plane-clipped tool closes against the leaning skin in sharp corner wedges.
+  # No extension is passed: lengthening the nail cannot lengthen this pocket.
+  shell($NailCutterThickness)
+  # Form the thick tool before landing its floor. Keep its outer cap clear of
+  # the skin instead of offsetting a fitted surface's varying normals outward.
+  conform(to=$host,within=$depth,project=-Y) [top,facing=-Y,carry=side,smooth=$width * .16]
+  # Recess along the fitting direction. A normal offset also slides the outline
+  # sideways at a curved fingertip, making near-tangent wedges at its corners.
+  place(by=(0,-$NailSeatDepth - $NailPocketClearance,0))
+}
+DigitNail = mesh(host=$StraightMiddle,length=8.3,width=1.95,depth=1.7,nail_width=1.15,extension=.15,bed_end=.91,curl=0) {
+  add($FittedNailSurface,host=$host,length=$length,width=$width,depth=$depth,nail_width=$nail_width,extension=$extension,bed_end=$bed_end)
+  shell($NailThickness)
+  $DigitPose(length=$length,curl=$curl)
+  material($Nail)
+}
+StraightIndex = mesh() { add($BareFinger,length=$IndexLength,width=$IndexWidth,depth=$IndexDepth) }
+StraightMiddle = mesh() { add($BareFinger,length=$MiddleLength,width=$MiddleWidth,depth=$MiddleDepth) }
+StraightRing = mesh() { add($BareFinger,length=$RingLength,width=$RingWidth,depth=$RingDepth) }
+StraightLittle = mesh() { add($BareFinger,length=$LittleLength,width=$LittleWidth,depth=$LittleDepth) }
+IndexNail = mesh() { add($DigitNail,host=$StraightIndex,length=$IndexLength,width=$IndexWidth,depth=$IndexDepth,nail_width=$IndexNailWidth,extension=$IndexNailLength,bed_end=$NailBedEnd,curl=$IndexCurl) }
+MiddleNail = mesh() { add($DigitNail,host=$StraightMiddle,length=$MiddleLength,width=$MiddleWidth,depth=$MiddleDepth,nail_width=$MiddleNailWidth,extension=$MiddleNailLength,bed_end=$NailBedEnd,curl=$MiddleCurl) }
+RingNail = mesh() { add($DigitNail,host=$StraightRing,length=$RingLength,width=$RingWidth,depth=$RingDepth,nail_width=$RingNailWidth,extension=$RingNailLength,bed_end=$NailBedEnd,curl=$RingCurl) }
+LittleNail = mesh() { add($DigitNail,host=$StraightLittle,length=$LittleLength,width=$LittleWidth,depth=$LittleDepth,nail_width=$LittleNailWidth,extension=$LittleNailLength,bed_end=$NailBedEnd,curl=$LittleCurl) }
+ThumbNail = mesh() { add($DigitNail,host=$ThumbForm,length=$ThumbLength,width=$ThumbWidth,depth=$ThumbDepth,nail_width=$ThumbNailWidth,extension=$ThumbNailLength,bed_end=$ThumbNailBedEnd,curl=$ThumbCurl) }
+HandNails = mesh() { add($RootLayout,index=$IndexNail,middle=$MiddleNail,ring=$RingNail,little=$LittleNail,thumb=$ThumbNail) $PalmPose() }
+
+Hand = mesh() {
+  add($HandSkin)
+  if ($Nails > 0) {
+    nails = add($HandNails,join=none)
+  }
+}

@@ -1,0 +1,62 @@
+gc 1  kind:widget_blueprint  asset:/Game/UI/WBP_FixtureScreen  sig:3f9a1c7e  bin:9c4e17ab
+parent: /Script/UMG.UserWidget
+omits: components cdo_defaults timelines delegate_signatures
+source: OraStudio 5.7.4  ir: widgetir/2 blueprintir/2
+
+defaults {
+  replicated = false
+  instance_editable = false
+}
+
+properties {
+  Health: float = 100.0
+  Username: text = text("Guest") [instance_editable]
+  # a variable legitimately named n0. The statement alias below escapes to n0_
+  n0: int = 0
+}
+
+widgets {
+  design DesignTimeSize=(X=1920.000000,Y=1080.000000)
+
+  Root = CanvasPanel()
+  {
+    Warning = TextBlock(Text=text("{ not a block }"))
+    `Handle (Pull) }` = Button(variable=true)
+    {
+      HandleLabel = TextBlock(Text=text("Pull"))
+    }
+    slot Footer
+    {
+      Legal = TextBlock(Text=text("(c) Ora", ns="UI", key="legal_line"))
+    }
+  }
+}
+
+graph {
+  eventgraph EventGraph  sig:8f3ac21b {
+    c0 = comment("Login path") color(0.20,0.60,1.00) covers[n1, n2]
+
+    n0_ = VariableGet n0()
+    // Bound from the Designer. The handler is a graph node, never a ui_apply payload
+    n1 = Event OnClicked_Submit() : ->n2
+    n2 = VariableSet Username(Value=n0_.n0) : ->_
+    # UNSUPPORTED: K2Node_Timeline 'Fade' has no IR model, and it has a } in this note
+  }
+
+  construction UserConstructionScript  sig:0c4d19aa {
+  }
+}
+
+functions {
+  function CalculateHealth  sig:1a2b3c4d {
+    input {
+      BaseHealth: float = 0.0
+    }
+    output {
+      TotalHealth: float
+    }
+
+    n0 = FunctionEntry() : ->n1
+    n1 = FunctionResult(TotalHealth=n0.BaseHealth)
+  }
+}

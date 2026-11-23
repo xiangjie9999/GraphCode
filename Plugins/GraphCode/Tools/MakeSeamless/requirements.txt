@@ -1,0 +1,5 @@
+numpy>=1.24
+# 4.x: the 5.0 wheels are built without OpenEXR (measured 2026-10-14); 4.x reads and writes .exr
+opencv-python-headless>=4.8,<5
+# optional, only for --seam graphcut (falls back to the dp seam without it):
+# PyMaxflow>=1.3

@@ -1,0 +1,1732 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "generator": "contact_resting_controls.py",
+  "source_sha256": "64e4dc76bfc2ec749be4e95394d7e8ee83bbbad28109225f5478d72ce9a6c458",
+  "shared_helper_sha256": "5c3d41d630c698b3c8752e5a582dfa87e1a91fd36c937fdc7a08e9aaac28724c",
+  "contract": {
+    "units": "cm; time normalized to one proposed linear sweep",
+    "proof": "A fixed axis n separates every cross-pair of feature vertices by their radii at BOTH trajectory endpoints. Time and barycentric interpolation preserve each inequality, so every intermediate convex feature pair is separated.",
+    "predicate": "For each endpoint/vertex pair: s=n dot(Ai-Bj), r=hi+hj. Require n!=0, s>=0 and s^2>=r^2*(n dot n). No approximate normalization or sqrt is needed.",
+    "precision": "Oracle uses exact rational arithmetic on the binary64 values loaded from JSON. The oblique zero-margin fixture uses only binary-exact integer/half coordinates. Production needs a conservative filtered/exact predicate; an arbitrary +epsilon acceptance is not a proof.",
+    "behavior": "Certified pair may bypass a conservative CCD query. NeedsCCD does not mean impact: run CCD or find another valid certificate. Never exclude on initial separating/tangential velocity alone.",
+    "partial_advance": "Useful only for a positive certified fraction; a repeated zero at resting contact is not fixed by reattempting partial progress.",
+    "clearance": "Adding delta changes the constraint target. No universal delta=TI_tolerance relation is established; retain the actual physical gap and separately specify any intentional clearance.",
+    "limits": "Local primitive-pair proof; still include all relevant swept broad-phase pairs. Linear vertex trajectories and constant per-vertex radii only. Not a proof of production implementation."
+  },
+  "cases": [
+    {
+      "id": "resting_point_slides_on_triangle",
+      "A_start": [
+        [
+          -0.5,
+          0,
+          1
+        ]
+      ],
+      "A_end": [
+        [
+          0.5,
+          0,
+          1
+        ]
+      ],
+      "B_start": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "B_end": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "half_thickness_A": [
+        0.5
+      ],
+      "half_thickness_B": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "candidate_separating_axis": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "FullSweepCertified",
+        "full_sweep_certified": true,
+        "checks": [
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          }
+        ],
+        "axis_norm_squared": "1",
+        "failure_is_not_collision": true
+      }
+    },
+    {
+      "id": "resting_cord_segment_slides_on_triangle",
+      "A_start": [
+        [
+          -0.5,
+          -0.5,
+          1
+        ],
+        [
+          -0.5,
+          0.5,
+          1
+        ]
+      ],
+      "A_end": [
+        [
+          0.5,
+          -0.5,
+          1
+        ],
+        [
+          0.5,
+          0.5,
+          1
+        ]
+      ],
+      "B_start": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "B_end": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "half_thickness_A": [
+        0.5,
+        0.5
+      ],
+      "half_thickness_B": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "candidate_separating_axis": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "FullSweepCertified",
+        "full_sweep_certified": true,
+        "checks": [
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 1,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 1,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 1,
+            "vertex_b": 2,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 1,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 1,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 1,
+            "vertex_b": 2,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          }
+        ],
+        "axis_norm_squared": "1",
+        "failure_is_not_collision": true
+      }
+    },
+    {
+      "id": "resting_edge_edge_sliding",
+      "A_start": [
+        [
+          -1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ]
+      ],
+      "A_end": [
+        [
+          -1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "B_start": [
+        [
+          0,
+          -2,
+          0
+        ],
+        [
+          0,
+          2,
+          0
+        ]
+      ],
+      "B_end": [
+        [
+          0,
+          -2,
+          0
+        ],
+        [
+          0,
+          2,
+          0
+        ]
+      ],
+      "half_thickness_A": [
+        0.5,
+        0.5
+      ],
+      "half_thickness_B": [
+        0.5,
+        0.5
+      ],
+      "candidate_separating_axis": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "FullSweepCertified",
+        "full_sweep_certified": true,
+        "checks": [
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 1,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 1,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 1,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 1,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          }
+        ],
+        "axis_norm_squared": "1",
+        "failure_is_not_collision": true
+      }
+    },
+    {
+      "id": "resting_point_separates",
+      "A_start": [
+        [
+          -0.5,
+          0,
+          1
+        ]
+      ],
+      "A_end": [
+        [
+          0.5,
+          0,
+          1.125
+        ]
+      ],
+      "B_start": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "B_end": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "half_thickness_A": [
+        0.5
+      ],
+      "half_thickness_B": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "candidate_separating_axis": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "FullSweepCertified",
+        "full_sweep_certified": true,
+        "checks": [
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "9/8",
+            "squared_margin": "17/64",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "9/8",
+            "squared_margin": "17/64",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "9/8",
+            "squared_margin": "17/64",
+            "proved": true
+          }
+        ],
+        "axis_norm_squared": "1",
+        "failure_is_not_collision": true
+      }
+    },
+    {
+      "id": "resting_point_closes_immediately",
+      "A_start": [
+        [
+          -0.5,
+          0,
+          1
+        ]
+      ],
+      "A_end": [
+        [
+          0.5,
+          0,
+          0.999
+        ]
+      ],
+      "B_start": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "B_end": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "half_thickness_A": [
+        0.5
+      ],
+      "half_thickness_B": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "candidate_separating_axis": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "NeedsCCD",
+        "full_sweep_certified": false,
+        "checks": [
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "8998192055486251/9007199254740992",
+            "squared_margin": "-162178147190798900680955109063/81129638414606681695789005144064",
+            "proved": false
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "8998192055486251/9007199254740992",
+            "squared_margin": "-162178147190798900680955109063/81129638414606681695789005144064",
+            "proved": false
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "8998192055486251/9007199254740992",
+            "squared_margin": "-162178147190798900680955109063/81129638414606681695789005144064",
+            "proved": false
+          }
+        ],
+        "axis_norm_squared": "1",
+        "failure_is_not_collision": true,
+        "actual_motion": "Violates gap immediately after t=0",
+        "first_contact_time": 0.0
+      }
+    },
+    {
+      "id": "resting_sliding_rotated_axis",
+      "A_start": [
+        [
+          -1.0,
+          2.0,
+          -0.5
+        ],
+        [
+          -1.0,
+          2.0,
+          0.5
+        ]
+      ],
+      "A_end": [
+        [
+          3.0,
+          -1.0,
+          -0.5
+        ],
+        [
+          3.0,
+          -1.0,
+          0.5
+        ]
+      ],
+      "B_start": [
+        [
+          -16,
+          12.0,
+          -4
+        ],
+        [
+          16,
+          -12.0,
+          -4
+        ],
+        [
+          0,
+          0.0,
+          4
+        ]
+      ],
+      "B_end": [
+        [
+          -16,
+          12.0,
+          -4
+        ],
+        [
+          16,
+          -12.0,
+          -4
+        ],
+        [
+          0,
+          0.0,
+          4
+        ]
+      ],
+      "half_thickness_A": [
+        0.5,
+        0.5
+      ],
+      "half_thickness_B": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "candidate_separating_axis": [
+        3,
+        4,
+        0
+      ],
+      "expected": {
+        "status": "FullSweepCertified",
+        "full_sweep_certified": true,
+        "checks": [
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "5",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "5",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "5",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 1,
+            "vertex_b": 0,
+            "axis_dot": "5",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 1,
+            "vertex_b": 1,
+            "axis_dot": "5",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 1,
+            "vertex_b": 2,
+            "axis_dot": "5",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "5",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "5",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "5",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 1,
+            "vertex_b": 0,
+            "axis_dot": "5",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 1,
+            "vertex_b": 1,
+            "axis_dot": "5",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 1,
+            "vertex_b": 2,
+            "axis_dot": "5",
+            "squared_margin": "0",
+            "proved": true
+          }
+        ],
+        "axis_norm_squared": "25",
+        "failure_is_not_collision": true
+      }
+    },
+    {
+      "id": "initially_separating_but_later_impact",
+      "A_start": [
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "A_end": [
+        [
+          1,
+          0,
+          1.1
+        ]
+      ],
+      "B_start": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "B_end": [
+        [
+          -4,
+          -4,
+          -4
+        ],
+        [
+          4,
+          -4,
+          4
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "half_thickness_A": [
+        0.5
+      ],
+      "half_thickness_B": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "candidate_separating_axis": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "NeedsCCD",
+        "full_sweep_certified": false,
+        "checks": [
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "1",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "11484179049794765/2251799813685248",
+            "squared_margin": "126815766046832073919401808583721/5070602400912917605986812821504",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "-6530219459687219/2251799813685248",
+            "squared_margin": "37573163790764716848274499132457/5070602400912917605986812821504",
+            "proved": false
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "2476979795053773/2251799813685248",
+            "squared_margin": "1064826504191713688049148714025/5070602400912917605986812821504",
+            "proved": true
+          }
+        ],
+        "axis_norm_squared": "1",
+        "failure_is_not_collision": true,
+        "initial_distance": 1.0,
+        "initial_distance_derivative": 0.1,
+        "first_return_to_gap_time": 0.06669133062030343,
+        "end_distance": 0.07071067811865475,
+        "distance_formula": "(1+0.1*t-t^2)/sqrt(1+t^2); closest point remains inside the triangle",
+        "root_polynomial": "t*(0.2-2.99*t-0.2*t^2+t^3)=0",
+        "reject_initial_velocity_only_exclusion": true
+      }
+    },
+    {
+      "id": "variable_radius_supported_slide",
+      "A_start": [
+        [
+          -0.5,
+          0,
+          0.5
+        ]
+      ],
+      "A_end": [
+        [
+          0.5,
+          0,
+          0.5
+        ]
+      ],
+      "B_start": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "B_end": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "half_thickness_A": [
+        0.2
+      ],
+      "half_thickness_B": [
+        0.1,
+        0.3,
+        0.2
+      ],
+      "candidate_separating_axis": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "FullSweepCertified",
+        "full_sweep_certified": true,
+        "checks": [
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "1/2",
+            "squared_margin": "207691874341393092170852926341775/1298074214633706907132624082305024",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "1/2",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "1/2",
+            "squared_margin": "7301667457314599911469129704407/81129638414606681695789005144064",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "1/2",
+            "squared_margin": "207691874341393092170852926341775/1298074214633706907132624082305024",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "1/2",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "1/2",
+            "squared_margin": "7301667457314599911469129704407/81129638414606681695789005144064",
+            "proved": true
+          }
+        ],
+        "axis_norm_squared": "1",
+        "failure_is_not_collision": true
+      }
+    },
+    {
+      "id": "clear_pair_with_unhelpful_axis",
+      "A_start": [
+        [
+          0,
+          0,
+          2
+        ]
+      ],
+      "A_end": [
+        [
+          0.5,
+          0,
+          2
+        ]
+      ],
+      "B_start": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "B_end": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "half_thickness_A": [
+        0.5
+      ],
+      "half_thickness_B": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "candidate_separating_axis": [
+        1,
+        0,
+        0
+      ],
+      "expected": {
+        "status": "NeedsCCD",
+        "full_sweep_certified": false,
+        "checks": [
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "4",
+            "squared_margin": "15",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "-4",
+            "squared_margin": "15",
+            "proved": false
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "0",
+            "squared_margin": "-1",
+            "proved": false
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "9/2",
+            "squared_margin": "77/4",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "-7/2",
+            "squared_margin": "45/4",
+            "proved": false
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "1/2",
+            "squared_margin": "-3/4",
+            "proved": false
+          }
+        ],
+        "axis_norm_squared": "1",
+        "failure_is_not_collision": true,
+        "actual_minimum_distance": 2.0,
+        "actual_motion": "Clear; certificate failure only requests another proof/CCD"
+      }
+    },
+    {
+      "id": "unnormalized_axis_must_not_fake_clearance",
+      "A_start": [
+        [
+          0,
+          0,
+          0.6
+        ]
+      ],
+      "A_end": [
+        [
+          0.5,
+          0,
+          0.6
+        ]
+      ],
+      "B_start": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "B_end": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "half_thickness_A": [
+        0.5
+      ],
+      "half_thickness_B": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "candidate_separating_axis": [
+        0,
+        0,
+        2
+      ],
+      "expected": {
+        "status": "NeedsCCD",
+        "full_sweep_certified": false,
+        "checks": [
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "5404319552844595/4503599627370496",
+            "squared_margin": "-51922968585348278447032784430039/20282409603651670423947251286016",
+            "proved": false
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "5404319552844595/4503599627370496",
+            "squared_margin": "-51922968585348278447032784430039/20282409603651670423947251286016",
+            "proved": false
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "5404319552844595/4503599627370496",
+            "squared_margin": "-51922968585348278447032784430039/20282409603651670423947251286016",
+            "proved": false
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "5404319552844595/4503599627370496",
+            "squared_margin": "-51922968585348278447032784430039/20282409603651670423947251286016",
+            "proved": false
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "5404319552844595/4503599627370496",
+            "squared_margin": "-51922968585348278447032784430039/20282409603651670423947251286016",
+            "proved": false
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "5404319552844595/4503599627370496",
+            "squared_margin": "-51922968585348278447032784430039/20282409603651670423947251286016",
+            "proved": false
+          }
+        ],
+        "axis_norm_squared": "4",
+        "failure_is_not_collision": true
+      }
+    },
+    {
+      "id": "zero_distance_declared_solid_face_sliding",
+      "A_start": [
+        [
+          -0.5,
+          -0.5,
+          0
+        ],
+        [
+          -0.5,
+          0.5,
+          0
+        ]
+      ],
+      "A_end": [
+        [
+          0.5,
+          -0.5,
+          0
+        ],
+        [
+          0.5,
+          0.5,
+          0
+        ]
+      ],
+      "B_start": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "B_end": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "half_thickness_A": [
+        0.0,
+        0.0
+      ],
+      "half_thickness_B": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "candidate_separating_axis": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "FullSweepCertified",
+        "full_sweep_certified": true,
+        "checks": [
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 1,
+            "vertex_b": 0,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 1,
+            "vertex_b": 1,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 1,
+            "vertex_b": 2,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 1,
+            "vertex_b": 0,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 1,
+            "vertex_b": 1,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 1,
+            "vertex_b": 2,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          }
+        ],
+        "axis_norm_squared": "1",
+        "failure_is_not_collision": true
+      },
+      "contact_side_source": "Explicit declared obstacle outward normal; solid occupies z<=0. Not inferred from zero closest-point difference."
+    },
+    {
+      "id": "zero_distance_declared_solid_face_inward",
+      "A_start": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "A_end": [
+        [
+          0.5,
+          0,
+          -0.125
+        ]
+      ],
+      "B_start": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "B_end": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "half_thickness_A": [
+        0.0
+      ],
+      "half_thickness_B": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "candidate_separating_axis": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "NeedsCCD",
+        "full_sweep_certified": false,
+        "checks": [
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 0,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "0",
+            "squared_margin": "0",
+            "proved": true
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 0,
+            "axis_dot": "-1/8",
+            "squared_margin": "1/64",
+            "proved": false
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 1,
+            "axis_dot": "-1/8",
+            "squared_margin": "1/64",
+            "proved": false
+          },
+          {
+            "endpoint": 1,
+            "vertex_a": 0,
+            "vertex_b": 2,
+            "axis_dot": "-1/8",
+            "squared_margin": "1/64",
+            "proved": false
+          }
+        ],
+        "axis_norm_squared": "1",
+        "failure_is_not_collision": true,
+        "actual_motion": "Enters forbidden solid immediately; do not use unsigned end distance as acceptance.",
+        "first_contact_time": 0.0
+      },
+      "contact_side_source": "Explicit declared obstacle outward normal; solid occupies z<=0."
+    },
+    {
+      "id": "zero_distance_unoriented_pair_has_no_side",
+      "A_start": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "A_end": [
+        [
+          0.5,
+          0,
+          0.125
+        ]
+      ],
+      "B_start": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "B_end": [
+        [
+          -4,
+          -4,
+          0
+        ],
+        [
+          4,
+          -4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ]
+      ],
+      "half_thickness_A": [
+        0.0
+      ],
+      "half_thickness_B": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "candidate_separating_axis": null,
+      "expected": {
+        "status": "NeedsContactSide",
+        "full_sweep_certified": false,
+        "reason": "No previous separating direction or declared obstacle side; being held alone does not supply one."
+      }
+    }
+  ]
+}

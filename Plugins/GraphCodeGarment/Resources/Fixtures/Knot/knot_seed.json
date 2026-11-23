@@ -1,0 +1,2443 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "generator": "knot_seed_controls.py",
+  "source_sha256": "7428bf9e434b43da15f41365ab0b4dcbf5d167b4b80c57b57578f2464dd27c61",
+  "shared_helper_sha256": "5c3d41d630c698b3c8752e5a582dfa87e1a91fd36c937fdc7a08e9aaac28724c",
+  "contract": {
+    "sign": "sign(facing dot (oriented projected over tangent cross under tangent)); positive facing depth is over. Guides oriented first to last.",
+    "ownership": "At a crossing vertex choose the outgoing segment with t=0; deduplicate incoming t=1 by station. Crossing requires four alternating local rays.",
+    "marks": "Each @over point must match exactly one transverse crossing branch. Both branches marked is contradictory. No mark and equal depth is unresolved, not an arbitrary default.",
+    "self_crossing": "One event contains two distinct branches of the same strand; over_strand alone cannot identify the over branch.",
+    "lift": "Increase only marked crossing vertices by powers of two from the radii sum +1e-6 until all interstrand/nonadjacent segment pairs pass. Bounded failure is unresolved; not a universal embedding algorithm.",
+    "model": "Coarse cut-free cord seeds; output rest lengths are construction lengths. Never overwrite existing authored material rest lengths with a lifted route.",
+    "reference": "https://www.siam.org/publications/siam-news/articles/topological-knot-mechanics/ Figure3b for granny/reef; cropped lower throw for this half-knot boundary. Overhand cut from a (2,3) torus trefoil.",
+    "scope": "Exact rational segment intersection on input coordinates; angle/ray and distance calculations are binary64 numerical controls. Not a robust production predicate, generic knot classifier, or tight solve."
+  },
+  "cases": [
+    {
+      "id": "half_knot",
+      "guides": [
+        {
+          "name": "A",
+          "points": [
+            [
+              6.0,
+              -3.0,
+              0.0
+            ],
+            [
+              4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              2.0,
+              -1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              -3.0,
+              0.0
+            ],
+            [
+              -4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -6.0,
+              -1.0,
+              0.0
+            ]
+          ],
+          "over": [
+            1,
+            5
+          ],
+          "radius_cm": 0.15
+        },
+        {
+          "name": "B",
+          "points": [
+            [
+              -6.0,
+              -3.0,
+              0.0
+            ],
+            [
+              -4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              -1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -2.0,
+              0.0
+            ],
+            [
+              2.0,
+              -3.0,
+              0.0
+            ],
+            [
+              4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              6.0,
+              -1.0,
+              0.0
+            ]
+          ],
+          "over": [
+            3
+          ],
+          "radius_cm": 0.15
+        }
+      ],
+      "facing": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "Accepted",
+        "crossings": [
+          {
+            "id": 0,
+            "projected_point": [
+              4.0,
+              -2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 1,
+                "t": 0.0,
+                "station": 1.0,
+                "at_vertex": true,
+                "marked_over": true
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 5,
+                "t": 0.0,
+                "station": 5.0,
+                "at_vertex": true,
+                "marked_over": false
+              }
+            ],
+            "over_branch": 0,
+            "over_strand": "A",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 1,
+            "projected_point": [
+              0.0,
+              -2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 3,
+                "t": 0.0,
+                "station": 3.0,
+                "at_vertex": true,
+                "marked_over": false
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 3,
+                "t": 0.0,
+                "station": 3.0,
+                "at_vertex": true,
+                "marked_over": true
+              }
+            ],
+            "over_branch": 1,
+            "over_strand": "B",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 2,
+            "projected_point": [
+              -4.0,
+              -2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 5,
+                "t": 0.0,
+                "station": 5.0,
+                "at_vertex": true,
+                "marked_over": true
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 1,
+                "t": 0.0,
+                "station": 1.0,
+                "at_vertex": true,
+                "marked_over": false
+              }
+            ],
+            "over_branch": 0,
+            "over_strand": "A",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          }
+        ],
+        "seed": {
+          "positions": [
+            [
+              [
+                6.0,
+                -3.0,
+                0.0
+              ],
+              [
+                4.0,
+                -2.0,
+                0.6000019999999999
+              ],
+              [
+                2.0,
+                -1.0,
+                0.0
+              ],
+              [
+                0.0,
+                -2.0,
+                0.0
+              ],
+              [
+                -2.0,
+                -3.0,
+                0.0
+              ],
+              [
+                -4.0,
+                -2.0,
+                0.6000019999999999
+              ],
+              [
+                -6.0,
+                -1.0,
+                0.0
+              ]
+            ],
+            [
+              [
+                -6.0,
+                -3.0,
+                0.0
+              ],
+              [
+                -4.0,
+                -2.0,
+                0.0
+              ],
+              [
+                -2.0,
+                -1.0,
+                0.0
+              ],
+              [
+                0.0,
+                -2.0,
+                0.6000019999999999
+              ],
+              [
+                2.0,
+                -3.0,
+                0.0
+              ],
+              [
+                4.0,
+                -2.0,
+                0.0
+              ],
+              [
+                6.0,
+                -1.0,
+                0.0
+              ]
+            ]
+          ],
+          "lift_scale": 2.0,
+          "naive_crossing_height_check": {
+            "pair_count": 56,
+            "worst": {
+              "strands": [
+                0,
+                1
+              ],
+              "segments": [
+                0,
+                5
+              ],
+              "parameters": [
+                0.9726441995174796,
+                0.016413480289512172
+              ],
+              "distance_cm": 0.29586916288127335,
+              "surface_gap_cm": -0.004130837118726638
+            }
+          },
+          "all_segment_check": {
+            "pair_count": 56,
+            "worst": {
+              "strands": [
+                0,
+                1
+              ],
+              "segments": [
+                1,
+                4
+              ],
+              "parameters": [
+                0.10112420149031233,
+                0.9393254791058125
+              ],
+              "distance_cm": 0.5688562602002366,
+              "surface_gap_cm": 0.26885626020023656
+            }
+          },
+          "rest_lengths_cm": [
+            [
+              2.3151678988799063,
+              2.3151678988799063,
+              2.23606797749979,
+              2.23606797749979,
+              2.3151678988799063,
+              2.3151678988799063
+            ],
+            [
+              2.23606797749979,
+              2.23606797749979,
+              2.3151678988799063,
+              2.3151678988799063,
+              2.23606797749979,
+              2.23606797749979
+            ]
+          ],
+          "status": "ValidSeparatedSeed",
+          "scope": "Cut-free construction only. Adjacent same-cord edges share their material neighborhood; every nonadjacent pair is checked for these coarse fixtures. No sweep from the intersecting planar drawing or smooth tube/curvature proof is claimed."
+        }
+      }
+    },
+    {
+      "id": "overhand_one_cord",
+      "guides": [
+        {
+          "name": "A",
+          "points": [
+            [
+              8.22935248711101,
+              8.473258620287806,
+              0.0
+            ],
+            [
+              4.507982224173681,
+              7.692772608464093,
+              0.0
+            ],
+            [
+              0.4987701776184177,
+              6.8519173052614395,
+              0.0
+            ],
+            [
+              -2.9614885991086854,
+              4.100677885406619,
+              0.0
+            ],
+            [
+              -7.939305597481141,
+              2.0035542762480167,
+              0.0
+            ],
+            [
+              -8.916127616553826,
+              0.05764082171104119,
+              0.0
+            ],
+            [
+              -11.817488193215373,
+              -5.722118921981592,
+              0.0
+            ],
+            [
+              -6.116251490066511,
+              -13.63257577107017,
+              0.0
+            ],
+            [
+              3.223380974449211,
+              -11.363457620678696,
+              0.0
+            ],
+            [
+              4.408145392380139,
+              -7.750413430175138,
+              0.0
+            ],
+            [
+              5.684549362177411,
+              -3.8579062970983493,
+              0.0
+            ],
+            [
+              5.032035521053528,
+              0.5143854171427988,
+              0.0
+            ],
+            [
+              5.704781699832297,
+              5.873863197702644,
+              0.0
+            ],
+            [
+              4.507982224173681,
+              7.692772608464093,
+              0.0
+            ],
+            [
+              0.9532437466960069,
+              13.095304445237977,
+              0.0
+            ],
+            [
+              -8.748031191729748,
+              12.113117051867107,
+              0.0
+            ],
+            [
+              -11.452733461560232,
+              2.890199000390889,
+              0.0
+            ],
+            [
+              -8.916127616553826,
+              0.05764082171104119,
+              0.0
+            ],
+            [
+              -6.183319539795821,
+              -2.9940110081630964,
+              0.0
+            ],
+            [
+              -2.070546921944843,
+              -4.61506330254942,
+              0.0
+            ],
+            [
+              2.234523897648852,
+              -7.877417473950674,
+              0.0
+            ],
+            [
+              4.408145392380139,
+              -7.750413430175138,
+              0.0
+            ],
+            [
+              10.864244446519375,
+              -7.373185523256387,
+              0.0
+            ],
+            [
+              14.864282681796254,
+              1.5194587192030464,
+              0.0
+            ]
+          ],
+          "over": [
+            1,
+            9,
+            17
+          ],
+          "radius_cm": 0.15
+        }
+      ],
+      "facing": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "Accepted",
+        "crossings": [
+          {
+            "id": 0,
+            "projected_point": [
+              4.507982224173681,
+              7.692772608464093
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 1,
+                "t": 0.0,
+                "station": 1.0,
+                "at_vertex": true,
+                "marked_over": true
+              },
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 13,
+                "t": 0.0,
+                "station": 13.0,
+                "at_vertex": true,
+                "marked_over": false
+              }
+            ],
+            "over_branch": 0,
+            "over_strand": "A",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 1,
+            "projected_point": [
+              -8.916127616553826,
+              0.05764082171104119
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 5,
+                "t": 0.0,
+                "station": 5.0,
+                "at_vertex": true,
+                "marked_over": false
+              },
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 17,
+                "t": 0.0,
+                "station": 17.0,
+                "at_vertex": true,
+                "marked_over": true
+              }
+            ],
+            "over_branch": 1,
+            "over_strand": "A",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 2,
+            "projected_point": [
+              4.408145392380139,
+              -7.750413430175138
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 9,
+                "t": 0.0,
+                "station": 9.0,
+                "at_vertex": true,
+                "marked_over": true
+              },
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 21,
+                "t": 0.0,
+                "station": 21.0,
+                "at_vertex": true,
+                "marked_over": false
+              }
+            ],
+            "over_branch": 0,
+            "over_strand": "A",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          }
+        ],
+        "seed": {
+          "positions": [
+            [
+              [
+                8.22935248711101,
+                8.473258620287806,
+                0.0
+              ],
+              [
+                4.507982224173681,
+                7.692772608464093,
+                0.6000019999999999
+              ],
+              [
+                0.4987701776184177,
+                6.8519173052614395,
+                0.0
+              ],
+              [
+                -2.9614885991086854,
+                4.100677885406619,
+                0.0
+              ],
+              [
+                -7.939305597481141,
+                2.0035542762480167,
+                0.0
+              ],
+              [
+                -8.916127616553826,
+                0.05764082171104119,
+                0.0
+              ],
+              [
+                -11.817488193215373,
+                -5.722118921981592,
+                0.0
+              ],
+              [
+                -6.116251490066511,
+                -13.63257577107017,
+                0.0
+              ],
+              [
+                3.223380974449211,
+                -11.363457620678696,
+                0.0
+              ],
+              [
+                4.408145392380139,
+                -7.750413430175138,
+                0.6000019999999999
+              ],
+              [
+                5.684549362177411,
+                -3.8579062970983493,
+                0.0
+              ],
+              [
+                5.032035521053528,
+                0.5143854171427988,
+                0.0
+              ],
+              [
+                5.704781699832297,
+                5.873863197702644,
+                0.0
+              ],
+              [
+                4.507982224173681,
+                7.692772608464093,
+                0.0
+              ],
+              [
+                0.9532437466960069,
+                13.095304445237977,
+                0.0
+              ],
+              [
+                -8.748031191729748,
+                12.113117051867107,
+                0.0
+              ],
+              [
+                -11.452733461560232,
+                2.890199000390889,
+                0.0
+              ],
+              [
+                -8.916127616553826,
+                0.05764082171104119,
+                0.6000019999999999
+              ],
+              [
+                -6.183319539795821,
+                -2.9940110081630964,
+                0.0
+              ],
+              [
+                -2.070546921944843,
+                -4.61506330254942,
+                0.0
+              ],
+              [
+                2.234523897648852,
+                -7.877417473950674,
+                0.0
+              ],
+              [
+                4.408145392380139,
+                -7.750413430175138,
+                0.0
+              ],
+              [
+                10.864244446519375,
+                -7.373185523256387,
+                0.0
+              ],
+              [
+                14.864282681796254,
+                1.5194587192030464,
+                0.0
+              ]
+            ]
+          ],
+          "lift_scale": 2.0,
+          "naive_crossing_height_check": {
+            "pair_count": 231,
+            "worst": {
+              "strands": [
+                0,
+                0
+              ],
+              "segments": [
+                4,
+                16
+              ],
+              "parameters": [
+                0.9954306676310742,
+                0.9928604510057527
+              ],
+              "distance_cm": 0.29892814572699766,
+              "surface_gap_cm": -0.0010718542730023262
+            }
+          },
+          "all_segment_check": {
+            "pair_count": 231,
+            "worst": {
+              "strands": [
+                0,
+                0
+              ],
+              "segments": [
+                0,
+                12
+              ],
+              "parameters": [
+                0.9720406553558134,
+                0.9821059371397867
+              ],
+              "distance_cm": 0.5915547048494785,
+              "surface_gap_cm": 0.29155470484947843
+            }
+          },
+          "rest_lengths_cm": [
+            [
+              3.8493840349503623,
+              4.140147494374066,
+              4.420713646831248,
+              5.401535846532555,
+              2.1773287371210768,
+              6.467110319966388,
+              9.750868038622208,
+              9.611328303240507,
+              3.8493840349503614,
+              4.140147494374073,
+              4.42071364683125,
+              5.40153584653255,
+              2.1773287371210857,
+              6.467110319966382,
+              9.750868038622217,
+              9.611328303240507,
+              3.849384034950366,
+              4.1401474943740775,
+              4.42071364683124,
+              5.401535846532566,
+              2.1773287371210652,
+              6.467110319966395,
+              9.750868038622196
+            ]
+          ],
+          "status": "ValidSeparatedSeed",
+          "scope": "Cut-free construction only. Adjacent same-cord edges share their material neighborhood; every nonadjacent pair is checked for these coarse fixtures. No sweep from the intersecting planar drawing or smooth tube/curvature proof is claimed."
+        }
+      }
+    },
+    {
+      "id": "granny",
+      "guides": [
+        {
+          "name": "A",
+          "points": [
+            [
+              6.0,
+              -3.0,
+              0.0
+            ],
+            [
+              4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              2.0,
+              -1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              -3.0,
+              0.0
+            ],
+            [
+              -4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -6.0,
+              -1.0,
+              0.0
+            ],
+            [
+              -7.0,
+              0.0,
+              0.0
+            ],
+            [
+              -6.0,
+              1.0,
+              0.0
+            ],
+            [
+              -4.0,
+              2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              3.0,
+              0.0
+            ],
+            [
+              0.0,
+              2.0,
+              0.0
+            ],
+            [
+              2.0,
+              1.0,
+              0.0
+            ],
+            [
+              4.0,
+              2.0,
+              0.0
+            ],
+            [
+              6.0,
+              3.0,
+              0.0
+            ]
+          ],
+          "over": [
+            1,
+            5,
+            11
+          ],
+          "radius_cm": 0.15
+        },
+        {
+          "name": "B",
+          "points": [
+            [
+              -6.0,
+              -3.0,
+              0.0
+            ],
+            [
+              -4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              -1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -2.0,
+              0.0
+            ],
+            [
+              2.0,
+              -3.0,
+              0.0
+            ],
+            [
+              4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              6.0,
+              -1.0,
+              0.0
+            ],
+            [
+              7.0,
+              0.0,
+              0.0
+            ],
+            [
+              6.0,
+              1.0,
+              0.0
+            ],
+            [
+              4.0,
+              2.0,
+              0.0
+            ],
+            [
+              2.0,
+              3.0,
+              0.0
+            ],
+            [
+              0.0,
+              2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              1.0,
+              0.0
+            ],
+            [
+              -4.0,
+              2.0,
+              0.0
+            ],
+            [
+              -6.0,
+              3.0,
+              0.0
+            ]
+          ],
+          "over": [
+            3,
+            9,
+            13
+          ],
+          "radius_cm": 0.15
+        }
+      ],
+      "facing": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "Accepted",
+        "crossings": [
+          {
+            "id": 0,
+            "projected_point": [
+              4.0,
+              -2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 1,
+                "t": 0.0,
+                "station": 1.0,
+                "at_vertex": true,
+                "marked_over": true
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 5,
+                "t": 0.0,
+                "station": 5.0,
+                "at_vertex": true,
+                "marked_over": false
+              }
+            ],
+            "over_branch": 0,
+            "over_strand": "A",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 1,
+            "projected_point": [
+              0.0,
+              -2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 3,
+                "t": 0.0,
+                "station": 3.0,
+                "at_vertex": true,
+                "marked_over": false
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 3,
+                "t": 0.0,
+                "station": 3.0,
+                "at_vertex": true,
+                "marked_over": true
+              }
+            ],
+            "over_branch": 1,
+            "over_strand": "B",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 2,
+            "projected_point": [
+              -4.0,
+              -2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 5,
+                "t": 0.0,
+                "station": 5.0,
+                "at_vertex": true,
+                "marked_over": true
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 1,
+                "t": 0.0,
+                "station": 1.0,
+                "at_vertex": true,
+                "marked_over": false
+              }
+            ],
+            "over_branch": 0,
+            "over_strand": "A",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 3,
+            "projected_point": [
+              -4.0,
+              2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 9,
+                "t": 0.0,
+                "station": 9.0,
+                "at_vertex": true,
+                "marked_over": false
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 13,
+                "t": 0.0,
+                "station": 13.0,
+                "at_vertex": true,
+                "marked_over": true
+              }
+            ],
+            "over_branch": 1,
+            "over_strand": "B",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 4,
+            "projected_point": [
+              0.0,
+              2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 11,
+                "t": 0.0,
+                "station": 11.0,
+                "at_vertex": true,
+                "marked_over": true
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 11,
+                "t": 0.0,
+                "station": 11.0,
+                "at_vertex": true,
+                "marked_over": false
+              }
+            ],
+            "over_branch": 0,
+            "over_strand": "A",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 5,
+            "projected_point": [
+              4.0,
+              2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 13,
+                "t": 0.0,
+                "station": 13.0,
+                "at_vertex": true,
+                "marked_over": false
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 9,
+                "t": 0.0,
+                "station": 9.0,
+                "at_vertex": true,
+                "marked_over": true
+              }
+            ],
+            "over_branch": 1,
+            "over_strand": "B",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          }
+        ],
+        "seed": {
+          "positions": [
+            [
+              [
+                6.0,
+                -3.0,
+                0.0
+              ],
+              [
+                4.0,
+                -2.0,
+                0.6000019999999999
+              ],
+              [
+                2.0,
+                -1.0,
+                0.0
+              ],
+              [
+                0.0,
+                -2.0,
+                0.0
+              ],
+              [
+                -2.0,
+                -3.0,
+                0.0
+              ],
+              [
+                -4.0,
+                -2.0,
+                0.6000019999999999
+              ],
+              [
+                -6.0,
+                -1.0,
+                0.0
+              ],
+              [
+                -7.0,
+                0.0,
+                0.0
+              ],
+              [
+                -6.0,
+                1.0,
+                0.0
+              ],
+              [
+                -4.0,
+                2.0,
+                0.0
+              ],
+              [
+                -2.0,
+                3.0,
+                0.0
+              ],
+              [
+                0.0,
+                2.0,
+                0.6000019999999999
+              ],
+              [
+                2.0,
+                1.0,
+                0.0
+              ],
+              [
+                4.0,
+                2.0,
+                0.0
+              ],
+              [
+                6.0,
+                3.0,
+                0.0
+              ]
+            ],
+            [
+              [
+                -6.0,
+                -3.0,
+                0.0
+              ],
+              [
+                -4.0,
+                -2.0,
+                0.0
+              ],
+              [
+                -2.0,
+                -1.0,
+                0.0
+              ],
+              [
+                0.0,
+                -2.0,
+                0.6000019999999999
+              ],
+              [
+                2.0,
+                -3.0,
+                0.0
+              ],
+              [
+                4.0,
+                -2.0,
+                0.0
+              ],
+              [
+                6.0,
+                -1.0,
+                0.0
+              ],
+              [
+                7.0,
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                1.0,
+                0.0
+              ],
+              [
+                4.0,
+                2.0,
+                0.6000019999999999
+              ],
+              [
+                2.0,
+                3.0,
+                0.0
+              ],
+              [
+                0.0,
+                2.0,
+                0.0
+              ],
+              [
+                -2.0,
+                1.0,
+                0.0
+              ],
+              [
+                -4.0,
+                2.0,
+                0.6000019999999999
+              ],
+              [
+                -6.0,
+                3.0,
+                0.0
+              ]
+            ]
+          ],
+          "lift_scale": 2.0,
+          "naive_crossing_height_check": {
+            "pair_count": 352,
+            "worst": {
+              "strands": [
+                0,
+                1
+              ],
+              "segments": [
+                0,
+                5
+              ],
+              "parameters": [
+                0.9726441995174796,
+                0.016413480289512172
+              ],
+              "distance_cm": 0.29586916288127335,
+              "surface_gap_cm": -0.004130837118726638
+            }
+          },
+          "all_segment_check": {
+            "pair_count": 352,
+            "worst": {
+              "strands": [
+                0,
+                1
+              ],
+              "segments": [
+                1,
+                4
+              ],
+              "parameters": [
+                0.10112420149031233,
+                0.9393254791058125
+              ],
+              "distance_cm": 0.5688562602002366,
+              "surface_gap_cm": 0.26885626020023656
+            }
+          },
+          "rest_lengths_cm": [
+            [
+              2.3151678988799063,
+              2.3151678988799063,
+              2.23606797749979,
+              2.23606797749979,
+              2.3151678988799063,
+              2.3151678988799063,
+              1.4142135623730951,
+              1.4142135623730951,
+              2.23606797749979,
+              2.23606797749979,
+              2.3151678988799063,
+              2.3151678988799063,
+              2.23606797749979,
+              2.23606797749979
+            ],
+            [
+              2.23606797749979,
+              2.23606797749979,
+              2.3151678988799063,
+              2.3151678988799063,
+              2.23606797749979,
+              2.23606797749979,
+              1.4142135623730951,
+              1.4142135623730951,
+              2.3151678988799063,
+              2.3151678988799063,
+              2.23606797749979,
+              2.23606797749979,
+              2.3151678988799063,
+              2.3151678988799063
+            ]
+          ],
+          "status": "ValidSeparatedSeed",
+          "scope": "Cut-free construction only. Adjacent same-cord edges share their material neighborhood; every nonadjacent pair is checked for these coarse fixtures. No sweep from the intersecting planar drawing or smooth tube/curvature proof is claimed."
+        }
+      }
+    },
+    {
+      "id": "reef",
+      "guides": [
+        {
+          "name": "A",
+          "points": [
+            [
+              6.0,
+              -3.0,
+              0.0
+            ],
+            [
+              4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              2.0,
+              -1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              -3.0,
+              0.0
+            ],
+            [
+              -4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -6.0,
+              -1.0,
+              0.0
+            ],
+            [
+              -7.0,
+              0.0,
+              0.0
+            ],
+            [
+              -6.0,
+              1.0,
+              0.0
+            ],
+            [
+              -4.0,
+              2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              3.0,
+              0.0
+            ],
+            [
+              0.0,
+              2.0,
+              0.0
+            ],
+            [
+              2.0,
+              1.0,
+              0.0
+            ],
+            [
+              4.0,
+              2.0,
+              0.0
+            ],
+            [
+              6.0,
+              3.0,
+              0.0
+            ]
+          ],
+          "over": [
+            3,
+            11
+          ],
+          "radius_cm": 0.15
+        },
+        {
+          "name": "B",
+          "points": [
+            [
+              -6.0,
+              -3.0,
+              0.0
+            ],
+            [
+              -4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              -1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -2.0,
+              0.0
+            ],
+            [
+              2.0,
+              -3.0,
+              0.0
+            ],
+            [
+              4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              6.0,
+              -1.0,
+              0.0
+            ],
+            [
+              7.0,
+              0.0,
+              0.0
+            ],
+            [
+              6.0,
+              1.0,
+              0.0
+            ],
+            [
+              4.0,
+              2.0,
+              0.0
+            ],
+            [
+              2.0,
+              3.0,
+              0.0
+            ],
+            [
+              0.0,
+              2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              1.0,
+              0.0
+            ],
+            [
+              -4.0,
+              2.0,
+              0.0
+            ],
+            [
+              -6.0,
+              3.0,
+              0.0
+            ]
+          ],
+          "over": [
+            1,
+            5,
+            9,
+            13
+          ],
+          "radius_cm": 0.15
+        }
+      ],
+      "facing": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "Accepted",
+        "crossings": [
+          {
+            "id": 0,
+            "projected_point": [
+              4.0,
+              -2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 1,
+                "t": 0.0,
+                "station": 1.0,
+                "at_vertex": true,
+                "marked_over": false
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 5,
+                "t": 0.0,
+                "station": 5.0,
+                "at_vertex": true,
+                "marked_over": true
+              }
+            ],
+            "over_branch": 1,
+            "over_strand": "B",
+            "sign": 1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 1,
+            "projected_point": [
+              0.0,
+              -2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 3,
+                "t": 0.0,
+                "station": 3.0,
+                "at_vertex": true,
+                "marked_over": true
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 3,
+                "t": 0.0,
+                "station": 3.0,
+                "at_vertex": true,
+                "marked_over": false
+              }
+            ],
+            "over_branch": 0,
+            "over_strand": "A",
+            "sign": 1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 2,
+            "projected_point": [
+              -4.0,
+              -2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 5,
+                "t": 0.0,
+                "station": 5.0,
+                "at_vertex": true,
+                "marked_over": false
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 1,
+                "t": 0.0,
+                "station": 1.0,
+                "at_vertex": true,
+                "marked_over": true
+              }
+            ],
+            "over_branch": 1,
+            "over_strand": "B",
+            "sign": 1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 3,
+            "projected_point": [
+              -4.0,
+              2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 9,
+                "t": 0.0,
+                "station": 9.0,
+                "at_vertex": true,
+                "marked_over": false
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 13,
+                "t": 0.0,
+                "station": 13.0,
+                "at_vertex": true,
+                "marked_over": true
+              }
+            ],
+            "over_branch": 1,
+            "over_strand": "B",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 4,
+            "projected_point": [
+              0.0,
+              2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 11,
+                "t": 0.0,
+                "station": 11.0,
+                "at_vertex": true,
+                "marked_over": true
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 11,
+                "t": 0.0,
+                "station": 11.0,
+                "at_vertex": true,
+                "marked_over": false
+              }
+            ],
+            "over_branch": 0,
+            "over_strand": "A",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          },
+          {
+            "id": 5,
+            "projected_point": [
+              4.0,
+              2.0
+            ],
+            "branches": [
+              {
+                "strand": "A",
+                "strand_index": 0,
+                "segment": 13,
+                "t": 0.0,
+                "station": 13.0,
+                "at_vertex": true,
+                "marked_over": false
+              },
+              {
+                "strand": "B",
+                "strand_index": 1,
+                "segment": 9,
+                "t": 0.0,
+                "station": 9.0,
+                "at_vertex": true,
+                "marked_over": true
+              }
+            ],
+            "over_branch": 1,
+            "over_strand": "B",
+            "sign": -1,
+            "marks_agree": true,
+            "source": "point_mark"
+          }
+        ],
+        "seed": {
+          "positions": [
+            [
+              [
+                6.0,
+                -3.0,
+                0.0
+              ],
+              [
+                4.0,
+                -2.0,
+                0.0
+              ],
+              [
+                2.0,
+                -1.0,
+                0.0
+              ],
+              [
+                0.0,
+                -2.0,
+                0.6000019999999999
+              ],
+              [
+                -2.0,
+                -3.0,
+                0.0
+              ],
+              [
+                -4.0,
+                -2.0,
+                0.0
+              ],
+              [
+                -6.0,
+                -1.0,
+                0.0
+              ],
+              [
+                -7.0,
+                0.0,
+                0.0
+              ],
+              [
+                -6.0,
+                1.0,
+                0.0
+              ],
+              [
+                -4.0,
+                2.0,
+                0.0
+              ],
+              [
+                -2.0,
+                3.0,
+                0.0
+              ],
+              [
+                0.0,
+                2.0,
+                0.6000019999999999
+              ],
+              [
+                2.0,
+                1.0,
+                0.0
+              ],
+              [
+                4.0,
+                2.0,
+                0.0
+              ],
+              [
+                6.0,
+                3.0,
+                0.0
+              ]
+            ],
+            [
+              [
+                -6.0,
+                -3.0,
+                0.0
+              ],
+              [
+                -4.0,
+                -2.0,
+                0.6000019999999999
+              ],
+              [
+                -2.0,
+                -1.0,
+                0.0
+              ],
+              [
+                0.0,
+                -2.0,
+                0.0
+              ],
+              [
+                2.0,
+                -3.0,
+                0.0
+              ],
+              [
+                4.0,
+                -2.0,
+                0.6000019999999999
+              ],
+              [
+                6.0,
+                -1.0,
+                0.0
+              ],
+              [
+                7.0,
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                1.0,
+                0.0
+              ],
+              [
+                4.0,
+                2.0,
+                0.6000019999999999
+              ],
+              [
+                2.0,
+                3.0,
+                0.0
+              ],
+              [
+                0.0,
+                2.0,
+                0.0
+              ],
+              [
+                -2.0,
+                1.0,
+                0.0
+              ],
+              [
+                -4.0,
+                2.0,
+                0.6000019999999999
+              ],
+              [
+                -6.0,
+                3.0,
+                0.0
+              ]
+            ]
+          ],
+          "lift_scale": 2.0,
+          "naive_crossing_height_check": {
+            "pair_count": 352,
+            "worst": {
+              "strands": [
+                0,
+                1
+              ],
+              "segments": [
+                1,
+                4
+              ],
+              "parameters": [
+                0.016413480289512238,
+                0.9726441995174796
+              ],
+              "distance_cm": 0.29586916288127335,
+              "surface_gap_cm": -0.004130837118726638
+            }
+          },
+          "all_segment_check": {
+            "pair_count": 352,
+            "worst": {
+              "strands": [
+                0,
+                1
+              ],
+              "segments": [
+                8,
+                13
+              ],
+              "parameters": [
+                0.9393254791058127,
+                0.10112420149031218
+              ],
+              "distance_cm": 0.5688562602002366,
+              "surface_gap_cm": 0.26885626020023656
+            }
+          },
+          "rest_lengths_cm": [
+            [
+              2.23606797749979,
+              2.23606797749979,
+              2.3151678988799063,
+              2.3151678988799063,
+              2.23606797749979,
+              2.23606797749979,
+              1.4142135623730951,
+              1.4142135623730951,
+              2.23606797749979,
+              2.23606797749979,
+              2.3151678988799063,
+              2.3151678988799063,
+              2.23606797749979,
+              2.23606797749979
+            ],
+            [
+              2.3151678988799063,
+              2.3151678988799063,
+              2.23606797749979,
+              2.23606797749979,
+              2.3151678988799063,
+              2.3151678988799063,
+              1.4142135623730951,
+              1.4142135623730951,
+              2.3151678988799063,
+              2.3151678988799063,
+              2.23606797749979,
+              2.23606797749979,
+              2.3151678988799063,
+              2.3151678988799063
+            ]
+          ],
+          "status": "ValidSeparatedSeed",
+          "scope": "Cut-free construction only. Adjacent same-cord edges share their material neighborhood; every nonadjacent pair is checked for these coarse fixtures. No sweep from the intersecting planar drawing or smooth tube/curvature proof is claimed."
+        }
+      }
+    },
+    {
+      "id": "no_crossing",
+      "guides": [
+        {
+          "name": "A",
+          "points": [
+            [
+              -2.0,
+              0.0,
+              0.0
+            ],
+            [
+              2.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "over": [],
+          "radius_cm": 0.15
+        },
+        {
+          "name": "B",
+          "points": [
+            [
+              -2.0,
+              2.0,
+              0.0
+            ],
+            [
+              2.0,
+              2.0,
+              0.0
+            ]
+          ],
+          "over": [],
+          "radius_cm": 0.15
+        }
+      ],
+      "facing": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "Accepted",
+        "crossings": [],
+        "seed": {
+          "positions": [
+            [
+              [
+                -2.0,
+                0.0,
+                0.0
+              ],
+              [
+                2.0,
+                0.0,
+                0.0
+              ]
+            ],
+            [
+              [
+                -2.0,
+                2.0,
+                0.0
+              ],
+              [
+                2.0,
+                2.0,
+                0.0
+              ]
+            ]
+          ],
+          "lift_scale": 1.0,
+          "naive_crossing_height_check": {
+            "pair_count": 1,
+            "worst": {
+              "strands": [
+                0,
+                1
+              ],
+              "segments": [
+                0,
+                0
+              ],
+              "parameters": [
+                0.5,
+                0.5
+              ],
+              "distance_cm": 2.0,
+              "surface_gap_cm": 1.7000000000000002
+            }
+          },
+          "all_segment_check": {
+            "pair_count": 1,
+            "worst": {
+              "strands": [
+                0,
+                1
+              ],
+              "segments": [
+                0,
+                0
+              ],
+              "parameters": [
+                0.5,
+                0.5
+              ],
+              "distance_cm": 2.0,
+              "surface_gap_cm": 1.7000000000000002
+            }
+          },
+          "rest_lengths_cm": [
+            [
+              4.0
+            ],
+            [
+              4.0
+            ]
+          ],
+          "status": "ValidSeparatedSeed",
+          "scope": "Cut-free construction only. Adjacent same-cord edges share their material neighborhood; every nonadjacent pair is checked for these coarse fixtures. No sweep from the intersecting planar drawing or smooth tube/curvature proof is claimed."
+        }
+      }
+    },
+    {
+      "id": "stray_over",
+      "guides": [
+        {
+          "name": "A",
+          "points": [
+            [
+              -2.0,
+              0.0,
+              0.0
+            ],
+            [
+              2.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "over": [
+            0
+          ],
+          "radius_cm": 0.15
+        },
+        {
+          "name": "B",
+          "points": [
+            [
+              -2.0,
+              2.0,
+              0.0
+            ],
+            [
+              2.0,
+              2.0,
+              0.0
+            ]
+          ],
+          "over": [],
+          "radius_cm": 0.15
+        }
+      ],
+      "facing": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "StrayOrAmbiguousOverMark",
+        "seed": null
+      }
+    },
+    {
+      "id": "contradictory_over",
+      "guides": [
+        {
+          "name": "A",
+          "points": [
+            [
+              6.0,
+              -3.0,
+              0.0
+            ],
+            [
+              4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              2.0,
+              -1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              -3.0,
+              0.0
+            ],
+            [
+              -4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -6.0,
+              -1.0,
+              0.0
+            ]
+          ],
+          "over": [
+            1,
+            5
+          ],
+          "radius_cm": 0.15
+        },
+        {
+          "name": "B",
+          "points": [
+            [
+              -6.0,
+              -3.0,
+              0.0
+            ],
+            [
+              -4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              -1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -2.0,
+              0.0
+            ],
+            [
+              2.0,
+              -3.0,
+              0.0
+            ],
+            [
+              4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              6.0,
+              -1.0,
+              0.0
+            ]
+          ],
+          "over": [
+            3,
+            5
+          ],
+          "radius_cm": 0.15
+        }
+      ],
+      "facing": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "ContradictoryOverMarks",
+        "seed": null
+      }
+    },
+    {
+      "id": "missing_over",
+      "guides": [
+        {
+          "name": "A",
+          "points": [
+            [
+              6.0,
+              -3.0,
+              0.0
+            ],
+            [
+              4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              2.0,
+              -1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              -3.0,
+              0.0
+            ],
+            [
+              -4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -6.0,
+              -1.0,
+              0.0
+            ]
+          ],
+          "over": [],
+          "radius_cm": 0.15
+        },
+        {
+          "name": "B",
+          "points": [
+            [
+              -6.0,
+              -3.0,
+              0.0
+            ],
+            [
+              -4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              -2.0,
+              -1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -2.0,
+              0.0
+            ],
+            [
+              2.0,
+              -3.0,
+              0.0
+            ],
+            [
+              4.0,
+              -2.0,
+              0.0
+            ],
+            [
+              6.0,
+              -1.0,
+              0.0
+            ]
+          ],
+          "over": [
+            3
+          ],
+          "radius_cm": 0.15
+        }
+      ],
+      "facing": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "MissingOverInformation",
+        "seed": null
+      }
+    },
+    {
+      "id": "projected_overlap",
+      "guides": [
+        {
+          "name": "A",
+          "points": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              3.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "over": [],
+          "radius_cm": 0.15
+        },
+        {
+          "name": "B",
+          "points": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              2.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "over": [],
+          "radius_cm": 0.15
+        }
+      ],
+      "facing": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "status": "CollinearProjectedOverlap",
+        "seed": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,1876 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "generator": "strip_hinge_controls.py",
+  "source_sha256": "c192c7980ae7900cfa3c9ee9eb6a493748f025594f2a103c0aefc68abd955d0c",
+  "shared_helper_sha256": "5c3d41d630c698b3c8752e5a582dfa87e1a91fd36c937fdc7a08e9aaac28724c",
+  "contract": {
+    "units": "cm, gram, second",
+    "canonicalization": "Shared edge i<j, k rest-material left, l right; ignore input face winding when constructing hinge normals.",
+    "theta": "atan2(t dot (n1 cross n2), n1 dot n2); N1=(xj-xi) cross (xk-xi), N2=(xl-xi) cross (xj-xi)",
+    "gradient": "qk=-L*N1/|N1|^2; ql=-L*N2/|N2|^2; qj=-rk*qk-rl*ql; qi=-(1-rk)*qk-(1-rl)*ql; r=(xopp-xi) dot e/L^2",
+    "finite_difference": "Central epsilon 1e-6 cm; unwrap both perturbed angles relative to base. Raw principal angle subtraction fails across +/-pi.",
+    "xpbd": "k=G*rest_edge_length^2/rest_area_sum; alpha_tilde=1/(k*h^2); dl=(-theta-alpha_tilde*lambda)/(sum(w*|q|^2)+alpha_tilde); x+=w*q*dl",
+    "degeneracy": "Do not divide by sin(theta) or skip because sin(theta) is small. Reject degenerate triangles or invalid rest topology separately.",
+    "source": "Tamstorf and Grinspun 2013 equation 4; signed convention independently checked against local central finite differences.",
+    "scope": "Projection controls only; near-pi geometry does not certify valid finite-thickness contact."
+  },
+  "cases": [
+    {
+      "id": "E3b_hinge_stored_lambda",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.3,
+            0.0
+          ],
+          "position": [
+            1.3,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            0.2,
+            0.9
+          ],
+          "position": [
+            0.2,
+            0.9,
+            0.0
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            0.6,
+            -1.1
+          ],
+          "position": [
+            0.6,
+            -0.8888302591433671,
+            -0.6480592337364965
+          ],
+          "inverse_mass": 0.5,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            1,
+            0,
+            3
+          ]
+        }
+      ],
+      "segments": [],
+      "settings": {
+        "G": 156.96,
+        "h": 0.016666666666666666,
+        "rest_angle": 0.0,
+        "lambda_before": 0.0007,
+        "projection_count": 1
+      },
+      "expected": {
+        "canonical_stencil": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "theta": 0.6299999999999999,
+        "gradient": [
+          [
+            0.0,
+            -0.28839253885285926,
+            1.3357088813027627
+          ],
+          [
+            0.0,
+            -0.24719360473102214,
+            0.5099726919103045
+          ],
+          [
+            -0.0,
+            -0.0,
+            -1.111111111111111
+          ],
+          [
+            -0.0,
+            0.5355861435838813,
+            -0.7345704621019562
+          ]
+        ],
+        "finite_difference_gradient": [
+          [
+            0.0,
+            -0.2883925388497133,
+            1.3357088813337192
+          ],
+          [
+            0.0,
+            -0.24719360469660495,
+            0.5099726919643999
+          ],
+          [
+            0.0,
+            0.0,
+            -1.111111111062879
+          ],
+          [
+            0.0,
+            0.5355861435463183,
+            -0.7345704620687066
+          ]
+        ],
+        "gradient_maximum_error": 5.409539483025583e-11,
+        "rest_area_sum": 1.3,
+        "stiffness": 204.048,
+        "compliance": 0.004900807653101231,
+        "scaled_compliance": 17.64290755116443,
+        "weighted_gradient_norm_squared": 3.203535767679162,
+        "denominator": 20.846443318843594,
+        "delta_lambda": -0.030813411451591822,
+        "lambda_after": -0.030113411451591823,
+        "positions_after": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.3,
+            0.00761687825077914,
+            -0.015713998384908084
+          ],
+          [
+            0.2,
+            0.9,
+            0.06847424767020403
+          ],
+          [
+            0.6,
+            -0.8970818772483778,
+            -0.6367419227920298
+          ]
+        ],
+        "theta_after": 0.5312803667733904,
+        "linearized_soft_residual": 0.0,
+        "nonlinear_soft_residual": -7.767517220425013e-06,
+        "numeric_tolerance": 2e-09,
+        "status": "OneProjection",
+        "scope": "One nonlinear update, not a coupled equilibrium or contact-safe step"
+      }
+    },
+    {
+      "id": "E3b_hinge_winding_1",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.3,
+            0.0
+          ],
+          "position": [
+            1.3,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            0.2,
+            0.9
+          ],
+          "position": [
+            0.2,
+            0.9,
+            0.0
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            0.6,
+            -1.1
+          ],
+          "position": [
+            0.6,
+            -0.8888302591433671,
+            -0.6480592337364965
+          ],
+          "inverse_mass": 0.5,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            1,
+            0,
+            3
+          ]
+        }
+      ],
+      "segments": [],
+      "settings": {
+        "G": 156.96,
+        "h": 0.016666666666666666,
+        "rest_angle": 0.0,
+        "lambda_before": 0.0007,
+        "projection_count": 1
+      },
+      "expected": {
+        "canonical_stencil": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "theta": 0.6299999999999999,
+        "gradient": [
+          [
+            0.0,
+            -0.28839253885285926,
+            1.3357088813027627
+          ],
+          [
+            0.0,
+            -0.24719360473102214,
+            0.5099726919103045
+          ],
+          [
+            -0.0,
+            -0.0,
+            -1.111111111111111
+          ],
+          [
+            -0.0,
+            0.5355861435838813,
+            -0.7345704621019562
+          ]
+        ],
+        "finite_difference_gradient": [
+          [
+            0.0,
+            -0.2883925388497133,
+            1.3357088813337192
+          ],
+          [
+            0.0,
+            -0.24719360469660495,
+            0.5099726919643999
+          ],
+          [
+            0.0,
+            0.0,
+            -1.111111111062879
+          ],
+          [
+            0.0,
+            0.5355861435463183,
+            -0.7345704620687066
+          ]
+        ],
+        "gradient_maximum_error": 5.409539483025583e-11,
+        "rest_area_sum": 1.3,
+        "stiffness": 204.048,
+        "compliance": 0.004900807653101231,
+        "scaled_compliance": 17.64290755116443,
+        "weighted_gradient_norm_squared": 3.203535767679162,
+        "denominator": 20.846443318843594,
+        "delta_lambda": -0.030813411451591822,
+        "lambda_after": -0.030113411451591823,
+        "positions_after": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.3,
+            0.00761687825077914,
+            -0.015713998384908084
+          ],
+          [
+            0.2,
+            0.9,
+            0.06847424767020403
+          ],
+          [
+            0.6,
+            -0.8970818772483778,
+            -0.6367419227920298
+          ]
+        ],
+        "theta_after": 0.5312803667733904,
+        "linearized_soft_residual": 0.0,
+        "nonlinear_soft_residual": -7.767517220425013e-06,
+        "numeric_tolerance": 2e-09,
+        "status": "OneProjection",
+        "scope": "One nonlinear update, not a coupled equilibrium or contact-safe step"
+      }
+    },
+    {
+      "id": "E3b_hinge_winding_2",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.3,
+            0.0
+          ],
+          "position": [
+            1.3,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            0.2,
+            0.9
+          ],
+          "position": [
+            0.2,
+            0.9,
+            0.0
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            0.6,
+            -1.1
+          ],
+          "position": [
+            0.6,
+            -0.8888302591433671,
+            -0.6480592337364965
+          ],
+          "inverse_mass": 0.5,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            3,
+            0,
+            1
+          ]
+        }
+      ],
+      "segments": [],
+      "settings": {
+        "G": 156.96,
+        "h": 0.016666666666666666,
+        "rest_angle": 0.0,
+        "lambda_before": 0.0007,
+        "projection_count": 1
+      },
+      "expected": {
+        "canonical_stencil": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "theta": 0.6299999999999999,
+        "gradient": [
+          [
+            0.0,
+            -0.28839253885285926,
+            1.3357088813027627
+          ],
+          [
+            0.0,
+            -0.24719360473102214,
+            0.5099726919103045
+          ],
+          [
+            -0.0,
+            -0.0,
+            -1.111111111111111
+          ],
+          [
+            -0.0,
+            0.5355861435838813,
+            -0.7345704621019562
+          ]
+        ],
+        "finite_difference_gradient": [
+          [
+            0.0,
+            -0.2883925388497133,
+            1.3357088813337192
+          ],
+          [
+            0.0,
+            -0.24719360469660495,
+            0.5099726919643999
+          ],
+          [
+            0.0,
+            0.0,
+            -1.111111111062879
+          ],
+          [
+            0.0,
+            0.5355861435463183,
+            -0.7345704620687066
+          ]
+        ],
+        "gradient_maximum_error": 5.409539483025583e-11,
+        "rest_area_sum": 1.3,
+        "stiffness": 204.048,
+        "compliance": 0.004900807653101231,
+        "scaled_compliance": 17.64290755116443,
+        "weighted_gradient_norm_squared": 3.203535767679162,
+        "denominator": 20.846443318843594,
+        "delta_lambda": -0.030813411451591822,
+        "lambda_after": -0.030113411451591823,
+        "positions_after": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.3,
+            0.00761687825077914,
+            -0.015713998384908084
+          ],
+          [
+            0.2,
+            0.9,
+            0.06847424767020403
+          ],
+          [
+            0.6,
+            -0.8970818772483778,
+            -0.6367419227920298
+          ]
+        ],
+        "theta_after": 0.5312803667733904,
+        "linearized_soft_residual": 0.0,
+        "nonlinear_soft_residual": -7.767517220425013e-06,
+        "numeric_tolerance": 2e-09,
+        "status": "OneProjection",
+        "scope": "One nonlinear update, not a coupled equilibrium or contact-safe step"
+      }
+    },
+    {
+      "id": "E3b_hinge_winding_3",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.3,
+            0.0
+          ],
+          "position": [
+            1.3,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            0.2,
+            0.9
+          ],
+          "position": [
+            0.2,
+            0.9,
+            0.0
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            0.6,
+            -1.1
+          ],
+          "position": [
+            0.6,
+            -0.8888302591433671,
+            -0.6480592337364965
+          ],
+          "inverse_mass": 0.5,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            3,
+            0,
+            1
+          ]
+        }
+      ],
+      "segments": [],
+      "settings": {
+        "G": 156.96,
+        "h": 0.016666666666666666,
+        "rest_angle": 0.0,
+        "lambda_before": 0.0007,
+        "projection_count": 1
+      },
+      "expected": {
+        "canonical_stencil": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "theta": 0.6299999999999999,
+        "gradient": [
+          [
+            0.0,
+            -0.28839253885285926,
+            1.3357088813027627
+          ],
+          [
+            0.0,
+            -0.24719360473102214,
+            0.5099726919103045
+          ],
+          [
+            -0.0,
+            -0.0,
+            -1.111111111111111
+          ],
+          [
+            -0.0,
+            0.5355861435838813,
+            -0.7345704621019562
+          ]
+        ],
+        "finite_difference_gradient": [
+          [
+            0.0,
+            -0.2883925388497133,
+            1.3357088813337192
+          ],
+          [
+            0.0,
+            -0.24719360469660495,
+            0.5099726919643999
+          ],
+          [
+            0.0,
+            0.0,
+            -1.111111111062879
+          ],
+          [
+            0.0,
+            0.5355861435463183,
+            -0.7345704620687066
+          ]
+        ],
+        "gradient_maximum_error": 5.409539483025583e-11,
+        "rest_area_sum": 1.3,
+        "stiffness": 204.048,
+        "compliance": 0.004900807653101231,
+        "scaled_compliance": 17.64290755116443,
+        "weighted_gradient_norm_squared": 3.203535767679162,
+        "denominator": 20.846443318843594,
+        "delta_lambda": -0.030813411451591822,
+        "lambda_after": -0.030113411451591823,
+        "positions_after": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.3,
+            0.00761687825077914,
+            -0.015713998384908084
+          ],
+          [
+            0.2,
+            0.9,
+            0.06847424767020403
+          ],
+          [
+            0.6,
+            -0.8970818772483778,
+            -0.6367419227920298
+          ]
+        ],
+        "theta_after": 0.5312803667733904,
+        "linearized_soft_residual": 0.0,
+        "nonlinear_soft_residual": -7.767517220425013e-06,
+        "numeric_tolerance": 2e-09,
+        "status": "OneProjection",
+        "scope": "One nonlinear update, not a coupled equilibrium or contact-safe step"
+      }
+    },
+    {
+      "id": "E3b_hinge_negative_rotated",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            2.0,
+            -3.0,
+            4.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.3,
+            0.0
+          ],
+          "position": [
+            3.0161309260791325,
+            -2.2848476000843343,
+            3.6178547580298455
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            0.2,
+            0.9
+          ],
+          "position": [
+            1.721691478988614,
+            -2.1411494334619574,
+            4.186869129311766
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            0.6,
+            -1.1
+          ],
+          "position": [
+            3.154040436310066,
+            -3.4557297894626657,
+            4.174645441846007
+          ],
+          "inverse_mass": 0.5,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            1,
+            0,
+            3
+          ]
+        }
+      ],
+      "segments": [],
+      "settings": {
+        "G": 156.96,
+        "h": 0.016666666666666666,
+        "rest_angle": 0.0,
+        "lambda_before": -0.0007,
+        "projection_count": 1
+      },
+      "expected": {
+        "canonical_stencil": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "theta": -0.6299999999999994,
+        "gradient": [
+          [
+            0.38798425186347363,
+            0.14459168715049187,
+            1.3022480318165166
+          ],
+          [
+            0.08192948688373954,
+            0.16926430290224762,
+            0.5346157308349082
+          ],
+          [
+            -0.4385997757486662,
+            0.07932499935319509,
+            -1.0177945187636863
+          ],
+          [
+            -0.031313962998546954,
+            -0.3931809894059346,
+            -0.8190692438877385
+          ]
+        ],
+        "finite_difference_gradient": [
+          [
+            0.38798425178177,
+            0.1445916871789521,
+            1.3022480320201701
+          ],
+          [
+            0.08192948691698732,
+            0.16926430290720162,
+            0.5346157308516729
+          ],
+          [
+            -0.43859977577609394,
+            0.07932499940244142,
+            -1.0177945188316606
+          ],
+          [
+            -0.03131396297817446,
+            -0.39318098948859515,
+            -0.8190692439846714
+          ]
+        ],
+        "gradient_maximum_error": 2.0365353847751066e-10,
+        "rest_area_sum": 1.3,
+        "stiffness": 204.048,
+        "compliance": 0.004900807653101231,
+        "scaled_compliance": 17.64290755116443,
+        "weighted_gradient_norm_squared": 3.2035357676791647,
+        "denominator": 20.846443318843594,
+        "delta_lambda": 0.0308134114515918,
+        "lambda_after": 0.030113411451591802,
+        "positions_after": [
+          [
+            2.0,
+            -3.0,
+            4.0
+          ],
+          [
+            3.018655453068499,
+            -2.2796319894749404,
+            3.634328092512555
+          ],
+          [
+            1.694661968283175,
+            -2.1362608857750227,
+            4.124145686752086
+          ],
+          [
+            3.153557991297039,
+            -3.46178741326342,
+            4.162026283036378
+          ]
+        ],
+        "theta_after": -0.53128036677339,
+        "linearized_soft_residual": 0.0,
+        "nonlinear_soft_residual": 7.767517220425013e-06,
+        "numeric_tolerance": 2e-09,
+        "status": "OneProjection",
+        "scope": "One nonlinear update, not a coupled equilibrium or contact-safe step"
+      }
+    },
+    {
+      "id": "E3b_hinge_near_flat",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.3,
+            0.0
+          ],
+          "position": [
+            1.3,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            0.2,
+            0.9
+          ],
+          "position": [
+            0.2,
+            0.9,
+            0.0
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            0.6,
+            -1.1
+          ],
+          "position": [
+            0.6,
+            -1.1,
+            -1.1000000000000001e-08
+          ],
+          "inverse_mass": 0.5,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            1,
+            0,
+            3
+          ]
+        }
+      ],
+      "segments": [],
+      "settings": {
+        "G": 156.96,
+        "h": 0.016666666666666666,
+        "rest_angle": 0.0,
+        "lambda_before": 0.0,
+        "projection_count": 1
+      },
+      "expected": {
+        "canonical_stencil": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "theta": 1e-08,
+        "gradient": [
+          [
+            0.0,
+            -4.8951048951048945e-09,
+            1.4296814296814295
+          ],
+          [
+            0.0,
+            -4.195804195804195e-09,
+            0.5905205905205904
+          ],
+          [
+            -0.0,
+            -0.0,
+            -1.111111111111111
+          ],
+          [
+            -0.0,
+            9.090909090909089e-09,
+            -0.909090909090909
+          ]
+        ],
+        "finite_difference_gradient": [
+          [
+            8.271806125530277e-19,
+            -4.8951048939350395e-09,
+            1.4296814296806906
+          ],
+          [
+            -8.271806125530277e-19,
+            -4.195804194683294e-09,
+            0.5905205905203894
+          ],
+          [
+            0.0,
+            0.0,
+            -1.111111111110654
+          ],
+          [
+            0.0,
+            9.090909090272694e-09,
+            -0.9090909090906586
+          ]
+        ],
+        "gradient_maximum_error": 7.389644451905042e-13,
+        "rest_area_sum": 1.3,
+        "stiffness": 204.048,
+        "compliance": 0.004900807653101231,
+        "scaled_compliance": 17.64290755116443,
+        "weighted_gradient_norm_squared": 3.23107351079379,
+        "denominator": 20.87398106195822,
+        "delta_lambda": -4.790653000171825e-10,
+        "lambda_after": -4.790653000171825e-10,
+        "positions_after": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.3,
+            2.01006419587629e-18,
+            -2.8289792386407043e-10
+          ],
+          [
+            0.2,
+            0.9,
+            1.0645895555937388e-09
+          ],
+          [
+            0.6,
+            -1.1,
+            -1.0782243045446735e-08
+          ]
+        ],
+        "theta_after": 8.452104799174003e-09,
+        "linearized_soft_residual": 0.0,
+        "nonlinear_soft_residual": 0.0,
+        "numeric_tolerance": 2e-09,
+        "status": "OneProjection",
+        "scope": "One nonlinear update, not a coupled equilibrium or contact-safe step"
+      }
+    },
+    {
+      "id": "E3b_hinge_near_flat_stored_lambda",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.3,
+            0.0
+          ],
+          "position": [
+            1.3,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            0.2,
+            0.9
+          ],
+          "position": [
+            0.2,
+            0.9,
+            0.0
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            0.6,
+            -1.1
+          ],
+          "position": [
+            0.6,
+            -1.1,
+            -1.1000000000000001e-08
+          ],
+          "inverse_mass": 0.5,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            1,
+            0,
+            3
+          ]
+        }
+      ],
+      "segments": [],
+      "settings": {
+        "G": 156.96,
+        "h": 0.016666666666666666,
+        "rest_angle": 0.0,
+        "lambda_before": 0.0007,
+        "projection_count": 1
+      },
+      "expected": {
+        "canonical_stencil": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "theta": 1e-08,
+        "gradient": [
+          [
+            0.0,
+            -4.8951048951048945e-09,
+            1.4296814296814295
+          ],
+          [
+            0.0,
+            -4.195804195804195e-09,
+            0.5905205905205904
+          ],
+          [
+            -0.0,
+            -0.0,
+            -1.111111111111111
+          ],
+          [
+            -0.0,
+            9.090909090909089e-09,
+            -0.909090909090909
+          ]
+        ],
+        "finite_difference_gradient": [
+          [
+            8.271806125530277e-19,
+            -4.8951048939350395e-09,
+            1.4296814296806906
+          ],
+          [
+            -8.271806125530277e-19,
+            -4.195804194683294e-09,
+            0.5905205905203894
+          ],
+          [
+            0.0,
+            0.0,
+            -1.111111111110654
+          ],
+          [
+            0.0,
+            9.090909090272694e-09,
+            -0.9090909090906586
+          ]
+        ],
+        "gradient_maximum_error": 7.389644451905042e-13,
+        "rest_area_sum": 1.3,
+        "stiffness": 204.048,
+        "compliance": 0.004900807653101231,
+        "scaled_compliance": 17.64290755116443,
+        "weighted_gradient_norm_squared": 3.23107351079379,
+        "denominator": 20.87398106195822,
+        "delta_lambda": -0.0005916478150074802,
+        "lambda_after": 0.00010835218499251982,
+        "positions_after": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.3,
+            2.4824383846467693e-12,
+            -0.0003493802170984342
+          ],
+          [
+            0.2,
+            0.9,
+            0.0013147729222388446
+          ],
+          [
+            0.6,
+            -1.1000000000026895,
+            0.0002689198250034
+          ]
+        ],
+        "theta_after": -0.001911646321869635,
+        "linearized_soft_residual": -4.336808689942018e-19,
+        "nonlinear_soft_residual": 1.2609200582529984e-09,
+        "numeric_tolerance": 2e-09,
+        "status": "OneProjection",
+        "scope": "One nonlinear update, not a coupled equilibrium or contact-safe step"
+      }
+    },
+    {
+      "id": "E3b_hinge_exact_flat",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.3,
+            0.0
+          ],
+          "position": [
+            1.3,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            0.2,
+            0.9
+          ],
+          "position": [
+            0.2,
+            0.9,
+            0.0
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            0.6,
+            -1.1
+          ],
+          "position": [
+            0.6,
+            -1.1,
+            -0.0
+          ],
+          "inverse_mass": 0.5,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            1,
+            0,
+            3
+          ]
+        }
+      ],
+      "segments": [],
+      "settings": {
+        "G": 156.96,
+        "h": 0.016666666666666666,
+        "rest_angle": 0.0,
+        "lambda_before": 0.0,
+        "projection_count": 1
+      },
+      "expected": {
+        "canonical_stencil": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "theta": 0.0,
+        "gradient": [
+          [
+            0.0,
+            0.0,
+            1.4296814296814295
+          ],
+          [
+            0.0,
+            0.0,
+            0.5905205905205904
+          ],
+          [
+            -0.0,
+            -0.0,
+            -1.111111111111111
+          ],
+          [
+            -0.0,
+            0.0,
+            -0.909090909090909
+          ]
+        ],
+        "finite_difference_gradient": [
+          [
+            0.0,
+            0.0,
+            1.4296814296806908
+          ],
+          [
+            0.0,
+            0.0,
+            0.5905205905203895
+          ],
+          [
+            0.0,
+            0.0,
+            -1.111111111110654
+          ],
+          [
+            0.0,
+            0.0,
+            -0.9090909090906587
+          ]
+        ],
+        "gradient_maximum_error": 7.387424005855792e-13,
+        "rest_area_sum": 1.3,
+        "stiffness": 204.048,
+        "compliance": 0.004900807653101231,
+        "scaled_compliance": 17.64290755116443,
+        "weighted_gradient_norm_squared": 3.23107351079379,
+        "denominator": 20.87398106195822,
+        "delta_lambda": -0.0,
+        "lambda_after": 0.0,
+        "positions_after": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.3,
+            0.0,
+            0.0
+          ],
+          [
+            0.2,
+            0.9,
+            0.0
+          ],
+          [
+            0.6,
+            -1.1,
+            0.0
+          ]
+        ],
+        "theta_after": 0.0,
+        "linearized_soft_residual": 0.0,
+        "nonlinear_soft_residual": 0.0,
+        "numeric_tolerance": 2e-09,
+        "status": "OneProjection",
+        "scope": "One nonlinear update, not a coupled equilibrium or contact-safe step"
+      }
+    },
+    {
+      "id": "E3b_hinge_near_positive_pi",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.3,
+            0.0
+          ],
+          "position": [
+            1.3,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            0.2,
+            0.9
+          ],
+          "position": [
+            0.2,
+            0.9,
+            0.0
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            0.6,
+            -1.1
+          ],
+          "position": [
+            0.6,
+            1.1,
+            -1.1000000067858968e-08
+          ],
+          "inverse_mass": 0.5,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            1,
+            0,
+            3
+          ]
+        }
+      ],
+      "segments": [],
+      "settings": {
+        "G": 156.96,
+        "h": 0.016666666666666666,
+        "rest_angle": 0.0,
+        "lambda_before": 0.0,
+        "projection_count": 1
+      },
+      "expected": {
+        "canonical_stencil": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "theta": 3.141592643589793,
+        "gradient": [
+          [
+            0.0,
+            -4.895104925302783e-09,
+            0.4506604506604505
+          ],
+          [
+            0.0,
+            -4.195804221688099e-09,
+            -0.24864024864024858
+          ],
+          [
+            -0.0,
+            -0.0,
+            -1.111111111111111
+          ],
+          [
+            -0.0,
+            9.090909146990881e-09,
+            0.909090909090909
+          ]
+        ],
+        "finite_difference_gradient": [
+          [
+            0.0,
+            -4.884981308350689e-09,
+            0.45066045063525006
+          ],
+          [
+            0.0,
+            -3.9968028886505635e-09,
+            -0.24864024851279518
+          ],
+          [
+            0.0,
+            0.0,
+            -1.1111111110188105
+          ],
+          [
+            0.0,
+            8.881784197001252e-09,
+            0.9090909093404447
+          ]
+        ],
+        "gradient_maximum_error": 2.495357254161945e-10,
+        "rest_area_sum": 1.3,
+        "stiffness": 204.048,
+        "compliance": 0.004900807653101231,
+        "scaled_compliance": 17.64290755116443,
+        "weighted_gradient_norm_squared": 2.9441809162088877,
+        "denominator": 20.58708846737332,
+        "delta_lambda": -0.15260014297644026,
+        "lambda_after": -0.15260014297644026,
+        "positions_after": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.3,
+            6.402803241307555e-10,
+            0.03794253749219959
+          ],
+          [
+            0.2,
+            0.9,
+            0.33911142883653383
+          ],
+          [
+            0.6,
+            1.0999999993063632,
+            -0.06936371235292745
+          ]
+        ],
+        "theta_after": 2.7083026246653383,
+        "linearized_soft_residual": 4.440892098500626e-16,
+        "nonlinear_soft_residual": 0.015992409837528587,
+        "numeric_tolerance": 2e-09,
+        "status": "OneProjection",
+        "scope": "One nonlinear update, not a coupled equilibrium or contact-safe step"
+      }
+    },
+    {
+      "id": "E3b_hinge_near_negative_pi",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.3,
+            0.0
+          ],
+          "position": [
+            1.3,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            0.2,
+            0.9
+          ],
+          "position": [
+            0.2,
+            0.9,
+            0.0
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            0.6,
+            -1.1
+          ],
+          "position": [
+            0.6,
+            1.1,
+            1.1000000067858968e-08
+          ],
+          "inverse_mass": 0.5,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            1,
+            0,
+            3
+          ]
+        }
+      ],
+      "segments": [],
+      "settings": {
+        "G": 156.96,
+        "h": 0.016666666666666666,
+        "rest_angle": 0.0,
+        "lambda_before": 0.0,
+        "projection_count": 1
+      },
+      "expected": {
+        "canonical_stencil": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "theta": -3.141592643589793,
+        "gradient": [
+          [
+            0.0,
+            4.895104925302783e-09,
+            0.4506604506604505
+          ],
+          [
+            0.0,
+            4.195804221688099e-09,
+            -0.24864024864024858
+          ],
+          [
+            -0.0,
+            -0.0,
+            -1.111111111111111
+          ],
+          [
+            -0.0,
+            -9.090909146990881e-09,
+            0.909090909090909
+          ]
+        ],
+        "finite_difference_gradient": [
+          [
+            0.0,
+            4.884981308350689e-09,
+            0.45066045063525006
+          ],
+          [
+            0.0,
+            3.9968028886505635e-09,
+            -0.24864024851279518
+          ],
+          [
+            0.0,
+            0.0,
+            -1.1111111110188105
+          ],
+          [
+            0.0,
+            -8.881784197001252e-09,
+            0.9090909093404447
+          ]
+        ],
+        "gradient_maximum_error": 2.495357254161945e-10,
+        "rest_area_sum": 1.3,
+        "stiffness": 204.048,
+        "compliance": 0.004900807653101231,
+        "scaled_compliance": 17.64290755116443,
+        "weighted_gradient_norm_squared": 2.9441809162088877,
+        "denominator": 20.58708846737332,
+        "delta_lambda": 0.15260014297644026,
+        "lambda_after": 0.15260014297644026,
+        "positions_after": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.3,
+            6.402803241307555e-10,
+            -0.03794253749219959
+          ],
+          [
+            0.2,
+            0.9,
+            -0.33911142883653383
+          ],
+          [
+            0.6,
+            1.0999999993063632,
+            0.06936371235292745
+          ]
+        ],
+        "theta_after": -2.7083026246653383,
+        "linearized_soft_residual": -4.440892098500626e-16,
+        "nonlinear_soft_residual": -0.015992409837528587,
+        "numeric_tolerance": 2e-09,
+        "status": "OneProjection",
+        "scope": "One nonlinear update, not a coupled equilibrium or contact-safe step"
+      }
+    },
+    {
+      "id": "E3b_hinge_exact_pi_branch_ambiguity",
+      "vertices": [
+        {
+          "id": 0,
+          "cut": [
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 0.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 1,
+          "cut": [
+            1.3,
+            0.0
+          ],
+          "position": [
+            1.3,
+            0.0,
+            0.0
+          ],
+          "inverse_mass": 1.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 2,
+          "cut": [
+            0.2,
+            0.9
+          ],
+          "position": [
+            0.2,
+            0.9,
+            0.0
+          ],
+          "inverse_mass": 2.0,
+          "half_thickness": 0.0
+        },
+        {
+          "id": 3,
+          "cut": [
+            0.6,
+            -1.1
+          ],
+          "position": [
+            0.6,
+            1.1,
+            0.0
+          ],
+          "inverse_mass": 0.5,
+          "half_thickness": 0.0
+        }
+      ],
+      "faces": [
+        {
+          "id": 0,
+          "vertices": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "id": 1,
+          "vertices": [
+            1,
+            0,
+            3
+          ]
+        }
+      ],
+      "segments": [],
+      "expected": {
+        "status": "NeedsBranchChoice",
+        "reason": "Nonzero triangle areas but principal theta^2 has a cusp at pi; retain a known branch or explicitly diagnose ambiguity.",
+        "no_unique_projection_without_branch": true,
+        "contact_warning": "Coplanar overlapping triangles are not a valid thick-cloth initial state."
+      }
+    }
+  ]
+}

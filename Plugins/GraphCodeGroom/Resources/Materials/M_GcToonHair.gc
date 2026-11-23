@@ -1,0 +1,61 @@
+gc 1  kind:material  asset:/Game/GraphCode/Groom/M_GcToonHair
+parent: /Script/Engine.Material
+
+settings {
+  bUsedWithSkeletalMesh = true
+  ShadingModel = MSM_Unlit
+}
+
+graph {
+  n0 = VertexTangentWS()
+  n1 = VertexNormalWS()
+  n2 = VertexColor()
+  n3 = SkyAtmosphereLightDirection()
+  n4 = TextureCoordinate()
+  n5 = TextureCoordinate() [CoordinateIndex=1]
+  n6 = TextureCoordinate() [CoordinateIndex=2]
+  n7 = ScalarParameter() [DefaultValue=1.0, ParameterName=UseProxyNormal]
+  n8 = ScalarParameter() [DefaultValue=0.0, ParameterName=UseFixedLight]
+  n9 = VectorParameter() [DefaultValue=(R=-0.4,G=-0.6,B=0.7,A=0.0), ParameterName=LightDirection]
+  n10 = VectorParameter() [DefaultValue=(R=0.85,G=0.8,B=0.75,A=1.0), ParameterName=Tint]
+  n11 = VectorParameter() [DefaultValue=(R=0.6,G=0.55,B=0.75,A=1.0), ParameterName=ShadeTint]
+  n12 = ScalarParameter() [DefaultValue=0.15, ParameterName=Threshold]
+  n13 = ScalarParameter() [DefaultValue=0.5, ParameterName=ShadowBias]
+  n14 = ScalarParameter() [DefaultValue=0.02, ParameterName=EdgeSoftness]
+  n15 = ScalarParameter() [DefaultValue=0.3, ParameterName=HighlightV]
+  n16 = ScalarParameter() [DefaultValue=0.05, ParameterName=HighlightWidth]
+  n17 = ScalarParameter() [DefaultValue=0.3, ParameterName=HighlightStrength]
+  n18 = ScalarParameter() [DefaultValue=0.16, ParameterName=CardVariation]
+  n19 = ScalarParameter() [DefaultValue=0.0, ParameterName=Debug]
+  n20 = TextureSampleParameter2D(in0=n4.out0) [ParameterName=Paint, Texture=obj'/Engine/EngineResources/WhiteSquareTexture.WhiteSquareTexture', link0.name="Coordinates"]
+  n21 = Custom(in0=n0.out0, in1=n1.out0, in2=n2.out0, in3=n2.out4, in4=n3.out0, in5=n4.out0, in6=n5.out0, in7=n6.out0, in8=n22.out0, in9=n7.out0, in10=n8.out0, in11=n9.out0.rgb, in12=n10.out0.rgb, in13=n11.out0.rgb, in14=n12.out0, in15=n13.out0, in16=n14.out0, in17=n15.out0, in18=n16.out0, in19=n17.out0, in20=n18.out0, in21=n19.out0, in22=n23.out0, in23=n24.out0, in24=n25.out0, in25=n26.out0, in26=n27.out0, in27=n28.out0, in28=n29.out0, in29=n30.out0, in30=n31.out0, in31=n32.out0, in32=n33.out0, in33=n34.out0, in34=n35.out0, in35=n36.out0, in36=n37.out0, in37=n38.out0, in38=n20.out0.rgb, in39=n39.out0, in40=n40.out0, in41=n41.out0, in42=n42.out0, in43=n43.out0.rgb, in44=n44.out0, in45=n45.out0, in46=n46.out0) [Code="// GraphCodeGroom toon hair. Normal = the lock\'s own surface; the tangent carries the proxy shading normal less its part\n// along the normal; colour A = d*0.5+0.5, so T + d*N rebuilds it. ProxyBlend mixes the true normal back in per lock.\nfloat3 n = normalize(N);\nfloat3 s = normalize(T + (VA * 2.0 - 1.0) * n);\nfloat3 sp = UseProxyNormal > 0.5 ? s : n;\nfloat3 sh = normalize(lerp(n, sp, ProxyBlend));\nfloat3 l = normalize(UseFixedLight > 0.5 ? LightDirection : Sky);\nfloat rnd = VC.b;\n// colour R 0 marks the scalp cap (the build writes it there only): the plain shade tone, no highlight\nfloat cap = VC.r < 0.002 ? 1.0 : 0.0;\nfloat u = UV0.x;\nfloat v = UV0.y;\nfloat edge = abs(u * 2.0 - 1.0);\n// two tones split by a soft edge; colour R biases the split per vertex, colour B per lock\nfloat x = dot(sh, l) + (VC.r - 0.5) * ShadowBias + Threshold + (rnd - 0.5) * 2.0 * LockJitter;\nfloat soft = max(EdgeSoftness, 0.0001);\nfloat lit = smoothstep(-soft, soft, x) * (1.0 - cap);\nfloat3 base = Tint * Paint;\nfloat3 colour = lerp(base * ShadeTint, base, lit);\n// second, deeper shade step well inside the shade\nfloat deep = 1.0 - smoothstep(-Shade2Offset - Shade2Soft, -Shade2Offset + Shade2Soft, x);\ncolour *= 1.0 - Shade2Strength * deep;\n// inner definition: darker toward each lock\'s side edges and toward its root (where the lock above overlaps it)\ncolour *= 1.0 - EdgeDarken * smoothstep(1.0 - EdgeDarkenWidth, 1.0, edge);\ncolour *= 1.0 - RootDarken * (1.0 - smoothstep(0.0, max(RootDarkenSpan, 0.0001), v));\ncolour *= 1.0 + (rnd - 0.5) * 2.0 * CardVariation;\n// the cap is the plain shade tone: no second shade step, no lock edges or roots\ncolour = lerp(colour, base * ShadeTint, cap);\n// angel ring: a thin band in UV1\'s V (down the head); each lock\'s piece is a zigzag of points along U, offset per lock\nfloat tri = abs(frac(u * HighlightZig + rnd * 7.0) * 2.0 - 1.0);\nfloat wobble = (sin(u * 9.42 + UV2.y * 23.7) * 0.5 + sin(u * 21.0 + UV2.x * 5.3) * 0.25) * HighlightWidth * 0.6 * HighlightWobble;\nfloat off = ((tri - 0.5) * HighlightZigAmp + (rnd - 0.5) * HighlightJitter) * HighlightWidth;\nfloat hv = UV1.y + wobble + off - (HighlightV - CamV.z * ViewShift);\nfloat band = 1.0 - smoothstep(HighlightWidth * (1.0 - HighlightSoft), HighlightWidth, abs(hv));\nfloat hm = smoothstep(0.0, max(HighlightLitRange, 0.0001), x) * (1.0 - cap);\ncolour += band * HighlightStrength * hm * lerp(float3(1.0, 1.0, 1.0), base, 0.35);\n// hair sheen along the lock (Kajiya-Kay, two lobes; off at SheenStrength 0 and Sheen2Strength 0): the strand direction is\n// the way UV0 V grows (root to tip), from the screen derivatives, so it is constant per triangle (facets at a very high exponent)\nfloat3 dpx = ddx(WP);\nfloat3 dpy = ddy(WP);\nfloat3 g = cross(dpy, n) * ddx(v) + cross(n, dpx) * ddy(v);\nfloat3 t = g - n * dot(g, n);\nt *= rsqrt(max(dot(t, t), 1e-30));\nfloat3 vw = normalize(CamV);\nfloat3 hv3 = normalize(l + vw);\nfloat streak = (sin(u * 23.0 + rnd * 40.0) * 0.6 + sin(u * 51.0 + rnd * 17.0) * 0.4) * SheenStreak;\nfloat3 t1 = normalize(t + (SheenShift + streak) * n);\nfloat3 t2 = normalize(t + (Sheen2Shift + streak) * n);\nfloat th1 = dot(t1, hv3);\nfloat th2 = dot(t2, hv3);\nfloat spec1 = pow(saturate(1.0 - th1 * th1), 0.5 * max(SheenExponent, 1.0));\nfloat spec2 = pow(saturate(1.0 - th2 * th2), 0.25 * max(SheenExponent, 1.0));\nfloat sg = saturate(lit);\nfloat3 sheen = (SheenTint * SheenStrength * spec1 + base * Sheen2Strength * spec2) * sg;\ncolour += (SheenStrength > 0.0 || Sheen2Strength > 0.0) ? sheen : float3(0.0, 0.0, 0.0);\n// Debug 7: the strand direction; 8: the first sheen lobe alone\nif (Debug > 6.5) return Debug > 7.5 ? float3(spec1, spec1, spec1) * sg : t * 0.5 + 0.5;\n// Debug 1: a colour per layer (UV2 U); 2: a colour per card (UV2 V); 3: UV1 V; 4: lock random; 5: UV0 U; 6: UV0 V\nfloat hue = Debug > 1.5 ? frac(UV2.y * 7.31 + UV2.x * 0.37) : frac(UV2.x * 0.83);\nfloat3 debug = saturate(abs(frac(hue + float3(0.0, 2.0 / 3.0, 1.0 / 3.0)) * 6.0 - 3.0) - 1.0) * (0.55 + 0.45 * lit);\nfloat dv = Debug < 3.5 ? UV1.y : (Debug < 4.5 ? rnd : (Debug < 5.5 ? u : v));\nfloat3 grey = float3(dv, dv, dv) * (frac(dv * 10.0) < 0.06 ? float3(1.0, 0.2, 0.2) : float3(1.0, 1.0, 1.0));\nreturn Debug > 2.5 ? grey : (Debug > 0.5 ? debug : colour);\n", Description="Toon hair: two tones, a second shade step, lock definition, a zigzag angel ring", Inputs=((InputName=T),(InputName=N),(InputName=VC),(InputName=VA),(InputName=Sky),(InputName=UV0),(InputName=UV1),(InputName=UV2),(InputName=CamV),(InputName=UseProxyNormal),(InputName=UseFixedLight),(InputName=LightDirection),(InputName=Tint),(InputName=ShadeTint),(InputName=Threshold),(InputName=ShadowBias),(InputName=EdgeSoftness),(InputName=HighlightV),(InputName=HighlightWidth),(InputName=HighlightStrength),(InputName=CardVariation),(InputName=Debug),(InputName=ProxyBlend),(InputName=LockJitter),(InputName=EdgeDarken),(InputName=EdgeDarkenWidth),(InputName=RootDarken),(InputName=RootDarkenSpan),(InputName=Shade2Offset),(InputName=Shade2Strength),(InputName=Shade2Soft),(InputName=HighlightSoft),(InputName=HighlightWobble),(InputName=HighlightZig),(InputName=HighlightZigAmp),(InputName=HighlightJitter),(InputName=HighlightLitRange),(InputName=ViewShift),(InputName=Paint),(InputName=WP),(InputName=SheenStrength),(InputName=SheenExponent),(InputName=SheenShift),(InputName=SheenTint),(InputName=SheenStreak),(InputName=Sheen2Strength),(InputName=Sheen2Shift)), link0.name="T", link1.name="N", link2.name="VC", link3.name="VA", link4.name="Sky", link5.name="UV0", link6.name="UV1", link7.name="UV2", link8.name="CamV", link9.name="UseProxyNormal", link10.name="UseFixedLight", link11.name="LightDirection", link12.name="Tint", link13.name="ShadeTint", link14.name="Threshold", link15.name="ShadowBias", link16.name="EdgeSoftness", link17.name="HighlightV", link18.name="HighlightWidth", link19.name="HighlightStrength", link20.name="CardVariation", link21.name="Debug", link22.name="ProxyBlend", link23.name="LockJitter", link24.name="EdgeDarken", link25.name="EdgeDarkenWidth", link26.name="RootDarken", link27.name="RootDarkenSpan", link28.name="Shade2Offset", link29.name="Shade2Strength", link30.name="Shade2Soft", link31.name="HighlightSoft", link32.name="HighlightWobble", link33.name="HighlightZig", link34.name="HighlightZigAmp", link35.name="HighlightJitter", link36.name="HighlightLitRange", link37.name="ViewShift", link38.name="Paint", link39.name="WP", link40.name="SheenStrength", link41.name="SheenExponent", link42.name="SheenShift", link43.name="SheenTint", link44.name="SheenStreak", link45.name="Sheen2Strength", link46.name="Sheen2Shift"]
+  n22 = CameraVectorWS()
+  n23 = ScalarParameter() [DefaultValue=0.7, ParameterName=ProxyBlend]
+  n24 = ScalarParameter() [DefaultValue=0.12, ParameterName=LockJitter]
+  n25 = ScalarParameter() [DefaultValue=0.18, ParameterName=EdgeDarken]
+  n26 = ScalarParameter() [DefaultValue=0.3, ParameterName=EdgeDarkenWidth]
+  n27 = ScalarParameter() [DefaultValue=0.15, ParameterName=RootDarken]
+  n28 = ScalarParameter() [DefaultValue=0.25, ParameterName=RootDarkenSpan]
+  n29 = ScalarParameter() [DefaultValue=0.5, ParameterName=Shade2Offset]
+  n30 = ScalarParameter() [DefaultValue=0.25, ParameterName=Shade2Strength]
+  n31 = ScalarParameter() [DefaultValue=0.05, ParameterName=Shade2Soft]
+  n32 = ScalarParameter() [DefaultValue=1.0, ParameterName=HighlightSoft]
+  n33 = ScalarParameter() [DefaultValue=0.6, ParameterName=HighlightWobble]
+  n34 = ScalarParameter() [DefaultValue=1.0, ParameterName=HighlightZig]
+  n35 = ScalarParameter() [DefaultValue=0.15, ParameterName=HighlightZigAmp]
+  n36 = ScalarParameter() [DefaultValue=0.6, ParameterName=HighlightJitter]
+  n37 = ScalarParameter() [DefaultValue=0.4, ParameterName=HighlightLitRange]
+  n38 = ScalarParameter() [DefaultValue=0.12, ParameterName=ViewShift]
+  n39 = WorldPosition()
+  n40 = ScalarParameter() [DefaultValue=0.0, ParameterName=SheenStrength]
+  n41 = ScalarParameter() [DefaultValue=24.0, ParameterName=SheenExponent]
+  n42 = ScalarParameter() [DefaultValue=0.0, ParameterName=SheenShift]
+  n43 = VectorParameter() [DefaultValue=(R=1.0,G=0.94,B=0.97,A=1.0), ParameterName=SheenTint]
+  n44 = ScalarParameter() [DefaultValue=0.0, ParameterName=SheenStreak]
+  n45 = ScalarParameter() [DefaultValue=0.0, ParameterName=Sheen2Strength]
+  n46 = ScalarParameter() [DefaultValue=-0.2, ParameterName=Sheen2Shift]
+  result = MaterialResult(EmissiveColor=n21.out0)
+}
+
+comments {
+}

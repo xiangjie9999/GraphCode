@@ -1,0 +1,303 @@
+gc 1  kind:widget_blueprint  asset:/GraphCode/UI/WBP_GraphCodeVcs  sig:e0b851f707529725863f71a7afc0e5ee  bin:564a8c167a0d55e98f17109cd5631149
+parent: /Script/GraphCode.GraphCodeVcsWidget
+omits: blueprint_extensions blueprint_metadata variable_metadata widget_navigation_method mvvm_instanced_objects orphan_widgets
+source: OraStudio 5.7.4-51494982+++UE5+Release-5.7  projector:29  ir: widgetir/7 blueprintir/2 actorir/1
+
+settings {
+}
+
+defaults {
+  blueprint_defaults
+  instance_editable = false
+  expose_on_spawn = false
+}
+
+properties {
+}
+
+interfaces {
+}
+
+dispatchers {
+}
+
+timelines {
+}
+
+class_defaults {
+}
+
+components {
+}
+
+widgets {
+  Frame = Border(Background.DrawAs=Box, Background.TintColor.SpecifiedColor=(R=0.012,G=0.012,B=0.013,A=1.0))
+  {
+    RootStack = Overlay()
+      @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=0.0)]
+    {
+      Root = VerticalBox()
+        @slot[HorizontalAlignment=HAlign_Fill, VerticalAlignment=VAlign_Fill]
+      {
+        HeaderBar = Border(variable=true, Background.DrawAs=Box, Background.TintColor.SpecifiedColor=(R=0.035,G=0.036,B=0.039,A=1.0))
+        {
+          HeaderRow = HorizontalBox()
+            @slot[Padding=(Left=10.0,Top=6.0,Right=10.0,Bottom=6.0)]
+          {
+            Title = TextBlock(Font.Size=12.0, Text=text("GraphCode"))
+              @slot[VerticalAlignment=VAlign_Center]
+            RepoLine = TextBlock(variable=true, Font.Size=9.0, Text=text("repository"))
+              @slot[Padding=(Left=10.0,Top=0.0,Right=0.0,Bottom=0.0), VerticalAlignment=VAlign_Center]
+            NextButton = Button(variable=true)
+              @slot[Padding=(Left=16.0,Top=0.0,Right=10.0,Bottom=0.0), VerticalAlignment=VAlign_Center]
+            {
+              NextLabel = TextBlock(variable=true, Font.Size=9.0, Text=text("0 to decide"))
+            }
+            StatChanged = TextBlock(variable=true, Font.Size=9.0, Text=text("0 changed"))
+              @slot[Padding=(Left=0.0,Top=0.0,Right=10.0,Bottom=0.0), VerticalAlignment=VAlign_Center]
+            StatNew = TextBlock(variable=true, Font.Size=9.0, Text=text("0 new"))
+              @slot[Padding=(Left=0.0,Top=0.0,Right=10.0,Bottom=0.0), VerticalAlignment=VAlign_Center]
+            StatDeleted = TextBlock(variable=true, Font.Size=9.0, Text=text("0 deleted"))
+              @slot[Padding=(Left=0.0,Top=0.0,Right=10.0,Bottom=0.0), Size.SizeRule=Fill, VerticalAlignment=VAlign_Center]
+            SyncAllButton = Button(variable=true)
+              @slot[VerticalAlignment=VAlign_Center]
+            {
+              SyncAllLabel = TextBlock(Font.Size=9.0, Text=text("Rewrite all .gc"))
+            }
+          }
+        }
+        Body = HorizontalBox()
+          @slot[Size.SizeRule=Fill]
+        {
+          LeftPaneSize = SizeBox(variable=true, WidthOverride=300.0)
+          {
+            LeftPane = Border(variable=true, Background.DrawAs=Box, Background.TintColor.SpecifiedColor=(R=0.019,G=0.019,B=0.021,A=1.0))
+            {
+              LeftPaneScroll = ScrollBox(variable=true)
+              {
+                LeftColumn = VerticalBox()
+                  @slot[Padding=(Left=8.0,Top=8.0,Right=6.0,Bottom=8.0)]
+                {
+                  ConflictZone = VerticalBox(variable=true)
+                    @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=12.0)]
+                  {
+                    ConflictCaption = TextBlock(variable=true, Font.Size=9.0, Text=text("CONFLICT"))
+                      @slot[Padding=(Left=4.0,Top=0.0,Right=0.0,Bottom=2.0)]
+                    ConflictListSize = SizeBox(MaxDesiredHeight=170.0)
+                    {
+                      ConflictList = ListView(variable=true, EntryWidgetClass=obj'/GraphCode/UI/WBP_GraphCodeVcsRow.WBP_GraphCodeVcsRow_C')
+                    }
+                  }
+                  CompareLeftCaption = TextBlock(variable=true, ColorAndOpacity.SpecifiedColor=(R=0.561,G=0.565,B=0.584,A=1.0), Font.Size=9.0, Text=text("Compare from:"))
+                    @slot[Padding=(Left=4.0,Top=0.0,Right=0.0,Bottom=2.0)]
+                  CompareLeftCategoryBox = ComboBoxString(variable=true, Font.Size=10.0, ForegroundColor.SpecifiedColor=(R=0.796,G=0.8,B=0.812,A=1.0))
+                    @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=2.0)]
+                  CompareLeftTargetBox = ComboBoxString(variable=true, Font.Size=10.0, ForegroundColor.SpecifiedColor=(R=0.796,G=0.8,B=0.812,A=1.0))
+                    @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=2.0)]
+                  CompareLeftCommitBox = ComboBoxString(variable=true, Font.Size=10.0, ForegroundColor.SpecifiedColor=(R=0.796,G=0.8,B=0.812,A=1.0))
+                    @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=2.0)]
+                  LeftTimeRow = HorizontalBox(variable=true, Visibility=Collapsed)
+                    @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=3.0)]
+                  {
+                    LeftTimeBackButton = Button(variable=true)
+                      @slot[Padding=(Left=0.0,Top=0.0,Right=5.0,Bottom=0.0), VerticalAlignment=VAlign_Center]
+                    {
+                      LeftTimeBackLabel = TextBlock(Font.Size=10.0, Text=text("<"))
+                    }
+                    LeftTimeEntry = EditableTextBox(variable=true, WidgetStyle.TextStyle.Font.Size=10.0)
+                      @slot[Padding=(Left=0.0,Top=0.0,Right=5.0,Bottom=0.0), Size.SizeRule=Fill, VerticalAlignment=VAlign_Center]
+                    LeftTimeForwardButton = Button(variable=true)
+                      @slot[VerticalAlignment=VAlign_Center]
+                    {
+                      LeftTimeForwardLabel = TextBlock(Font.Size=10.0, Text=text(">"))
+                    }
+                  }
+                  LeftTimeBlockRow = HorizontalBox(variable=true, Visibility=Collapsed)
+                    @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=7.0)]
+                  {
+                    LeftTimeBackBlockButton = Button(variable=true)
+                      @slot[Padding=(Left=0.0,Top=0.0,Right=5.0,Bottom=0.0), Size.SizeRule=Fill, VerticalAlignment=VAlign_Center]
+                    {
+                      LeftTimeBackBlockLabel = TextBlock(Font.Size=10.0, Justification=Center, Text=text("<< prev"))
+                    }
+                    LeftTimeForwardBlockButton = Button(variable=true)
+                      @slot[Size.SizeRule=Fill, VerticalAlignment=VAlign_Center]
+                    {
+                      LeftTimeForwardBlockLabel = TextBlock(Font.Size=10.0, Justification=Center, Text=text("next >>"))
+                    }
+                  }
+                  CompareRightCaption = TextBlock(variable=true, ColorAndOpacity.SpecifiedColor=(R=0.561,G=0.565,B=0.584,A=1.0), Font.Size=9.0, Text=text("to"))
+                    @slot[Padding=(Left=4.0,Top=0.0,Right=0.0,Bottom=2.0)]
+                  CompareRightCategoryBox = ComboBoxString(variable=true, Font.Size=10.0, ForegroundColor.SpecifiedColor=(R=0.796,G=0.8,B=0.812,A=1.0))
+                    @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=2.0)]
+                  CompareRightTargetBox = ComboBoxString(variable=true, Font.Size=10.0, ForegroundColor.SpecifiedColor=(R=0.796,G=0.8,B=0.812,A=1.0))
+                    @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=2.0)]
+                  CompareRightCommitBox = ComboBoxString(variable=true, Font.Size=10.0, ForegroundColor.SpecifiedColor=(R=0.796,G=0.8,B=0.812,A=1.0))
+                    @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=2.0)]
+                  RightTimeRow = HorizontalBox(variable=true, Visibility=Collapsed)
+                    @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=3.0)]
+                  {
+                    RightTimeBackButton = Button(variable=true)
+                      @slot[Padding=(Left=0.0,Top=0.0,Right=5.0,Bottom=0.0), VerticalAlignment=VAlign_Center]
+                    {
+                      RightTimeBackLabel = TextBlock(Font.Size=10.0, Text=text("<"))
+                    }
+                    RightTimeEntry = EditableTextBox(variable=true, WidgetStyle.TextStyle.Font.Size=10.0)
+                      @slot[Padding=(Left=0.0,Top=0.0,Right=5.0,Bottom=0.0), Size.SizeRule=Fill, VerticalAlignment=VAlign_Center]
+                    RightTimeForwardButton = Button(variable=true)
+                      @slot[VerticalAlignment=VAlign_Center]
+                    {
+                      RightTimeForwardLabel = TextBlock(Font.Size=10.0, Text=text(">"))
+                    }
+                  }
+                  RightTimeBlockRow = HorizontalBox(variable=true, Visibility=Collapsed)
+                    @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=2.0)]
+                  {
+                    RightTimeBackBlockButton = Button(variable=true)
+                      @slot[Padding=(Left=0.0,Top=0.0,Right=5.0,Bottom=0.0), Size.SizeRule=Fill, VerticalAlignment=VAlign_Center]
+                    {
+                      RightTimeBackBlockLabel = TextBlock(Font.Size=10.0, Justification=Center, Text=text("<< prev"))
+                    }
+                    RightTimeForwardBlockButton = Button(variable=true)
+                      @slot[Size.SizeRule=Fill, VerticalAlignment=VAlign_Center]
+                    {
+                      RightTimeForwardBlockLabel = TextBlock(Font.Size=10.0, Justification=Center, Text=text("next >>"))
+                    }
+                  }
+                  TimeMachineNote = TextBlock(variable=true, AutoWrapText=true, ColorAndOpacity.SpecifiedColor=(R=0.522,G=0.525,B=0.545,A=1.0), Font.Size=9.0, Text=text("-"))
+                    @slot[Padding=(Left=2.0,Top=3.0,Right=0.0,Bottom=9.0)]
+                  ProjectRevertZone = VerticalBox()
+                    @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=9.0)]
+                  {
+                    ProjectRevertButton = Button(variable=true, Visibility=Collapsed)
+                      @slot[HorizontalAlignment=HAlign_Left]
+                    {
+                      ProjectRevertLabel = TextBlock(variable=true, Font.Size=9.0, Text=text("Revert the whole project..."))
+                    }
+                    ProjectRevertDetailsToggle = Button(variable=true, Visibility=Collapsed)
+                      @slot[Padding=(Left=0.0,Top=3.0,Right=0.0,Bottom=0.0)]
+                    {
+                      ProjectRevertDetailsToggleLabel = TextBlock(variable=true, Font.Size=9.0, Text=text("0 created / 0 removed"))
+                    }
+                    ProjectRevertDetails = VerticalBox(variable=true, Visibility=Collapsed)
+                      @slot[Padding=(Left=0.0,Top=4.0,Right=0.0,Bottom=0.0)]
+                    {
+                      ProjectRevertDetailsText = TextBlock(variable=true, AutoWrapText=true, Font.Size=9.0)
+                    }
+                  }
+                  ChangesHeading = TextBlock(variable=true, ColorAndOpacity.SpecifiedColor=(R=0.561,G=0.565,B=0.584,A=1.0), Font.Size=9.0, Text=text("not refreshed"))
+                    @slot[Padding=(Left=4.0,Top=0.0,Right=0.0,Bottom=5.0)]
+                  FileListSize = SizeBox(variable=true, MinDesiredHeight=40.0)
+                  {
+                    FileList = ListView(variable=true, EntryWidgetClass=obj'/GraphCode/UI/WBP_GraphCodeVcsRow.WBP_GraphCodeVcsRow_C')
+                  }
+                }
+              }
+            }
+          }
+          SplitHandle = Border(variable=true, Background.DrawAs=Box, Background.TintColor.SpecifiedColor=(R=0.086,G=0.086,B=0.094,A=1.0))
+          {
+            SplitHandleWidth = SizeBox(WidthOverride=3.0)
+          }
+          DiffPane = Border(variable=true, Background.DrawAs=Box, Background.TintColor.SpecifiedColor=(R=0.012,G=0.012,B=0.013,A=1.0))
+            @slot[Size.SizeRule=Fill]
+          {
+            DiffColumn = VerticalBox()
+              @slot[Padding=(Left=10.0,Top=8.0,Right=10.0,Bottom=8.0)]
+            {
+              SideNames = HorizontalBox()
+                @slot[Padding=(Left=0.0,Top=0.0,Right=0.0,Bottom=4.0)]
+              {
+                LeftSideName = TextBlock(variable=true, Font.Size=10.0, Text=text("-"))
+                  @slot[Padding=(Left=51.0,Top=0.0,Right=0.0,Bottom=0.0), Size.SizeRule=Fill, Size.Value=0.5, VerticalAlignment=VAlign_Center]
+                RightSideName = TextBlock(variable=true, Font.Size=10.0, Text=text("-"))
+                  @slot[Padding=(Left=51.0,Top=0.0,Right=0.0,Bottom=0.0), Size.SizeRule=Fill, Size.Value=0.5, VerticalAlignment=VAlign_Center]
+              }
+              DiffArea = Overlay()
+                @slot[Size.SizeRule=Fill]
+              {
+                DiffList = ListView(variable=true, EntryWidgetClass=obj'/GraphCode/UI/WBP_GraphCodeVcsDiffRow.WBP_GraphCodeVcsDiffRow_C')
+                  @slot[HorizontalAlignment=HAlign_Fill, VerticalAlignment=VAlign_Fill]
+                EmptyMessage = TextBlock(variable=true, Font.Size=9.0, Text=text("Pick a file on the left to see what changed in it."))
+                  @slot[HorizontalAlignment=HAlign_Center, VerticalAlignment=VAlign_Center]
+              }
+              RestoreButton = Button(variable=true, Visibility=Collapsed)
+                @slot[HorizontalAlignment=HAlign_Left, Padding=(Left=34.0,Top=6.0,Right=0.0,Bottom=0.0)]
+              {
+                RestoreLabel = TextBlock(variable=true, Font.Size=9.0, Text=text("Restore this file..."))
+              }
+              TakeAllRow = HorizontalBox(variable=true, Visibility=Collapsed)
+                @slot[Padding=(Left=34.0,Top=4.0,Right=0.0,Bottom=0.0)]
+              {
+                TakeAllLeftButton = Button(variable=true)
+                  @slot[Padding=(Left=0.0,Top=0.0,Right=4.0,Bottom=0.0), Size.SizeRule=Fill, Size.Value=0.5]
+                {
+                  TakeAllLeftLabel = TextBlock(variable=true, Font.Size=9.0, Text=text("Take all from the left"))
+                }
+                TakeAllRightButton = Button(variable=true)
+                  @slot[Padding=(Left=4.0,Top=0.0,Right=0.0,Bottom=0.0), Size.SizeRule=Fill, Size.Value=0.5]
+                {
+                  TakeAllRightLabel = TextBlock(variable=true, Font.Size=9.0, Text=text("Take all from the right"))
+                }
+              }
+              DiffPanBar = Slider(variable=true, StepSize=0.02)
+                @slot[Padding=(Left=34.0,Top=4.0,Right=0.0,Bottom=0.0)]
+            }
+          }
+        }
+        FooterBar = Border(variable=true, Background.DrawAs=Box, Background.TintColor.SpecifiedColor=(R=0.035,G=0.036,B=0.039,A=1.0))
+        {
+          FooterColumn = VerticalBox()
+            @slot[Padding=(Left=10.0,Top=6.0,Right=10.0,Bottom=6.0)]
+          {
+            FooterRow = HorizontalBox()
+            {
+              SelectionLine = TextBlock(variable=true, Font.Size=9.0, Text=text("no file selected"))
+                @slot[Size.SizeRule=Fill, VerticalAlignment=VAlign_Center]
+              OpenButton = Button(variable=true)
+                @slot[Padding=(Left=0.0,Top=0.0,Right=6.0,Bottom=0.0), VerticalAlignment=VAlign_Center]
+              {
+                OpenLabel = TextBlock(Font.Size=9.0, Text=text("Open asset"))
+              }
+              SaveButton = Button(variable=true, Visibility=Collapsed)
+                @slot[Padding=(Left=0.0,Top=0.0,Right=6.0,Bottom=0.0), VerticalAlignment=VAlign_Center]
+              {
+                SaveLabel = TextBlock(variable=true, Font.Size=9.0, Text=text("Save asset"))
+              }
+              PrimaryButton = Button(variable=true, Visibility=Collapsed)
+                @slot[VerticalAlignment=VAlign_Center]
+              {
+                PrimaryLabel = TextBlock(variable=true, Font.Size=9.0, Text=text("Save resolution to file"))
+              }
+            }
+            ResultLine = TextBlock(variable=true, AutoWrapText=true, Font.Size=9.0)
+              @slot[Padding=(Left=0.0,Top=5.0,Right=0.0,Bottom=0.0)]
+          }
+        }
+      }
+    }
+  }
+}
+
+graph {
+  eventgraph EventGraph {
+    // This node is disabled and will not be called.
+    // Drag off pins to build functionality.
+    n1 = Event Construct() [enabled=false, bOverrideFunction=True] : ->_
+    // This node is disabled and will not be called.
+    // Drag off pins to build functionality.
+    n2 = Event PreConstruct() [enabled=false, bOverrideFunction=True] : ->_
+    // This node is disabled and will not be called.
+    // Drag off pins to build functionality.
+    n3 = Event Tick() [enabled=false, bOverrideFunction=True] : ->_
+  }
+}
+
+functions {
+}
+
+macros {
+}
+
+animations {
+}

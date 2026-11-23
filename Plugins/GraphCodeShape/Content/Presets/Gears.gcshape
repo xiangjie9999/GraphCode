@@ -1,0 +1,383 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.025  shade:40
+
+# GEARS — L3 Parts. `Docs/GC-SHAPE-PRESET-LIBRARY.md` §4.
+#
+#   G = shape('/GraphCodeShape/Presets/Gears')
+#   Train = mesh() { add($G.SpurGear, teeth=32) add($G.SpurGear, teeth=16, at=(72, 0, 0)) }
+#
+# THE PROMISE THIS FILE MAKES, AND ALMOST NOTHING ON A MARKETPLACE DOES:
+# TWO GEARS FROM THIS FILE MESH WITH EACH OTHER.
+#
+#   centre distance = Module * (teethA + teethB) / 2
+#
+# At the defaults a 32 and a 16 sit 72 cm apart. That formula is the whole
+# contract and it is why `Module`, `PressureAngle` and `Backlash` are FILE-LEVEL
+# names rather than entry parameters: two gears mesh only if they SHARE them, so
+# a per-entry module would let an author build a pair that cannot possibly run.
+# A whole machine changes size through the import line instead —
+#
+#   Clockwork = shape('/GraphCodeShape/Presets/Gears', Module = 0.8, Bronze = $Brass)
+#
+# — and everything in that machine still meshes. `teeth`, `bore`, `spokes` and
+# `facewidth` are per-entry, because those genuinely differ between two gears on
+# the same shaft.
+#
+# THE TOOTH FLANK IS GENERATED, NOT AUTHORED. A trapezoidal rack with 20-degree
+# flanks — itself made from two half-plane intersections, so not a vertex list
+# either — is rolled around the pitch circle and subtracted at 25 sampled
+# angles. That is why changing `teeth` keeps the teeth CORRECT instead of
+# stretching a drawn shape: the involute falls out of the rolling, exactly as it
+# does when a real gear is hobbed.
+#
+# WHAT IS HONEST TO CLAIM: a sampled visual model of rack generation, correct
+# enough that paired gears look and align right. NOT a manufacturing export, and
+# not a stress-bearing profile. The original recipe said so and the sentence
+# stays.
+#
+# `Samples` IS A COST DIAL AND IT IS FIXED AT 25. Each sample is a boolean in the
+# outline, per tooth space, so a 32-tooth wheel pays 25 booleans once and then
+# composes the ring in binary. Lowering it is possible and is NOT exposed yet —
+# the roll positions are written out rather than looped, so a different count is
+# a different entry. Named here so nobody reads 25 as free.
+#
+# BOOLEANS STAY IN THE OUTLINE. Everything down to `GearOutline` is `plane()`
+# work; only the finished wheel is triangulated. Doing the same cuts in 3D makes
+# slivers off the boolean caps, which is the defect this ordering avoids.
+#
+# NOT IN THIS FILE YET, and each for a stated reason rather than an oversight:
+# `BevelGear` (the cone carries the same method — `Content/Steampunk/Recipes/
+# BevelGears.gcshape` is the source to promote), `Worm` and `WormWheel` (a worm
+# is a multi-turn helical thread, and `revolve` turns between 0 and 360, so it
+# needs the arrayed-turn treatment `Mechanical.Spring` uses).
+
+build {
+  SM_Gear_Spur32   = $Spur32   [bounds=(103.0, 103.0, 10.0),  triangles=60000, pivot=(0,0,0)]
+  SM_Gear_Spur24   = $Spur24   [bounds=(79.0, 79.0, 10.0),    triangles=50000, pivot=(0,0,0)]
+  SM_Gear_Pinion16 = $Pinion16 [bounds=(55.0, 55.0, 10.0),    triangles=40000, pivot=(0,0,0)]
+  SM_Gear_Rack     = $RackBar  [bounds=(96.0, 16.0, 6.0),     triangles=20000]
+  SM_Gear_Pulley   = $Pulley   [bounds=(45.0, 45.0, 10.0),    triangles=20000, pivot=(0,0,0)]
+  SM_Gear_Sprocket = $Sprocket [bounds=(51.0, 51.0, 4.0),     triangles=20000, pivot=(0,0,0)]
+  SM_Gear_Ratchet  = $Ratchet  [bounds=(63.0, 63.0, 6.0),     triangles=20000, pivot=(0,0,0)]
+  SM_Gear_Pawl     = $Pawl     [bounds=(26.0, 6.0, 9.0),      triangles=2000]
+  SM_Gear_Pair     = $Pair     [bounds=(178.0, 103.0, 10.0),  triangles=110000]
+}
+
+# ---- material slots ------------------------------------------------------
+# SLOTS, NEVER PATHS. The recipe this was promoted from imported
+# `/Game/Steampunk/Materials/M_Iron` and two others; a shipped library that
+# imports a project path is broken in every project but the one it came from,
+# and stripping them is the single most common defect to introduce while
+# promoting a recipe.
+Iron   = material()
+Bronze = material()
+
+# ---- the meshing contract, shared by every wheel in the file -------------
+Module        = 3
+PressureAngle = 20
+Backlash      = 0.12
+Pi            = 3.141592653589793
+
+# ---- proportions an importer may override whole --------------------------
+FaceWidth     = 5
+HubWall       = 5.4
+HubProjection = 2
+RimThickness  = 6.9
+SpokeWidth    = 5.1
+Bore          = 10
+Spokes        = 6
+
+# ---- the generator -------------------------------------------------------
+
+Disk      = plane(r=20) { circle(radius=$r) }
+HalfPlane = plane(size=200) { rect(w=$size,h=$size,at=(-$size*0.5,0,0)) }
+
+# The cutting rack. Named `RackTool` because `Rack` is a PRODUCT further down —
+# the toothed bar — and one name cannot be both the tool and the thing.
+# The two intersections form the 20-degree flanks; no hand-authored gear vertex
+# list exists anywhere in this file.
+RackTool = plane() {
+  $Space = $Pi*$Module*0.5 + $Backlash
+  $Limit = 40*$Module
+  rect(w=8*$Module,h=5*$Module,at=(0,1.25*$Module,0))
+  intersect($HalfPlane,size=$Limit,rotate=(0,0,-$PressureAngle),at=($Space*0.5,0,0))
+  intersect($HalfPlane,size=$Limit,mirror=X,rotate=(0,0,$PressureAngle),at=(-$Space*0.5,0,0))
+  round($Module*0.18)
+}
+
+RackTranslated = plane(teeth=32,roll=0) {
+  $Pitch = $Module*$teeth*0.5
+  $Travel = $Pitch*$roll*$Pi/180
+  add($RackTool,at=(-$Travel,$Pitch,0))
+}
+
+RackPose = plane(teeth=32,roll=0) {
+  add($RackTranslated,teeth=$teeth,roll=$roll,rotate=(0,0,-$roll))
+}
+
+# 25 samples of ONE rolling tool, composed in 2D before triangulation.
+ToothSpace = plane(teeth=32) {
+  $Step = 52/24
+  add($RackPose,teeth=$teeth,roll=-12*$Step)
+  add($RackPose,teeth=$teeth,roll=-11*$Step)
+  add($RackPose,teeth=$teeth,roll=-10*$Step)
+  add($RackPose,teeth=$teeth,roll=-9*$Step)
+  add($RackPose,teeth=$teeth,roll=-8*$Step)
+  add($RackPose,teeth=$teeth,roll=-7*$Step)
+  add($RackPose,teeth=$teeth,roll=-6*$Step)
+  add($RackPose,teeth=$teeth,roll=-5*$Step)
+  add($RackPose,teeth=$teeth,roll=-4*$Step)
+  add($RackPose,teeth=$teeth,roll=-3*$Step)
+  add($RackPose,teeth=$teeth,roll=-2*$Step)
+  add($RackPose,teeth=$teeth,roll=-$Step)
+  add($RackPose,teeth=$teeth,roll=0)
+  add($RackPose,teeth=$teeth,roll=$Step)
+  add($RackPose,teeth=$teeth,roll=2*$Step)
+  add($RackPose,teeth=$teeth,roll=3*$Step)
+  add($RackPose,teeth=$teeth,roll=4*$Step)
+  add($RackPose,teeth=$teeth,roll=5*$Step)
+  add($RackPose,teeth=$teeth,roll=6*$Step)
+  add($RackPose,teeth=$teeth,roll=7*$Step)
+  add($RackPose,teeth=$teeth,roll=8*$Step)
+  add($RackPose,teeth=$teeth,roll=9*$Step)
+  add($RackPose,teeth=$teeth,roll=10*$Step)
+  add($RackPose,teeth=$teeth,roll=11*$Step)
+  add($RackPose,teeth=$teeth,roll=12*$Step)
+}
+
+Tooth = plane(teeth=32) {
+  $Pitch = $Module*$teeth*0.5
+  $Root = $Pitch-1.25*$Module
+  circle(radius=$Pitch+$Module)
+  subtract($Disk,r=$Root-0.3*$Module)
+  intersect($HalfPlane,size=$Pitch*5,rotate=(0,0,-180/$teeth))
+  intersect($HalfPlane,size=$Pitch*5,mirror=X,rotate=(0,0,180/$teeth))
+  subtract($ToothSpace,teeth=$teeth,rotate=(0,0,180/$teeth))
+  subtract($ToothSpace,teeth=$teeth,rotate=(0,0,-180/$teeth))
+}
+
+# Binary composition supports tooth counts through 127 without copied
+# coordinates: doubling six times costs six entries, not 127 lines.
+Two        = plane(teeth=32) { add($Tooth,teeth=$teeth) add($Tooth,teeth=$teeth,rotate=(0,0,360/$teeth)) }
+Four       = plane(teeth=32) { add($Two,teeth=$teeth) add($Two,teeth=$teeth,rotate=(0,0,720/$teeth)) }
+Eight      = plane(teeth=32) { add($Four,teeth=$teeth) add($Four,teeth=$teeth,rotate=(0,0,1440/$teeth)) }
+Sixteen    = plane(teeth=32) { add($Eight,teeth=$teeth) add($Eight,teeth=$teeth,rotate=(0,0,2880/$teeth)) }
+ThirtyTwo  = plane(teeth=32) { add($Sixteen,teeth=$teeth) add($Sixteen,teeth=$teeth,rotate=(0,0,5760/$teeth)) }
+SixtyFour  = plane(teeth=32) { add($ThirtyTwo,teeth=$teeth) add($ThirtyTwo,teeth=$teeth,rotate=(0,0,11520/$teeth)) }
+
+ToothRing = plane(teeth=32) {
+  $Left = $teeth
+  $Angle = 0
+  $PitchAngle = 360/$teeth
+  if ($Left >= 64) { add($SixtyFour,teeth=$teeth,rotate=(0,0,$Angle))
+    $Left=$Left-64
+    $Angle=$Angle+64*$PitchAngle
+  }
+  if ($Left >= 32) { add($ThirtyTwo,teeth=$teeth,rotate=(0,0,$Angle))
+    $Left=$Left-32
+    $Angle=$Angle+32*$PitchAngle
+  }
+  if ($Left >= 16) { add($Sixteen,teeth=$teeth,rotate=(0,0,$Angle))
+    $Left=$Left-16
+    $Angle=$Angle+16*$PitchAngle
+  }
+  if ($Left >= 8) { add($Eight,teeth=$teeth,rotate=(0,0,$Angle))
+    $Left=$Left-8
+    $Angle=$Angle+8*$PitchAngle
+  }
+  if ($Left >= 4) { add($Four,teeth=$teeth,rotate=(0,0,$Angle))
+    $Left=$Left-4
+    $Angle=$Angle+4*$PitchAngle
+  }
+  if ($Left >= 2) { add($Two,teeth=$teeth,rotate=(0,0,$Angle))
+    $Left=$Left-2
+    $Angle=$Angle+2*$PitchAngle
+  }
+  if ($Left >= 1) { add($Tooth,teeth=$teeth,rotate=(0,0,$Angle)) }
+}
+
+Spoke = plane(length=30,width=5,start=8) { rect(w=$length,h=$width) round($width*0.3) }
+StraightSpoke = plane(start=8,end=30) { add($Spoke,length=$end-$start,width=$SpokeWidth,at=(($start+$end)*0.5,0,0)) }
+RadialSpoke   = plane(start=8,end=30,angle=0) { add($StraightSpoke,start=$start,end=$end,rotate=(0,0,$angle)) }
+
+GearOutline = plane(teeth=32,bore=10,spokes=6) {
+  $Pitch = $Module*$teeth*0.5
+  $Root = $Pitch-1.25*$Module
+  # A small root land avoids zero-area tangency between the generated root and
+  # rim. It leaves 0.21 module radial tip clearance in a standard-centre pair.
+  circle(radius=$Root+0.04*$Module)
+  subtract($Disk,r=$Root-$RimThickness)
+  add($ToothRing,teeth=$teeth)
+  $Start = $bore*0.5+$HubWall-1
+  $End = $Root-$RimThickness+1
+  add($RadialSpoke,start=$Start,end=$End)
+  if ($spokes > 1) { add($RadialSpoke,start=$Start,end=$End,angle=360/$spokes) }
+  if ($spokes > 2) { add($RadialSpoke,start=$Start,end=$End,angle=720/$spokes) }
+  if ($spokes > 3) { add($RadialSpoke,start=$Start,end=$End,angle=1080/$spokes) }
+  if ($spokes > 4) { add($RadialSpoke,start=$Start,end=$End,angle=1440/$spokes) }
+  if ($spokes > 5) { add($RadialSpoke,start=$Start,end=$End,angle=1800/$spokes) }
+  if ($spokes > 6) { add($RadialSpoke,start=$Start,end=$End,angle=2160/$spokes) }
+  if ($spokes > 7) { add($RadialSpoke,start=$Start,end=$End,angle=2520/$spokes) }
+  add($Disk,r=$bore*0.5+$HubWall)
+  subtract($Disk,r=$bore*0.5)
+}
+
+Hub = mesh(bore=10) {
+  circle(radius=$bore*0.5+$HubWall)
+  subtract($Disk,r=$bore*0.5)
+  extrude(height=$FaceWidth+2*$HubProjection)
+  round(0.12) [sharp]
+  material($Iron)
+}
+
+# ---- the products --------------------------------------------------------
+
+# A spur gear. THE ONE ENTRY EVERYTHING ELSE IN THE FILE EXISTS FOR.
+# Hub, spokes, rim and bore are separable: a clock wheel and a mill wheel differ
+# in `spokes` and `bore` and nowhere else, so neither is baked in.
+# THE SOCKETS ARE THE POINT OF SHIPPING THIS RATHER THAN A MESH. `Axle` is the
+# shaft centre at mid-face; `ShaftDatum` is the mesh datum, so a child inherits
+# this wheel's rotation and a bearing does not; `FrontHub` is the outer hub face.
+SpurGear = mesh(teeth=32,bore=10,spokes=6) {
+  add($GearOutline,teeth=$teeth,bore=$bore,spokes=$spokes)
+  extrude(height=$FaceWidth)
+  round(0.02) [sharp]
+  add($Hub,bore=$bore,at=(0,0,-$HubProjection))
+  material($Bronze)
+  uv(box,scale=40)
+  socket(Axle,at=(0,0,$FaceWidth*0.5),facing=+Z,up=+X)
+  socket(ShaftDatum,at=(0,0,0),facing=+Z,up=+X)
+  socket(FrontHub,at=(0,0,$FaceWidth+$HubProjection),facing=+Z,up=+X)
+}
+
+# A pinion is not a different mechanism — it is a spur gear with few teeth, and
+# it is a named entry so that the word an engineer uses reaches the thing.
+# Four spokes and a narrower bore, because a small wheel has no room for six.
+Pinion = mesh(teeth=16,bore=6,spokes=4) {
+  add($SpurGear,teeth=$teeth,bore=$bore,spokes=$spokes)
+}
+
+# A toothed bar — the straight half of a rack and pinion. THE SAME RACK THAT
+# CUTS THE GEARS IS THE ONE THAT SHAPES THIS, which is what guarantees a pinion
+# from this file runs along it: the tooth space is identical by construction
+# rather than by a second set of numbers agreeing.
+# Tooth pitch on a rack is `Pi * Module`, which is the same pitch the wheels use
+# measured along the pitch circle instead of around it.
+RackToothSolid = mesh() {
+  add($RackTool)
+  extrude(height=$FaceWidth * 2)
+  place(by=(0.0, 0.0, -$FaceWidth * 0.5))
+}
+
+# THE BAR LIES IN THE WHEELS' OWN FRAME: its teeth are drawn in XY, as theirs are, its height `depth` runs along Y
+# with the pitch line on its +Y edge, and it is `FaceWidth` thick along Z like every wheel. A pinion whose axis is Z
+# runs along +Y of it. (Until 2026-11-19 the bar was extruded `depth` along Z on a `FaceWidth`-wide rect, which put
+# the tooth profile across the top face; `[bounds=(96, 16, 6)]` refused it at 9 cm in Z, so it never built.)
+RackBar = mesh(teeth=10,depth=9) {
+  $Pitch = $Pi*$Module
+  rect(w=$Pitch*$teeth,h=$depth)
+  extrude(height=$FaceWidth)
+  subtract($RackToothSolid,repeat=$teeth,step=($Pitch,0,0),at=(-$Pitch*($teeth-1)*0.5,$depth*0.5,0))
+  material($Bronze)
+  uv(box,scale=40)
+  socket(Datum,at=(0,0,0),facing=+Z,up=+X)
+}
+
+# A flat belt pulley: a wheel with a crowned rim and no teeth. A belt drive is
+# the quiet alternative to a gear train and the part is three lines.
+PulleyGroove = mesh(r=3.0,ring=18.0) {
+  circle(radius=$r)
+  revolve(degrees=360.0,offset=$ring)
+}
+
+Pulley = mesh(r=22,bore=10,width=8) {
+  circle(radius=$r)
+  subtract($Disk,r=$bore*0.5)
+  extrude(height=$width)
+  subtract($PulleyGroove,r=$width*0.42,ring=$r+$width*0.30,at=(0,0,$width*0.5))
+  round(0.2) [sharp]
+  material($Bronze)
+  uv(box,scale=40)
+  socket(Axle,at=(0,0,$width*0.5),facing=+Z,up=+X)
+}
+
+# A roller-chain sprocket. IT IS NOT A GEAR AND SAYS SO: the tooth form is a
+# roller seat, not an involute flank, so a sprocket does NOT mesh with anything
+# else in this file — it meshes with a chain.
+# `pitch_r` IS ASKED FOR RATHER THAN DERIVED, because the pitch radius of a
+# sprocket is `chain_pitch / (2 * sin(180/teeth))` and this grammar has no sine.
+# For chain pitch p: 12 teeth -> 1.932p, 16 -> 2.563p, 18 -> 2.879p,
+# 20 -> 3.196p, 24 -> 3.831p. Multiply and pass it.
+Sprocket = mesh(teeth=12,roller=1.9,pitch_r=23.2,bore=8,width=3) {
+  circle(radius=$pitch_r+$roller*0.6)
+  subtract($Disk,r=$bore*0.5)
+  extrude(height=$width)
+  subtract($RollerSeat,r=$roller,width=$width,at=($pitch_r,0,$width*0.5),repeat=$teeth,turn=360/$teeth,around=Z)
+  material($Iron)
+  uv(box,scale=40)
+  socket(Axle,at=(0,0,$width*0.5),facing=+Z,up=+X)
+}
+
+RollerSeat = mesh(r=1.9,width=3) {
+  circle(radius=$r)
+  extrude(height=$width*4)
+  place(by=(0,0,-$width*2))
+}
+
+# A ratchet wheel — one-way teeth, so the pawl below drops into them turning one
+# way and rides over them turning the other. The asymmetry IS the mechanism: a
+# radial face to catch on and a long ramp to climb.
+RatchetTooth = mesh(depth=4.5,width=5,face=3.5) {
+  points((0,0),($depth,0),(0,-$face),loop=true)
+  extrude(height=$width*3)
+  place(by=(0,0,-$width))
+}
+
+Ratchet = mesh(teeth=18,r=31,bore=10,width=5) {
+  circle(radius=$r)
+  subtract($Disk,r=$bore*0.5)
+  extrude(height=$width)
+  subtract($RatchetTooth,depth=$r*0.16,width=$width,face=$r*0.12,at=($r,0,$width*0.5),repeat=$teeth,turn=360/$teeth,around=Z)
+  material($Iron)
+  uv(box,scale=40)
+  socket(Axle,at=(0,0,$width*0.5),facing=+Z,up=+X)
+}
+
+# The pawl that drops into the ratchet. A lever with a pivot bore at one end and
+# a nose at the other; `Pivot` is where it hangs and `Nose` is the tip that does
+# the work, so an assembly never has to measure either.
+# THE BORE IS CUT IN THE OUTLINE, round an eye: `bore` is a diameter, as on every
+# wheel, and the eye (a disc as wide as the lever) puts metal all round the pin.
+# (Until 2026-11-19 the bore was a plane subtracted after `extrude`, refused, and
+# centred on the lever's end edge with `r=$bore`, so it would have cut a notch.)
+Pawl = mesh(length=24,width=4,thick=3.5,bore=2.4) {
+  points((0,-$width*0.5),($length*0.72,-$width*0.62),($length,-$width*0.15),($length*0.93,$width*0.5),(0,$width*0.62),loop=true)
+  add($Disk,r=$width*0.5)
+  round($width*0.25)
+  subtract($Disk,r=$bore*0.5)
+  extrude(height=$thick)
+  material($Iron)
+  uv(box,scale=40)
+  socket(Pivot,at=(0,0,$thick*0.5),facing=+Z,up=+X)
+  socket(Nose,at=($length,0,$thick*0.5),facing=+X,up=+Z)
+}
+
+# ---- the shop window -----------------------------------------------------
+
+Spur32   = mesh() { add($SpurGear,teeth=32,bore=$Bore,spokes=$Spokes) }
+Spur24   = mesh() { add($SpurGear,teeth=24,bore=$Bore*0.8,spokes=5) }
+Pinion16 = mesh() { add($Pinion,teeth=16,bore=$Bore*0.6,spokes=4) }
+
+# THE CLAIM, BUILT. Two wheels at the contract's own centre distance, the driven
+# one turned half a pitch so a tooth faces the other's space. If the formula in
+# this file's header were wrong, this asset would show it: the teeth would
+# either interpenetrate — which `crossings` on the build line would report — or
+# stand visibly apart.
+# Each wheel brings its own sockets, so each has a handle: `driver.Axle` and
+# `driven.Axle`, not two `Axle`s (one name is one frame; refused until 2026-11-19).
+Pair = mesh() {
+  driver = add($SpurGear,teeth=32,bore=$Bore,spokes=$Spokes)
+  $Centres = $Module*(32+16)*0.5
+  driven = add($Pinion,teeth=16,bore=$Bore*0.6,spokes=4,rotate=(0,0,180/16),at=($Centres,0,0),join=none)
+  socket(DriverAxis,at=(0,0,0),facing=+Z,up=+X)
+  socket(DrivenAxis,at=($Centres,0,0),facing=+Z,up=+X)
+}

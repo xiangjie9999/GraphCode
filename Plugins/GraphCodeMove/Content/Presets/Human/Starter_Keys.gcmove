@@ -1,0 +1,69 @@
+gcmove 1 character:/Game/GraphCodeExamples/MetaHumanStrike_20261025/BP_StrikeStage part:Body worn:SkeletalMesh
+         ik_rig:/Game/GraphCodeExamples/ParamPoses_20261116/IKR_PoseBody
+         controls:/Game/GraphCodeExamples/ParamPoses_20261116/PoseBody
+         physics_asset:/Game/GraphCodeExamples/MetaHumanBody_20261009/PHAT_ClothedReferenceBody
+         presets:/GraphCodeMove/Presets/Human/HumanBody
+         into:/Game/HumanStarter fps:30
+build {
+  A_Starter_Stance = $KStance
+  A_Starter_Windup = $KWindup
+  A_Starter_Contact = $KContact
+  A_Starter_Follow = $KFollow
+}
+# STARTER, THE KEYS: four still poses of a right hook (guard, wind-up, contact, follow-through), each made from the human
+# presets. Build this file first; the action (Starter.gcmove) then plays the built keys in order.
+#
+# YOUR OWN CHARACTER: copy this file and Starter.gcmove into your own folder and change these header lines. They are made
+# per character; nothing else changes:
+#   character:      your character's Blueprint (a MetaHuman body), and part: the name of its body component
+#   ik_rig:         an IK Rig made over your body's mesh
+#   controls:       your body's controls (.gcrig): each joint's limits and axes, read on YOUR mesh
+#   physics_asset:  your body's Physics Asset (the build uses it to check that limbs do not pass through each other)
+#   into:           the folder the built keys go to
+# Keep the presets: line as it is: it brings in the whole library, so nothing of it is pasted here.
+#
+# Each key is one frame. A preset call poses one body part with a few values: $Stance(...) the feet and hips, $Back(...)
+# the spine, $Head(...), $ArmReach(...) one arm aimed by where its hand goes, $Hand(...) the fingers. A value left out
+# stays at rest. left=false means "the right side only", right=false "the left side only". Each value has a range; a
+# number outside it is refused by name.
+
+# Guard: feet apart, left foot ahead, knees a little bent, both fists up.
+KStance = clip(frames=1) {
+  $Stance(forward_l=0.2, forward_r=-0.1, out_l=0.25, out_r=0.25, turnout_r=20, knees=20, turn=-10)
+  $Back(lean=8)
+  $Head(nod=5)
+  $ArmReach(raise=45, azimuth=20, reach=0.6, swivel=40, left=false)
+  $ArmReach(raise=50, azimuth=20, reach=0.6, swivel=40, right=false)
+  $Hand(curl=1)
+}
+
+# Wind-up: the weight back on the rear foot, the chest turned right, the right fist drawn back and out.
+KWindup = clip(frames=1) {
+  $Stance(forward_l=0.2, forward_r=-0.1, out_l=0.25, out_r=0.25, turnout_r=20, knees=25, weight_fore=-0.3, turn=5)
+  $Back(lean=5, twist=20)
+  $Head(nod=5, turn=-15)
+  $ArmReach(raise=40, azimuth=75, reach=0.5, swivel=60, left=false)
+  $ArmReach(raise=50, azimuth=20, reach=0.6, swivel=40, right=false)
+  $Hand(curl=1)
+}
+
+# Contact: the weight forward, the chest turned left, the right fist straight ahead at shoulder height.
+KContact = clip(frames=1) {
+  $Stance(forward_l=0.2, forward_r=-0.1, out_l=0.25, out_r=0.25, turnout_r=20, knees=20, weight_fore=0.5, turn=-25)
+  $Back(lean=12, twist=-20)
+  $Head(nod=5, turn=15)
+  $ArmReach(raise=85, azimuth=-5, reach=0.95, swivel=10, left=false)
+  $ArmReach(raise=50, azimuth=20, reach=0.6, swivel=40, right=false)
+  $Hand(curl=1)
+}
+
+# Follow-through: the fist carried on past the target and across, the chest turned further left. A strike needs a key
+# after its contact, so the fist travels THROUGH the contact instead of stopping on it.
+KFollow = clip(frames=1) {
+  $Stance(forward_l=0.2, forward_r=-0.1, out_l=0.25, out_r=0.25, turnout_r=20, knees=20, weight_fore=0.6, turn=-35)
+  $Back(lean=14, twist=-30)
+  $Head(nod=5, turn=20)
+  $ArmReach(raise=80, azimuth=-40, reach=0.85, swivel=10, left=false)
+  $ArmReach(raise=50, azimuth=45, reach=0.7, swivel=40, right=false)
+  $Hand(curl=1)
+}

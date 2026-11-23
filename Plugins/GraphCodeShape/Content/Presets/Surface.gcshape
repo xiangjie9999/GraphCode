@@ -1,0 +1,179 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.5  shade:40
+
+# SURFACE — L2 Primitives, the finishing vocabulary. One geometric act each,
+# named. `Docs/GC-SHAPE-PRESET-LIBRARY.md` §3, L2.
+#
+#   Surf = shape('/GraphCodeShape/Presets/Surface')
+#   Block = mesh() { rect(w=40, h=30) extrude(height=10) $Surf.Erode() [top] }
+#
+# EVERY ENTRY IS AN `instruction()` AND THE CALLER OWNS THE SELECTION. That is
+# the whole contract: this file decides WHAT the treatment is, the bracket on the
+# call decides WHERE. `$Surf.Erode() [top]` and `$Surf.Erode() [side, !cut]` are
+# the same treatment on different faces, and nothing here may assume a face.
+#
+# `grain=` IS THE COST DIAL AND IT IS NOT DECORATION. `roughen` refines to about
+# a third of its feature size, so TRIANGLES GROW AS 1/grain². Measured on
+# `Masonry`: one brick at `grain=3.5` is 8,704 triangles and at `grain=16` about
+# 420, for the same amplitude. A wall unit takes the coarse number; a hero prop
+# buys its detail deliberately. Every entry here exposes it and every build line
+# below carries a `triangles=` ceiling.
+#
+# `[fade=]` IS EXPENSIVE AND IS NOT A CHEAP WAY TO SOFTEN A BORDER. It is a
+# density statement: a fade refines the band it runs through, and a careless one
+# has cost this project 195k triangles and eighty times the folds. Only
+# `FacetedWear` carries one, because a faceted field genuinely folds against
+# smooth neighbours where a smooth field does not.
+#
+# NAMES AVOID THE GROUP-5 RESERVED SET — `scale` and `seed` among them — which is
+# why the amplitude dial is `grain=` and the seed is `noise=`. A colliding
+# parameter is one no caller could ever pass. (SUPERSEDED for `seed`, `repeat` and
+# `along`, measured 2026-09-28: an instruction call passes them through as its own
+# parameters, and `Liquid.Drip` takes all three. The names here stay; `scale` untested.)
+#
+# THE FOUR NOISE FORMS ARE NOT INTERCHANGEABLE and each entry names the one it
+# wants: `smooth` rolls (weathered masonry), `billow` humps with creased valleys
+# (a worn boulder), `ridged` gives sharp crests (fractured rock, and it costs
+# about +53% triangles), `faceted` gives flat plates meeting at sharp edges
+# (fired clay, broken stone, split timber).
+
+build {
+  SM_Surface_Erode       = $Eroded     [bounds=(41.0, 31.0, 11.0), triangles=9000]
+  SM_Surface_FacetedWear = $Faceted    [bounds=(41.0, 31.0, 11.0), triangles=30000]
+  SM_Surface_Pitted      = $Pitted_Ex  [bounds=(41.0, 31.0, 11.0), triangles=9000]
+  SM_Surface_Grain       = $Grain_Ex   [bounds=(41.0, 31.0, 11.0), triangles=9000]
+  SM_Surface_Stratify    = $Strat_Ex   [bounds=(41.0, 31.0, 12.0), triangles=30000]
+  SM_Surface_Stipple     = $Stip_Ex    [bounds=(41.0, 31.0, 11.0), triangles=40000]
+  SM_Surface_Dent        = $Dent_Ex    [bounds=(41.0, 31.0, 11.0), triangles=3000]
+  SM_Surface_Bump        = $Bump_Ex    [bounds=(41.0, 31.0, 12.0), triangles=3000]
+  SM_Surface_Groove      = $Groove_Ex  [bounds=(41.0, 31.0, 11.0), triangles=3000]
+  SM_Surface_Ridge       = $Ridge_Ex   [bounds=(41.0, 31.0, 12.0), triangles=3000]
+  SM_Surface_Smooth      = $Smooth_Ex  [bounds=(41.0, 31.0, 11.0), triangles=9000]
+  SM_Surface_Rebuild     = $Rebuild_Ex [bounds=(41.0, 31.0, 11.0), triangles=40000]
+}
+
+# ---- the two that already shipped, unchanged ------------------------------
+
+# Weather a surface: break it up with noise, then settle what the noise left so
+# the crests read as wear rather than as a displacement map. The general-purpose
+# stone, plaster and clay treatment; start here.
+# `depth` is the amplitude in cm, `grain` the feature size, `settle` how far it
+# relaxes.
+Erode = instruction(depth=.25, grain=8, settle=.05, noise=7) {
+  roughen(by=$depth, scale=$grain, seed=$noise)
+  relax($settle)
+}
+
+# Chipped, flat-faceted wear for a brittle material — fired brick, cast iron,
+# hard stone. The faceted noise field breaks into planes instead of bumps, which
+# is what separates a fractured edge from an eroded one. `edge` fades it out over
+# that many cm at the selection boundary; without the fade an unfaded join
+# against smooth geometry folds.
+FacetedWear = instruction(depth=.25, grain=8, edge=2, noise=7) {
+  roughen(by=$depth, scale=$grain, seed=$noise, form=faceted) [fade=$edge]
+}
+
+# ---- noise treatments -----------------------------------------------------
+
+# Rounded pits with creased floors — a worn boulder, a cast surface, old bronze.
+# `billow` is the form that humps and creases rather than rolling, and it is the
+# one noise that comes out CHEAPER than smooth (about -31% triangles), so this is
+# the treatment to reach for when the budget is tight.
+# NO `relax` HERE ON PURPOSE: settling a billow field fills in the creases that
+# are the whole reason to choose it.
+Pitted = instruction(depth=.2, grain=5, noise=11) {
+  roughen(by=$depth, scale=$grain, seed=$noise, form=billow)
+}
+
+# Directional grain — sawn timber, brushed metal, a stone face worked along one
+# axis. THE WHOLE ENTRY IS THE ANISOTROPIC `scale=`: three lengths instead of
+# one, long along the grain and short across it, which is what makes a streak
+# rather than a speckle. `along` is the long axis in cm and `across` the short.
+Grain = instruction(depth=.06, along=40, across=1.2, noise=13) {
+  roughen(by=$depth, scale=($along, $across, $across), seed=$noise)
+}
+
+# Horizontal bedding — sedimentary rock, stratified cliff, laid-up slate. The
+# same anisotropic trick turned on its side: long in X and Y, short in Z, so the
+# noise varies with height and holds across the face. `ridged` gives the sharp
+# crests a weathered bed reads as, and costs about +53% triangles for them.
+Stratify = instruction(depth=.8, spread=60, bed=3, noise=17) {
+  roughen(by=$depth, scale=($spread, $spread, $bed), seed=$noise, form=ridged)
+}
+
+# A fine even tooth — cast iron, unglazed ceramic, coarse plaster. Shallow and
+# small, and THE SMALL `grain` IS WHAT COSTS: at this feature size the ceiling on
+# the build line is four times Erode's for a tenth of the amplitude. Use it on a
+# named region, not on a whole wall.
+Stipple = instruction(depth=.04, grain=0.8, noise=19) {
+  roughen(by=$depth, scale=$grain, seed=$noise)
+}
+
+# ---- settling and rebuilding ----------------------------------------------
+
+# Settle a surface without adding anything — take the edge off a boolean, calm a
+# noisy join, soften a machined corner that reads too hard. A capped Laplacian
+# settle per position, so it moves vertices and never adds them.
+Smooth = instruction(settle=.12) {
+  relax($settle)
+}
+
+# Unify triangles after booleans. A subtract leaves long thin triangles along its
+# cut and a later `roughen` refines them unevenly; rebuilding first is what makes
+# the noise land even. `size` is the target edge length in cm — SMALLER IS
+# QUADRATICALLY DEARER, exactly as `grain` is.
+# Tags are re-derived by proximity across a remesh, so a `[cut]` selection taken
+# AFTER this one is approximate where it was exact before.
+Rebuild = instruction(size=1.0) {
+  remesh($size)
+}
+
+# ---- placed relief --------------------------------------------------------
+
+# A dent: push the selected region in, ramped from its own border so the floor is
+# deepest at the middle and there is no wall at the edge. `displace` measures
+# each vertex's distance from the region's border, which is what makes this a
+# dent rather than a stamped-in pocket — `raise` would give the pocket.
+Dent = instruction(depth=.4, slope=mound) {
+  displace(by=-$depth, slope=$slope)
+}
+
+# A bump: the same act outward. A boss on a casting, a blister, a swelling.
+Bump = instruction(height=.4, slope=mound) {
+  displace(by=$height, slope=$slope)
+}
+
+# A groove: a recessed band with WALLS, which is the difference from a dent.
+# `raise` insets the region and offsets it as a unit, so the floor stays flat and
+# the sides stay upright — a machined channel, a mortar joint, a panel line.
+Groove = instruction(depth=.3, margin=.15) {
+  raise(by=-$depth, inset=$margin)
+}
+
+# A ridge: the same act outward. A weld bead, a raised rib, a moulding band.
+Ridge = instruction(height=.3, margin=.15) {
+  raise(by=$height, inset=$margin)
+}
+
+# ---- the shop window ------------------------------------------------------
+# One bevelled 40 x 30 x 10 block per treatment, so two entries can be compared
+# without a second variable. Built by this file; an importer's own `build { }`
+# never runs.
+
+Blank = mesh(w=40, d=30, h=10) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  round(.5, segments=2) [sharp]
+}
+
+Eroded     = mesh() { add($Blank) $Erode() [top] }
+Faceted    = mesh() { add($Blank) $FacetedWear() [top] }
+Pitted_Ex  = mesh() { add($Blank) $Pitted() [top] }
+Grain_Ex   = mesh() { add($Blank) $Grain() [top] }
+Strat_Ex   = mesh() { add($Blank) $Stratify() [side] }
+Stip_Ex    = mesh() { add($Blank) $Stipple() [top] }
+Dent_Ex    = mesh() { add($Blank) $Dent() [top] }
+Bump_Ex    = mesh() { add($Blank) $Bump() [top] }
+Groove_Ex  = mesh() { add($Blank) $Groove() [top] }
+Ridge_Ex   = mesh() { add($Blank) $Ridge() [top] }
+Smooth_Ex  = mesh() { add($Blank) $Erode() [top] $Smooth() [top] }
+Rebuild_Ex = mesh() { add($Blank) $Rebuild() $Erode() [top] }

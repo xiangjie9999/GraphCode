@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "phase": "binary-only-product",
+  "readyToSend": false,
+  "plugin": "GraphCodeIntegrate",
+  "version": "0.1.13",
+  "engine": "5.7.4",
+  "engineBuildId": "47537391",
+  "platform": "Win64",
+  "sourceRevision": "bdf3cd62ae1c8689ebafb65ddc230ec95dd0c77d",
+  "sourceWasDirty": false,
+  "packagedAtUtc": "2026-11-12T01:24:34.3672632Z",
+  "fileCount": 32,
+  "privateImplementationIncluded": false
+}

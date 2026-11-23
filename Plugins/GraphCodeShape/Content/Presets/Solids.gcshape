@@ -1,0 +1,215 @@
+gcshape 1  into:/GraphCodeShape/Presets  smooth:0.2  shade:40
+
+# SOLIDS — L2 Primitives. One geometric act each, named, so that nothing above
+# this layer re-types `circle` then `extrude` to get a cylinder.
+# `Docs/GC-SHAPE-PRESET-LIBRARY.md` §3, L2.
+#
+# THIS FILE IS MEANT TO BE IMPORTED, NOT BUILT:
+#
+#   S    = shape('/GraphCodeShape/Presets/Solids')
+#   Post = mesh() { add($S.Cylinder, r=4.0, h=90.0) }
+#
+# An imported file's own `build { }` NEVER RUNS, so the block below costs an
+# importer nothing. It is here because a preset nobody can look at is a preset
+# nobody buys, and because the `[bounds=]` contracts are this file's self-check.
+#
+# WHAT AN ENTRY HERE PROMISES — §2's composition contract, and every entry keeps
+# all four:
+#   1. authored AT THE ORIGIN, centred in X and Y;
+#   2. grows along +Z, with its MOUNTING FACE AT z = 0 — so `Ball` sits ON the
+#      ground rather than half under it, and a chain of parts needs no offset;
+#   3. its driving dimensions are PARAMETERS, named for what an author knows
+#      (a `height`, not a half-extent);
+#   4. one material SLOT and no path.
+#
+# THERE ARE NO PRIMITIVES IN THE LANGUAGE, and that is the whole point of this
+# file rather than an argument against it: a cylinder is `circle` then `extrude`
+# and the grammar is right to keep it that way. What a preset removes is the
+# repeated DECISION — how many segments, which end is the mounting face, where
+# the origin sits — not the two lines.
+#
+# CENTIMETRES. The defaults are a legible 10–20 cm demonstration size and are
+# meant to be overridden; they are not a claim about what anything should be.
+#
+# WHY A RADIUS IS SPELLED `r` HERE AND NOT `radius`, WHICH IS THE ONE PIECE OF
+# UGLINESS IN THIS FILE AND IS NOT A PREFERENCE. A group-5 line carries the
+# target entry's parameters — `add($S.Cylinder, r=4.0)` — but it has argument
+# names of its own, and THOSE ARE READ FIRST. `radius=` belongs to
+# `join=fillet`'s arc, so `add($S.Cylinder, radius=4.0)` is refused by name
+# whatever the entry declares, and `subtract($Bore, radius=…)` is refused too.
+# An entry parameter that collides with one of them is therefore a parameter
+# NOBODY CAN PASS. The reserved set is the whole group-5 argument list:
+#
+#   join  radius  falloff  at  rotate  scale  mirror  align  onto
+#   repeat  step  turn  around  scatter  apart  jitter  seed  lod
+#
+# So a preset names its dimensions around them: `r`, `w`, `d`, `h`, `wall`,
+# `thickness`, `sides`, `top`. This is a rule for every family in the library,
+# not a quirk of this file.
+
+build {
+  SM_Solid_Box         = $Box         [bounds=(20.0, 20.0, 20.0)]
+  SM_Solid_RoundedBox  = $RoundedBox  [bounds=(20.0, 20.0, 20.0)]
+  SM_Solid_Cylinder    = $Cylinder    [bounds=(20.0, 20.0, 20.0)]
+  SM_Solid_Tube        = $Tube        [bounds=(20.0, 20.0, 20.0)]
+  SM_Solid_Cone        = $Cone        [bounds=(20.0, 20.0, 20.0)]
+  SM_Solid_Frustum     = $Frustum     [bounds=(20.0, 20.0, 20.0)]
+  SM_Solid_Ball        = $Ball        [bounds=(20.0, 20.0, 20.0)]
+  SM_Solid_Dome        = $Dome        [bounds=(20.0, 20.0, 10.0)]
+  SM_Solid_Capsule     = $Capsule     [bounds=(10.0, 10.0, 20.0)]
+  SM_Solid_Torus       = $Torus       [bounds=(24.0, 24.0, 4.0)]
+  SM_Solid_Prism       = $Prism       [bounds=(20.0, 20.0, 20.0)]
+  SM_Solid_Pyramid     = $Pyramid     [bounds=(20.0, 20.0, 20.0)]
+  SM_Solid_Wedge       = $Wedge       [bounds=(20.0, 20.0, 10.0)]
+}
+
+# ---- material slot ------------------------------------------------------
+
+# ONE slot for the whole family. A primitive has no opinion about its finish,
+# and a slot is what lets the importer paint it: `shape('…/Solids', Solid = $Brass)`.
+Solid = material()
+
+# ---- flat-sided ---------------------------------------------------------
+
+# The generic block. `w` runs along X, `d` along Y, `h` up Z from the mounting
+# face at z = 0.
+Box = mesh(w=20.0, d=20.0, h=20.0) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  material($Solid)
+}
+
+# The block with its edges taken off — which is what nearly every real
+# manufactured block has, and what catches a highlight at close range.
+# `r` is the fillet radius; `[sharp]` is every hard edge, so the vertical arrises
+# and both caps are rounded in one line.
+RoundedBox = mesh(w=20.0, d=20.0, h=20.0, r=1.5, segments=3) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  round($r, segments=$segments) [sharp]
+  material($Solid)
+}
+
+# A regular prism — `sides` is the INTENT and not a tolerance the evaluator may
+# improve on, which is the grammar's own rule about a hexagonal nut. `radius` is
+# to the CORNERS, which is how a circumscribed polygon is always measured.
+Prism = mesh(r=10.0, sides=6, h=20.0) {
+  circle(radius=$r, segments=$sides)
+  extrude(height=$h)
+  material($Solid)
+}
+
+# A rectangular pyramid: the block whose top has converged to a point.
+Pyramid = mesh(w=20.0, d=20.0, h=20.0) {
+  rect(w=$w, h=$d)
+  extrude(height=$h, to=0%)
+  material($Solid)
+}
+
+# A ramp — a block with one sloping face, rising along +Y. Built by CUTTING a
+# block rather than by extruding a triangle, because an extruded triangle is a
+# prism standing on its section and reads as a box from the side.
+# The cut plane contains the low edge at y = -d/2, z = 0 and the high edge at
+# y = +d/2, z = h, so its normal is perpendicular to the slope: (0, -h, d).
+Wedge = mesh(w=20.0, d=20.0, h=10.0) {
+  rect(w=$w, h=$d)
+  extrude(height=$h)
+  cut(plane=(0.0, -$h, $d), at=(0.0, -$d*0.5, 0.0), fill=true)
+  material($Solid)
+}
+
+# ---- round --------------------------------------------------------------
+
+# The rod, the post, the pin. No `segments=`: `smooth:` prices the curvature and
+# solves for the count, which is the one number an author should not have to
+# carry from file to file.
+Cylinder = mesh(r=10.0, h=20.0) {
+  circle(radius=$r)
+  extrude(height=$h)
+  material($Solid)
+}
+
+# A pipe, a sleeve, a bushing. `wall` is the WALL THICKNESS and not an inner
+# radius — a thickness is what an author knows and what a material is sold in;
+# an inner radius is arithmetic they would have to do.
+Tube_Bore = plane(r=10.0, wall=1.5) { circle(radius=$r - $wall) }
+
+Tube = mesh(r=10.0, wall=1.5, h=20.0) {
+  circle(radius=$r)
+  subtract($Tube_Bore, r=$r, wall=$wall)
+  extrude(height=$h)
+  material($Solid)
+}
+
+# The full cone: the far end converged to a point about the outline's own centre.
+Cone = mesh(r=10.0, h=20.0) {
+  circle(radius=$r)
+  extrude(height=$h, to=0%)
+  material($Solid)
+}
+
+# The truncated cone — a funnel, a plinth, a cup. `top` is the far end's size as
+# a FRACTION OF THE NEAR END, which is what `to=` means, so 30% is a strong taper
+# and 140% flares out.
+Frustum = mesh(r=10.0, h=20.0, top=40%) {
+  circle(radius=$r)
+  extrude(height=$h, to=$top)
+  material($Solid)
+}
+
+# A sphere, SITTING ON z = 0 rather than centred there — contract point 2. The
+# half-circle is revolved; `place` then lifts it by its own radius so the south
+# pole is the mounting face and `add($Ball, at=on())` lands a ball on a surface
+# rather than half inside it.
+Ball = mesh(r=10.0) {
+  arc(radius=$r, from=-90.0, to=90.0)
+  revolve()
+  place(by=(0.0, 0.0, $r))
+  material($Solid)
+}
+
+# A hemisphere with its flat face down, and `h` free of `radius` so a SQUASHED
+# dome — the commoner one, on a boiler end or a rivet head — needs no second
+# entry. The scale is the ratio, so `h = radius` is the true hemisphere.
+#
+# THE `if` IS NOT DECORATION AND THE REFUSAL THAT PUT IT THERE IS WORTH KNOWING:
+# `place()` refuses a transform that turns out to be the identity — correctly, by
+# the format's own rule that a line doing nothing is worse than a missing one —
+# and at THIS entry's default `h` equals `radius`, so the scale is exactly
+# (1,1,1) and the unguarded line refuses the file. A parametric entry whose
+# default happens to be the identity has to say so.
+#
+# THE `by=` KEEPS THE FLAT FACE ON z = 0. `place(scale=)` resizes a shape about
+# its own CENTRE, which on this dome is r/2 above the face, so the squash alone
+# leaves the face at (r - h)/2 — measured 2026-09-28, r=9 h=5 floated 2 cm and
+# every `Mechanical.Rivet` head sat 0.005 cm off its shank as a second piece.
+Dome = mesh(r=10.0, h=10.0) {
+  arc(radius=$r, from=0.0, to=90.0)
+  revolve()
+  if ($h != $r) {
+    place(scale=(1.0, 1.0, $h/$r), by=(0.0, 0.0, ($h - $r) / 2.0))
+  }
+  material($Solid)
+}
+
+# A cylinder with hemispherical ends, `h` being the TOTAL height including them.
+# Composed from `Ball` rather than by rounding the rim, so the ends are true
+# hemispheres at any proportion and the entry cannot fold at h close to 2·radius.
+Capsule = mesh(r=5.0, h=20.0) {
+  circle(radius=$r)
+  extrude(height=$h - $r * 2.0)
+  place(by=(0.0, 0.0, $r))
+  add($Ball, r=$r, at=(0.0, 0.0, 0.0))
+  add($Ball, r=$r, at=(0.0, 0.0, $h - $r * 2.0))
+  material($Solid)
+}
+
+# A ring of round section — a washer's big brother, a handle, a bead, a gasket.
+# `radius` is to the CENTRE of the tube, which is how a torus is always given, so
+# the outside diameter is 2·(radius + thickness).
+Torus = mesh(r=10.0, thickness=2.0) {
+  circle(radius=$thickness)
+  revolve(offset=$r)
+  place(by=(0.0, 0.0, $thickness))
+  material($Solid)
+}

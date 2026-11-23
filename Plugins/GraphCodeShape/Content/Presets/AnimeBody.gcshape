@@ -1,0 +1,280 @@
+gcshape 1 into:/GraphCodeShape/Presets smooth:.06 shade:80
+
+# Hairless, unclothed adult-proportioned anime base. +Z up, -Y front.
+# A static anatomy blockout: no hair, clothing, genital detail or rig.
+# Dimensions are authored choices, not measurements recovered from the reference.
+# WORK IN PROGRESS: the organic body is published and inspected, not visually
+# accepted. See GC-SHAPE-ANIME-CHARACTER.md for the remaining defects. Fingers
+# remain unfinished; no accepted complete-character output is claimed here.
+build { SM_AnimeBody = $Body [pivot=(0,0,0)] }
+
+Height = 178
+Unit = $Height / 178
+ShoulderWidth = 36 * $Unit
+ChestWidth = 33 * $Unit
+WaistWidth = 25 * $Unit
+HipWidth = 30 * $Unit
+TorsoDepth = 20 * $Unit
+HipHeight = $Height * .545
+WaistHeight = $Height * .636
+ChestHeight = $Height * .781
+ShoulderHeight = $Height * .813
+NeckHeight = $Height * .836
+HeadHeight = $Height * .132
+HeadWidth = $HeadHeight * .65
+HeadDepth = $HeadHeight * .77
+ArmLength = $Height * .301
+# Horizontal travel per unit drop. Both guide and socket use this one direction.
+ArmSlope = .531709432
+UpperArmWidth = 10.2 * $Unit
+ArmRootHeight = $ShoulderHeight - $UpperArmWidth * .49
+ElbowWidth = 6.6 * $Unit
+ForearmWidth = 7.2 * $Unit
+PalmWidth = 7.1 * $Unit
+# Reuse the refined hand study's proportions rather than flattening/stretching
+# its palm for the body. The owner height still scales the whole anatomy.
+PalmLength = 7.4 * $Unit
+PalmDepth = 3.0 * $Unit
+FingerLength = 7.7 * $Unit
+# Body-view sampling; standalone parts retain their finer .02 default.
+DigitResolutionRatio = .04
+ThumbLength = 7.0 * $Unit
+IndexCurl = 10
+MiddleCurl = 14
+RingCurl = 18
+LittleCurl = 23
+ThumbCurl = 15
+WristWidth = $PalmWidth * .58
+WristDepth = $PalmDepth * .82
+WristTransition = $WristWidth
+ThighWidth = 15 * $Unit
+KneeWidth = 8.5 * $Unit
+CalfWidth = 9.6 * $Unit
+AnkleWidth = 5.1 * $Unit
+AnkleHeight = 7 * $Unit
+KneeHeight = $Height * .292
+FootLength = 25 * $Unit
+FootWidth = 8.5 * $Unit
+FootHeight = 6.6 * $Unit
+# Keep the first whole-body silhouette study light. Nail authoring remains
+# available through this switch and the independently tested hand recipe.
+Nails = 0
+NailLength = .08 * $Unit
+IndexNailLength = $NailLength
+MiddleNailLength = $NailLength
+RingNailLength = $NailLength
+LittleNailLength = $NailLength
+ThumbNailLength = $NailLength
+Skin = material()
+Nail = material()
+Profiles = shape('/GraphCodeShape/Presets/Profiles')
+Hands = shape('/GraphCodeShape/Presets/AnimeHand',
+  PalmWidth=$PalmWidth,PalmLength=$PalmLength,PalmDepth=$PalmDepth,
+  FingerLength=$FingerLength,ThumbLength=$ThumbLength,DigitResolutionRatio=$DigitResolutionRatio,
+  PalmCup=0,IndexCurl=$IndexCurl,MiddleCurl=$MiddleCurl,RingCurl=$RingCurl,LittleCurl=$LittleCurl,ThumbCurl=$ThumbCurl,
+  NailLength=$NailLength,IndexNailLength=$IndexNailLength,MiddleNailLength=$MiddleNailLength,RingNailLength=$RingNailLength,LittleNailLength=$LittleNailLength,ThumbNailLength=$ThumbNailLength,
+  Nails=$Nails,Skin=$Skin,Nail=$Nail)
+OppositeHands = shape('/GraphCodeShape/Presets/AnimeHand',
+  Handedness=-1,PalmWidth=$PalmWidth,PalmLength=$PalmLength,PalmDepth=$PalmDepth,
+  FingerLength=$FingerLength,ThumbLength=$ThumbLength,DigitResolutionRatio=$DigitResolutionRatio,
+  PalmCup=0,IndexCurl=$IndexCurl,MiddleCurl=$MiddleCurl,RingCurl=$RingCurl,LittleCurl=$LittleCurl,ThumbCurl=$ThumbCurl,
+  NailLength=$NailLength,IndexNailLength=$IndexNailLength,MiddleNailLength=$MiddleNailLength,RingNailLength=$RingNailLength,LittleNailLength=$LittleNailLength,ThumbNailLength=$ThumbNailLength,
+  Nails=$Nails,Skin=$Skin,Nail=$Nail)
+
+# Broad front/back planes with rounded sides, not a circular torso tube.
+TorsoSection = plane(width=$ChestWidth,depth=$TorsoDepth) {
+  curve((-$width * .50,0),(-$width * .43,-$depth * .33),(-$width * .24,-$depth * .49),(0,-$depth * .48),($width * .24,-$depth * .49),($width * .43,-$depth * .33),($width * .50,0),($width * .39,$depth * .35),(0,$depth * .50),(-$width * .39,$depth * .35),loop=true)
+}
+Torso = mesh() {
+  $Base = $HipHeight - 10 * $Unit
+  add($TorsoSection,width=$HipWidth * .82,depth=$TorsoDepth * .78)
+  loft(to=$TorsoSection,scale=($HipWidth / $ChestWidth,1.02,1),at=(0,1.5 * $Unit,$HipHeight - $Base))
+  # Intermediate iliac/abdominal stations avoid a single conical hip shelf.
+  loft(to=$TorsoSection,scale=(($HipWidth * .8 + $WaistWidth * .2) / $ChestWidth,.96,1),at=(0,1.2 * $Unit,$HipHeight + ($WaistHeight - $HipHeight) * .38 - $Base))
+  loft(to=$TorsoSection,scale=(($HipWidth * .2 + $WaistWidth * .8) / $ChestWidth,.82,1),at=(0,.5 * $Unit,$HipHeight + ($WaistHeight - $HipHeight) * .80 - $Base))
+  loft(to=$TorsoSection,scale=($WaistWidth / $ChestWidth,.78,1),at=(0,0,$WaistHeight - $Base))
+  loft(to=$TorsoSection,scale=(($WaistWidth * .88 + $ChestWidth * .12) / $ChestWidth,.82,1),at=(0,-.5 * $Unit,$WaistHeight + ($ChestHeight - $WaistHeight) * .22 - $Base))
+  loft(to=$TorsoSection,scale=(.92,.95,1),at=(0,-$Unit,$ChestHeight - 11 * $Unit - $Base))
+  loft(to=$TorsoSection,scale=(1,1.04,1),at=(0,-1.5 * $Unit,$ChestHeight - $Base))
+  loft(to=$TorsoSection,scale=($ShoulderWidth * .90 / $ChestWidth,.82,1),at=(0,0,$ShoulderHeight - $Base))
+  loft(to=$TorsoSection,scale=(10.4 * $Unit / $ChestWidth,10 * $Unit / $TorsoDepth,1),at=(0,$Unit,$NeckHeight - $Base))
+  loft(to=$TorsoSection,scale=(9.4 * $Unit / $ChestWidth,9.2 * $Unit / $TorsoDepth,1),at=(0,$Unit,$NeckHeight + 2 * $Unit - $Base),profile=$Profiles.SCurve)
+  place(by=(0,0,$Base))
+  save($NeckTip) [top]
+}
+
+# Each limb is one authored contour through named anatomical stations.
+# The wrist collar is the only part of the arm editable by the hand join.
+Arm = mesh() {
+  circle(radius=$UpperArmWidth / 2,scale=(1,.9,1),segments=40)
+  $Section = plane
+  circle(radius=$UpperArmWidth * .075,scale=(1,.9,1),segments=40)
+  loft(to=$Section,scale=(1.04,1.04,1),at=(0,0,$ArmLength * .095),profile=$Profiles.SCurve)
+  loft(to=$Section,scale=(.86,.91,1),at=(0,-.4 * $Unit,$ArmLength * .28),profile=$Profiles.SCurve)
+  loft(to=$Section,scale=(.72,.77,1),at=(0,.2 * $Unit,$ArmLength * .39))
+  loft(to=$Section,scale=($ElbowWidth / $UpperArmWidth,$ElbowWidth / ($UpperArmWidth * .9),1),at=(0,.6 * $Unit,$ArmLength * .49))
+  loft(to=$Section,scale=($ForearmWidth / $UpperArmWidth,$ForearmWidth * .90 / ($UpperArmWidth * .9),1),at=(0,-.4 * $Unit,$ArmLength * .62),profile=$Profiles.SCurve)
+  loft(to=$Section,scale=($WristWidth * 1.3 / $UpperArmWidth,$WristDepth * 1.5 / ($UpperArmWidth * .9),1),at=(0,0,$ArmLength * .86))
+  loft(to=$Section,scale=($WristWidth * 1.02 / $UpperArmWidth,$WristDepth * 1.02 / ($UpperArmWidth * .9),1),at=(0,0,$ArmLength),profile=$Profiles.SCurve)
+  # Manually authored rough palm continuation. The wrist datum remains fixed;
+  # its disposable tip is replaced by the independently authored hand.
+  loft(to=$Section,scale=($PalmWidth * .72 / $UpperArmWidth,$WristDepth / ($UpperArmWidth * .9),1),at=(0,0,$ArmLength + $WristWidth * .30),profile=$Profiles.SCurve)
+  # The authored loft already has a continuous ordered rim. Keep that rim;
+  # voxel rebuilding it makes the replacement boundary an axial staircase.
+  save($RoughPalm) [top]
+  save($WristBlend) [above=$ArmLength - $WristTransition,!$RoughPalm]
+  socket(Hand,at=(0,0,$ArmLength),facing=+Z,up=+X,type='organic/wrist@1',transition=$WristBlend,replace=$RoughPalm)
+}
+HandSkin = mesh() {
+  add($Hands.SkinOnly)
+  socket(Root,at=(0,0,0),facing=-Z,up=+X,type='organic/wrist@1')
+}
+OppositeHandSkin = mesh() {
+  add($OppositeHands.SkinOnly)
+  socket(Root,at=(0,0,0),facing=-Z,up=+X,type='organic/wrist@1')
+}
+ArmWithHand = mesh(hand_skin=$HandSkin,hand_nails=$Hands.NailsOnly) {
+  arm = add($Arm)
+  hand = add($hand_skin,join=organic,into=$arm.Hand,using=Root,fit=frame)
+  if ($Nails > 0) { nails = add($hand_nails,at=(0,0,$ArmLength),join=none) }
+  socket(ShoulderRoot,at=(0,0,0),facing=-Z,up=+X,type='organic/shoulder@1')
+}
+
+LegGeometry = mesh() {
+  circle(radius=$AnkleWidth / 2,scale=(1,1.15,1),segments=40)
+  $Ankle = plane
+  loft(to=$Ankle,scale=(1.2,1.25,1),at=(0,$Unit,15 * $Unit - $AnkleHeight))
+  loft(to=$Ankle,scale=($CalfWidth / $AnkleWidth,$CalfWidth * 1.1 / ($AnkleWidth * 1.15),1),at=(-$Unit,1.4 * $Unit,$KneeHeight * .64 - $AnkleHeight),profile=$Profiles.SCurve)
+  loft(to=$Ankle,scale=($KneeWidth / $AnkleWidth,$KneeWidth / ($AnkleWidth * 1.15),1),at=(-1.8 * $Unit,-1.2 * $Unit,$KneeHeight - $AnkleHeight),profile=$Profiles.SCurve)
+  loft(to=$Ankle,scale=($ThighWidth * .84 / $AnkleWidth,$ThighWidth * .9 / ($AnkleWidth * 1.15),1),at=(-2 * $Unit,-.2 * $Unit,$KneeHeight + ($HipHeight - $KneeHeight) * .48 - $AnkleHeight),profile=$Profiles.SCurve)
+  loft(to=$Ankle,scale=($ThighWidth / $AnkleWidth,$ThighWidth * 1.1 / ($AnkleWidth * 1.15),1),at=(-2.4 * $Unit,$Unit,$HipHeight - 5 * $Unit - $AnkleHeight))
+  loft(to=$Ankle,scale=($ThighWidth * .87 / $AnkleWidth,$ThighWidth / ($AnkleWidth * 1.15),1),at=(-2.4 * $Unit,$Unit,$HipHeight + 2 * $Unit - $AnkleHeight))
+  place(by=(0,0,$AnkleHeight))
+}
+Leg = mesh(side=1) {
+  if ($side < 0) { add($LegGeometry,mirror=X) } else { add($LegGeometry) }
+  socket(AnkleRoot,at=(0,0,$AnkleHeight),facing=-Z,up=+X,type='organic/ankle@1')
+  socket(HipRoot,at=(-2.4 * $Unit * $side,$Unit,$HipHeight - 5 * $Unit),facing=+Z,up=+X,type='organic/hip@1')
+}
+FootGeometry = mesh() {
+  circle(radius=$AnkleWidth * 1.15 / 2,scale=(1,1.55 / 1.15,1),segments=40)
+  $Instep = plane
+  # Asymmetric forefoot outline and a narrower heel. Individual toes remain
+  # unbuilt; this is still the foot blockout, not finished foot anatomy.
+  curve((-$FootWidth * .29,$FootLength * .22),(-$FootWidth * .36,-$FootLength * .12),(-$FootWidth * .48,-$FootLength * .49),(-$FootWidth * .36,-$FootLength * .77),(-$FootWidth * .12,-$FootLength * .80),($FootWidth * .21,-$FootLength * .70),($FootWidth * .46,-$FootLength * .53),($FootWidth * .42,-$FootLength * .29),($FootWidth * .28,$FootLength * .22),(0,$FootLength * .27),loop=true)
+  $Sole = plane
+  loft(to=$Sole,scale=(1,.97,1),at=(0,0,$FootHeight * .28),profile=$Profiles.SCurve)
+  # Continue the foot rather than append a hovering ankle lump.
+  loft(to=$Instep,at=(0,-$Unit,$FootHeight * 1.20),profile=$Profiles.SCurve)
+  loft(to=$Instep,scale=(.92,.78,1),at=(0,0,$AnkleHeight + 2 * $Unit),profile=$Profiles.SCurve)
+}
+Foot = mesh(side=1) {
+  if ($side < 0) { add($FootGeometry,mirror=X) } else { add($FootGeometry) }
+  save($RoughAnkle) [top]
+  save($AnkleBlend) [above=$FootHeight * .3,!$RoughAnkle]
+  socket(Ankle,at=(0,0,$AnkleHeight),facing=+Z,up=+X,type='organic/ankle@1',transition=$AnkleBlend,replace=$RoughAnkle)
+}
+LegWithFoot = mesh(side=1) {
+  foot = add($Foot,side=$side)
+  leg = add($Leg,side=$side,join=organic,into=$foot.Ankle,using=AnkleRoot,fit=frame)
+  socket(HipRoot,at=(-2.4 * $Unit * $side,$Unit,$HipHeight - 5 * $Unit),facing=+Z,up=+X,type='organic/hip@1')
+}
+
+# One ordered silhouette controls neck, jaw and skull. Do not ease to a
+# vertical barrel at every station: section slopes must continue into the next.
+Head = mesh() {
+  $NeckLength = $Height - $HeadHeight - $NeckHeight
+  circle(radius=$HeadWidth / 2,scale=(1,$HeadDepth / $HeadWidth,1),segments=64)
+  $Skull = plane
+  circle(radius=4.7 * $Unit,scale=(1,9.2 / 9.4,1),segments=64)
+  loft(to=$Skull,scale=(.46,.40,1),at=(0,0,2 * $Unit + $NeckLength * .72))
+  loft(to=$Skull,scale=(.50,.55,1),at=(0,-$HeadDepth * .075,2 * $Unit + $NeckLength))
+  loft(to=$Skull,scale=(.68,.75,1),at=(0,-$HeadDepth * .035,2 * $Unit + $NeckLength + $HeadHeight * .17))
+  loft(to=$Skull,scale=(.87,.93,1),at=(0,0,2 * $Unit + $NeckLength + $HeadHeight * .34))
+  loft(to=$Skull,scale=(.98,1,1),at=(0,0,2 * $Unit + $NeckLength + $HeadHeight * .53))
+  loft(to=$Skull,scale=(1,.98,1),at=(0,0,2 * $Unit + $NeckLength + $HeadHeight * .68))
+  loft(to=$Skull,scale=(.93,.89,1),at=(0,0,2 * $Unit + $NeckLength + $HeadHeight * .81))
+  loft(to=$Skull,scale=(.76,.73,1),at=(0,0,2 * $Unit + $NeckLength + $HeadHeight * .91))
+  loft(to=$Skull,scale=(.47,.45,1),at=(0,0,2 * $Unit + $NeckLength + $HeadHeight * .97))
+  loft(to=$Skull,scale=(.015,.015,1),at=(0,0,2 * $Unit + $NeckLength + $HeadHeight))
+  place(by=(0,0,-2 * $Unit))
+  socket(Root,at=(0,0,0),facing=-Z,up=+X,type='organic/neck@1')
+}
+
+# Disposable guides are authored rough limbs, not generated merger padding.
+# Their end caps are explicit, ordered replacement boundaries.
+ShoulderGuide = mesh(side=1) {
+  $Stock = $UpperArmWidth * .25
+  $Drop = $UpperArmWidth * 1.2
+  points((-$side * $ArmSlope * $Stock,0,$Stock),($side * $ArmSlope * $Drop,0,-$Drop))
+  $Route = plane
+  circle(radius=$UpperArmWidth / 2,segments=40)
+  sweep(along=$Route,to=90%)
+  save($Tip) [top]
+}
+HipGuide = mesh() {
+  points((0,0,$ThighWidth * .35),(0,0,-$ThighWidth * .85))
+  $Route = plane
+  circle(radius=$ThighWidth * .45,scale=(1,1.1,1),segments=40)
+  sweep(along=$Route)
+  save($Tip) [top]
+}
+ShoulderTransition = mesh(side=1) {
+  rect(w=$UpperArmWidth * 1.7,h=$TorsoDepth * 1.4)
+  extrude(height=$UpperArmWidth * 2.5)
+  place(by=($side * ($ShoulderWidth * .38 + $UpperArmWidth * .3),0,$ArmRootHeight - $UpperArmWidth * 1.4))
+}
+LeftShoulderTransition = mesh() { add($ShoulderTransition,side=-1) }
+RightShoulderTransition = mesh() { add($ShoulderTransition,side=1) }
+ShoulderReplacement = mesh(side=1) {
+  points(($side * $ArmSlope * $UpperArmWidth,0,-$UpperArmWidth),($side * $ArmSlope * $UpperArmWidth * 1.5,0,-$UpperArmWidth * 1.5))
+  $Route = plane
+  circle(radius=$UpperArmWidth * .48,segments=40)
+  sweep(along=$Route)
+  place(by=($side * $ShoulderWidth * .38,0,$ArmRootHeight))
+}
+LeftShoulderReplacement = mesh() { add($ShoulderReplacement,side=-1) }
+RightShoulderReplacement = mesh() { add($ShoulderReplacement,side=1) }
+HipReplacement = mesh(side=1) {
+  rect(w=$ThighWidth,h=$ThighWidth * 1.25)
+  extrude(height=$ThighWidth)
+  place(by=($side * ($HipWidth * .35 - 2.4 * $Unit),$Unit,$HipHeight - 5 * $Unit - $ThighWidth * 1.7))
+}
+LeftHipReplacement = mesh() { add($HipReplacement,side=-1) }
+RightHipReplacement = mesh() { add($HipReplacement,side=1) }
+Core = mesh() {
+  torso = add($Torso)
+  # These blends AUTHOR the rough receiver, as RoughDigits does in HandAnatomy.
+  # Finished limbs are attached later only with the organic transition solver.
+  leftguide = add($ShoulderGuide,side=-1,at=(-$ShoulderWidth * .38,0,$ArmRootHeight),join=blend,falloff=$UpperArmWidth * .1)
+  rightguide = add($ShoulderGuide,side=1,at=($ShoulderWidth * .38,0,$ArmRootHeight),join=blend,falloff=$UpperArmWidth * .1)
+  lefthip = add($HipGuide,at=(-$HipWidth * .35 + 2.4 * $Unit,$Unit,$HipHeight - 5 * $Unit),join=blend,falloff=$ThighWidth * .1)
+  righthip = add($HipGuide,at=($HipWidth * .35 - 2.4 * $Unit,$Unit,$HipHeight - 5 * $Unit),join=blend,falloff=$ThighWidth * .1)
+  # Select the disposable stock on the finished rough receiver. Boolean source
+  # face tags are not a geometric definition of a cap after several blends.
+  save($NeckReplacement) [above=$NeckHeight + $Unit]
+  save($LeftArmReplacement) [in=$LeftShoulderReplacement]
+  save($RightArmReplacement) [in=$RightShoulderReplacement]
+  save($LeftLegReplacement) [in=$LeftHipReplacement]
+  save($RightLegReplacement) [in=$RightHipReplacement]
+  save($NeckBlend) [above=$ShoulderHeight + 2 * $Unit,!$NeckReplacement]
+  save($LeftShoulderBlend) [in=$LeftShoulderTransition,!$LeftArmReplacement]
+  save($RightShoulderBlend) [in=$RightShoulderTransition,!$RightArmReplacement]
+  save($LowerBlend) [below=$HipHeight + 10 * $Unit,!$LeftLegReplacement,!$RightLegReplacement]
+  socket(LeftShoulder,at=(-$ShoulderWidth * .38,0,$ArmRootHeight),facing=(-$ArmSlope,0,-1),up=(1,0,-$ArmSlope),type='organic/shoulder@1',transition=$LeftShoulderBlend,replace=$LeftArmReplacement)
+  socket(RightShoulder,at=($ShoulderWidth * .38,0,$ArmRootHeight),facing=($ArmSlope,0,-1),up=(1,0,$ArmSlope),type='organic/shoulder@1',transition=$RightShoulderBlend,replace=$RightArmReplacement)
+  socket(Neck,at=(0,$Unit,$NeckHeight),facing=+Z,up=+X,type='organic/neck@1',transition=$NeckBlend,replace=$NeckReplacement)
+  socket(LeftHip,at=(-$HipWidth * .35 + 2.4 * $Unit,$Unit,$HipHeight - 5 * $Unit),facing=-Z,up=+X,type='organic/hip@1',transition=$LowerBlend,replace=$LeftLegReplacement)
+  socket(RightHip,at=($HipWidth * .35 - 2.4 * $Unit,$Unit,$HipHeight - 5 * $Unit),facing=-Z,up=+X,type='organic/hip@1',transition=$LowerBlend,replace=$RightLegReplacement)
+}
+Body = mesh() {
+  core = add($Core)
+  left = add($ArmWithHand,hand_skin=$OppositeHandSkin,hand_nails=$OppositeHands.NailsOnly,join=organic,into=$core.LeftShoulder,using=ShoulderRoot,fit=frame)
+  right = add($ArmWithHand,join=organic,into=$core.RightShoulder,using=ShoulderRoot,fit=frame)
+  head = add($Head,join=organic,into=$core.Neck,using=Root,fit=frame)
+  leftleg = add($LegWithFoot,side=-1,join=organic,into=$core.LeftHip,using=HipRoot,fit=frame)
+  rightleg = add($LegWithFoot,side=1,join=organic,into=$core.RightHip,using=HipRoot,fit=frame)
+  material($Skin)
+  uv(none)
+  socket(Root,at=(0,0,$HipHeight),facing=+Z,up=-Y)
+}

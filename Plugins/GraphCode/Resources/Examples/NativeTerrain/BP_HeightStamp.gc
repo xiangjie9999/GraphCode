@@ -1,0 +1,19 @@
+gc 1 kind:blueprint asset:/Game/GraphCodeExamples/Terrain/BP_HeightStamp
+parent: /Script/Engine.Actor
+
+components {
+  Patch = LandscapeTexturePatch(bApplyComponentZScale=false, BlendMode=Additive, bUseTextureAlphaForHeight=true, Falloff=1800.0, HeightEncoding=ZeroToOne, HeightEncodingSettings=(ZeroInEncoding=0.5,WorldSpaceEncodingScale=4000.0), HeightSourceMode=TextureAsset, HeightTextureAsset=obj'/Game/GraphCodeExamples/Terrain/T_GC_AsymmetricHeightStamp.T_GC_AsymmetricHeightStamp', UnscaledPatchCoverage=(X=26000.0,Y=26000.0))
+}
+
+graph {
+  eventgraph EventGraph {
+    // This actor is data-only. The native component performs the Landscape update.
+    n1 = Event ReceiveBeginPlay() [enabled=false, bOverrideFunction=True] : ->_
+  }
+}
+
+functions {
+  function UserConstructionScript {
+    n1 = FunctionEntry() : ->_
+  }
+}
