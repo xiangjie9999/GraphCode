@@ -6,7 +6,7 @@
 <a href="https://github.com/xiangjie9999/GraphCode/releases/latest"><b>Download 0.1.13</b></a> ·
 <a href="https://graphcode.dev/start"><b>Start the 14-day trial</b></a> ·
 <a href="#what-your-ai-can-build">Capabilities</a> ·
-<a href="#get-started">Get started</a> ·
+<a href="docs/SETUP.md"><b>Setup guide</b></a> ·
 <a href="#questions">FAQ</a> ·
 <a href="https://graphcode.dev/pricing">Pricing</a> ·
 <a href="https://graphcode.dev/marketplace">Market</a>
@@ -27,6 +27,25 @@ and every change it makes is saved so you can compare it or take it back.
 | **Includes** | Ten products in one package, a free Market of ready-made packs, and 96 guides the AI reads as it works. |
 | **Try it** | 14 days of everything with just an email. No card. |
 | **Then** | A [one-time licence](https://graphcode.dev/pricing) per product or for all of them. |
+
+## Start here
+
+**What you download:** ten Unreal Engine plugins in one package (about 130 MB). You copy them into your
+project, turn them on, start the free trial with your email, and connect the AI you already use.
+Setup takes about 15 minutes: **[the setup guide](docs/SETUP.md)**.
+
+**What you get:** your AI building inside your open Unreal editor, on your project: you ask in its chat,
+it makes real Unreal assets, shows you renders and test runs, and every change can be undone.
+
+**How to read this page:**
+
+| Section | What it tells you |
+|---|---|
+| [Made with GraphCode](#made-with-graphcode) | Things it has built. |
+| [How it works](#how-it-works) | What a session with your AI looks like. |
+| [Get started](#get-started) | The setup in five steps, and the full guide. |
+| [What your AI can build](#what-your-ai-can-build) | Each of the ten products: a picture, an example, and everything it can do. |
+| [Trial and licence](#trial-and-licence) · [Trust and privacy](#trust-and-privacy) · [Questions](#questions) | Before you buy. |
 
 ## Made with GraphCode
 
@@ -70,6 +89,25 @@ All packs: [docs/MARKET.md](docs/MARKET.md). Case studies with films and samples
 
 While the AI works, your project is protected: it can't overwrite newer work, a change that would break
 a working Blueprint is not saved, and anything it deletes goes to a trash folder it never empties.
+
+## Get started
+
+**You need:** Windows 64-bit, Unreal Engine **exactly 5.7.4**, and an AI client that supports MCP
+(Claude Code, Cursor, Claude Desktop, Codex or any other). No compiler, Visual Studio or Node.js.
+
+1. **Download** `graphcode-0.1.13-win64.tar.xz` from the
+   [latest release](https://github.com/xiangjie9999/GraphCode/releases/latest) and unpack it.
+2. **Copy** the folders in its `Plugins` folder into your project's `Plugins` folder, open the project,
+   tick the GraphCode plugins in **Edit > Plugins** and restart.
+3. **Start the trial** at [graphcode.dev/start](https://graphcode.dev/start): save the file it gives you
+   as `%USERPROFILE%\.graphcode\activation.txt`.
+4. **Connect your AI:** give your AI client the `unreal` entry from your project's
+   `Saved\UnrealAIBridge\mcp-config.json`. Ask it *"Run unreal_info"*: it should answer **CONNECTED**.
+5. **Ask:** *"Read Plugins/GraphCode/SETUP.md and set up this project for GraphCode."* It looks at your
+   project, asks how involved you want to be, and builds a first thing so you see it working.
+
+**[The full setup guide](docs/SETUP.md)**: what you see at each step, how to tell it worked, where the
+file goes for each AI client, and what to do if something goes wrong.
 
 ## What your AI can build
 
@@ -346,36 +384,6 @@ long."* Or skip the tab: *"Find a pack for broken concrete and use it."*
 The full technical reference, for your AI and your team: [docs/REFERENCE.md](docs/REFERENCE.md) ·
 [docs/TOOLS.md](docs/TOOLS.md) · [docs/KINDS.md](docs/KINDS.md).
 
-## Get started
-
-**You need:** Windows 64-bit, Unreal Engine **5.7.4**, and an AI client that supports MCP.
-
-1. **Download** `graphcode-0.1.13-win64.tar.xz` (130 MB) from the
-   [latest release](https://github.com/xiangjie9999/GraphCode/releases/latest). You can
-   [verify it](docs/STUDIOS.md#release-signing-and-keys) with our signature.
-2. **Install.** Close Unreal, unpack the archive, and copy its `Plugins` folders into your project:
-   ```powershell
-   mkdir GraphCode; tar -xf graphcode-0.1.13-win64.tar.xz -C GraphCode
-   Copy-Item GraphCode\Plugins\* "C:\Path\To\YourProject\Plugins\" -Recurse
-   ```
-   Open the project, enable the GraphCode plugins in **Edit > Plugins**, accept the engine plugins they
-   ask for, and restart.
-3. **Start the trial.** Enter your email at [graphcode.dev/start](https://graphcode.dev/start) and save the
-   file it gives you as `%USERPROFILE%\.graphcode\activation.txt`.
-4. **Connect your AI.** Opening the project writes `Saved/UnrealAIBridge/mcp-config.json`. Add its `unreal`
-   entry to your AI client:
-
-   | Client | Where it goes |
-   |---|---|
-   | Claude Code | Copy the file to `.mcp.json` in your project folder. |
-   | Cursor | `.cursor/mcp.json` in your project folder. |
-   | Claude Desktop | `%APPDATA%\Claude\claude_desktop_config.json` |
-   | Codex | `[mcp_servers.unreal]` in `~/.codex/config.toml` |
-   | Any other | Add it as a local (stdio) MCP server. |
-
-5. **Ask.** Start with *"Read Plugins/GraphCode/SETUP.md and set up this project for GraphCode."* The AI
-   looks at your project, asks how involved you want to be, and gets it ready. Then ask for what you want.
-
 ## Trial and licence
 
 | | |
@@ -461,7 +469,7 @@ Everything the AI made stays in your project.
 
 ## More
 
-[Market packs and presets](docs/MARKET.md) · [Case studies and samples](docs/EXAMPLES.md) ·
+[Setup guide](docs/SETUP.md) · [Market packs and presets](docs/MARKET.md) · [Case studies and samples](docs/EXAMPLES.md) ·
 [For studios](docs/STUDIOS.md) · [Changelog](CHANGELOG.md) · [Licence agreement](LICENSE.md) ·
 [Issues](https://github.com/xiangjie9999/GraphCode/issues) · support@graphcode.dev
 
