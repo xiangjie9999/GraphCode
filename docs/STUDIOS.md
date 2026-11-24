@@ -65,9 +65,14 @@ your AI client --stdio--> graphcode-bridge.exe --HTTP, loopback only--> Unreal E
   are signed with the backup key (a software key, not in the TPM) until the new hardware key, `release-tpm-2` (listed as
   `primary-pending`), reaches users inside a release signed by a key they already trust. 0.1.14 is that release; the switch
   to `release-tpm-2` comes once it is widely installed.
-- `tools/Verify-GraphCodeRelease.ps1` prints the fingerprint of the signing key. Compare it with the
-  one published on [graphcode.dev/trust](https://graphcode.dev/trust): that way a key swapped in
-  this repository would not go unnoticed.
+- `tools/Verify-GraphCodeRelease.ps1` prints the fingerprint of the signing key (SHA-256 of its public
+  point X||Y). Compare it with this list, which is also in each release's notes:
+
+  | Key | Role | Created | Fingerprint |
+  |---|---|---|---|
+  | `release-backup-1` | backup, signs releases now | 2026-10-20 | `f26d4d4c32bef500237ac775001df50d90cdd562f499693fbd28c40105cf1358` |
+  | `release-tpm-2` | next primary (hardware) | 2026-11-20 | `e50261369b47f768ff96fc1e0e9f6dd474584671491c26edaaff4c6d32faad4d` |
+  | `release-tpm-1` | former primary, can no longer sign | 2026-10-20 | `b00a922038c4395e58a94afa5193c20075ff26306a174735aaf3452f8b1bd25f` |
 - The verify script also flags files in an unpacked folder that are not part of the release.
 
 ## CI and pre-commit checks

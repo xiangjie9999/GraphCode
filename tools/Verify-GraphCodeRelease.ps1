@@ -77,8 +77,8 @@ if (-not $jwk -or $sig.alg -ne 'ES256' -or $jwk.crv -ne 'P-256') {
         $raw = ConvertFrom-Base64Url $sig.sig
         $ok = $raw.Length -eq 64 -and $ecdsa.VerifyData($manifestBytes, $raw, [Security.Cryptography.HashAlgorithmName]::SHA256)
         Write-Check $ok "release.json is signed by $($sig.kid) ($($jwk.role) key, created $($jwk.created))"
-        # Fingerprint = SHA-256 of the raw public point X||Y. Compare it with the one published on
-        # graphcode.dev/trust, so a key swapped in this repository would not go unnoticed.
+        # Fingerprint = SHA-256 of the raw public point X||Y. Compare it with the one in the release notes and
+        # docs/STUDIOS.md, so a key swapped in one place would not go unnoticed.
         $sha = [Security.Cryptography.SHA256]::Create()
         try { $fp = -join ($sha.ComputeHash([byte[]]($point.X + $point.Y)) | ForEach-Object { $_.ToString('x2') }) }
         finally { $sha.Dispose() }

@@ -79,10 +79,31 @@ Opening the project with GraphCode enabled also writes the file your AI client n
 
 ## 4. Start the trial
 
-1. Go to [graphcode.dev/start](https://graphcode.dev/start) and enter your email.
-2. Save the file it gives you as **`%USERPROFILE%\.graphcode\activation.txt`** (for example
-   `C:\Users\you\.graphcode\activation.txt`). It has three lines, `email=`, `code=` and `server=`; keep
-   all three as they are.
+The trial needs only your email: no card, no account, nothing to confirm by email.
+
+Save this file as **`%USERPROFILE%\.graphcode\activation.txt`** (for example
+`C:\Users\you\.graphcode\activation.txt`), with your own email on the first line:
+
+```
+email = you@example.com
+code =
+server = https://rlzbzhcrwvdxoriwgajn.supabase.co/functions/v1/gc-license-device
+```
+
+Leave `code =` empty: a trial has no code. `server =` is GraphCode's licence service; copy it exactly.
+
+Or make the file with one PowerShell command (put your email in the first line):
+
+```powershell
+$email = "you@example.com"
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.graphcode" | Out-Null
+[IO.File]::WriteAllText("$env:USERPROFILE\.graphcode\activation.txt", "email = $email`ncode =`nserver = https://rlzbzhcrwvdxoriwgajn.supabase.co/functions/v1/gc-license-device`n")
+```
+
+Your AI can also make it for you: give it your email and this page.
+
+One trial per email and one per PC. If you later move to another PC, GraphCode emails you a one-time
+code for that move.
 
 The trial is checked the first time your AI changes something, and the 14 days start then. Until then
 your AI can already read, search and render. There is no sign-in window: if anything is missing, the

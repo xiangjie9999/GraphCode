@@ -4,7 +4,7 @@
 
 <p align="center">
 <a href="https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.14/graphcode-0.1.14-win64.tar.xz"><b>Download 0.1.14</b></a> ·
-<a href="https://graphcode.dev/start"><b>Start the 14-day trial</b></a> ·
+<a href="docs/SETUP.md#4-start-the-trial"><b>Start the 14-day trial</b></a> ·
 <a href="#what-your-ai-can-build">Capabilities</a> ·
 <a href="docs/SETUP.md"><b>Setup guide</b></a> ·
 <a href="#questions">FAQ</a> ·
@@ -99,8 +99,9 @@ a working Blueprint is not saved, and anything it deletes goes to a trash folder
    [Releases](https://github.com/xiangjie9999/GraphCode/releases) page) and unpack it.
 2. **Copy** the folders in its `Plugins` folder into your project's `Plugins` folder, open the project,
    tick the GraphCode plugins in **Edit > Plugins** and restart.
-3. **Start the trial** at [graphcode.dev/start](https://graphcode.dev/start): save the file it gives you
-   as `%USERPROFILE%\.graphcode\activation.txt`.
+3. **Start the trial** with just your email: save the three-line file from the
+   [setup guide](docs/SETUP.md#4-start-the-trial) as `%USERPROFILE%\.graphcode\activation.txt`. No card,
+   nothing to confirm by email.
 4. **Connect your AI:** give your AI client the `unreal` entry from your project's
    `Saved\UnrealAIBridge\mcp-config.json`. Ask it *"Run unreal_info"*: it should answer **CONNECTED**.
 5. **Ask:** *"Read Plugins/GraphCode/SETUP.md and set up this project for GraphCode."* It looks at your
