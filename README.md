@@ -37,17 +37,6 @@ Setup takes about 15 minutes: **[the setup guide](docs/SETUP.md)**.
 **What you get:** your AI building inside your open Unreal editor, on your project: you ask in its chat,
 it makes real Unreal assets, shows you renders and test runs, and every change can be undone.
 
-**How to read this page:**
-
-| Section | What it tells you |
-|---|---|
-| [Made with GraphCode](#made-with-graphcode) | A showreel of what each product builds. |
-| [How it works](#how-it-works) | What a session with your AI looks like. |
-| [Why GraphCode](#why-graphcode-what-goes-wrong-when-an-ai-drives-unreal-and-how-graphcode-fixes-it) | The seven problems with an AI driving Unreal through a free MCP server or Blender MCP, and how GraphCode fixes each. |
-| [Get started](#get-started) | The setup in five steps, and the full guide. |
-| [What your AI can build](#what-your-ai-can-build) | Each of the ten products: a picture, an example, why it beats the alternative, and everything it can do. |
-| [Trial and licence](#trial-and-licence) · [Trust and privacy](#trust-and-privacy) · [Questions](#questions) | Before you buy. |
-
 ## Made with GraphCode
 
 <p align="center"><img src="docs/media/showreel.gif" alt="A showreel of things made with GraphCode: a furnished hall, a river through a town, an airship, a character climbing through a window, a violinist, a portal effect, a rigged cat, a furred cat, a game HUD, a crowd and a test run" width="100%"></p>
@@ -180,7 +169,7 @@ the project's history the way a developer reads Git, and so can you:
   first**: every asset it will restore, recreate or remove. Nothing changes until it's confirmed, and the
   state it replaces is kept, so you can go back again.
 
-You do not need Git for any of this. Local history is on by default, with a size budget for the whole project, so a project that has never had a commit still keeps your recent saves. Versions are named the way you would say them: *"compare the HUD with yesterday 3pm"*, *"what did the level look like at 1am"*, or `HEAD`, a branch or a commit if you do use Git. A restore is planned first: your AI shows every asset it would change, recreate or remove, and nothing happens until you confirm the plan. Local history covers your recent saves and Git covers what you committed, so the two together cover everything.
+You do not need Git for any of this. Local history is on by default, with a size budget for the whole project, so a project that has never had a commit still keeps your recent saves. Versions are named the way you would say them: *"compare the HUD with yesterday 3pm"*, *"what did the level look like at 1am"*, or `HEAD`, a branch or a commit if you do use Git. Local history covers your recent saves and Git covers what you committed, so the two together cover everything.
 
 For a team, the same text makes Git useful for Unreal: pull requests show readable diffs instead of
 "binary file changed", two people's edits to one asset can be merged, and a CI check flags any asset whose
@@ -225,7 +214,7 @@ stones, and the same line always builds the same wall. Kits share parts: the woo
 the timber kit, the rubble from the concrete and rebar parts. Damage, wear and weathering apply to **your
 own** shapes too, and rocks, cliffs and plants come with PCG graphs that spread them across your level.
 
-**Built inside Unreal, not imported from Blender.** An export carries Blender's metres, its axes and its naming conventions into Unreal, and each mismatch (scale, rotation, mirrored sides, a pivot in the wrong place, `SOCKET_` and `UCX_` dummy objects) is a chance for the mesh to arrive wrong. GraphCode builds the mesh in Unreal, in centimetres and Unreal's own rotations, with sockets, collision and materials declared in the recipe. Nothing is converted on the way in, and a change is a rebuild of the same asset, not a second import.
+**Built inside Unreal, not imported from Blender.** An export carries Blender's metres, axes and naming tricks into Unreal, and every mismatch is a chance for the mesh to arrive wrong. GraphCode builds it in Unreal, in Unreal's own terms, so nothing is converted on the way in ([the details](#graphcode-shape-props-buildings-machines-creatures-and-plants)).
 
 ### 7. It forgets your project between sessions
 
@@ -260,16 +249,9 @@ The next session, and the one after, opens with your AI already knowing the game
 
 A server can advertise 200 tools, or 1,000. Every one of them is still a verb over the same binary assets:
 the AI still types coordinates into a scene it can't see, still changes things one call at a time, and
-still has no history to go back to. GraphCode is different **underneath**, and everything else is built
-on that foundation:
+still has no history to go back to. GraphCode is different **underneath**: readable text, relationships and history, all in the table above. On
+top of that foundation:
 
-- **Every asset is readable text.** Blueprints, widgets, materials, levels, meshes, motions, rigs, hair and
-  clothing each have a text twin. Your AI understands the whole asset before it touches it, and you can read
-  exactly what it changed.
-- **Relationships, not coordinates.** On the floor, facing the door, along the river, the foot planted, cut
-  to this body, sized from that measurement. GraphCode works out the numbers from the real scene.
-- **Every version, for the AI and for you.** Compare any asset or the whole project with any commit or any
-  moment, and restore just what you want, with the plan shown first.
 - **You fine-tune by hand, on the very thing the AI made.** No export, no second app, no round trip:
   - the **Pose panel**: your AI writes the motion, you drag sliders for each body part, effort and timing,
     press Apply to watch it and Save to keep it, and your AI carries on from your values;
@@ -282,9 +264,6 @@ on that foundation:
   settle in the editor. A write made over a teammate's newer work is refused, whether the writer is a person
   or another AI session. A CI check flags any asset whose text is out of date, with no licence needed. It
   works alongside Git and Perforce, with studio seats.
-- **Knowledge, not just access.** Solvers for balance, cloth, strands, terrain and settling piles; recipes
-  and kits for walls, roofs, rocks, plants and machines; about 100 guides your AI reads as it works.
-- **It checks itself.** Renders, video, layout reports, loudness, play-tests, and numbers from every build.
 - **Safe by design.** Dry runs before writes, refusals that name the reason, restores planned first, and a
   trash folder that is never emptied.
 - **Light on your AI.** 15 tools, each explaining itself on demand, so your AI's attention goes on your game,
@@ -336,17 +315,6 @@ All ten products ship in one package and are included in the trial. Jump to:
 
 The game itself: the rules, the screens, the surfaces and the levels, built as ordinary Unreal assets.
 
-<table><tr>
-<td width="50%"><img src="docs/media/core-hall.jpg" alt="A furnished hall with wallpaper, panelled ceiling, chandelier and parquet floor"><br><sub>A hall's materials: wallpaper, panelled ceiling, parquet, velvet.</sub></td>
-<td width="50%"><img src="docs/media/core-hud.jpg" alt="Twenty states of a game HUD: health, ammo, reloading, empty, charging, ready"><br><sub>One HUD in twenty states (reload, empty, charging, ready), each checked.</sub></td>
-</tr></table>
-
-**How it goes:** *"Add a reload key and show the ammo on the HUD."* The AI adds the input, the
-Blueprint logic and the widget, plays the game, presses the key and shows you the result. Don't like
-it? Click **GraphCode** in the editor's status bar to open **Version Control**: compare what changed
-against the last commit, a branch or a moment in local history, and restore one file or the whole project.
-
-
 **Why GraphCode Core?** Your AI places things by what they relate to, and changes whole assets it can read, instead of guessing coordinates and wiring nodes blind.
 
 *"Add a Reload function to the rifle and call it from the R key."*
@@ -366,20 +334,19 @@ Only with GraphCode Core:
   buttons pressed by name.
 - Before anything is renamed, moved or deleted: every asset that depends on it, soft references included.
 
+**Everything it covers:**
+
 - **Blueprints:** characters, weapons, doors, pickups, game rules: variables, components, events,
   functions, macros, interfaces, event dispatchers and timelines.
 - **Animation Blueprints** with their state machines.
-- **Menus, HUDs and screens:** widget layouts, bindings and animations, checked at up to eight screen
-  sizes for overlap, clipping and contrast, with buttons pressed to test them.
+- **Menus, HUDs and screens:** widget layouts, bindings and animations.
 - **Materials:** material graphs, reusable material functions and material instances.
 - **Game data:** data assets, data tables, localised text tables, curves, structs, enums and data registries.
 - **Controls:** Enhanced Input actions and mapping contexts for keyboard, mouse and gamepad.
 - **Sound cues, fonts, physical materials, foliage types, render targets and HLOD layers.**
-- **Levels:** placing, moving and arranging actors, sublevels, volumes, splines and the Level Blueprint;
-  placing things by intent ("on the floor, facing the door"); editing one World Partition actor without
-  loading the map.
+- **Levels:** actors, sublevels, volumes, splines and the Level Blueprint.
 - **Importing** meshes, textures and audio (FBX, glTF, OBJ, images, archives) with the import settings planned first.
-- **Finding things:** assets, nodes, functions, widgets, and what depends on what before anything is deleted.
+- **Finding things:** assets, nodes, functions and widgets.
 - **Looking and listening:** renders from any angle, short videos and contact sheets, "what is at this
   pixel", and sounds rendered with their loudness.
 - **History:** every change saved, compared and restorable; a recoverable trash; readable diffs in Git; a
@@ -388,13 +355,6 @@ Only with GraphCode Core:
 ### GraphCode World: terrain, water, forests and navigation
 
 Whole places, at real scale: the land, the water, what grows on it and how characters cross it.
-
-<p><img src="docs/media/world-river.gif" alt="A stream carved through a town of glass domes, towers and lit windows" width="100%"></p>
-
-**How it goes:** *"A wooded valley with a waterfall into a pool, cliffs on both sides."* The AI shapes the
-terrain, carves the riverbed, adds the water and plants the slopes, then renders it from several
-angles. Then: *"More erosion on the cliffs, and keep the trees out of the path."*
-
 
 **Why GraphCode World?** Your AI names the places in your world once (the stream, the trail, the crypt, the street) and puts everything in relation to them. GraphCode works out the coordinates against the real terrain, every time it applies.
 
@@ -419,41 +379,24 @@ Only with GraphCode World:
 - *"Can a person get from the road to this door? Can a mouse?"* answered from the navigation mesh, per body size.
 - Hand sculpting recorded and replayed exactly, and your own heightmaps (from Gaea or anywhere) used as brushes.
 
+**Everything it covers:**
+
 - **Terrain** shaped by instruction: mountains, ridges, valleys, carved riverbeds, erosion, noise and
   smoothing, at real scale in metres.
-- **Height brushes** from your own heightmap images, and hand sculpting that is recorded and replayed exactly.
 - **Open worlds:** terrain streamed in World Partition tiles.
 - **Water:** lakes, rivers and ponds, with water materials tuned for depth, reflections, flow and foam.
 - **Planting:** forests, grass and plants spread by region, density, height and slope, and kept out of
   rivers, paths and ponds; PCG graphs.
-- **Places and routes:** named points and courses that terrain, rivers, roads and placed objects share.
-- **Roads and buildings** that meet at the right heights, with a check that every door can be reached
-  from the street.
-- **Navigation:** "can this character walk from here to there?", and AI characters that find a way round.
+- **Roads and buildings** planned to meet at the right heights.
+- **Navigation** for AI characters that find a way round.
 - **Surfaces:** landscape paint layers and texture variation; placed meshes baked into one atlas.
 
 ### GraphCode Shape: props, buildings, machines, creatures and plants
 
 The things in your world, modelled part by part from measurements, so they stay editable.
 
-<p><img src="docs/media/shape-airship-city.gif" alt="An 18 metre airship with a glazed gondola and propellers flying over a city" width="100%"></p>
-
 <p><a href="https://graphcode.dev/showcase"><img src="docs/media/lineup-machines.jpg" alt="Machines and buildings made with GraphCode Shape: an airship, a timber-framed house, a riveted street carrier, a milliner's shop, a compressor and an auto-duster" width="100%"></a></p>
 <p align="center"><sub>More machines and buildings, every part from a recipe: <a href="https://graphcode.dev/showcase">the showcase</a>.</sub></p>
-
-**How it goes:** *"An 18 metre airship with a glazed bridge and four engines."* The AI models the hull,
-gondola, engines and propellers, each with its own material, and renders it turning. Then: *"Make it
-longer"*, and every part sized from the length follows. This is the text the AI keeps for it:
-
-```
-# centimetres. +X is the nose and forward thrust.
-Length = 1800
-Radius = 250
-# the deck hangs 70 cm lower so the glazed bridge has standing headroom
-DeckZ = -470
-EngineRadius = 38
-PropellerRadius = 90
-```
 
 **Why GraphCode Shape?** Your AI declares how the parts relate, and GraphCode rebuilds the mesh from that, so a change ripples through instead of starting over.
 
@@ -471,14 +414,14 @@ PropellerRadius = 90
 | Problem with the Blender-to-Unreal route | Why it happens | In GraphCode Shape |
 |---|---|---|
 | **Wrong size.** The prop arrives 100x too small or too big. | Blender works in metres, Unreal in centimetres. | A recipe is written in centimetres. There is no export step to apply a unit scale in. |
-| **Wrong way round.** Parts arrive turned 90 degrees or facing backwards. | The two programs disagree about which axis is up and which way is forward. | Turns are Unreal's own roll, pitch and yaw (`rotate=(roll, pitch, yaw)`), and a socket is declared with the direction it faces and which way is up, in Unreal's frame. |
-| **Left and right swap.** The mirrored half is not the half you meant. | A mirror is applied in whatever frame the exporter chose. | `add($Half, mirror=Y)` reflects the part in its own frame, and the build's left/right note says where the two sides differ. |
-| **Wrong pivot.** The sword spins about its middle, not its grip. | The origin is wherever the modeller left it. | The pivot is stated in the recipe (`[pivot=(0, 0, 0)]`), and a held prop's origin sits at its grip. |
-| **Attachment points by name.** Dummy objects called `SOCKET_Hand`, with parts hand-placed on them. | Epic's FBX pipeline reads sockets from objects with a `SOCKET_` prefix ([Epic's FBX static mesh pipeline](https://dev.epicgames.com/documentation/en-us/unreal-engine/fbx-static-mesh-pipeline-in-unreal-engine)). | Declare a `socket(...)` and join a part with `into=$body.Socket`; the build reports the joint as touching, gapped or overlapping. |
-| **Collision by naming.** Extra meshes called `UCX_` or `UBX_` that must match the visible one. | The same pipeline reads collision from objects with those prefixes. | One line on the build: `[collision=$Solid]`. A build without it says so. |
-| **Wrong shading.** Hard edges look soft, or the reverse. | Smoothing does not always survive the export. | The recipe states the angle above which an edge shades hard (`shade:`). |
+| **Wrong way round.** Parts arrive turned 90 degrees or facing backwards. | The two programs disagree about which axis is up and which way is forward. | Turns are Unreal's own roll, pitch and yaw, and every socket is declared with the way it faces, in Unreal's frame. |
+| **Left and right swap.** The mirrored half is not the half you meant. | A mirror is applied in whatever frame the exporter chose. | A mirrored part is reflected in its own frame, and the build says where the two sides differ. |
+| **Wrong pivot.** The sword spins about its middle, not its grip. | The origin is wherever the modeller left it. | The pivot is stated in the recipe, and a held prop's origin sits at its grip. |
+| **Attachment points by name.** Dummy objects called `SOCKET_Hand`, with parts hand-placed on them. | Epic's FBX pipeline reads sockets from objects with a `SOCKET_` prefix ([Epic's FBX static mesh pipeline](https://dev.epicgames.com/documentation/en-us/unreal-engine/fbx-static-mesh-pipeline-in-unreal-engine)). | Sockets are declared in the recipe and parts join onto them; the build reports each joint as touching, gapped or overlapping. |
+| **Collision by naming.** Extra meshes called `UCX_` or `UBX_` that must match the visible one. | The same pipeline reads collision from objects with those prefixes. | Collision is one line in the recipe, and a build without it says so. |
+| **Wrong shading.** Hard edges look soft, or the reverse. | Smoothing does not always survive the export. | The recipe states the angle above which an edge shades hard. |
 | **A look that does not transfer.** It looked right in Eevee or Cycles, not in your game. | Those are not Unreal's renderer. | Materials are Unreal materials bound to the mesh's slots, and the AI checks them in the editor's own renderer while it builds. |
-| **No light version.** Mobile, VR and distant LODs are another round of work. | Baking is a separate job in a separate app. | `SM_X5k = $X [triangles=5000, maps=(normal, ao, curvature)]` makes a light mesh with its normal and AO maps baked from the full detail. |
+| **No light version.** Mobile, VR and distant LODs are another round of work. | Baking is a separate job in a separate app. | One line makes a light mesh with its normal and AO maps baked from the full detail. |
 | **Every change is a re-import.** | The mesh is a finished file, not a recipe. | Change the recipe and rebuild: the same asset updates in place, and the same recipe always builds the same mesh. |
 
 The AI never leaves Unreal, so there is no unit, axis or naming mistake to find afterwards.
@@ -491,6 +434,8 @@ Only with GraphCode Shape:
 - A triangle budget per mesh, with a light version baked from the full detail; a mesh that folds through
   itself is refused.
 - Damage, wear and weathering that apply to **your own** shapes; 35 preset libraries and the Market kits.
+
+**Everything it covers:**
 
 - **Props, furniture, buildings, machines, vehicles and weapons,** built part by part, each part with its
   own material.
@@ -515,26 +460,6 @@ Only with GraphCode Shape:
 
 Motion for your characters, made from poses and physics, and a panel where you fine-tune it by hand.
 
-<p><img src="docs/media/move-climb.gif" alt="A character with a sword on their back climbing in through a house window" width="100%"></p>
-
-**How it goes:** *"A two-handed sword slash: wind up over the right shoulder, cut down across, follow
-through."* The AI builds the key poses from body-part presets (feet, hips, back, arms, hands, grip),
-times them, checks the feet stay planted and the hands hold the sword, and renders the motion. Then you
-open it in the **Pose** panel and adjust it yourself:
-
-<p><img src="docs/media/move-pose-panel.jpg" alt="The GraphCode Pose panel: a strip of poses Cock, Slash and Spent; groups of body-part sliders such as FootAt right with forward, out, turnout and turn; Apply, Save and Discard; a MetaHuman holding a sword in the slash pose" width="100%"></p>
-
-1. **Window > GraphCode Pose**, then choose the motion your AI made. The character appears on the right.
-2. **Pick a pose** from the strip at the top (here *Cock*, *Slash*, *Spent*).
-3. **Drag the sliders** of any body part: a foot's reach and turn, the hips, the back, the head, each
-   arm's reach, each hand's grip. A tick marks a value you set yourself; untick it and it follows the
-   value it inherits. Headers show how many values you changed. Ctrl+Z undoes.
-4. **Apply** builds a trial of the animation so you can watch it play; the saved animation stays as it
-   is. **Save** keeps your values and rebuilds the animation (Version Control takes you back);
-   **Discard** throws the trial away.
-5. **Hand it back.** Your AI picks up from your values: *"Keep my slash pose, make the follow-through
-   heavier."*
-
 **Working together on one motion:**
 
 | You | Your AI |
@@ -545,10 +470,18 @@ open it in the **Pose** panel and adjust it yourself:
 
 Nothing is exported, nobody overwrites anybody: you and your AI edit the same motion, and every save is a version either of you can go back to.
 
-<table><tr>
-<td width="50%"><img src="docs/media/move-portal.gif" alt="A glowing blue portal opening in a night street"><br><sub>Effects built as timed layers: a portal opening.</sub></td>
-<td width="50%"><img src="docs/media/violin.gif" alt="A character playing the violin, bow arm and fingers moving"><br><sub>Hands and arms in contact: playing the violin.</sub></td>
-</tr></table>
+**Fine-tuning in the Pose panel:**
+
+<p><img src="docs/media/move-pose-panel.jpg" alt="The GraphCode Pose panel: a strip of poses Cock, Slash and Spent; the right arm's sliders for raise, azimuth, reach and swivel; Apply, Save and Discard; a MetaHuman raising a sword in the wind-up pose" width="100%"></p>
+
+1. **Window > GraphCode Pose**, then choose the motion your AI made. The character appears on the right.
+2. **Pick a pose** from the strip at the top (here *Cock*, *Slash*, *Spent*).
+3. **Drag the sliders** of any body part: a foot's reach and turn, the hips, the back, the head, each
+   arm's reach, each hand's grip. A tick marks a value you set yourself; untick it and it follows the
+   value it inherits. Headers show how many values you changed. Ctrl+Z undoes.
+4. **Apply** builds a trial of the animation so you can watch it play; the saved animation stays as it
+   is. **Save** keeps your values and rebuilds the animation (Version Control takes you back);
+   **Discard** throws the trial away.
 
 **Why GraphCode Move?** Your AI says where the hands go, where the feet stay and how hard the effort is. GraphCode solves the body against your real skeleton, and tells you anything it couldn't keep.
 
@@ -569,10 +502,10 @@ Only with GraphCode Move:
 - Poses reused with values (*lean the back 45°*), and a value outside the body's range refused by name.
 - The floor, props and the body itself kept clear through the whole clip, between keys too.
 
+**Everything it covers:**
+
 - **Character animation** on your skeleton: walking, running, stairs, jumping and landing, climbing,
   reaching, grabbing, throwing, fighting, sitting, opening doors and looking around.
-- **Believable contact:** feet that stay planted and roll heel to toe, hands that land where they should,
-  balance, speed that follows effort, and limbs that never pass through the body or a table.
 - **Props:** picking things up, carrying, handing over and dropping them into physics; sword, pistol and
   rifle grips.
 - **Pose libraries** of body parts for people and four-legged animals, used by the AI and by the Pose panel.
@@ -587,13 +520,6 @@ Only with GraphCode Move:
 
 Any model, ready to animate, even one that arrived with no bones.
 
-<p align="center"><img src="docs/media/rig-cat-bones.gif" alt="A cat walking in Unreal with the skeleton the AI built drawn through its body" width="70%"></p>
-
-**How it goes:** *"Rig this cat."* The AI builds the skeleton (shown above, walking), paints the skin weights,
-adds physics bodies and an IK rig, and moves the joints to check them. Then: *"The
-knees crease too much; soften them."*
-
-
 **Why GraphCode Rig?** Your AI names where a mesh bends, and gets a skeleton, skin, physics, IK and Control Rig that agree with the mesh, with every joint's axis reported.
 
 *"Rig this bare elephant mesh."*
@@ -602,7 +528,7 @@ knees crease too much; soften them."*
   its hip axis came out 132° off the stride and the walk ran backwards, and an auto-rig gives no reason why.
   Joint limits, collision bodies and IK are still left to you.
 - **How GraphCode Rig solves it:** the AI measures points on the mesh, declares each joint by the region it
-  bends in and the way it closes (`hip_L [turns_in=$hip_out_L, range=(-35, 60), closes=forward]`), and
+  bends in and the way it closes (*the hip bends in this region, closes forward, from -35° to 60°*), and
   gets the skeleton, skin weights, Physics Asset, IK Rig and Control Rig from one file, with each joint's
   axis reported against the way its bones bend.
 
@@ -613,23 +539,15 @@ Only with GraphCode Rig:
 - Corrective shapes that follow a joint while the game runs: the elbow creases, the bicep bulges.
 - A MetaHuman adapter in four lines, over a shared 84-joint map.
 
+**Everything it covers:**
+
 - **Rigging any model,** even one with no bones: skeleton, skin weights, physics bodies, IK rig and a
   Control Rig, ready to animate.
-- **Joints with real ranges** taken from anatomy, and shoulder twist that follows the arm.
-- **Contacts and grips:** heel, ball and toe for walking; finger pads and grip sockets for holding things.
-- **Skin that behaves:** creases, folds and bulges where joints bend, and corrective shapes driven by the joints.
 - **MetaHumans:** a ready MetaHuman body template and face controls.
 
 ### GraphCode Groom: hair, fur and feathers
 
 Strand hair and fur grown on your characters, in Unreal's own groom format.
-
-<p><img src="docs/media/cat-fur.gif" alt="A grey British Shorthair cat with a thick strand fur coat" width="100%"></p>
-
-**How it goes:** *"Give the cat a thick grey British Shorthair coat."* The AI grows the fur by region,
-sets its length, flow and clumping in layers, binds it to the cat and previews it moving. Then:
-*"Shorter on the face, denser on the chest."*
-
 
 **Why GraphCode Groom?** Your AI grows hair on your character's own scalp from regions and directions, so a new parting is one changed line, not a new groom.
 
@@ -649,23 +567,15 @@ Only with GraphCode Groom:
 - Strands, short fur, anime hair and feathers from one recipe; a cat's coat of over a million strands in
   four layers from 64 lines.
 
+**Everything it covers:**
+
 - **Hair, fur, eyebrows and stubble** grown as Unreal's own strands: regions, flow, combing, clumping and
   layered coats.
-- **Styles:** braids, plaits, buns, ties and stray hairs.
-- **Short fur, anime hair and feathers:** dense shell fur, stylised card hair with toon shading and
-  outlines, and rows of feathers.
 - **Ready for games:** levels of detail, hair bound to MetaHumans, and previews with hair physics.
 
 ### GraphCode Garment: clothing and armour
 
 Clothing cut to the body and made the way a tailor makes it, from real fabric.
-
-<p><img src="docs/media/garments.jpg" alt="Four garments made with GraphCode: a hoodie, a double-breasted long coat, a T-shirt and a zip jacket" width="100%"></p>
-
-**How it goes:** *"A long coat with two rows of buttons for this character."* The AI cuts the panels to the
-body, gives them the fabric's weight and stiffness, sews on the collar, pockets and buttons, lets the
-cloth settle and renders it front, back and three-quarter. Then: *"Lengthen it to the knee."*
-
 
 **Why GraphCode Garment?** Clothing your AI sews, not sculpts: measured on your character's body, made from real fabric, and built the way a maker builds it.
 
@@ -687,6 +597,8 @@ Only with GraphCode Garment:
 - Builds that report folds and crossings ring by ring, so the AI sees what's wrong.
 - One recipe becomes a static mesh, clothing skinned to the body, simulated cloth, or a MetaHuman outfit.
 
+**Everything it covers:**
+
 - **Clothing cut to the body:** shirts, T-shirts, trousers, jeans, jackets, coats, dresses, cloaks,
   scarves, vests and more.
 - **Real fabric:** weight, thickness, stretch and stiffness from real cloth.
@@ -695,18 +607,11 @@ Only with GraphCode Garment:
 - **Armour:** padded gambesons, leather and plates fitted over the cloth.
 - **Every use:** static meshes, clothing skinned to the body, simulated cloth that hangs and moves,
   MetaHuman outfits, and curtains.
-- **20 example garments** ship with it, the four above among them.
+- **20 example garments** ship with it: shirts, jeans, a hoodie, a long coat, a dress, a gambeson and more.
 
 ### GraphCode Core Extension: MetaHumans, crowds, sound and trees
 
 People: as many as your game needs, each one different.
-
-<p><img src="docs/media/ext-crowd.jpg" alt="A crowd of different people moving down a sunlit street in a game" width="100%"></p>
-
-**How it goes:** *"Nine different townspeople for the street."* The AI blends faces and bodies, chooses
-hair and clothes, assembles each one as a playable character and puts them into the scene.
-Then: *"Make the third one older and heavier."*
-
 
 **Why GraphCode Core Extension?** Your AI describes the person, whose nose, how tall, which drawing, and the MetaHuman is built to match, the same way every time.
 
@@ -725,23 +630,16 @@ Only with GraphCode Core Extension:
 - Details drawn between the face's own landmarks, such as a double eyelid crease.
 - Crowds that rebuild the same people every time.
 
+**Everything it covers:**
+
 - **MetaHumans with any face and body:** preset faces blended, 21 face regions sculpted, height and waist
   set, eyelashes and teeth chosen.
-- **A likeness** from a drawing, a scan or a generated head.
 - **Playable characters:** rigged and assembled, ready for a game or a cinematic.
-- **Crowds** of different people that rebuild the same.
 - **MetaSounds, AI environment queries and procedural trees.**
 
 ### GraphCode Play: testing the game
 
 Your AI plays the game for you, and shows you what happened.
-
-<p><img src="docs/media/play-yard.jpg" alt="A sunlit street in the running game, captured during a test run" width="100%"></p>
-
-**How it goes:** *"Zombie hands go through my character. Fix it and prove it."* The AI plays the scene,
-measures every swipe, fixes it, plays again and gives you the before and after, with screenshots from
-both runs.
-
 
 **Why GraphCode Play?** Your AI names the moment and the button, and the game answers when it happens, so a test checks the game, not the timing of the editor.
 
@@ -760,10 +658,10 @@ Only with GraphCode Play:
 - The whole game world captured as text, compared between moments, and a run restarted from any captured moment.
 - A log of every run with the frame and time of each step, and two runs compared mark by mark.
 
+**Everything it covers:**
+
 - **Plays the game:** starts it, drives input through the game's own actions, presses HUD buttons by name, calls functions and spawns things.
-- **Screenshots** of the running game, HUD included.
-- **Captures** of the whole game world, compared between runs, and restarting from a captured moment.
-- **Records of every run,** compared to show what changed; the game's audio recorded with its loudness.
+- **Sound:** the game's audio recorded during a run, with its loudness.
 
 ### GraphCode Integrate: Blender
 
@@ -774,7 +672,6 @@ meshes**, or **Export material bundle** in the shader editor. Then ask: *"Bring 
 from Blender."* The AI imports the meshes and rebuilds the materials as editable Unreal materials.
 **Open conversion report** shows what was translated and what was baked. When you change the model in
 Blender, export again and the Unreal asset updates in place.
-
 
 **Why GraphCode Integrate?** Your AI sends Blender objects across as meshes with editable Unreal materials, not as an FBX and a flat bake, and updates them in place.
 
@@ -793,10 +690,6 @@ Only with GraphCode Integrate:
 - Updates in place, and an asset someone edited in Unreal is never overwritten.
 - Displacement carried into Nanite tessellation, its strength still editable.
 - Works from a saved .blend in the background, or from your open scene.
-
-- **Blender models into Unreal** with their materials, translated into editable Unreal materials.
-- **Baking** the shader branches Unreal can't translate, with a report of what was converted.
-- **Updating in place** when the Blender model changes, from the Blender add-on or by asking your AI.
 
 ### GraphCode Market (free)
 
@@ -852,8 +745,8 @@ The full technical reference, for your AI and your team: [docs/REFERENCE.md](doc
 
 <details><summary><b>Do I need to know how to code, or learn GraphCode's format?</b></summary>
 
-No. You describe what you want and your AI does the work. GraphCode gives the AI the tools and the
-about 100 guides it reads as it goes. Blueprint-only projects work.
+No. You describe what you want and your AI does the work. GraphCode gives the AI the tools and
+the guides it reads as it goes. Blueprint-only projects work.
 </details>
 
 <details><summary><b>Does GraphCode include an AI?</b></summary>
