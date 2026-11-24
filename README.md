@@ -618,7 +618,7 @@ Only with GraphCode Groom:
 
 Clothing cut to the body and made the way a tailor makes it, from real fabric.
 
-<img align="right" src="docs/media/garments.jpg" width="320" alt="Garments made with GraphCode Garment: a hoodie, a double-breasted long coat, a T-shirt and a zip jacket">
+<img align="right" src="docs/media/garment-coat.jpg" width="300" alt="A double-breasted long coat made with GraphCode Garment, with its buttons, pockets and turned hem">
 
 **Why GraphCode Garment?** Clothing your AI sews, not sculpts: measured on your character's body, made from real fabric, and built the way a maker builds it.
 
