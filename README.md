@@ -43,7 +43,7 @@ it makes real Unreal assets, shows you renders and test runs, and every change c
 |---|---|
 | [Made with GraphCode](#made-with-graphcode) | Things it has built. |
 | [How it works](#how-it-works) | What a session with your AI looks like. |
-| [Why GraphCode](#why-graphcode-what-goes-wrong-when-an-ai-drives-unreal-and-how-graphcode-fixes-it) | The six problems with an AI driving Unreal through a free MCP server or Blender MCP, and how GraphCode fixes each. |
+| [Why GraphCode](#why-graphcode-what-goes-wrong-when-an-ai-drives-unreal-and-how-graphcode-fixes-it) | The seven problems with an AI driving Unreal through a free MCP server or Blender MCP, and how GraphCode fixes each. |
 | [Get started](#get-started) | The setup in five steps, and the full guide. |
 | [What your AI can build](#what-your-ai-can-build) | Each of the ten products: a picture, an example, why it beats the alternative, and everything it can do. |
 | [Trial and licence](#trial-and-licence) · [Trust and privacy](#trust-and-privacy) · [Questions](#questions) | Before you buy. |
@@ -83,8 +83,7 @@ All packs: [docs/MARKET.md](docs/MARKET.md). Case studies with films and samples
 
 ## How it works
 
-1. **You ask** in plain words: *"Put an oval glass dome on the hall."* *"Give the cat a thick grey coat."*
-   *"Add a reload key to the gun and show the ammo on the HUD."*
+1. **You ask** in plain words: *"Put an oval glass dome on the hall."* *"Give the cat a thick grey coat."* The first time, your AI reads your project, asks how hands-on you want to be, and writes your answers down so you never repeat them.
 2. **The AI builds it** inside your Unreal editor, as real assets: Blueprints, levels, meshes,
    materials, animations, effects. It reads the relevant guide first, tries the change before making it,
    then renders it and plays it to check, and fixes what it sees.
@@ -102,7 +101,7 @@ a working Blueprint is not saved, and anything it deletes goes to a trash folder
 You can already connect an AI to Unreal for free: community MCP servers, Epic's own experimental Unreal
 MCP, or Blender MCP with an export to Unreal. They give your AI **verbs**: spawn an
 actor, set a property, add a node, run some Python, take a screenshot. That is enough to block out a
-room. Making a game takes more, and the same six problems come up again and again. Here is each one,
+room. Making a game takes more, and the same seven problems come up again and again. Here is each one,
 why it happens, and what GraphCode does about it.
 
 ### 1. The AI can't see your scene, so every number it types is a guess
@@ -199,6 +198,8 @@ the project's history the way a developer reads Git, and so can you:
   first**: every asset it will restore, recreate or remove. Nothing changes until it's confirmed, and the
   state it replaces is kept, so you can go back again.
 
+You do not need Git for any of this. Local history is on by default, with a size budget for the whole project, so a project that has never had a commit still keeps your recent saves. Versions are named the way you would say them: *"compare the HUD with yesterday 3pm"*, *"what did the level look like at 1am"*, or `HEAD`, a branch or a commit if you do use Git. A restore is planned first: your AI shows every asset it would change, recreate or remove, and nothing happens until you confirm the plan. Local history covers your recent saves and Git covers what you committed, so the two together cover everything.
+
 For a team, the same text makes Git useful for Unreal: pull requests show readable diffs instead of
 "binary file changed", two people's edits to one asset can be merged, and a CI check flags any asset whose
 text is out of date, with no licence needed. You get the same history in the editor: click **GraphCode** in
@@ -242,6 +243,24 @@ stones, and the same line always builds the same wall. Kits share parts: the woo
 the timber kit, the rubble from the concrete and rebar parts. Damage, wear and weathering apply to **your
 own** shapes too, and rocks, cliffs and plants come with PCG graphs that spread them across your level.
 
+**Built inside Unreal, not imported from Blender.** An export carries Blender's metres, its axes and its naming conventions into Unreal, and each mismatch (scale, rotation, mirrored sides, a pivot in the wrong place, `SOCKET_` and `UCX_` dummy objects) is a chance for the mesh to arrive wrong. GraphCode builds the mesh in Unreal, in centimetres and Unreal's own rotations, with sockets, collision and materials declared in the recipe. Nothing is converted on the way in, and a change is a rebuild of the same asset, not a second import.
+
+### 7. It forgets your project between sessions
+
+**What goes wrong.** Monday you tell your AI the game is a moody third-person survival game, that the UI is cold blue, and that nothing is deleted without asking. Tuesday is a new chat. It suggests a cheerful orange HUD, asks again what genre this is, and renames a folder you told it to leave alone. Every session starts from nothing, so the first ten minutes go on re-explaining a game you already explained.
+
+**Why.** An AI has no memory of its own between chats, and Unreal has nowhere to keep the decisions you have made. A free server hands the AI tools but no knowledge of your project.
+
+**How GraphCode fixes it.** Setup is something your AI does with you once. What it learns is written into your project, where every later session reads it first.
+
+- **It looks before it asks.** It reads your `Content/` folder, your enabled plugins, any `CLAUDE.md` or `AGENTS.md`, your Git history and your default map. A project with a half-built shooter is never asked what genre it is: the AI says what it found and you correct it.
+- **It works on the game you already have.** Nothing is rebuilt or moved. Packs you bought or vendored can be left out of GraphCode's readable-text copies by folder, and an excluded folder can still be read, searched and changed.
+- **You choose how hands-on you are, and not as one answer for the whole game.** Approve everything, approve each draft, review at milestones, or let it just do it. Then say what you drive and what the AI drives, separately for **game direction, art direction, mechanics and sound**. *"You do the art, I decide how it plays"* is a normal answer. Where you drive, the AI shows you a render before it places the second wall. Where you handed over, it decides, tells you once and stops asking.
+- **It writes down what you decided.** A small routing file read at the start of every session, one short document each for game, art, mechanics and sound, a board of open work, and a folder for mood-board images. A decision goes in the moment it is made, so a settled question stays settled.
+- **Your rules are enforced, not just written.** Where your AI client has a real settings layer (Claude Code's permission rules and hooks, for example), setup writes your rules there too, so "never delete without asking" is applied by the client.
+
+The next session, and the one after, opens with your AI already knowing the game.
+
 **At a glance:**
 
 | Your AI needs to… | With a free MCP server | With GraphCode |
@@ -252,6 +271,8 @@ own** shapes too, and rocks, cliffs and plants come with PCG graphs that spread 
 | **Know it worked** | A screenshot, usually. | Renders, video, layout reports, loudness, play-tests and numbers from every build. |
 | **Go back** | Unreal's undo, and Git, where binary assets don't diff. | Every version compared and restored, one asset or the whole project, to any moment. |
 | **Make real content** | Script it from scratch, one asset at a time. | Recipes for terrain, meshes, motion, rigs, hair and clothing, and ready-made kits. |
+| **Bring a model in** | Export an FBX from Blender, then fix scale, axes, pivot, sockets and collision by naming convention. | Built in Unreal in centimetres and Unreal's own rotations; sockets, collision and materials declared in the recipe; change it and rebuild in place. |
+| **Remember your project** | Nothing. Each new chat starts from zero. | Your choices, art direction and rules are written into your project, and every session reads them first. |
 
 ### Why more tools don't close the gap
 
@@ -288,9 +309,7 @@ on that foundation:
   not on a tool list.
 - **Secure.** Only programs on your PC can reach the editor, web pages are refused, releases are signed, and
   GraphCode never calls an AI provider.
-- **Yours, in plain Unreal.** Everything it makes is ordinary Unreal content that opens, builds and ships
-  without GraphCode. Blueprint-only projects work, no compiler needed, and you can switch AI clients
-  whenever you like.
+- **Yours, in plain Unreal.** Everything it makes is ordinary Unreal content that opens, builds and packages like anything else in your project. Almost all of GraphCode is editor-only, and the few small runtime pieces that ship are checked in Development and Shipping packaging with every release. Blueprint-only projects work, no compiler needed, and you can switch AI clients whenever you like.
 
 ## Get started
 
@@ -306,8 +325,7 @@ on that foundation:
    nothing to confirm by email.
 4. **Connect your AI:** give your AI client the `unreal` entry from your project's
    `Saved\UnrealAIBridge\mcp-config.json`. Ask it *"Run unreal_info"*: it should answer **CONNECTED**.
-5. **Ask:** *"Read Plugins/GraphCode/SETUP.md and set up this project for GraphCode."* It looks at your
-   project, asks how involved you want to be, and builds a first thing so you see it working.
+5. **Ask:** *"Read Plugins/GraphCode/SETUP.md and set up this project for GraphCode."* It reads your existing project first, asks how hands-on you want to be (for game, art, mechanics and sound separately), saves what you decide in your project, and builds a first thing so you see it working.
 
 **[The full setup guide](docs/SETUP.md)**: what you see at each step, how to tell it worked, where the
 file goes for each AI client, and what to do if something goes wrong.
@@ -386,7 +404,7 @@ Only with GraphCode Core:
 
 Whole places, at real scale: the land, the water, what grows on it and how characters cross it.
 
-<p><img src="docs/media/world-terrain.gif" alt="Flying through a valley with a waterfall, a pool, cliffs and plants" width="100%"></p>
+<p><img src="docs/media/world-river.gif" alt="A stream carved through a town of glass domes, towers and lit windows" width="100%"></p>
 
 **How it goes:** *"A wooded valley with a waterfall into a pool, cliffs on both sides."* The AI shapes the
 terrain, carves the riverbed, adds the water and plants the slopes, then renders it from several
@@ -433,7 +451,7 @@ Only with GraphCode World:
 
 The things in your world, modelled part by part from measurements, so they stay editable.
 
-<p><img src="docs/media/airship.gif" alt="An 18 metre airship with a gondola, engines and propellers turning on a turntable" width="100%"></p>
+<p><img src="docs/media/shape-airship-city.gif" alt="An 18 metre airship with a glazed gondola and propellers flying over a city" width="100%"></p>
 
 **How it goes:** *"An 18 metre airship with a glazed bridge and four engines."* The AI models the hull,
 gondola, engines and propellers, each with its own material, and renders it turning. Then: *"Make it
@@ -459,6 +477,23 @@ PropellerRadius = 90
 - **How GraphCode Shape solves it:** the gears are spaced by their tooth counts, so any pair meshes at any
   size; *smaller* is one number at the top of the recipe, and the build reports any teeth that pass through
   each other. Each mesh comes out game-ready, and the same text always builds the same mesh.
+
+**Built inside Unreal, not imported from it.** A model made in Blender carries Blender's habits with it: metres, a different up axis, its own idea of which side is left, and naming tricks Unreal has to decode on import. GraphCode Shape builds the mesh in Unreal, in Unreal's own terms, so there is nothing to convert on the way in.
+
+| Problem with the Blender-to-Unreal route | Why it happens | In GraphCode Shape |
+|---|---|---|
+| **Wrong size.** The prop arrives 100x too small or too big. | Blender works in metres, Unreal in centimetres. | A recipe is written in centimetres. There is no export step to apply a unit scale in. |
+| **Wrong way round.** Parts arrive turned 90 degrees or facing backwards. | The two programs disagree about which axis is up and which way is forward. | Turns are Unreal's own roll, pitch and yaw (`rotate=(roll, pitch, yaw)`), and a socket is declared with the direction it faces and which way is up, in Unreal's frame. |
+| **Left and right swap.** The mirrored half is not the half you meant. | A mirror is applied in whatever frame the exporter chose. | `add($Half, mirror=Y)` reflects the part in its own frame, and the build's left/right note says where the two sides differ. |
+| **Wrong pivot.** The sword spins about its middle, not its grip. | The origin is wherever the modeller left it. | The pivot is stated in the recipe (`[pivot=(0, 0, 0)]`), and a held prop's origin sits at its grip. |
+| **Attachment points by name.** Dummy objects called `SOCKET_Hand`, with parts hand-placed on them. | Epic's FBX pipeline reads sockets from objects with a `SOCKET_` prefix ([Epic's FBX static mesh pipeline](https://dev.epicgames.com/documentation/en-us/unreal-engine/fbx-static-mesh-pipeline-in-unreal-engine)). | Declare a `socket(...)` and join a part with `into=$body.Socket`; the build reports the joint as touching, gapped or overlapping. |
+| **Collision by naming.** Extra meshes called `UCX_` or `UBX_` that must match the visible one. | The same pipeline reads collision from objects with those prefixes. | One line on the build: `[collision=$Solid]`. A build without it says so. |
+| **Wrong shading.** Hard edges look soft, or the reverse. | Smoothing does not always survive the export. | The recipe states the angle above which an edge shades hard (`shade:`). |
+| **A look that does not transfer.** It looked right in Eevee or Cycles, not in your game. | Those are not Unreal's renderer. | Materials are Unreal materials bound to the mesh's slots, and the AI checks them in the editor's own renderer while it builds. |
+| **No light version.** Mobile, VR and distant LODs are another round of work. | Baking is a separate job in a separate app. | `SM_X5k = $X [triangles=5000, maps=(normal, ao, curvature)]` makes a light mesh with its normal and AO maps baked from the full detail. |
+| **Every change is a re-import.** | The mesh is a finished file, not a recipe. | Change the recipe and rebuild: the same asset updates in place, and the same recipe always builds the same mesh. |
+
+The AI never leaves Unreal, so there is no unit, axis or naming mistake to find afterwards.
 
 Only with GraphCode Shape:
 - Parts sized from named measurements: change one number and every part built from it follows.
@@ -511,6 +546,16 @@ open it in the **Pose** panel and adjust it yourself:
    **Discard** throws the trial away.
 5. **Hand it back.** Your AI picks up from your values: *"Keep my slash pose, make the follow-through
    heavier."*
+
+**Working together on one motion:**
+
+| You | Your AI |
+|---|---|
+| *"A two-handed sword slash: wind up over the right shoulder, cut down across, follow through."* | Builds the three key poses (wind-up, cut, follow-through) from body-part presets, keeps the feet planted and both hands on the grip, and shows you the motion. |
+| Open it in the Pose panel. The wind-up feels low: raise the right arm, press **Apply** and watch it. | |
+| Press **Save**. | Reads your values from the same file and carries on: *"Keep my wind-up, make the follow-through heavier."* |
+
+Nothing is exported, nobody overwrites anybody: you and your AI edit the same motion, and every save is a version either of you can go back to.
 
 <table><tr>
 <td width="50%"><img src="docs/media/move-portal.gif" alt="A glowing blue portal opening in a night street"><br><sub>Effects built as timed layers: a portal opening.</sub></td>
@@ -668,10 +713,10 @@ Only with GraphCode Garment:
 
 People: as many as your game needs, each one different.
 
-<p><img src="docs/media/ext-cast.jpg" alt="Nine different MetaHuman characters in different clothes, standing in two rows" width="100%"></p>
+<p><img src="docs/media/ext-crowd.jpg" alt="A crowd of different people moving down a sunlit street in a game" width="100%"></p>
 
 **How it goes:** *"Nine different townspeople for the street."* The AI blends faces and bodies, chooses
-hair and clothes, assembles each one as a playable character and lines them up for you to look at.
+hair and clothes, assembles each one as a playable character and puts them into the scene.
 Then: *"Make the third one older and heavier."*
 
 
@@ -703,7 +748,7 @@ Only with GraphCode Core Extension:
 
 Your AI plays the game for you, and shows you what happened.
 
-<p><img src="docs/media/play-run.gif" alt="A night street in a running game: a zombie walks past a parked van" width="100%"></p>
+<p><img src="docs/media/play-yard.jpg" alt="A sunlit street in the running game, captured during a test run" width="100%"></p>
 
 **How it goes:** *"Zombie hands go through my character. Fix it and prove it."* The AI plays the scene,
 measures every swipe, fixes it, plays again and gives you the before and after, with screenshots from
@@ -827,10 +872,32 @@ No. You bring the AI you already use (Claude Code, Codex, Cursor or any MCP clie
 subscription. GraphCode is what lets that AI build inside Unreal Engine.
 </details>
 
+<details><summary><b>Does it work on my existing project?</b></summary>
+
+Yes. You copy the plugins in and turn them on; nothing in your project is rebuilt or moved. On first setup your AI reads what is already there (your content, plugins, Git history and any agent notes) before it asks you anything, and it asks only what the project cannot answer. Packs you bought can be left out of GraphCode's readable-text copies by folder, and those folders stay fully readable to your AI.
+</details>
+
+<details><summary><b>Does it cost me AI tokens?</b></summary>
+
+GraphCode adds no AI charge: it never calls an AI provider, and the AI you already use bills you as it always does. It is also built to be light on your AI. There are 15 tools, not hundreds, and each one explains itself on demand, so your AI's attention goes on your game and not on a tool list. Reading a whole Blueprint or level as one text and changing it in one step also takes fewer calls than wiring it node by node.
+</details>
+
 <details><summary><b>Does my project leave my computer?</b></summary>
 
 Not through GraphCode. It only contacts our servers to check your licence, offer updates and download
 Market packs, with no project content. Your AI client sends what it reads to the AI provider you chose.
+</details>
+
+<details><summary><b>Is it closed source? Can I trust it?</b></summary>
+
+The plugin binaries are closed source, and everything you need to check them is public. Every release is signed, every file has a published checksum, and a [script](tools/Verify-GraphCodeRelease.ps1) verifies a download on your PC and sends nothing anywhere. The in-editor updater runs the same checks and deletes a download that fails; nothing installs until you click.
+
+The tool server in your editor answers only programs on your own PC, and it refuses any request that comes from a web page. GraphCode never calls an AI provider and sends no usage data: the only traffic is licence checks, update checks and Market downloads, all listed in [Trust and privacy](#trust-and-privacy). Every public header, guide and example is in this repository, and the [security policy](SECURITY.md) and [threat model](docs/STUDIOS.md#threat-model-who-can-talk-to-the-editor) say exactly who can talk to the editor and what they can do.
+</details>
+
+<details><summary><b>What if GraphCode disappears, or the licence server is down?</b></summary>
+
+Everything you already made is ordinary Unreal content and stays yours. It opens, builds and ships without contacting us. Reading, searching, rendering and all normal editor work carry on, and your recipe files (`.gcshape`, `.gcmove`, `.gcrig` and the rest) are plain text in your own repository. Only AI-driven writes need a token from our licence server; they pause with a message saying so and resume as soon as it is reachable. Every release stays downloadable, so you can keep running the version you have.
 </details>
 
 <details><summary><b>What if the AI gets something wrong?</b></summary>
@@ -841,8 +908,17 @@ folder, and a change that would break a working Blueprint is never saved.
 
 <details><summary><b>Can I use what it makes in a commercial game?</b></summary>
 
-Yes. Everything you make is yours, and it is ordinary Unreal content that needs nothing from GraphCode
-to open, build or ship.
+Yes. Everything you make is yours, and it is ordinary Unreal content: Blueprints, materials, meshes, animations, Niagara systems. It opens in any Unreal editor, builds with the normal Unreal tools and packages like the rest of your game. Almost all of GraphCode is editor-only and stays out of your game, and every release is checked by packaging and launching Development and Shipping games with GraphCode installed.
+</details>
+
+<details><summary><b>Can I sell what I make on Fab?</b></summary>
+
+What GraphCode makes is ordinary Unreal content, and it is yours to sell. A listing on Fab is subject to Fab's own rules, including its policy on AI-generated content, so tag and describe your assets as that policy asks when you publish them.
+</details>
+
+<details><summary><b>Will it replace my artists?</b></summary>
+
+No. The AI authors and your people direct. You say what you want, and your artist fine-tunes it on the very asset the AI made: the **Pose** panel for motion, **Version Control** to compare and restore, and a readable diff of every change the AI makes, to review before it goes in. You choose how hands-on you are separately for game direction, art direction, mechanics and sound, so an art lead can own the look while the AI builds it.
 </details>
 
 <details><summary><b>Does it work offline?</b></summary>
@@ -854,6 +930,11 @@ server, so it needs a connection.
 <details><summary><b>Which Unreal versions and platforms?</b></summary>
 
 Unreal Engine 5.7.4 on Windows 64-bit. Each new engine version comes with a matching GraphCode release.
+</details>
+
+<details><summary><b>What happens when Unreal 5.8 comes out?</b></summary>
+
+Each GraphCode release targets one exact engine build, and a new engine version comes with a matching GraphCode release. Until you move, nothing changes: updates never install without a person clicking, you can turn the automatic check off, and every release stays downloadable with its signature and checksums, so you can stay on the version that matches your engine.
 </details>
 
 <details><summary><b>Does it work for a team?</b></summary>
