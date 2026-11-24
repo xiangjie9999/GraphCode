@@ -262,7 +262,7 @@ top of that foundation:
 - **Built for teams.** Pull requests show what changed in a Blueprint or a level as readable lines instead
   of "binary file changed". Two people's edits to one asset merge, and a real clash becomes a conflict you
   settle in the editor. A write made over a teammate's newer work is refused, whether the writer is a person
-  or another AI session. A CI check flags any asset whose text is out of date, with no licence needed. It
+  or another AI session. Headless tools check, regenerate and apply from your CI, and the check needs no licence. It
   works alongside Git and Perforce, with studio seats.
 - **Safe by design.** Dry runs before writes, refusals that name the reason, restores planned first, and a
   trash folder that is never emptied.
@@ -352,9 +352,14 @@ Only with GraphCode Core:
 - **Sound cues, fonts, physical materials, foliage types, render targets and HLOD layers.**
 - **Levels:** actors, sublevels, volumes, splines and the Level Blueprint.
 - **Importing** meshes, textures and audio (FBX, glTF, OBJ, images, archives) with the import settings planned first.
-- **Finding things:** assets, nodes, functions and widgets.
-- **Looking and listening:** renders from any angle, short videos and contact sheets, "what is at this
-  pixel", and sounds rendered with their loudness.
+- **Finding, copying and exporting:** assets, nodes, functions and widgets found; any asset duplicated, renamed, moved
+  or exported through Unreal's own exporters, its readable text following.
+- **Looking and listening:** renders from any angle, short videos and contact sheets, lit, unlit and
+  lighting-only views, section cuts, a UV map, your reference picture side by side, "what is at this
+  pixel", a warning when GPU memory goes over budget, and sounds rendered with their loudness.
+- **Previews without pressing Play:** a Blueprint's BeginPlay, Tick and timers run for up to a minute.
+- **Long jobs in the background:** big builds run while your AI keeps working, and one settings change can
+  be applied to many assets at once.
 - **History:** every change saved, compared and restorable; a recoverable trash; readable diffs in Git; a
   merge of two people's edits to the same asset; a check for your CI that needs no licence.
 
@@ -395,6 +400,8 @@ Only with GraphCode World:
 
 - **Terrain** shaped by instruction: mountains, ridges, valleys, carved riverbeds, erosion, noise and
   smoothing, at real scale in metres.
+- **Unreal's own landscape brushes:** noise, water levelling, erosion and height stamps, each bound to a
+  named layer and removable exactly.
 - **Open worlds:** terrain streamed in World Partition tiles.
 - **Water:** lakes, rivers and ponds, with water materials tuned for depth, reflections, flow and foam.
 - **Planting:** forests, grass and plants spread by region, density, height and slope, and kept out of
@@ -465,6 +472,12 @@ Only with GraphCode Shape:
   into one clean mesh.
 - **35 preset libraries** ship with it: solids, profiles, fixings, gears, masonry, timber, roofs, stone
   walls, concrete, rubble, debris, hands and more.
+- **Cleaning AI-generated models:** a model from an AI 3D generator becomes a clean, life-size asset: its
+  pieces identified, holes closed, material slots named, its painted texture kept.
+- **Checks on what is built:** penetration, gaps, z-fighting and clearances between placed parts.
+- **Textures and artwork:** any texture made to tile, with a report of how well it wraps; artwork turned
+  into outlines a recipe can fill.
+
 
 ### GraphCode Move: animation, effects, cutscenes and AI behaviour
 
@@ -519,12 +532,17 @@ Only with GraphCode Move:
 - **Props:** picking things up, carrying, handing over and dropping them into physics; sword, pistol and
   rifle grips.
 - **Pose libraries** of body parts for people and four-legged animals, used by the AI and by the Pose panel.
+- **Uneven ground:** a planted foot tilts to the slope beneath it.
 - **Faces:** smiles, blinks and jaw movement, and lip sync from a voice recording.
 - **Checking motion:** motion trails and speed graphs, rendered as video.
-- **Effects:** fire, smoke, explosions, magic and portals in Niagara, built as timed layers.
-- **Cutscenes:** Level Sequences and camera moves; montages, composites and blend spaces.
+- **Effects:** fire, smoke, explosions, magic and portals in Niagara, built as timed layers, with parameters
+  the game sets while it runs, and simulations captured to inspect.
+- **Cutscenes, directed:** intent, shots, camera moves, attention, editing and transitions, built as Level
+  Sequences; montages, composites and blend spaces.
 - **AI behaviour:** Behavior Trees and State Trees for enemies and companions.
 - **Physics and retargeting:** physics assets, IK rigs and animation retargeting between characters.
+- **Your existing skeletons and clips:** retarget sources, virtual bones, sockets, slot groups, blend profiles
+  and notifies edited as text.
 
 ### GraphCode Rig: skeletons and skinning
 
@@ -593,6 +611,7 @@ Only with GraphCode Groom:
 
 - **Hair, fur, eyebrows and stubble** grown as Unreal's own strands: regions, flow, combing, clumping and
   layered coats.
+- **Hair cards** for games as well as strands, and anime hair with outlines and toon shading.
 - **Ready for games:** levels of detail, hair bound to MetaHumans, and previews with hair physics.
 
 ### GraphCode Garment: clothing and armour
