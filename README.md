@@ -511,7 +511,7 @@ Only with GraphCode Move:
 - **Pose libraries** of body parts for people and four-legged animals, used by the AI and by the Pose panel.
 - **Faces:** smiles, blinks and jaw movement, and lip sync from a voice recording.
 - **Checking motion:** motion trails and speed graphs, rendered as video.
-- **Effects:** fire, smoke, explosions, magic, ice, lightning and portals in Niagara, built as timed layers.
+- **Effects:** fire, smoke, explosions, magic and portals in Niagara, built as timed layers.
 - **Cutscenes:** Level Sequences and camera moves; montages, composites and blend spaces.
 - **AI behaviour:** Behavior Trees and State Trees for enemies and companions.
 - **Physics and retargeting:** physics assets, IK rigs and animation retargeting between characters.
@@ -607,7 +607,7 @@ Only with GraphCode Garment:
 - **Armour:** padded gambesons, leather and plates fitted over the cloth.
 - **Every use:** static meshes, clothing skinned to the body, simulated cloth that hangs and moves,
   MetaHuman outfits, and curtains.
-- **20 example garments** ship with it: shirts, jeans, a hoodie, a long coat, a dress, a gambeson and more.
+- **21 example garments** ship with it: shirts, jeans, a hoodie, a long coat, a dress, a gambeson and more.
 
 ### GraphCode Core Extension: MetaHumans, crowds, sound and trees
 
@@ -667,11 +667,11 @@ Only with GraphCode Play:
 
 Keep modelling in Blender; your AI brings it into Unreal and keeps it in step.
 
-**How it goes:** in Blender, open the **GraphCode** tab in the sidebar (N) and press **Export selected
-meshes**, or **Export material bundle** in the shader editor. Then ask: *"Bring the new tavern sign in
-from Blender."* The AI imports the meshes and rebuilds the materials as editable Unreal materials.
-**Open conversion report** shows what was translated and what was baked. When you change the model in
-Blender, export again and the Unreal asset updates in place.
+**How it goes:** in Blender, open the **GraphCode** tab in the sidebar (N) and press **Send selected meshes
+to Unreal**, or **Send to Unreal** on a material in the shader editor. Or just ask your AI: *"Bring the new
+tavern sign in from Blender."* The meshes arrive with their materials rebuilt as editable Unreal materials,
+and **Open conversion report** shows what was translated and what was baked. Change the model in Blender,
+send it again, and the Unreal asset updates in place.
 
 **Why GraphCode Integrate?** Your AI sends Blender objects across as meshes with editable Unreal materials, not as an FBX and a flat bake, and updates them in place.
 

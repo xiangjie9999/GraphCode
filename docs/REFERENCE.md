@@ -132,7 +132,7 @@ Props, buildings, vehicles, creatures and plants from short readable recipes.
 
 <img src="media/market-clay.jpg" alt="Clay renders of six Market packs" width="100%">
 
-36 signed packs: mesh recipes, operations you apply to your own shapes, material packs, human, face and
+39 signed packs: mesh recipes, operations you apply to your own shapes, material packs, human, face and
 quadruped pose libraries, a guide and two AI skills. Search, describe, install (dependencies first, every
 file hash checked, written whole or not at all), update (your edits kept) and remove, from `gc_market` or the
 **Get in Unreal** button on [graphcode.dev/marketplace](https://graphcode.dev/marketplace). Installing needs no
