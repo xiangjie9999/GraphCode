@@ -302,12 +302,15 @@ on that foundation:
    [Releases](https://github.com/xiangjie9999/GraphCode/releases) page) and unpack it.
 2. **Copy** the folders in its `Plugins` folder into your project's `Plugins` folder, open the project,
    tick the GraphCode plugins in **Edit > Plugins** and restart.
-3. **Start the trial** with just your email: save the three-line file from the
-   [setup guide](docs/SETUP.md#4-start-the-trial) as `%USERPROFILE%\.graphcode\activation.txt`. No card,
-   nothing to confirm by email.
-4. **Connect your AI:** give your AI client the `unreal` entry from your project's
+3. **Connect your AI:** give your AI client the `unreal` entry from your project's
    `Saved\UnrealAIBridge\mcp-config.json`. Ask it *"Run unreal_info"*: it should answer **CONNECTED**.
-5. **Ask:** *"Read Plugins/GraphCode/SETUP.md and set up this project for GraphCode."* It reads your existing project first, asks how hands-on you want to be (for game, art, mechanics and sound separately), saves what you decide in your project, and builds a first thing so you see it working.
+4. **Ask, with your email** (this starts the 14-day trial; no card, nothing to confirm by email):
+
+   > My email is you@example.com. Start my GraphCode trial: the licence server is
+   > https://rlzbzhcrwvdxoriwgajn.supabase.co/functions/v1/gc-license-device
+   > Then read Plugins/GraphCode/SETUP.md and set up this project for GraphCode.
+
+   It reads your existing project first, asks how hands-on you want to be (for game, art, mechanics and sound separately), saves what you decide in your project, and builds a first thing so you see it working.
 
 **[The full setup guide](docs/SETUP.md)**: what you see at each step, how to tell it worked, where the
 file goes for each AI client, and what to do if something goes wrong.

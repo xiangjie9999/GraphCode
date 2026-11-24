@@ -81,7 +81,14 @@ Opening the project with GraphCode enabled also writes the file your AI client n
 
 The trial needs only your email: no card, no account, nothing to confirm by email.
 
-Save this file as **`%USERPROFILE%\.graphcode\activation.txt`** (for example
+**Easiest:** once your AI is connected (step 5), send it this, with your own email:
+
+> My email is you@example.com. Start my GraphCode trial: the licence server is
+> https://rlzbzhcrwvdxoriwgajn.supabase.co/functions/v1/gc-license-device
+
+It writes the activation file for you, and the trial starts with its first change.
+
+**Or make the file yourself.** Save this file as **`%USERPROFILE%\.graphcode\activation.txt`** (for example
 `C:\Users\you\.graphcode\activation.txt`), with your own email on the first line:
 
 ```
