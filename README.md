@@ -599,7 +599,7 @@ Only with GraphCode Move:
 
 Any model, ready to animate, even one that arrived with no bones.
 
-<p><img src="docs/media/rig-walk.gif" alt="The skeleton the AI built inside a cat model, walking" width="100%"></p>
+<p align="center"><img src="docs/media/rig-cat-bones.gif" alt="A cat walking in Unreal with the skeleton the AI built drawn through its body" width="70%"></p>
 
 **How it goes:** *"Rig this cat."* The AI builds the skeleton (shown above, walking), paints the skin weights,
 adds physics bodies and an IK rig, and moves the joints to check them. Then: *"The
