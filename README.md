@@ -13,12 +13,15 @@
 </p>
 
 <p align="center"><img src="docs/media/ask-and-build.gif" alt="A chat with an AI on the left asking for a domed hall and a working lift, and the Unreal editor on the right building it" width="100%"></p>
-<p align="center"><sub>Asked in plain words on the left; built in Unreal on the right (7× speed).</sub></p>
+<p align="center"><sub>Asked in plain words on the left; built in Unreal on the right (7× speed). You ask, the AI builds and checks it; you fine-tune by hand where you want and take back anything.</sub></p>
 
 GraphCode is a set of Unreal Engine plugins that let the AI you already use build your game: gameplay,
 menus, levels, terrain, props, characters, animation, hair, clothing and effects. You describe what you
 want; the AI makes it as ordinary Unreal assets in your project, renders and plays it to check its work,
 and every change it makes is saved so you can compare it or take it back.
+
+Free MCP servers give your AI verbs. GraphCode gives it whole assets to read, places to put things by
+relationship, eyes to check its work, and a history it can restore. [Why that matters.](#why-graphcode-what-goes-wrong-when-an-ai-drives-unreal-and-how-graphcode-fixes-it)
 
 | | |
 |---|---|
@@ -436,8 +439,6 @@ The things in your world, modelled part by part from measurements, so they stay 
 | **Wrong way round.** Parts arrive turned 90 degrees or facing backwards. | The two programs disagree about which axis is up and which way is forward. | Turns are Unreal's own roll, pitch and yaw, and every socket is declared with the way it faces, in Unreal's frame. |
 | **Attachment points by name.** Dummy objects called `SOCKET_Hand`, with parts hand-placed on them. | Epic's FBX pipeline reads sockets from objects with a `SOCKET_` prefix ([Epic's FBX static mesh pipeline](https://dev.epicgames.com/documentation/en-us/unreal-engine/fbx-static-mesh-pipeline-in-unreal-engine)). | Sockets are declared in the recipe and parts join onto them; the build reports each joint as touching, gapped or overlapping. |
 | **Collision by naming.** Extra meshes called `UCX_` or `UBX_` that must match the visible one. | The same pipeline reads collision from objects with those prefixes. | Collision is one line in the recipe, and a build without it says so. |
-| **A look that does not transfer.** It looked right in Eevee or Cycles, not in your game. | Those are not Unreal's renderer. | Materials are Unreal materials bound to the mesh's slots, and the AI checks them in the editor's own renderer while it builds. |
-| **Every change is a re-import.** | The mesh is a finished file, not a recipe. | Change the recipe and rebuild: the same asset updates in place, and the same recipe always builds the same mesh. |
 
 The AI never leaves Unreal, so there is no unit, axis or naming mistake to find afterwards.
 
@@ -497,14 +498,9 @@ Nothing is exported, nobody overwrites anybody: you and your AI edit the same mo
 
 <p><img src="docs/media/move-pose-panel.jpg" alt="The GraphCode Pose panel: a strip of poses Cock, Slash and Spent; the right arm's sliders for raise, azimuth, reach and swivel; Apply, Save and Discard; a MetaHuman raising a sword in the wind-up pose" width="100%"></p>
 
-1. **Window > GraphCode Pose**, then choose the motion your AI made. The character appears on the right.
-2. **Pick a pose** from the strip at the top (here *Cock*, *Slash*, *Spent*).
-3. **Drag the sliders** of any body part: a foot's reach and turn, the hips, the back, the head, each
-   arm's reach, each hand's grip. A tick marks a value you set yourself; untick it and it follows the
-   value it inherits. Headers show how many values you changed. Ctrl+Z undoes.
-4. **Apply** builds a trial of the animation so you can watch it play; the saved animation stays as it
-   is. **Save** keeps your values and rebuilds the animation (Version Control takes you back);
-   **Discard** throws the trial away.
+Open it with **Window > GraphCode Pose**, pick a pose from the strip, and drag any body part's sliders. A tick
+marks a value you set yourself. **Apply** plays a trial without touching the saved animation, **Save** keeps
+it (Version Control takes you back), and **Discard** throws the trial away.
 
 **Why GraphCode Move?** Your AI says where the hands go, where the feet stay and how hard the effort is. GraphCode solves the body against your real skeleton, and tells you anything it couldn't keep.
 
@@ -618,8 +614,6 @@ Only with GraphCode Groom:
 
 Clothing cut to the body and made the way a tailor makes it, from real fabric.
 
-<img align="right" src="docs/media/garment-coat.jpg" width="300" alt="A double-breasted long coat made with GraphCode Garment, with its buttons, pockets and turned hem">
-
 **Why GraphCode Garment?** Clothing your AI sews, not sculpts: measured on your character's body, made from real fabric, and built the way a maker builds it.
 
 *"A denim jacket with a chest pocket and a hem turned twice. Then let it out two centimetres."*
@@ -642,8 +636,6 @@ Only with GraphCode Garment:
 - Builds that report folds and crossings ring by ring, so the AI sees what's wrong.
 - One recipe becomes a static mesh, clothing skinned to the body, simulated cloth, or a MetaHuman outfit.
 
-<br clear="right">
-
 **Everything it covers:**
 
 - **Clothing cut to the body:** shirts, T-shirts, trousers, jeans, jackets, coats, dresses, cloaks,
@@ -659,8 +651,6 @@ Only with GraphCode Garment:
 ### GraphCode Core Extension: MetaHumans, crowds, sound and trees
 
 Core Extension adds MetaHuman characters, crowds, MetaSounds and procedural trees to Core: people, as many as your game needs, each one different.
-
-<img align="right" src="docs/media/ext-crowd.jpg" width="320" alt="A crowd of different people moving down a sunlit street in a game">
 
 **Why GraphCode Core Extension?** Your AI describes the person, whose nose, how tall, which drawing, and the MetaHuman is built to match, the same way every time.
 
@@ -681,8 +671,6 @@ Only with GraphCode Core Extension:
 - Details drawn between the face's own landmarks, such as a double eyelid crease.
 - Crowds that rebuild the same people every time.
 
-<br clear="right">
-
 **Everything it covers:**
 
 - **MetaHumans with any face and body:** preset faces blended, 21 face regions sculpted, height and waist
@@ -693,8 +681,6 @@ Only with GraphCode Core Extension:
 ### GraphCode Play: testing the game
 
 Your AI plays the game for you, and shows you what happened.
-
-<img align="right" src="docs/media/play-yard.jpg" width="320" alt="A sunlit street in the running game, captured during a test run">
 
 **Why GraphCode Play?** Your AI names the moment and the button, and the game answers when it happens, so a test checks the game, not the timing of the editor.
 
@@ -714,8 +700,6 @@ Only with GraphCode Play:
 - Every screenshot comes with a text map of the screen: each widget's name, position, text, and what can be pressed.
 - The whole game world captured as text, compared between moments, and a run restarted from any captured moment.
 - A log of every run with the frame and time of each step, and two runs compared mark by mark.
-
-<br clear="right">
 
 **Everything it covers:**
 
