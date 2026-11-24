@@ -39,7 +39,7 @@ you agree on its behalf and confirm you may do so.
 3. Sell, rent or sublicense GraphCode itself, or distribute modified copies.
 4. Use GraphCode or its documentation to build a competing tool for authoring Unreal Engine
    content as text. (Your own content, including your `.gc` documents and recipes, stays yours under
-   section 1.4.)
+   section 1.5.)
 
 ## 3. Licence checks and data
 
@@ -57,7 +57,7 @@ engine-upgrade policy, for example "all updates for the life of the major versio
 ## 5. Market packs
 
 Packs in the GraphCode Market are offered under the licence shown on each pack. Unless a pack says
-otherwise, you may use its content in your projects and games on the same terms as section 1.4.
+otherwise, you may use its content in your projects and games on the same terms as section 1.5.
 
 ## 6. Third-party components and Unreal Engine
 
