@@ -41,7 +41,7 @@ it makes real Unreal assets, shows you renders and test runs, and every change c
 
 | Section | What it tells you |
 |---|---|
-| [Made with GraphCode](#made-with-graphcode) | Things it has built. |
+| [Made with GraphCode](#made-with-graphcode) | A showreel of what each product builds. |
 | [How it works](#how-it-works) | What a session with your AI looks like. |
 | [Why GraphCode](#why-graphcode-what-goes-wrong-when-an-ai-drives-unreal-and-how-graphcode-fixes-it) | The seven problems with an AI driving Unreal through a free MCP server or Blender MCP, and how GraphCode fixes each. |
 | [Get started](#get-started) | The setup in five steps, and the full guide. |
@@ -50,36 +50,18 @@ it makes real Unreal assets, shows you renders and test runs, and every change c
 
 ## Made with GraphCode
 
-Machines and buildings from the [GraphCode showcase](https://graphcode.dev/showcase), and pieces from the free [GraphCode Market](https://graphcode.dev/marketplace) packs, every one built by the AI inside Unreal. Your AI can install any Market pack and build it in your project, or make its own.
+<p align="center"><img src="docs/media/showreel.gif" alt="A showreel of things made with GraphCode: a furnished hall, a river through a town, an airship, a character climbing through a window, a violinist, a portal effect, a rigged cat, a furred cat, a game HUD, a crowd and a test run" width="100%"></p>
 
-<table>
-<tr>
-<td align="center" width="25%"><a href="https://graphcode.dev/showcase/airship/"><img src="docs/media/showcase/airship.jpg" width="200" alt="An airship with a gondola and engines"><br><sub>Airship</sub></a></td>
-<td align="center" width="25%"><a href="https://graphcode.dev/showcase/steam-house/"><img src="docs/media/showcase/steam-house.jpg" width="200" alt="A timber-framed house with a tin roof and pipework"><br><sub>Steam house</sub></a></td>
-<td align="center" width="25%"><a href="https://graphcode.dev/showcase/milliner/"><img src="docs/media/showcase/milliner.jpg" width="200" alt="A brick shop with a hat-shaped patina roof"><br><sub>Milliner's shop</sub></a></td>
-<td align="center" width="25%"><a href="https://graphcode.dev/showcase/compressor/"><img src="docs/media/showcase/compressor.jpg" width="200" alt="A copper compressor with a flywheel"><br><sub>Compressor</sub></a></td>
-</tr>
-<tr>
-<td align="center" width="25%"><a href="https://graphcode.dev/showcase/street-carrier/"><img src="docs/media/showcase/street-carrier.jpg" width="200" alt="A riveted egg-shaped carrier on wheels"><br><sub>Street carrier</sub></a></td>
-<td align="center" width="25%"><a href="https://graphcode.dev/showcase/auto-duster/"><img src="docs/media/showcase/auto-duster.jpg" width="200" alt="A brass and iron machine on a pedestal"><br><sub>Auto-duster</sub></a></td>
-<td align="center" width="25%"><a href="https://graphcode.dev/showcase/watchman-lamp/"><img src="docs/media/showcase/watchman-lamp.jpg" width="200" alt="A lit cast street lamp"><br><sub>Watchman lamp</sub></a></td>
-<td align="center" width="25%"><a href="https://graphcode.dev/showcase/street/"><img src="docs/media/showcase/street.jpg" width="200" alt="A paved street with kerbs, lamps and bollards"><br><sub>Street</sub></a></td>
-</tr>
-<tr>
-<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/RocksCliffsKit/"><img src="docs/media/showcase/cliff-tall.jpg" width="200" alt="A tall layered stone cliff"><br><sub>Cliffs</sub></a></td>
-<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/RocksCliffsKit/"><img src="docs/media/showcase/cliff-ledges.jpg" width="200" alt="Layered stone ledges"><br><sub>Rock ledges</sub></a></td>
-<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/BarkMaterials/"><img src="docs/media/showcase/oak-bark.jpg" width="200" alt="A log with mossy oak bark"><br><sub>Mossy oak bark</sub></a></td>
-<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/UnderstoryKit/"><img src="docs/media/showcase/hazel.jpg" width="200" alt="A hazel shrub"><br><sub>Hazel</sub></a></td>
-</tr>
-<tr>
-<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/UnderstoryKit/"><img src="docs/media/showcase/fern.jpg" width="200" alt="A male fern"><br><sub>Male fern</sub></a></td>
-<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/UnderstoryKit/"><img src="docs/media/showcase/moss.jpg" width="200" alt="A cushion of moss"><br><sub>Moss</sub></a></td>
-<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/VegetationKit/"><img src="docs/media/showcase/oak-leaf.jpg" width="200" alt="A dry oak leaf"><br><sub>Oak leaf</sub></a></td>
-<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/VegetationKit/"><img src="docs/media/showcase/leaf-litter.jpg" width="200" alt="Fallen autumn leaves"><br><sub>Leaf litter</sub></a></td>
-</tr>
-</table>
-
-All packs: [docs/MARKET.md](docs/MARKET.md). Case studies with films and samples: [docs/EXAMPLES.md](docs/EXAMPLES.md).
+Every shot was built by an AI inside Unreal with GraphCode:
+[Core](#graphcode-core-gameplay-ui-materials-data-and-levels) (the hall's materials, the HUD) ·
+[World](#graphcode-world-terrain-water-forests-and-navigation) (the river town) ·
+[Shape](#graphcode-shape-props-buildings-machines-creatures-and-plants) (the airship) ·
+[Move](#graphcode-move-animation-effects-cutscenes-and-ai-behaviour) (the climb, the violinist, the portal) ·
+[Rig](#graphcode-rig-skeletons-and-skinning) (the cat's skeleton) ·
+[Groom](#graphcode-groom-hair-fur-and-feathers) (its coat) ·
+[Core Extension](#graphcode-core-extension-metahumans-crowds-sound-and-trees) (the crowd) ·
+[Play](#graphcode-play-testing-the-game) (the test run).
+More in the [showcase](https://graphcode.dev/showcase), the [case studies](docs/EXAMPLES.md) and the free [Market](https://graphcode.dev/marketplace).
 
 ## How it works
 
@@ -453,6 +435,9 @@ The things in your world, modelled part by part from measurements, so they stay 
 
 <p><img src="docs/media/shape-airship-city.gif" alt="An 18 metre airship with a glazed gondola and propellers flying over a city" width="100%"></p>
 
+<p><a href="https://graphcode.dev/showcase"><img src="docs/media/lineup-machines.jpg" alt="Machines and buildings made with GraphCode Shape: an airship, a timber-framed house, a riveted street carrier, a milliner's shop, a compressor and an auto-duster" width="100%"></a></p>
+<p align="center"><sub>More machines and buildings, every part from a recipe: <a href="https://graphcode.dev/showcase">the showcase</a>.</sub></p>
+
 **How it goes:** *"An 18 metre airship with a glazed bridge and four engines."* The AI models the hull,
 gondola, engines and propellers, each with its own material, and renders it turning. Then: *"Make it
 longer"*, and every part sized from the length follows. This is the text the AI keeps for it:
@@ -813,6 +798,8 @@ Only with GraphCode Integrate:
 ### GraphCode Market (free)
 
 Ready-made packs your AI can install and build on, in a tab inside your editor.
+
+<p><a href="https://graphcode.dev/marketplace"><img src="docs/media/lineup-kits.jpg" alt="Pieces from the free Market kits: cliffs, rock ledges, a hazel shrub, a fern, moss, mossy oak bark and an oak leaf" width="100%"></a></p>
 
 <p><img src="docs/media/market-tab.jpg" alt="The GraphCode Market tab: search, categories, pack cards and the Stone Wall pack selected with its description and Show in Content Browser" width="100%"></p>
 
