@@ -12,8 +12,8 @@
 <a href="https://graphcode.dev/marketplace">Market</a>
 </p>
 
-<p align="center"><img src="docs/media/ask-and-build.gif" alt="A chat with an AI on the left asking for a domed hall and a working lift, and the Unreal editor on the right building it" width="100%"></p>
-<p align="center"><sub>Asked in plain words on the left; built in Unreal on the right (7× speed). You ask, the AI builds and checks it; you fine-tune by hand where you want and take back anything.</sub></p>
+<p align="center"><img src="docs/media/showreel.gif" alt="A showreel of things made with GraphCode: a furnished hall, a river through a town, an airship, a character climbing through a window, a violinist, a portal effect, a rigged cat, a furred cat, a game HUD, a crowd and a test run" width="100%"></p>
+<p align="center"><sub>Every shot was built by an AI inside Unreal with GraphCode: <a href="#graphcode-core-gameplay-ui-materials-data-and-levels">Core</a> (the hall's materials, the HUD) · <a href="#graphcode-world-terrain-water-forests-and-navigation">World</a> (the river town) · <a href="#graphcode-shape-props-buildings-machines-creatures-and-plants">Shape</a> (the airship) · <a href="#graphcode-move-animation-effects-cutscenes-and-ai-behaviour">Move</a> (the climb, the violinist, the portal) · <a href="#graphcode-rig-skeletons-and-skinning">Rig</a> (the cat's skeleton) · <a href="#graphcode-groom-hair-fur-and-feathers">Groom</a> (its coat) · <a href="#graphcode-core-extension-metahumans-crowds-sound-and-trees">Core Extension</a> (the crowd) · <a href="#graphcode-play-testing-the-game">Play</a> (the test run). More in the <a href="https://graphcode.dev/showcase">showcase</a>, the <a href="docs/EXAMPLES.md">case studies</a> and the free <a href="https://graphcode.dev/marketplace">Market</a>.</sub></p>
 
 GraphCode is a set of Unreal Engine plugins that let the AI you already use build your game: gameplay,
 menus, levels, terrain, props, characters, animation, hair, clothing and effects. You describe what you
@@ -28,34 +28,14 @@ relationship, eyes to check its work, and a history it can restore. [Why that ma
 | **Runs on** | Unreal Engine 5.7.4, Windows 64-bit. Blueprint-only projects work; no compiler needed. |
 | **Works with** | The AI you already use, through MCP: Claude Code, Codex, Cursor, Claude Desktop or any MCP client. |
 | **Includes** | Ten products in one package, a free Market of ready-made packs, and about 100 guides the AI reads as it works. |
+| **Setup** | About 15 minutes: copy the plugins in, connect your AI, ask it to set up your project. [The setup guide](docs/SETUP.md). |
 | **Try it** | 14 days of everything with just an email. No card. |
 | **Then** | Core, Shape and Integrate stay free for personal use, for ever. The rest: a [one-time licence](https://graphcode.dev/pricing) per product or for all of them. |
 
-## Start here
-
-**What you download:** ten Unreal Engine plugins in one package (about 132 MB). You copy them into your
-project, turn them on, start the free trial with your email, and connect the AI you already use.
-Setup takes about 15 minutes: **[the setup guide](docs/SETUP.md)**.
-
-**What you get:** your AI building inside your open Unreal editor, on your project: you ask in its chat,
-it makes real Unreal assets, shows you renders and test runs, and every change can be undone.
-
-## Made with GraphCode
-
-<p align="center"><img src="docs/media/showreel.gif" alt="A showreel of things made with GraphCode: a furnished hall, a river through a town, an airship, a character climbing through a window, a violinist, a portal effect, a rigged cat, a furred cat, a game HUD, a crowd and a test run" width="100%"></p>
-
-Every shot was built by an AI inside Unreal with GraphCode:
-[Core](#graphcode-core-gameplay-ui-materials-data-and-levels) (the hall's materials, the HUD) ·
-[World](#graphcode-world-terrain-water-forests-and-navigation) (the river town) ·
-[Shape](#graphcode-shape-props-buildings-machines-creatures-and-plants) (the airship) ·
-[Move](#graphcode-move-animation-effects-cutscenes-and-ai-behaviour) (the climb, the violinist, the portal) ·
-[Rig](#graphcode-rig-skeletons-and-skinning) (the cat's skeleton) ·
-[Groom](#graphcode-groom-hair-fur-and-feathers) (its coat) ·
-[Core Extension](#graphcode-core-extension-metahumans-crowds-sound-and-trees) (the crowd) ·
-[Play](#graphcode-play-testing-the-game) (the test run).
-More in the [showcase](https://graphcode.dev/showcase), the [case studies](docs/EXAMPLES.md) and the free [Market](https://graphcode.dev/marketplace).
-
 ## How it works
+
+<p align="center"><img src="docs/media/ask-and-build.gif" alt="A chat with an AI on the left asking for a domed hall and a working lift, and the Unreal editor on the right building it" width="100%"></p>
+<p align="center"><sub>A real session: asked in plain words on the left; built in Unreal on the right (7× speed). You ask, the AI builds and checks it; you fine-tune by hand where you want and take back anything.</sub></p>
 
 1. **You ask** in plain words: *"Put an oval glass dome on the hall."* *"Give the cat a thick grey coat."* The first time, your AI reads your project, asks how hands-on you want to be, and writes your answers down so you never repeat them.
 2. **The AI builds it** inside your Unreal editor, as real assets: Blueprints, levels, meshes,
@@ -217,8 +197,6 @@ stones, and the same line always builds the same wall. Kits share parts: the woo
 the timber kit, the rubble from the concrete and rebar parts. Damage, wear and weathering apply to **your
 own** shapes too, and rocks, cliffs and plants come with PCG graphs that spread them across your level.
 
-**Built inside Unreal, not imported from Blender.** An export carries Blender's metres, axes and naming tricks into Unreal, and every mismatch is a chance for the mesh to arrive wrong. GraphCode builds it in Unreal, in Unreal's own terms, so nothing is converted on the way in ([the details](#graphcode-shape-props-buildings-machines-creatures-and-plants)).
-
 ### 7. It forgets your project between sessions
 
 **What goes wrong.** Monday you tell your AI the game is a moody third-person survival game, that the UI is cold blue, and that nothing is deleted without asking. Tuesday is a new chat. It suggests a cheerful orange HUD, asks again what genre this is, and renames a folder you told it to leave alone. Every session starts from nothing, so the first ten minutes go on re-explaining a game you already explained.
@@ -357,9 +335,8 @@ Only with GraphCode Core:
 - **Importing** meshes, textures and audio (FBX, glTF, OBJ, images, archives) with the import settings planned first.
 - **Finding, copying and exporting:** assets, nodes, functions and widgets found; any asset duplicated, renamed, moved
   or exported through Unreal's own exporters, its readable text following.
-- **Looking and listening:** renders from any angle, short videos and contact sheets, lit, unlit and
-  lighting-only views, section cuts, a UV map, your reference picture side by side, "what is at this
-  pixel", a warning when GPU memory goes over budget, and sounds rendered with their loudness.
+- **Looking and listening:** renders from any angle, video, contact sheets, lit and unlit views, section cuts,
+  UV maps, your reference side by side, "what is at this pixel", GPU budget warnings, sound with its loudness.
 - **Previews without pressing Play:** a Blueprint's BeginPlay, Tick and timers run for up to a minute.
 - **Long jobs in the background:** big builds run while your AI keeps working, and one settings change can
   be applied to many assets at once.
@@ -378,8 +355,7 @@ Whole places, at real scale: the land, the water, what grows on it and how chara
 - **The problem with a free MCP server:** the AI guesses a coordinate for every tree, the lantern and each
   house. Nothing tells it where the trail or the wall is, so trees land on the path, the lantern floats,
   and every house is aimed at the same point in the middle of the street. Running the script again plants
-  a second forest. Terrain tools like Gaea make excellent heightmaps, but the heightmap knows nothing about
-  your trail or your doors.
+  a second forest. A Gaea heightmap knows nothing about your trail or your doors.
 - **How GraphCode World solves it:** the AI names the stream, the trail and the street once. The forest is
   planted by a rule that keeps off both and off steep slopes; the lantern is *halfway along the north wall,
   resting on it*; each house is *on the street, facing the nearest part of it*. Edit a point of the trail
@@ -479,7 +455,6 @@ Only with GraphCode Shape:
 - **Textures and artwork:** any texture made to tile, with a report of how well it wraps; artwork turned
   into outlines a recipe can fill.
 
-
 ### GraphCode Move: animation, effects, cutscenes and AI behaviour
 
 Motion for your characters, made from poses and physics, and a panel where you fine-tune it by hand.
@@ -498,9 +473,8 @@ Nothing is exported, nobody overwrites anybody: you and your AI edit the same mo
 
 <p><img src="docs/media/move-pose-panel.jpg" alt="The GraphCode Pose panel: a strip of poses Cock, Slash and Spent; the right arm's sliders for raise, azimuth, reach and swivel; Apply, Save and Discard; a MetaHuman raising a sword in the wind-up pose" width="100%"></p>
 
-Open it with **Window > GraphCode Pose**, pick a pose from the strip, and drag any body part's sliders. A tick
-marks a value you set yourself. **Apply** plays a trial without touching the saved animation, **Save** keeps
-it (Version Control takes you back), and **Discard** throws the trial away.
+Open it with **Window > GraphCode Pose**, pick a pose and drag any body part. **Apply** plays a trial without
+touching the saved animation; **Save** keeps it, and Version Control takes you back.
 
 **Why GraphCode Move?** Your AI says where the hands go, where the feet stay and how hard the effort is. GraphCode solves the body against your real skeleton, and tells you anything it couldn't keep.
 
@@ -579,7 +553,7 @@ Only with GraphCode Rig:
 
 Strand hair and fur grown on your characters, in Unreal's own groom format.
 
-<img align="right" src="docs/media/cat-fur.gif" width="320" alt="A grey British Shorthair cat with a thick strand fur coat walking on grass">
+<img align="right" src="docs/media/groom-cat-strands.jpg" width="340" alt="A British Shorthair cat walking, its coat of individual strands in four layers grown by GraphCode Groom">
 
 **Why GraphCode Groom?** Your AI grows hair on your character's own scalp from regions and directions, so a new parting is one changed line, not a new groom.
 
@@ -629,7 +603,6 @@ Clothing cut to the body and made the way a tailor makes it, from real fabric.
 **You and your AI:** you choose the garment, the fabric and the fit; the AI cuts, sews and settles it, and shows it from the front, the back and three-quarter.
 
 Only with GraphCode Garment:
-- Every ring is placed on the real body; one that isn't touching the skin is refused.
 - Pockets, belt loops and labels are separate cloth sewn on, not marks on the surface.
 - Seams pressed toward a side; facings that follow their topstitching; hems turned, faced or raw.
 - Fabric by its test-report numbers: the same skirt falls in narrow folds in 80 g/m² silk and broad ones in 400 g/m² denim.
@@ -700,6 +673,7 @@ Only with GraphCode Play:
 - Every screenshot comes with a text map of the screen: each widget's name, position, text, and what can be pressed.
 - The whole game world captured as text, compared between moments, and a run restarted from any captured moment.
 - A log of every run with the frame and time of each step, and two runs compared mark by mark.
+- From the case studies: held fire on ten zombies, all down in 4.28 seconds, and the rifle never fired by mistake.
 
 **Everything it covers:**
 
@@ -726,6 +700,9 @@ send it again, and the Unreal asset updates in place.
   Unreal material with real parameters; only the branches Unreal can't express are baked; a render checks
   the result; and the report lists every decision. The next send updates the chair in place.
 
+**You and your AI:** you model in Blender and press one button, or just ask; the AI brings it across and checks it
+by render. Change a colour in Unreal and the next send keeps your edit.
+
 Only with GraphCode Integrate:
 - Blender node graphs translated: Principled BSDF, node groups, colour ramps, maths, mixes, normal maps, bump
   and alpha cut-outs.
@@ -746,6 +723,9 @@ Ready-made packs your AI can install and build on, in a tab inside your editor. 
 get, what it needs and what uses it, and press **Install** (tick *with its textures* for photo
 materials; an installed pack shows **Manage** instead). Then ask your AI: *"Build the ruined stone wall from the Stone Wall pack, three metres
 long."* Or skip the tab: *"Find a pack for broken concrete and use it."*
+
+**You and your AI:** you browse and install; your AI builds from the pack and changes it by number, *longer*,
+*more ruined*, *older*, without touching a mesh.
 
 - **39 ready-made packs** of walls, roofs, timber, rocks, cliffs, plants, materials, mechanical parts,
   damage and human and animal poses, plus guides and AI skills. All of them: [docs/MARKET.md](docs/MARKET.md).
