@@ -50,26 +50,32 @@ it makes real Unreal assets, shows you renders and test runs, and every change c
 
 ## Made with GraphCode
 
-A few of the 39 free packs in the [GraphCode Market](https://graphcode.dev/marketplace), each built by the AI in Unreal. Your AI can install any of them and build them in your project, or make its own.
+Machines and buildings from the [GraphCode showcase](https://graphcode.dev/showcase), and pieces from the free [GraphCode Market](https://graphcode.dev/marketplace) packs, every one built by the AI inside Unreal. Your AI can install any Market pack and build it in your project, or make its own.
 
 <table>
 <tr>
-<td align="center"><a href="https://graphcode.dev/marketplace/GraphCode/StoneWall/"><img src="docs/media/market/StoneWall.jpg" width="160" alt="Stone wall"><br><sub>Stone walls</sub></a></td>
-<td align="center"><a href="https://graphcode.dev/marketplace/GraphCode/RoofKit/"><img src="docs/media/market/RoofKit.jpg" width="160" alt="Roof"><br><sub>Roofs</sub></a></td>
-<td align="center"><a href="https://graphcode.dev/marketplace/GraphCode/WoodRuin/"><img src="docs/media/market/WoodRuin.jpg" width="160" alt="Broken wooden deck"><br><sub>Wood ruins</sub></a></td>
-<td align="center"><a href="https://graphcode.dev/marketplace/GraphCode/TimberKit/"><img src="docs/media/market/TimberKit.jpg" width="160" alt="Plank walkway"><br><sub>Timber</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/showcase/airship/"><img src="docs/media/showcase/airship.jpg" width="200" alt="An airship with a gondola and engines"><br><sub>Airship</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/showcase/steam-house/"><img src="docs/media/showcase/steam-house.jpg" width="200" alt="A timber-framed house with a tin roof and pipework"><br><sub>Steam house</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/showcase/milliner/"><img src="docs/media/showcase/milliner.jpg" width="200" alt="A brick shop with a hat-shaped patina roof"><br><sub>Milliner's shop</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/showcase/compressor/"><img src="docs/media/showcase/compressor.jpg" width="200" alt="A copper compressor with a flywheel"><br><sub>Compressor</sub></a></td>
 </tr>
 <tr>
-<td align="center"><a href="https://graphcode.dev/marketplace/GraphCode/RocksCliffsKit/"><img src="docs/media/market/RocksCliffsKit.jpg" width="160" alt="Rocks and cliffs"><br><sub>Rocks and cliffs</sub></a></td>
-<td align="center"><a href="https://graphcode.dev/marketplace/GraphCode/UnderstoryKit/"><img src="docs/media/market/UnderstoryKit.jpg" width="160" alt="Ferns, grass and mushrooms"><br><sub>Understory plants</sub></a></td>
-<td align="center"><a href="https://graphcode.dev/marketplace/GraphCode/StoneKit/"><img src="docs/media/market/StoneKit.jpg" width="160" alt="Stone stairs"><br><sub>Stone stairs</sub></a></td>
-<td align="center"><a href="https://graphcode.dev/marketplace/GraphCode/BrokenConcrete/"><img src="docs/media/market/BrokenConcrete.jpg" width="160" alt="Broken concrete slab"><br><sub>Broken concrete</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/showcase/street-carrier/"><img src="docs/media/showcase/street-carrier.jpg" width="200" alt="A riveted egg-shaped carrier on wheels"><br><sub>Street carrier</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/showcase/auto-duster/"><img src="docs/media/showcase/auto-duster.jpg" width="200" alt="A brass and iron machine on a pedestal"><br><sub>Auto-duster</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/showcase/watchman-lamp/"><img src="docs/media/showcase/watchman-lamp.jpg" width="200" alt="A lit cast street lamp"><br><sub>Watchman lamp</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/showcase/street/"><img src="docs/media/showcase/street.jpg" width="200" alt="A paved street with kerbs, lamps and bollards"><br><sub>Street</sub></a></td>
 </tr>
 <tr>
-<td align="center"><a href="https://graphcode.dev/marketplace/GraphCode/BarkMaterials/"><img src="docs/media/market/BarkMaterials.jpg" width="160" alt="Bark material"><br><sub>Bark materials</sub></a></td>
-<td align="center"><a href="https://graphcode.dev/marketplace/GraphCode/CleanGeneratedMesh/"><img src="docs/media/market/CleanGeneratedMesh.jpg" width="160" alt="A cleaned AI-generated cat"><br><sub>Cleaned AI models</sub></a></td>
-<td align="center"><a href="https://graphcode.dev/marketplace/GraphCode/Gears/"><img src="docs/media/market/Gears.jpg" width="160" alt="Gears"><br><sub>Gears</sub></a></td>
-<td align="center"><a href="https://graphcode.dev/marketplace/GraphCode/Rubble/"><img src="docs/media/market/Rubble.jpg" width="160" alt="Rubble"><br><sub>Rubble</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/RocksCliffsKit/"><img src="docs/media/showcase/cliff-tall.jpg" width="200" alt="A tall layered stone cliff"><br><sub>Cliffs</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/RocksCliffsKit/"><img src="docs/media/showcase/cliff-ledges.jpg" width="200" alt="Layered stone ledges"><br><sub>Rock ledges</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/BarkMaterials/"><img src="docs/media/showcase/oak-bark.jpg" width="200" alt="A log with mossy oak bark"><br><sub>Mossy oak bark</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/UnderstoryKit/"><img src="docs/media/showcase/hazel.jpg" width="200" alt="A hazel shrub"><br><sub>Hazel</sub></a></td>
+</tr>
+<tr>
+<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/UnderstoryKit/"><img src="docs/media/showcase/fern.jpg" width="200" alt="A male fern"><br><sub>Male fern</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/UnderstoryKit/"><img src="docs/media/showcase/moss.jpg" width="200" alt="A cushion of moss"><br><sub>Moss</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/VegetationKit/"><img src="docs/media/showcase/oak-leaf.jpg" width="200" alt="A dry oak leaf"><br><sub>Oak leaf</sub></a></td>
+<td align="center" width="25%"><a href="https://graphcode.dev/marketplace/GraphCode/VegetationKit/"><img src="docs/media/showcase/leaf-litter.jpg" width="200" alt="Fallen autumn leaves"><br><sub>Leaf litter</sub></a></td>
 </tr>
 </table>
 
