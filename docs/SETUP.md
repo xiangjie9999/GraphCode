@@ -79,14 +79,18 @@ Opening the project with GraphCode enabled also writes the file your AI client n
 
 ## 4. Start the trial
 
-The trial needs only your email: no card, no account, nothing to confirm by email.
+The trial needs only your email: no card, no account. GraphCode emails you a code to confirm the email is yours,
+and the 14 days start when you use it.
 
 **Easiest:** once your AI is connected (step 5), send it this, with your own email:
 
 > My email is you@example.com. Start my GraphCode trial: the licence server is
 > https://rlzbzhcrwvdxoriwgajn.supabase.co/functions/v1/gc-license-device
 
-It writes the activation file for you, and the trial starts with its first change.
+It writes the activation file for you. Its first change is held while GraphCode emails you a code: the email,
+from `noreply@graphcode.dev`, holds a code like `7F3A-9C21-4B8E-D054`.
+Give the code to your AI (it goes in the file's `code =` line); the trial starts, and the AI carries on. The code works once,
+only on this PC, for 15 minutes; if it ran out, ask the AI to try again for a new one.
 
 **Or make the file yourself.** Save this file as **`%USERPROFILE%\.graphcode\activation.txt`** (for example
 `C:\Users\you\.graphcode\activation.txt`), with your own email on the first line:
@@ -97,7 +101,8 @@ code =
 server = https://rlzbzhcrwvdxoriwgajn.supabase.co/functions/v1/gc-license-device
 ```
 
-Leave `code =` empty: a trial has no code. `server =` is GraphCode's licence service; copy it exactly.
+Leave `code =` empty for now: the first change GraphCode is asked to make emails you a code, which goes there.
+`server =` is GraphCode's licence service; copy it exactly.
 
 Or make the file with one PowerShell command (put your email in the first line):
 
@@ -109,8 +114,8 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.graphcode" | Out-Null
 
 Your AI can also make it for you: give it your email and this page.
 
-One trial per email and one per PC. A new email on a PC that already had a trial gets no trial, only the free products:
-its first change asks for a one-time code that GraphCode emails you. If you later move to another PC, GraphCode emails you a one-time
+One trial per email and one per PC. A new email on a PC that already had a trial gets no trial, only the free products
+(it confirms its email with an emailed code the same way). If you later move to another PC, GraphCode emails you a one-time
 code for that move.
 
 The trial is checked the first time your AI changes something, and the 14 days start then. Until then
