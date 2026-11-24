@@ -102,12 +102,14 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.graphcode" | Out-Null
 
 Your AI can also make it for you: give it your email and this page.
 
-One trial per email and one per PC. If you later move to another PC, GraphCode emails you a one-time
+One trial per email and one per PC. A new email on a PC that already had a trial gets no trial, only the free products:
+its first change asks for a one-time code that GraphCode emails you. If you later move to another PC, GraphCode emails you a one-time
 code for that move.
 
 The trial is checked the first time your AI changes something, and the 14 days start then. Until then
 your AI can already read, search and render. There is no sign-in window: if anything is missing, the
-AI's first change is refused with a message that says what to do.
+AI's first change is refused with a message that says what to do. When the 14 days end, Core, Shape and
+Integrate keep working, free for personal use, for ever; the other products need a licence.
 
 ## 5. Connect your AI client
 
@@ -188,7 +190,7 @@ check, and shows you the picture. Every change is saved as a version you can com
 | *no licence server to ask* | Your activation file is missing the `server=` line: save the file from step 4 again. |
 | A licence refusal about time | Set Windows' clock to sync automatically; it must be within 5 minutes. |
 | A licence refusal naming another PC | A licence runs on one PC at a time; the message says how to move it. |
-| *trial used* or *trial ended* | One trial per email and per PC. Get a licence at [graphcode.dev/pricing](https://graphcode.dev/pricing). |
+| *trial used* or *trial ended* | One trial per email and per PC. Core, Shape and Integrate keep working for free; for the other products get a licence at [graphcode.dev/pricing](https://graphcode.dev/pricing). |
 
 Still stuck: [open an issue](https://github.com/xiangjie9999/GraphCode/issues) or email support@graphcode.dev.
 Your AI can also read `Plugins/GraphCode/Docs/CONNECTING.md` and fix the connection itself.

@@ -15,23 +15,25 @@ you agree on its behalf and confirm you may do so.
 
 1. **Trial.** You may use every GraphCode product free for 14 days from the first activation on a
    computer. One trial is available per email address and one per computer.
-2. **Licence.** After you buy a licence, you may use the products it names, without a time limit,
+2. **Free products.** You may use GraphCode Core, Shape and Integrate free for personal use, with no
+   time limit, on one computer at a time.
+3. **Licence.** After you buy a licence, you may use the products it names, without a time limit,
    on one computer at a time per licence. An individual licence is for one named person. A studio
    licence is for one named user per seat within your organisation.
-3. **Sharing the download.** You may copy and share the unmodified download (for example with a
-   teammate). Each person who uses it needs their own trial or licence.
-4. **Your work is yours.** Everything you create with GraphCode belongs to you: assets, `.gc`
+4. **Sharing the download.** You may copy and share the unmodified download (for example with a
+   teammate). Each person who uses it needs their own trial, free use or licence.
+5. **Your work is yours.** Everything you create with GraphCode belongs to you: assets, `.gc`
    documents, recipe files (`.gcshape`, `.gcmove`, `.gcrig`, `.gcgroom`, `.gcgarment`, `.gchuman`,
    `.gcw` and others) and games. We claim no rights in it, and you may ship it in any product,
    commercial or not. Small runtime modules that GraphCode places in a packaged game may be
    distributed inside that game.
-5. **Public headers.** You may use the published C++ headers and build rules to write code that
+6. **Public headers.** You may use the published C++ headers and build rules to write code that
    calls GraphCode.
 
 ## 2. What you may not do
 
-1. Remove, bypass or interfere with the licence checks, or use GraphCode beyond the trial or the
-   licences you hold.
+1. Remove, bypass or interfere with the licence checks, or use GraphCode beyond the trial, the free
+   products or the licences you hold.
 2. Decompile, disassemble or reverse-engineer GraphCode, except where the law allows it despite
    this restriction.
 3. Sell, rent or sublicense GraphCode itself, or distribute modified copies.

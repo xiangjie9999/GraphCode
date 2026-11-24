@@ -26,7 +26,7 @@ and every change it makes is saved so you can compare it or take it back.
 | **Works with** | The AI you already use, through MCP: Claude Code, Codex, Cursor, Claude Desktop or any MCP client. |
 | **Includes** | Ten products in one package, a free Market of ready-made packs, and about 100 guides the AI reads as it works. |
 | **Try it** | 14 days of everything with just an email. No card. |
-| **Then** | A [one-time licence](https://graphcode.dev/pricing) per product or for all of them. |
+| **Then** | Core, Shape and Integrate stay free for personal use, for ever. The rest: a [one-time licence](https://graphcode.dev/pricing) per product or for all of them. |
 
 ## Start here
 
@@ -835,7 +835,7 @@ The full technical reference, for your AI and your team: [docs/REFERENCE.md](doc
 | | |
 |---|---|
 | **Trial** | 14 days of all ten products from the first sign-in on your PC. One trial per email and one per PC. No card. |
-| **After the trial** | Everything you made stays. The AI can still read and look; building and changing things needs a licence. |
+| **After the trial** | Core, Shape and Integrate keep building, free for personal use, for ever. The other products need a licence; everything you made stays, and the AI can still read and look. |
 | **Licence** | One-time purchase with no time limit, per product or all products, for individuals or per studio seat: [pricing](https://graphcode.dev/pricing). |
 | **Computers** | A licence works on one PC at a time; move it by signing the old PC out. |
 | **What you make** | Yours to ship in any game, commercial or not. |
