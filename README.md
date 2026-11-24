@@ -315,6 +315,8 @@ All ten products ship in one package and are included in the trial. Jump to:
 
 The game itself: the rules, the screens, the surfaces and the levels, built as ordinary Unreal assets.
 
+<img align="right" src="docs/media/core-hall.jpg" width="320" alt="A furnished hall built with GraphCode Core: wallpaper, panelled ceiling, chandelier, parquet and velvet">
+
 **Why GraphCode Core?** Your AI places things by what they relate to, and changes whole assets it can read, instead of guessing coordinates and wiring nodes blind.
 
 *"Add a Reload function to the rifle and call it from the R key."*
@@ -323,6 +325,8 @@ The game itself: the rules, the screens, the surfaces and the levels, built as o
 - **How GraphCode Core solves it:** the AI reads the rifle Blueprint as text, writes the function and its
   caller in one change, sees the difference before it lands, and is told if a call has nothing wired in. A
   break is not saved, and the earlier version is one restore away.
+
+**You and your AI:** you ask and read the change as plain lines before it lands; the AI writes it, compiles it and plays it. Not happy? Restore the earlier version in Version Control.
 
 Only with GraphCode Core:
 - Place by relationship: anchor to an actor, rest on a surface, face a target, with distances measured from
@@ -333,6 +337,8 @@ Only with GraphCode Core:
 - Menus painted at up to 8 screen sizes with a report of overlaps, clipping and low contrast, then their
   buttons pressed by name.
 - Before anything is renamed, moved or deleted: every asset that depends on it, soft references included.
+
+<br clear="right">
 
 **Everything it covers:**
 
@@ -356,6 +362,8 @@ Only with GraphCode Core:
 
 Whole places, at real scale: the land, the water, what grows on it and how characters cross it.
 
+<img align="right" src="docs/media/world-river.gif" width="320" alt="A stream carved through a town of glass domes, towers and lit windows">
+
 **Why GraphCode World?** Your AI names the places in your world once (the stream, the trail, the crypt, the street) and puts everything in relation to them. GraphCode works out the coordinates against the real terrain, every time it applies.
 
 *"A wooded valley with a stream and a trail, a forest that keeps off both, a lantern halfway along the crypt's north wall, and a row of houses facing the street."*
@@ -370,6 +378,8 @@ Whole places, at real scale: the land, the water, what grows on it and how chara
   and what was built from it follows on the next apply, and applying again changes only what changed: no
   second forest.
 
+**You and your AI:** you name the places that matter (the stream, the trail, the street) or point at them in a render; the AI shapes and plants around them, and you fly through and ask for changes.
+
 Only with GraphCode World:
 - Places by relationship, with no x, y or z in the request: *halfway along the wall*, *on the street, facing it*.
 - Named points and routes shared by the terrain, rivers, planting, volumes and placed actors.
@@ -378,6 +388,8 @@ Only with GraphCode World:
 - Answers about space from the world's text alone: distances, gaps in centimetres, how far a wall bows.
 - *"Can a person get from the road to this door? Can a mouse?"* answered from the navigation mesh, per body size.
 - Hand sculpting recorded and replayed exactly, and your own heightmaps (from Gaea or anywhere) used as brushes.
+
+<br clear="right">
 
 **Everything it covers:**
 
@@ -415,16 +427,14 @@ The things in your world, modelled part by part from measurements, so they stay 
 |---|---|---|
 | **Wrong size.** The prop arrives 100x too small or too big. | Blender works in metres, Unreal in centimetres. | A recipe is written in centimetres. There is no export step to apply a unit scale in. |
 | **Wrong way round.** Parts arrive turned 90 degrees or facing backwards. | The two programs disagree about which axis is up and which way is forward. | Turns are Unreal's own roll, pitch and yaw, and every socket is declared with the way it faces, in Unreal's frame. |
-| **Left and right swap.** The mirrored half is not the half you meant. | A mirror is applied in whatever frame the exporter chose. | A mirrored part is reflected in its own frame, and the build says where the two sides differ. |
-| **Wrong pivot.** The sword spins about its middle, not its grip. | The origin is wherever the modeller left it. | The pivot is stated in the recipe, and a held prop's origin sits at its grip. |
 | **Attachment points by name.** Dummy objects called `SOCKET_Hand`, with parts hand-placed on them. | Epic's FBX pipeline reads sockets from objects with a `SOCKET_` prefix ([Epic's FBX static mesh pipeline](https://dev.epicgames.com/documentation/en-us/unreal-engine/fbx-static-mesh-pipeline-in-unreal-engine)). | Sockets are declared in the recipe and parts join onto them; the build reports each joint as touching, gapped or overlapping. |
 | **Collision by naming.** Extra meshes called `UCX_` or `UBX_` that must match the visible one. | The same pipeline reads collision from objects with those prefixes. | Collision is one line in the recipe, and a build without it says so. |
-| **Wrong shading.** Hard edges look soft, or the reverse. | Smoothing does not always survive the export. | The recipe states the angle above which an edge shades hard. |
 | **A look that does not transfer.** It looked right in Eevee or Cycles, not in your game. | Those are not Unreal's renderer. | Materials are Unreal materials bound to the mesh's slots, and the AI checks them in the editor's own renderer while it builds. |
-| **No light version.** Mobile, VR and distant LODs are another round of work. | Baking is a separate job in a separate app. | One line makes a light mesh with its normal and AO maps baked from the full detail. |
 | **Every change is a re-import.** | The mesh is a finished file, not a recipe. | Change the recipe and rebuild: the same asset updates in place, and the same recipe always builds the same mesh. |
 
 The AI never leaves Unreal, so there is no unit, axis or naming mistake to find afterwards.
+
+**You and your AI:** you ask for the object and its size; the AI writes the recipe and renders it. *Bigger*, *older*, *more ruined* is one word from you and one number for it.
 
 Only with GraphCode Shape:
 - Parts sized from named measurements: change one number and every part built from it follows.
@@ -488,7 +498,7 @@ Nothing is exported, nobody overwrites anybody: you and your AI edit the same mo
 *"A right hook: feet planted, weight shifting forward, the fist fastest at contact. Then make it slower."*
 - **The problem with a free MCP server:** the AI types bone rotations at points in time. The feet slide unless
   it checks every frame, the balance is a guess, and "fastest at contact" isn't written down anywhere, so
-  making it slower means re-keying the whole thing. Mixamo has the punch but not your character's stance;
+  making it slower means re-keying the whole thing. Mixamo clips are made for one generic skeleton, not solved against yours;
   Cascadeur and motion capture mean another app and a hand clean-up.
 - **How GraphCode Move solves it:** the AI writes four body-part poses, plants both feet, and names the fist as
   the point that must be fastest at contact. The build solves against your skeleton and floor and reports
@@ -518,7 +528,9 @@ Only with GraphCode Move:
 
 ### GraphCode Rig: skeletons and skinning
 
-Any model, ready to animate, even one that arrived with no bones.
+A mesh with no bones becomes a rigged character ready to animate: a person, an animal or a creature.
+
+<img align="right" src="docs/media/rig-cat-bones.gif" width="320" alt="A cat walking in Unreal with the skeleton the AI built drawn through its body">
 
 **Why GraphCode Rig?** Your AI names where a mesh bends, and gets a skeleton, skin, physics, IK and Control Rig that agree with the mesh, with every joint's axis reported.
 
@@ -532,12 +544,16 @@ Any model, ready to animate, even one that arrived with no bones.
   gets the skeleton, skin weights, Physics Asset, IK Rig and Control Rig from one file, with each joint's
   axis reported against the way its bones bend.
 
+**You and your AI:** you hand over the mesh; the AI measures it, places the joints and shows it moving; you say where it bends wrong.
+
 Only with GraphCode Rig:
 - Every point measured on the mesh, never typed from memory.
 - Joint ranges from published studies of the human body, and a limit that's too tight reported.
 - Heel, ball and toe named on the foot, so a walk rolls through them; finger pads and grip sockets for holding.
 - Corrective shapes that follow a joint while the game runs: the elbow creases, the bicep bulges.
 - A MetaHuman adapter in four lines, over a shared 84-joint map.
+
+<br clear="right">
 
 **Everything it covers:**
 
@@ -549,15 +565,19 @@ Only with GraphCode Rig:
 
 Strand hair and fur grown on your characters, in Unreal's own groom format.
 
+<img align="right" src="docs/media/cat-fur.gif" width="320" alt="A grey British Shorthair cat with a thick strand fur coat walking on grass">
+
 **Why GraphCode Groom?** Your AI grows hair on your character's own scalp from regions and directions, so a new parting is one changed line, not a new groom.
 
 *"Part it in the centre, sweep the fringe off her face, let the back fall straight, and add a plait."*
-- **The problem with the usual route:** free MCP servers have no hair tools. A Blender or Houdini groom is
-  styled by hand on one head and imported as a fixed cache; a bought groom was made for someone else's
+- **The problem with the usual route:** grooming by hand in Blender or Houdini takes hours for one head, and
+  arrives as a fixed cache (free MCP servers have no hair tools at all); a bought groom was made for someone else's
   head. A different parting or a different character means grooming it again.
 - **How GraphCode Groom solves it:** the AI measures points on your character's scalp, divides it into
   regions, gives each a direction, combs the fringe off the face, plaits one region, and grows the strands
   on that mesh, bound to your MetaHuman. A new parting is an edited region.
+
+**You and your AI:** you describe the style or show a photo; the AI grows it and reports how much scalp shows. *Less scalp*, *a longer fringe* is one changed line.
 
 Only with GraphCode Groom:
 - Hair that leaves the skin already turned along its flow, so it lies down instead of standing up.
@@ -566,6 +586,8 @@ Only with GraphCode Groom:
 - Builds that report how much scalp shows and where locks cross, so the AI can fix it.
 - Strands, short fur, anime hair and feathers from one recipe; a cat's coat of over a million strands in
   four layers from 64 lines.
+
+<br clear="right">
 
 **Everything it covers:**
 
@@ -576,6 +598,8 @@ Only with GraphCode Groom:
 ### GraphCode Garment: clothing and armour
 
 Clothing cut to the body and made the way a tailor makes it, from real fabric.
+
+<img align="right" src="docs/media/garments.jpg" width="320" alt="Garments made with GraphCode Garment: a hoodie, a double-breasted long coat, a T-shirt and a zip jacket">
 
 **Why GraphCode Garment?** Clothing your AI sews, not sculpts: measured on your character's body, made from real fabric, and built the way a maker builds it.
 
@@ -589,6 +613,8 @@ Clothing cut to the body and made the way a tailor makes it, from real fabric.
   gives the denim its real weight, stretch and stiffness. *Let it out* changes the rings, and everything
   built from them follows.
 
+**You and your AI:** you choose the garment, the fabric and the fit; the AI cuts, sews and settles it, and shows it from the front, the back and three-quarter.
+
 Only with GraphCode Garment:
 - Every ring is placed on the real body; one that isn't touching the skin is refused.
 - Pockets, belt loops and labels are separate cloth sewn on, not marks on the surface.
@@ -596,6 +622,8 @@ Only with GraphCode Garment:
 - Fabric by its test-report numbers: the same skirt falls in narrow folds in 80 g/m² silk and broad ones in 400 g/m² denim.
 - Builds that report folds and crossings ring by ring, so the AI sees what's wrong.
 - One recipe becomes a static mesh, clothing skinned to the body, simulated cloth, or a MetaHuman outfit.
+
+<br clear="right">
 
 **Everything it covers:**
 
@@ -611,7 +639,9 @@ Only with GraphCode Garment:
 
 ### GraphCode Core Extension: MetaHumans, crowds, sound and trees
 
-People: as many as your game needs, each one different.
+Core Extension adds MetaHuman characters, crowds, MetaSounds and procedural trees to Core: people, as many as your game needs, each one different.
+
+<img align="right" src="docs/media/ext-crowd.jpg" width="320" alt="A crowd of different people moving down a sunlit street in a game">
 
 **Why GraphCode Core Extension?** Your AI describes the person, whose nose, how tall, which drawing, and the MetaHuman is built to match, the same way every time.
 
@@ -622,6 +652,8 @@ People: as many as your game needs, each one different.
   Bruce's nose, heights drawn from 165 to 186 cm, one build line per person. The same draw rebuilds the
   same twelve, and each face is previewed before it goes to Epic's rig service.
 
+**You and your AI:** you describe the cast or hand over a drawing; the AI builds and previews each face, you pick, and only then is it rigged.
+
 Only with GraphCode Core Extension:
 - Faces blended whole or region by region; 21 regions sculpted, mirrored or not.
 - Bodies set by measurement (height, waist), and each face measured back in centimetres.
@@ -629,6 +661,8 @@ Only with GraphCode Core Extension:
   feature landed.
 - Details drawn between the face's own landmarks, such as a double eyelid crease.
 - Crowds that rebuild the same people every time.
+
+<br clear="right">
 
 **Everything it covers:**
 
@@ -641,6 +675,8 @@ Only with GraphCode Core Extension:
 
 Your AI plays the game for you, and shows you what happened.
 
+<img align="right" src="docs/media/play-yard.jpg" width="320" alt="A sunlit street in the running game, captured during a test run">
+
 **Why GraphCode Play?** Your AI names the moment and the button, and the game answers when it happens, so a test checks the game, not the timing of the editor.
 
 *"Walk into the shop, open the inventory, buy the sword, and prove the gold went down by 50 and the HUD shows it."*
@@ -651,12 +687,16 @@ Your AI plays the game for you, and shows you what happened.
   button by its name, and captures the world before and after. The reply says what ran, on which frame, and
   exactly what changed.
 
+**You and your AI:** you say what must be true; the AI plays it, captures the world before and after, and hands you the log and the screenshots.
+
 Only with GraphCode Play:
 - Waits on named moments or counted game frames, so an editor hitch can't shorten them.
 - HUD buttons pressed by name; a hidden, disabled or covered one is refused with the reason.
 - Every screenshot comes with a text map of the screen: each widget's name, position, text, and what can be pressed.
 - The whole game world captured as text, compared between moments, and a run restarted from any captured moment.
 - A log of every run with the frame and time of each step, and two runs compared mark by mark.
+
+<br clear="right">
 
 **Everything it covers:**
 
@@ -693,7 +733,7 @@ Only with GraphCode Integrate:
 
 ### GraphCode Market (free)
 
-Ready-made packs your AI can install and build on, in a tab inside your editor.
+Ready-made packs your AI can install and build on, in a tab inside your editor. They are recipes, not fixed meshes: your AI changes them by number and builds them in your project, and each installs with what it needs.
 
 <p><a href="https://graphcode.dev/marketplace"><img src="docs/media/lineup-kits.jpg" alt="Pieces from the free Market kits: cliffs, rock ledges, a hazel shrub, a fern, moss, mossy oak bark and an oak leaf" width="100%"></a></p>
 
