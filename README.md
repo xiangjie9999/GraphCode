@@ -32,9 +32,11 @@ relationship, eyes to check its work, and a history it can restore. [Why that ma
 | **Try it** | 14 days of everything with just an email. No card. |
 | **Then** | Core, Shape and Integrate stay free for personal use, for ever. The rest: a [one-time licence](https://graphcode.dev/pricing) per product or for all of them. |
 
+**[Skip to Get started](#get-started)** · [See what each product builds](#what-your-ai-can-build)
+
 ## How it works
 
-<p align="center"><img src="docs/media/ask-and-build.gif" alt="A chat with an AI on the left asking for a domed hall and a working lift, and the Unreal editor on the right building it" width="100%"></p>
+<p align="center"><img src="docs/media/ask-and-build.gif" alt="A real session: a chat on the left asking for an emblem over the entrance and the interior of a dome, and the Unreal editor on the right building a domed town hub with galleries, bridges and a lift tower" width="100%"></p>
 <p align="center"><sub>A real session: asked in plain words on the left; built in Unreal on the right (7× speed). You ask, the AI builds and checks it; you fine-tune by hand where you want and take back anything.</sub></p>
 
 1. **You ask** in plain words: *"Put an oval glass dome on the hall."* *"Give the cat a thick grey coat."* The first time, your AI reads your project, asks how hands-on you want to be, and writes your answers down so you never repeat them.
@@ -522,7 +524,7 @@ A mesh with no bones becomes a rigged character ready to animate: a person, an a
 
 **Why GraphCode Rig?** Your AI names where a mesh bends, and gets a skeleton, skin, physics, IK and Control Rig that agree with the mesh, with every joint's axis reported.
 
-*"Rig this bare elephant mesh."*
+*"Rig this bare animal mesh: a cat, or an elephant."*
 - **The problem with an auto-rigger or a Blender armature:** they expect a human, or joints placed by eye,
   and the axis each joint bends about is inferred. When GraphCode's own elephant was first rigged that way,
   its hip axis came out 132° off the stride and the walk ran backwards, and an auto-rig gives no reason why.
@@ -553,12 +555,10 @@ Only with GraphCode Rig:
 
 Strand hair and fur grown on your characters, in Unreal's own groom format.
 
-<img align="right" src="docs/media/groom-cat-strands.jpg" width="340" alt="A British Shorthair cat walking, its coat of individual strands in four layers grown by GraphCode Groom">
-
 **Why GraphCode Groom?** Your AI grows hair on your character's own scalp from regions and directions, so a new parting is one changed line, not a new groom.
 
 *"Part it in the centre, sweep the fringe off her face, let the back fall straight, and add a plait."*
-- **The problem with the usual route:** grooming by hand in Blender or Houdini takes hours for one head, and
+- **The problem with the usual route:** grooming by hand with Blender hair curves, Maya XGen or Houdini takes hours for one head, and
   arrives as a fixed cache (free MCP servers have no hair tools at all); a bought groom was made for someone else's
   head. A different parting or a different character means grooming it again.
 - **How GraphCode Groom solves it:** the AI measures points on your character's scalp, divides it into
@@ -574,8 +574,6 @@ Only with GraphCode Groom:
 - Builds that report how much scalp shows and where locks cross, so the AI can fix it.
 - Strands, short fur, anime hair and feathers from one recipe; a cat's coat of over a million strands in
   four layers from 64 lines.
-
-<br clear="right">
 
 **Everything it covers:**
 
@@ -663,7 +661,8 @@ Your AI plays the game for you, and shows you what happened.
   "works", and a screenshot can't say which button is which.
 - **How GraphCode Play solves it:** the AI waits for the moments the game itself announces, presses the buy
   button by its name, and captures the world before and after. The reply says what ran, on which frame, and
-  exactly what changed.
+  exactly what changed. In one of the case studies it held fire on ten zombies: all down in 4.28 seconds, and
+  the rifle never fired by mistake.
 
 **You and your AI:** you say what must be true; the AI plays it, captures the world before and after, and hands you the log and the screenshots.
 
@@ -673,7 +672,6 @@ Only with GraphCode Play:
 - Every screenshot comes with a text map of the screen: each widget's name, position, text, and what can be pressed.
 - The whole game world captured as text, compared between moments, and a run restarted from any captured moment.
 - A log of every run with the frame and time of each step, and two runs compared mark by mark.
-- From the case studies: held fire on ten zombies, all down in 4.28 seconds, and the rifle never fired by mistake.
 
 **Everything it covers:**
 
@@ -693,7 +691,8 @@ send it again, and the Unreal asset updates in place.
 **Why GraphCode Integrate?** Your AI sends Blender objects across as meshes with editable Unreal materials, not as an FBX and a flat bake, and updates them in place.
 
 *"Send the chair and table to Unreal, keep the wood editable, bake only what Unreal can't do, and update them when I change the grain."*
-- **The problem with a plain export or Blender MCP:** the AI exports an FBX, then either bakes the material
+- **The problem with a plain export or Blender MCP:** Blender MCP drives Blender, but has no way to rebuild a
+  shader graph as an Unreal material. So the AI exports an FBX, then either bakes the material
   flat, losing every control, or rewires it by hand in Unreal. Each change in Blender means doing it all
   again, and a re-import can overwrite edits made in Unreal.
 - **How GraphCode Integrate solves it:** the AI names the objects and the intent. Supported nodes become an
@@ -715,7 +714,7 @@ Only with GraphCode Integrate:
 
 Ready-made packs your AI can install and build on, in a tab inside your editor. They are recipes, not fixed meshes: your AI changes them by number and builds them in your project, and each installs with what it needs.
 
-<p><a href="https://graphcode.dev/marketplace"><img src="docs/media/lineup-kits.jpg" alt="Pieces from the free Market kits: cliffs, rock ledges, a hazel shrub, a fern, moss, mossy oak bark and an oak leaf" width="100%"></a></p>
+<p><a href="https://graphcode.dev/marketplace"><img src="docs/media/lineup-kits.jpg" alt="Pieces from the free Market kits: a tall cliff, rock ledges, a hazel shrub and a male fern" width="100%"></a></p>
 
 <p><img src="docs/media/market-tab.jpg" alt="The GraphCode Market tab: search, categories, pack cards and the Stone Wall pack selected with its description and Show in Content Browser" width="100%"></p>
 
