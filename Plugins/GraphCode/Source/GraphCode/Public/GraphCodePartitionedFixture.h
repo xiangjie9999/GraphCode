@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // THE PARTITIONED FIXTURE, IN ONE CARRIER — `Content/__RuntimeFixture/RuntimeFixture_WP` and the
 // three things every spec that opens it needs: its package name, the load, and the unwind.

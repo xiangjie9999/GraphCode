@@ -41,8 +41,9 @@ into a rigid construction sequence. Keep parametric construction for dimensions,
 must stay precise. Where a feature's visible or physical requirements need another representation, use it and note
 why in the asset's build guide.
 
-Generative 3D model services are not part of this workflow. Build with native construction, editable contours and
-controlled brush operations. ImageGen is available for 2D reference and artwork; image brightness is not a measured
+This workflow builds with native construction, editable contours and controlled brush operations. For an organic
+form (a creature, a character, a sculpted shape) use a generated model instead: see the organic route in
+[CAPABILITY-MAP.md](CAPABILITY-MAP.md). ImageGen is available for 2D reference and artwork; image brightness is not a measured
 depth field.
 
 For unique contours, start from texture artwork, then convert it to named paths ([below](#convert-texture-artwork-to-svg)).

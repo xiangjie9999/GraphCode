@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/TopLevelAssetPath.h"
 
 #include "GraphCodeErrors.h"
 

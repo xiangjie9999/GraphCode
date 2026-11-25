@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // "Get in Unreal" (Docs/GC-MARKET-DESIGN.md §0, owner 2026-11-20): a pack page on GraphCode.dev/marketplace links
 // `graphcode://market/install/<Publisher>/<Name>`. Windows starts the handler shipped in Production

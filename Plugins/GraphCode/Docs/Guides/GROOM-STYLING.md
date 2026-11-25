@@ -19,7 +19,7 @@ to have watched footage when only its written tutorial was available.
 Write a short construction brief: reference silhouette from front/side/back/top; parting and
 growth direction; sections and lengths; which sections join where; over/under crossings; ties,
 pins or other support; texture and deliberate loose hair. Separate sourced observations,
-measurements on the target, and artistic choices. In OraStudio keep findings in `Docs/Research/`.
+measurements on the target, and artistic choices. In GraphCode's development project we keep findings in `Docs/Research/`.
 If a hidden side has no reference, label the design assumption rather than presenting it as fact.
 
 Build in that physical order. Establish the cut and growth first, brush the loose hair, gather
@@ -162,7 +162,7 @@ quarter views. Smooth noise breaks up uniform sweeps coherently, per-strand nois
 individual turns, and joint controls give a gradual change of heading across the selected patch.
 The proxy still has sparse coverage, exposed skin and concentrated bends at brush boundaries.
 These captures demonstrate the controls and improved variation; they do not establish a finished
-natural hairstyle, realistic cat coat, or collision-free result. In OraStudio the comparison is
+natural hairstyle, realistic cat coat, or collision-free result. In GraphCode's development project the comparison is
 `Saved/GroomComb/NoiseComparison.html`, with recipes in `Content/__MCPTests/GroomComb/`.
 Agents must render and assess the complete intended style separately before calling it natural.
 
@@ -173,7 +173,7 @@ starts with controlled, approximately equal sections and an alternating crossing
 Feeding new sections along the scalp is an additional construction step. A gathered free plait
 does not become a French braid merely by changing its name.
 
-This excerpt adapts OraStudio's `Content/__MCPTests/GroomVisual/PresetBraid.gcgroom`.
+This excerpt adapts GraphCode's `Content/__MCPTests/GroomVisual/PresetBraid.gcgroom`.
 Declare `$Braided`, `$LeftCol`, `$MidCol`, `$RightCol`, `$Crown`, `$Nape`, `$Fibre` and `$Hair`
 first. The columns must be disjoint and carry comparable hair amounts, not merely equal areas.
 The numbers below fit that fixture head in centimetres; remeasure them for another head.

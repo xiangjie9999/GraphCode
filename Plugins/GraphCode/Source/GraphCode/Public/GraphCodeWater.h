@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // The `water { }` block — `GC-TERRAIN-DESIGN.md` §12i, row L8.
 //

@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // A REGION INSIDE A REGION — `GC-SPATIAL-AUTHORING-DESIGN.md` §21.17, task R11.
 //

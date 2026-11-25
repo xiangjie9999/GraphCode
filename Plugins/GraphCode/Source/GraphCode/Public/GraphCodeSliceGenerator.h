@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // W0's pure generation half: selected actors become one deterministic `.gcs` answer.
 // `GC-SPATIAL-AUTHORING-DESIGN.md` sections 18.3i, 18.4, 18.5 and 19.13.

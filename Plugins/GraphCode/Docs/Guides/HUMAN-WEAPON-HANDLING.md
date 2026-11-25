@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person holds and handles a rifle or a pistol.
-
 # Human movement: holding and handling a rifle or a pistol
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person holds and handles a rifle or a pistol.
 
 This guide says what a person's body does with a gun, in angles, distances and order of events. It does not say how
 to build the grip in GraphCode. That is [HANDS.md](HANDS.md), and this guide points into it.

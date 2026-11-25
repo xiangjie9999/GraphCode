@@ -1,7 +1,7 @@
 gc 1  kind:widget_blueprint  asset:/GraphCode/UI/WBP_GraphCodeVcs  sig:e0b851f707529725863f71a7afc0e5ee  bin:564a8c167a0d55e98f17109cd5631149
 parent: /Script/GraphCode.GraphCodeVcsWidget
 omits: blueprint_extensions blueprint_metadata variable_metadata widget_navigation_method mvvm_instanced_objects orphan_widgets
-source: OraStudio 5.7.4-51494982+++UE5+Release-5.7  projector:29  ir: widgetir/7 blueprintir/2 actorir/1
+source: MyGame 5.7.4-51494982+++UE5+Release-5.7  projector:29  ir: widgetir/7 blueprintir/2 actorir/1
 
 settings {
 }

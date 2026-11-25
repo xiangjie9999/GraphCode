@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // The frame legend — `GC-SPATIAL-AUTHORING-DESIGN.md` §20.22, task Z3.
 //

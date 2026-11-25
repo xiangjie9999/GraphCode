@@ -1,8 +1,9 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GraphCodeEngineCompat.h"
 
 #include "Math/RandomStream.h"
 

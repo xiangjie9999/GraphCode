@@ -41,7 +41,7 @@ world transforms, including child actors, and writes JSON/HTML under
 The call below uses the installed plugin automatically. To reuse the checker in a
 separate project without that installation, copy the **whole `Tools/Inspection`
 folder** and point `helper` at that copy; its six Python modules have no
-Steampunk, OraStudio asset or machine-path dependency.
+Steampunk, project-specific asset or machine-path dependency.
 
 Select a bounded assembly or street section in the level. Include the receiving
 road, sidewalk, buildings and relevant neighbors in that selection. Paste this

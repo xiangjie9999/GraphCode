@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: looking, moving the head, and coordinating attention with action.
-
 # Human movement: gaze and head
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: looking, moving the head, and coordinating attention with action.
 
 A convincing person looks toward the next useful place, turns the head when the task needs it, and keeps the view
 steady while the body moves. Eyes, head and trunk do not share one rotation curve. During a large gaze shift the eyes

@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // Does a brush's BUILDER still describe the brush's GEOMETRY?
 //

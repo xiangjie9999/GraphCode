@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person throws overarm and how a person punches.
-
 # Human movement: throwing and striking
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person throws overarm and how a person punches.
 
 This guide says how the body builds speed in an overarm throw and a punch: which part moves first, when each part
 peaks, and the joint angles and speeds that were measured. The data are for the overarm baseball pitch and for

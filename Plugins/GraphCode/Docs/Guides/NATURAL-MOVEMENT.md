@@ -1,6 +1,6 @@
-[Back to animation](ANIMATION.md)
-
 # Author a natural movement: a worked front kick
+
+[Back to animation](ANIMATION.md)
 
 This guide shows how to make a movement look like a person did it, using a `.gcmove` front kick built from
 nothing, one layer at a time. It explains why each layer is there, gives starting values, and says what to

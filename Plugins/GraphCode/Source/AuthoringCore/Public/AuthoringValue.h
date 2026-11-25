@@ -74,7 +74,7 @@ namespace AuthoringCore
 	 * The two differ on exactly the case this exists for. `BP_SelectionArea.Properties` is a plain
 	 * `BP_Properties_C*` that the actor genuinely owns, so the declared question answers no and a
 	 * level document wrote `obj'…PersistentLevel.BP_SelectionArea_C_37.BP_DoorProperties_C_0'` — a
-	 * path to an object nothing then described. Measured on `L_OraStudio.gc`: 80 such references
+	 * path to an object nothing then described. Measured on `L_MyLevel.gc`: 80 such references
 	 * naming 27 objects the document never declared.
 	 *
 	 * **NOT SYMMETRIC WITH THE IMPORT SIDE, deliberately.** An import has the TEXT and not yet a

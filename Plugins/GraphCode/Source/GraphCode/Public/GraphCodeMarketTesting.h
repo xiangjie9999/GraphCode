@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // The GraphCode Market's test seam (Docs/GC-MARKET-DESIGN.md R8): a spec builds a catalog in a temp folder and
 // signs it with an ephemeral P-256 key it registers through GcReleaseTrust's seam. The key lives only in this

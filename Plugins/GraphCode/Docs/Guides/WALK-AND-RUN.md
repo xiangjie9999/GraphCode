@@ -654,7 +654,7 @@ the tool. A gait is then only when each leg's cycle starts and how much of it th
    `give=25` and a reach that carries the pad 8% of the leg up under the blade: at the picture gallop's elbow (78) its toes brushed the floor
    through early swing, as the pictures' did, and lifting them asked the elbow to 101-104, past any give drawn from 78.
    **Where a real cat says otherwise, the photograph wins** (2026-11-04, Muybridge 1887 plate 716, `Docs/Research/cat-walking-joint-curves.md` in
-   the OraStudio checkout): a galloping cat's leading forepaw lands under its nose, far ahead of where a walking one lands (Harnie's equal footholds
+   the GraphCode development checkout): a galloping cat's leading forepaw lands under its nose, far ahead of where a walking one lands (Harnie's equal footholds
    are measured only to 1 m/s), so the gallop's forefoot place is `point(bone=scapula_L, at=(forward=17.4), relative=moving, on=$Floor)` (the
    head's joint ahead of the blade plus the face's front ahead of the head, both measured on the rig), not the walk's 10.4.
 7. **A reach in flight before each landing**, at about 0.9 of the leg's cycle: the paw a little further ahead than it lands and a few
@@ -707,11 +707,11 @@ bones; ~~0.45 cm lower as well~~, that lengthened the leg and folded its elbow f
 so its fold is read on a locked axis, "range 0 to 0", and the final audit clamps it 6-10 degrees in every gait: the gallop's left elbow tops
 out at 92 in swing, the right at 102)~~ (FIXED 2026-11-01 in Move: the IK rig was right; a rest-twisted joint's declared fold was snapped to
 the rig's axis in the twisted frame instead of on the bind, and a twisting fold on Y with its Z locked was read past 90 as a side on the
-locked axis; the gallop's elbows now reach 102.5 and 102.6, research note cat-elbow-rest-twist-axis.md in the OraStudio checkout).
+locked axis; the gallop's elbows now reach 102.5 and 102.6, research note cat-elbow-rest-twist-axis.md in the GraphCode development checkout).
 
 ## 6b. ~~A four-legged walk, written as intent~~ (2026-10-19; superseded by 6a on 2026-10-20)
 
-Moved verbatim to [WALK-AND-RUN-DONE.md](WALK-AND-RUN-DONE.md).
+Moved verbatim to [WALK-AND-RUN-DONE-2026-11.md](../Historical/WALK-AND-RUN-DONE-2026-11.md) and [WALK-AND-RUN-DONE.md](../Historical/WALK-AND-RUN-DONE.md).
 
 ## 7. Use it
 

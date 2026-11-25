@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: doors, phones, keyboards and screens.
-
 # Human movement: doors and devices
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: doors, phones, keyboards and screens.
 
 **What a correct-looking result is.** A person can reach the door hardware without the hand missing it. The hand
 stays on the hardware as the door moves, and the body has room to pass. At a desk, the arms hang naturally, the

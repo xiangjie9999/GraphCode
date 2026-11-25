@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: what a normal run looks like, in numbers.
-
 # Human movement: running, what a normal run looks like
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: what a normal run looks like, in numbers.
 
 This guide states what a healthy adult's run does: stride, cadence and how long each foot is down and how long the
 body is in the air at each speed, the joint angles and when they peak, how the foot lands, how far the trunk leans and

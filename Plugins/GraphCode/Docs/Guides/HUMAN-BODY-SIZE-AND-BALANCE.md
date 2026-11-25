@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: scaling a gait to body size, where the mass is, and how a person stands.
-
 # Human movement: body size and balance
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: scaling a gait to body size, where the mass is, and how a person stands.
 
 This guide answers three questions for a human character. How do speed, stride and timing change for a body of another
 size? Where are a person's segment lengths, segment masses and centre of mass? Where does the weight sit when a person

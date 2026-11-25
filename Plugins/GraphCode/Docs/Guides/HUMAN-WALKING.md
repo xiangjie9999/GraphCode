@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: what a normal walk looks like, in numbers.
-
 # Human movement: walking, what a normal walk looks like
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: what a normal walk looks like, in numbers.
 
 This guide states what a healthy adult's walk at a self-selected speed does: how fast, how long a stride, how long each
 foot is down, what each joint does through the cycle, and how the pelvis, trunk, arms and head move. Use it to decide

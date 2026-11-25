@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // GraphCode Market 2 (Docs/GC-MARKET2-UPLOAD-DESIGN.md §7): the editor's verifier of the per-version wire formats and
 // its copy of the live market. Written ONCE against the frozen vectors (Tools/Market/test/vectors/), in §7.2's and

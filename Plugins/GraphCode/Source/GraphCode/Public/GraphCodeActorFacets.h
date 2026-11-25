@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // What a product knows about ONE ACTOR CLASS that the reflective walk cannot see —
 // `GC-TERRAIN-DESIGN.md` §7 and row L0a.

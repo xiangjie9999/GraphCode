@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a hand grasps and how an arm reaches.
-
 # Human movement: grasping and reaching
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a hand grasps and how an arm reaches.
 
 This guide says what a hand does when it takes hold of something, and what an arm does on the way there. It gives the
 numbers a result can be checked against. How a grip is built and fitted in GraphCode is [HANDS.md](HANDS.md) and

@@ -51,6 +51,11 @@ public class GraphCodeRig : ModuleRules
 				// Core owns the product table and the `gcrig 1` header word. One way, always.
 				"GraphCode",
 
+				// Widgets reached through editor headers (SBorder, SCompoundWidget). UE 5.7 linked them in
+				// through another dependency; 5.8 does not, so the module names them itself.
+				"Slate",
+				"SlateCore",
+
 				// `SplitTopLevel` and `ExtractBalanced` — the bracket and brace readers every other
 				// GraphCode parser already uses. A second copy here would drift from them, and this
 				// format's whole correction on 2026-09-15 was about not inventing a second grammar.

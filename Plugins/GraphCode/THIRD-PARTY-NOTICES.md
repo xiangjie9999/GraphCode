@@ -45,8 +45,8 @@ Scotoni and contributors, as `LICENCE.md` there records.
 
 **Every file under `Source/GraphCodeMCP/` carries a `// Copyright Natali Caggiano` header, and
 those headers must stay.** Removing them is a licence violation. If you add a genuinely new file
-to that module — one whose content is OraStudio's own work rather than a modification of
-upstream's — give it an OraStudio header instead; the two can sit side by side in one module, and
+to that module — one whose content is GraphCode Sdn Bhd's own work rather than a modification of
+upstream's — give it a GraphCode Sdn Bhd header instead; the two can sit side by side in one module, and
 mislabelling in either direction is the thing to avoid.
 
 ### What was changed
@@ -64,7 +64,7 @@ substantive divergences are:
   nobody had asked for. Seventeen files and roughly 4,500 lines were removed, along with the
   module's dependency on the chat widgets, `ToolMenus` and `WorkspaceMenuStructure`.
 
-Much of what is under `Source/GraphCodeMCP/MCP/Tools/` is OraStudio's own work — the `gc_*` verbs
+Much of what is under `Source/GraphCodeMCP/MCP/Tools/` is GraphCode Sdn Bhd's own work — the `gc_*` verbs
 and their adapters were written here against upstream's registry, not inherited from it.
 
 ### The bridge's own dependency

@@ -1,7 +1,7 @@
+# Hair, clothing and parts that swing
+
 [Animation guide](ANIMATION.md) · this page: hair, clothing and parts that swing on an animated character (moved here
 verbatim from ANIMATION.md on 2026-10-13, when that page passed its length; its old heading there points here).
-
-# Hair, clothing and parts that swing
 
 A `.gcmove` animates the body. Hair and clothing are layers worn on that body, each moved by its own
 system; you author their shape and how they are worn, then judge them on the moving character. What

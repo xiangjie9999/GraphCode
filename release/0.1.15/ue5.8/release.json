@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "suite": "GraphCode",
+  "version": "0.1.15",
+  "platform": "Win64",
+  "format": "tar.xz",
+  "engine": "5.8.4",
+  "engineBuildId": "55116800",
+  "products": [
+    "GraphCode",
+    "GraphCodePlay",
+    "GraphCodeMove",
+    "GraphCodeWorld",
+    "GraphCodeShape",
+    "GraphCodeRig",
+    "GraphCodeGroom",
+    "GraphCodeCoreExtension",
+    "GraphCodeGarment",
+    "GraphCodeIntegrate"
+  ],
+  "size": 136153720,
+  "sha256": "278b0733c8dcb38c3c3f9e597b9efa6878b4c8bdf917a01f43b156034caac3fb",
+  "files": 1046,
+  "parts": [
+    {
+      "index": 1,
+      "name": "part-001.bin",
+      "size": 50331648,
+      "sha256": "cf330673d8126574769a63b5f93e37a160486bd56f9b490254b69f2034b3f3fe"
+    },
+    {
+      "index": 2,
+      "name": "part-002.bin",
+      "size": 50331648,
+      "sha256": "1cd0617952eec691d459a8f52dc94036af57d6b9816db360b91ea9b76203506b"
+    },
+    {
+      "index": 3,
+      "name": "part-003.bin",
+      "size": 35490424,
+      "sha256": "feeae3462703666432007a511a56a4590c3fc32da3080da74eb64280b901b8f7"
+    }
+  ],
+  "notes": "- **Unreal Engine 5.8 support.** GraphCode now ships one download per engine: pick the package for Unreal 5.7 or Unreal 5.8. The in-editor updater offers each editor the build for its own engine.\n- **21-day trial** of all ten products (was 14 days), still started with just your email.\n- **Works offline after activation.** Activate once online; after that a licence keeps working without a connection.\n- **Move:** an `[over]` modifier for layering a part over a motion; a limb that starts inside the body is turned out on the first frame (with a warning, never a refusal); optional own-face collision (`gc.Move.FaceCollision`).\n- **Market:** showcase photos get their own slides in the Market tab.\n- **Privacy:** every GraphCode request now identifies itself only as `GraphCode`; the project name, engine build and OS are no longer sent.\n- **Docs:** a new \"what GraphCode can and can't do\" page with a workaround for each limit (organic shapes: generate the mesh with an AI model, then clean, rig and animate it in GraphCode), a refreshed setup guide and one organised guide index.\n- **Contact:** admin@graphcode.dev.",
+  "publishedAt": "2026-11-25T02:57:01Z",
+  "source": {
+    "commit": "589f294b0d2d04efd4e6a6e790ba1a2bb460509c",
+    "dirty": true,
+    "builtAtUtc": "11/25/2026 02:54:36"
+  }
+}

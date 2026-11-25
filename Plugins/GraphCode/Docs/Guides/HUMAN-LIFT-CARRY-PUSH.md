@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person lifts, carries, pushes and pulls.
-
 # Human movement: lifting, carrying, pushing and pulling
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person lifts, carries, pushes and pulls.
 
 This guide says what a body does when it picks a load up off the floor, carries it, and pushes or pulls a cart. It
 gives joint angles, the order and timing of events, how far the load sits from the body, and where the hands go. It

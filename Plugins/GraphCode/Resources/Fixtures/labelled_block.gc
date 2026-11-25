@@ -3,7 +3,7 @@ parent: /Script/AIModule.BehaviorTree
 blackboard: /Game/AI/BB_FixtureGuard
 baseline: default
 omits: transient
-source: OraStudio 5.7.4  projector:18  ir: btir/1 valueir/1
+source: MyGame 5.7.4  projector:18  ir: btir/1 valueir/1
 
 behaviortree BTGraph  sig:41a0ce77-3 {
   Guard = Selector() {

@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // A person changes the ground and saves; that is a SCULPT — `GC-TERRAIN-DESIGN.md` §6, and the
 // user's own words 2026-08-19: *"when user change and save, it's called sculpt"*, *"the delta is

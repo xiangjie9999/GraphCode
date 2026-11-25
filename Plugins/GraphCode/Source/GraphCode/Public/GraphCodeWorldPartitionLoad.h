@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // WHAT ONE WRITE CAN SEE ON A MAP WHOSE ACTORS ARE NOT IN MEMORY — World Partition row 8. The
 // account is `GC-WORLD-PARTITION-DONE.md` §7a; the survey it corrects is

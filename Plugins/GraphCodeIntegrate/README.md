@@ -4,8 +4,8 @@ GraphCode Integrate connects external authoring tools to GraphCode. It is a sepa
 Editor plugin alongside World and Shape. It sends selected Blender static meshes and translates
 their material graphs into editable Unreal materials, baking branches when translation is unavailable.
 
-**Version 0.3.0 beta.** Tested on Windows, Blender 5.2.1 and Unreal 5.7.4. This is a working
-first integration, not a universal Blender shader or renderer conversion.
+**Version 0.3.0.** Tested on Windows, Blender 5.2.1 and Unreal 5.7.4; supports Unreal Engine 5.7 and 5.8. It sends
+selected Blender static meshes and their materials into Unreal as editable assets.
 
 ## AI-operated workflow (default)
 

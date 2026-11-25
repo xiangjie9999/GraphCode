@@ -3,7 +3,7 @@
   "generatedAt": "2026-11-21T15:29:05.976Z",
   "source": {
     "url": "http://localhost:3000",
-    "projectName": "OraStudio",
+    "projectName": "",
     "engineVersion": "5.7.4-51494982+++UE5+Release-5.7"
   },
   "tools": [
@@ -1677,7 +1677,7 @@
         {
           "name": "type_path",
           "type": "string",
-          "description": "A NATIVE C++ UENUM, USTRUCT or UCLASS to reflect, by object path — /Script/Engine.ECollisionChannel, /Script/CoreUObject.Vector, /Script/Engine.MaterialExpression, or one of this project's own such as /Script/OraStudio.EOraItemType. Passing it selects the native-type route and no block or asset_path is needed. Returns the enum's entries or the struct's members, and — since CP2 R5 — a `derived` list of every LOADED type deriving from it, which is how a grammar's <Type> token is turned into the set it came from. answered_by names which reader resolved it. ONE TYPE ANSWERS WITH MORE THAN ITS MEMBERS: /Script/InputCore.Key also returns `keys`, every key this editor has registered, grouped by the engine's own menu category and read live off EKeys. That is the only route to a key name there is - EKeys is a static registry, not a UENUM - and a key name is what `Key=` takes in a kind:input_mapping_context mapping. A Blueprint enum or struct is REFUSED and sent to unreal_gc_read: this route exists for types that have no package and no sidecar, which is exactly what stops gc_read addressing them.",
+          "description": "A NATIVE C++ UENUM, USTRUCT or UCLASS to reflect, by object path — /Script/Engine.ECollisionChannel, /Script/CoreUObject.Vector, /Script/Engine.MaterialExpression, or one of this project's own such as /Script/MyGame.EItemType. Passing it selects the native-type route and no block or asset_path is needed. Returns the enum's entries or the struct's members, and — since CP2 R5 — a `derived` list of every LOADED type deriving from it, which is how a grammar's <Type> token is turned into the set it came from. answered_by names which reader resolved it. ONE TYPE ANSWERS WITH MORE THAN ITS MEMBERS: /Script/InputCore.Key also returns `keys`, every key this editor has registered, grouped by the engine's own menu category and read live off EKeys. That is the only route to a key name there is - EKeys is a static registry, not a UENUM - and a key name is what `Key=` takes in a kind:input_mapping_context mapping. A Blueprint enum or struct is REFUSED and sent to unreal_gc_read: this route exists for types that have no package and no sidecar, which is exactly what stops gc_read addressing them.",
           "required": false
         },
         {

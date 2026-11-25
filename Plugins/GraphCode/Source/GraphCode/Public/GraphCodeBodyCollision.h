@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 #pragma once
 
 #include "CoreMinimal.h"
@@ -252,6 +252,11 @@ public:
 	 * other; a bone above all of it carries the pair whole, and one above none of it leaves it be. True when nothing was refused, or the pair rides
 	 * no bone on one side (a ground). MOVE-KIN1 2026-10-25: a form fit's step is judged only on what that step changes. */
 	bool LastRefusalMovedBy(TConstArrayView<int32> Changed) const;
+	/** Every bone the pair the last refusing check stopped on reads (its shapes' bones, their skin's bones, its rigid pieces', a posed worn piece's
+	 * influences): a pose in which each of them stands where it stood has that pair exactly as deep, so it is refused too (24 Nov 2026: an elbow
+	 * search tried 72 elbows a sample, every one refused by the two hands' fingers on one grip, which no elbow moves). Empty when nothing was refused
+	 * or a side moves on its own clock (a surface's motion), which no pose places. */
+	TArray<int32> LastRefusalReads() const;
 	/** Keep the pair the last refusing check stopped on at the depth it was refused at, for ONE step: it may stay, not deepen, until
 	 * ForgetStepKeeps (a keep that outlived its step let a push-out leave a forearm 3.47 cm in the belly). False when nothing was refused or it
 	 * is already kept that deep. */

@@ -3,13 +3,13 @@
   "phase": "binary-only-product",
   "readyToSend": false,
   "plugin": "GraphCodeWorld",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "engine": "5.7.4",
   "engineBuildId": "47537391",
   "platform": "Win64",
-  "sourceRevision": "ae98c507f51ffaba72f159263f69d33e9a23004d",
+  "sourceRevision": "589f294b0d2d04efd4e6a6e790ba1a2bb460509c",
   "sourceWasDirty": true,
-  "packagedAtUtc": "2026-11-22T16:47:39.0445196Z",
+  "packagedAtUtc": "2026-11-25T02:47:50.5645762Z",
   "fileCount": 64,
   "privateImplementationIncluded": false
 }

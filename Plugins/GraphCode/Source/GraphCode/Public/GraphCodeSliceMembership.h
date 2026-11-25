@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // W0 — MEMBERSHIP. Which actors a `.gcs` declaration's groups claim, and it is PURE.
 //

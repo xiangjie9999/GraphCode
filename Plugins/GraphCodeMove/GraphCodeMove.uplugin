@@ -1,11 +1,12 @@
 {
   "FileVersion": 3,
   "Version": 1,
-  "VersionName": "0.1.14",
+  "VersionName": "0.1.15",
   "FriendlyName": "GraphCode Move",
   "Description": "Animation, state machines and the AI graphs that decide and drive motion.",
   "Category": "Editor",
-  "CreatedBy": "OraStudio",
+  "CreatedBy": "GraphCode Sdn Bhd",
+  "CreatedByURL": "https://graphcode.dev",
   "CanContainContent": true,
   "IsBetaVersion": true,
   "Modules": [
@@ -43,7 +44,8 @@
     },
     {
       "Name": "ControlRigPhysics",
-      "Enabled": true
+      "Enabled": true,
+      "Optional": true
     },
     {
       "Name": "PhysicsControl",

@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // The seam between a `terrain { }` program and a landscape — `GC-TERRAIN-DESIGN.md` §5, L1 and L3.
 //

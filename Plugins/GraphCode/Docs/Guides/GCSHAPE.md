@@ -622,7 +622,7 @@ A vehicle, an appliance or a moulded product uses the spellings above together. 
 3. **Declare the crisp lines** you want inside the surface as `@sharp` stops on the profiles the warp reads, after
    the `remesh`.
 4. **Join what should read as one surface** with `join=blend` before you round or cut it, and add pieces that
-   touch into one entry before a `round` ([SHAPE-EDGE-FINISH.md](SHAPE-EDGE-FINISH.md#order-the-work-so-the-finish-survives)).
+   touch into one entry before a `round` ([SHAPE-EDGE-FINISH.md](SHAPE-EDGE-FINISH.md#3-order-the-work-so-the-finish-survives)).
    Where a part crosses the body (a canopy), use `join=hard`; see [Welding shells that cross](#welding-shells-that-cross).
 5. **Cut the openings** (doors, windows, lamps, vents) with closed cutters, then `round(…) [cut]` their edges.
 6. **Mark the shut lines** as a `raise(by=-…)` brush stroke along each route, rather than a thin box.

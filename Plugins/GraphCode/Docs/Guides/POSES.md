@@ -758,7 +758,7 @@ For native game playback, the build emits `GC_Holder_<Prop>` curves and attachme
 notifies; the game must handle them with native AttachToComponent/DetachFromComponent using
 KeepWorldTransform. The baked prop motion does not install a runtime attachment handler in the
 AnimBP. Read the build's holder list and event names, then verify pickup, transfer and release.
-Shape socket facing is local +Z, up is +X; see [GCSHAPE.md](GCSHAPE.md#every-gcshape) before
+Shape socket facing is local +Z, up is +X; see [GCSHAPE.md](GCSHAPE.md#what-to-read-for-your-shape) before
 assuming a prop socket uses actor-forward axes.
 
 **A holder curve is a ladder, and each rung of the game's tick must exclude the rungs above it.**

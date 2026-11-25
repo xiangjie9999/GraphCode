@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // Resolving §20's directives against a world somebody else owns — `GC-SPATIAL-AUTHORING-DESIGN.md`
 // §20.9, and the door Play needed.

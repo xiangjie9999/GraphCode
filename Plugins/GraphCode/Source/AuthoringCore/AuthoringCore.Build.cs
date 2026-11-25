@@ -113,7 +113,7 @@ public static class GraphCodeBuildGates
 	}
 
 	/**
-	 * The gate above decides at BUILD time from the building project, and OraStudio enables every framework,
+	 * The gate above decides at BUILD time from the building project, and our development project enables every framework,
 	 * so a shipped DLL linked them hard and could not load in a project without them (user-ruled 2026-10-20:
 	 * optional, never forced; Docs/GC-OPTIONAL-FRAMEWORKS-PLAN.md). Delay-loading those module DLLs lets the
 	 * product load anywhere; its code calls FGraphCodeOptionalModules::PluginsEnabled before the first use and
@@ -126,6 +126,18 @@ public static class GraphCodeBuildGates
 		{
 			Module.PublicDelayLoadDLLs.Add(Prefix + "-" + Name + ".dll");
 		}
+	}
+
+	/**
+	 * Is the engine building this target at least Major.Minor? The build-rules half of
+	 * Docs/GC-ENGINE-VERSIONS-PLAN.md: one source tree builds for UE 5.6, 5.7 and 5.8, and a module
+	 * that exists only from some engine on is referenced only there. C++ asks the same question only
+	 * inside GraphCodeEngineCompat.h.
+	 */
+	public static bool EngineAtLeast(ReadOnlyTargetRules Target, int Major, int Minor)
+	{
+		return Target.Version.MajorVersion > Major
+			|| (Target.Version.MajorVersion == Major && Target.Version.MinorVersion >= Minor);
 	}
 }
 

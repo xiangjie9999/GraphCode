@@ -11,7 +11,7 @@
 //
 // **AND THEY ARE GUARDED TWICE, so no packaged game carries a tag named `GcTest`.**
 // `WITH_GRAPHCODE_ABILITIES` is the optional-plugin gate; `WITH_DEV_AUTOMATION_TESTS` is what keeps
-// a fixture out of a shipping build. The alternative — declaring them in `OraStudio`'s own
+// a fixture out of a shipping build. The alternative — declaring them in the host project's own
 // `DefaultGameplayTags.ini` — was rejected because a spec that needs project CONFIG compiles fine
 // for a Core-only install and then fails, which is the one outcome the gating recipe exists to
 // prevent (`PLAY-SESSION-DESIGN.md` §3.1i, recipe part 4).

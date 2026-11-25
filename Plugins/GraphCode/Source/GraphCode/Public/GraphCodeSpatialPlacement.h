@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // The placement resolver — `GC-SPATIAL-AUTHORING-DESIGN.md` §20, task P0.
 //

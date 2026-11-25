@@ -3,8 +3,8 @@
 **Retired by the user, 8 October 2026:** “and discard the working with tripo or 3d generative
 model approach, since that one is very unreliable”. This applies to the authoring approach
 generally, extending the earlier rifle-body replacement. Do not start or resume this route.
-Follow [the current artistic-shape workflow](ARTISTIC-SHAPES.md), including iterative brush
-sculpting for real depth, and [content intake](CONTENT.md).
+Follow [the current artistic-shape workflow](../Guides/ARTISTIC-SHAPES.md), including iterative brush
+sculpting for real depth, and [content intake](../Guides/CONTENT.md).
 
 Everything below is the earlier procedure retained as history. Its recommendations and API
 snapshot are superseded for current production authoring; existing files are retained.
@@ -30,7 +30,7 @@ snapshot are superseded for current production authoring; existing files are ret
    Remove those features from the reference. First import and size the resulting
    mesh, then construct the interfaces natively against the actual parts.
 
-These were OraStudio production decisions from the Aether rifle brief (2026-10-08), superseded above.
+These were GraphCode production decisions from the Aether rifle brief (2026-10-08), superseded above.
 
 ## Credentials
 

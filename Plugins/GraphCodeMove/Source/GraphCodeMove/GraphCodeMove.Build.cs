@@ -12,7 +12,11 @@ public class GraphCodeMove : ModuleRules
 		BinariesSubFolder = "BuildOutputs";
 		PCHUsage = Target.bBuildEditor ? ModuleRules.PCHUsageMode.UseSharedPCHs : ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		// Native units are discovered by reflection; UE 5.7's physics unit header includes a private header.
-		DynamicallyLoadedModuleNames.Add("ControlRigPhysics");
+		// ControlRigPhysics ships with UE 5.7 and later; on 5.6 gravity constraints refuse by name.
+		if (GraphCodeBuildGates.EngineAtLeast(Target, 5, 7))
+		{
+			DynamicallyLoadedModuleNames.Add("ControlRigPhysics");
+		}
 
 		PublicDependencyModuleNames.AddRange(
 			new string[]

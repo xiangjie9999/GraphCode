@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // Realizing a `terrain { }` program onto a landscape — `GC-TERRAIN-DESIGN.md` §5, §12's L1 and L3.
 //

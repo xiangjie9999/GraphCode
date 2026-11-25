@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // A person drags a river's control point and saves; the document stops claiming it drew that shape
 // — `GC-TERRAIN-DESIGN.md` §12i.4, row L8's last open item.

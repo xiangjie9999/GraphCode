@@ -3,8 +3,8 @@
 <p align="center"><b>Tell your AI what to build in Unreal Engine. It builds it, in your editor.</b></p>
 
 <p align="center">
-<a href="https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.14/graphcode-0.1.14-ue5.7-win64.tar.xz"><b>Download 0.1.14 for UE 5.7</b></a> ·
-<a href="https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.14/graphcode-0.1.14-ue5.8-win64.tar.xz"><b>for UE 5.8</b></a> ·
+<a href="https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.15/graphcode-0.1.15-ue5.7-win64.tar.xz"><b>Download 0.1.15 for UE 5.7</b></a> ·
+<a href="https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.15/graphcode-0.1.15-ue5.8-win64.tar.xz"><b>for UE 5.8</b></a> ·
 <a href="docs/SETUP.md#4-start-the-trial"><b>Start the 21-day trial</b></a> ·
 <a href="#what-your-ai-can-build">Capabilities</a> ·
 <a href="docs/SETUP.md"><b>Setup guide</b></a> ·
@@ -261,8 +261,8 @@ top of that foundation:
 **You need:** Windows 64-bit, Unreal Engine **5.7 or 5.8**, and an AI client that supports MCP
 (Claude Code, Cursor, Claude Desktop, Codex or any other). No compiler, Visual Studio or Node.js.
 
-1. **Download** the package for your engine: [`graphcode-0.1.14-ue5.7-win64.tar.xz`](https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.14/graphcode-0.1.14-ue5.7-win64.tar.xz) for Unreal 5.7 or
-   [`graphcode-0.1.14-ue5.8-win64.tar.xz`](https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.14/graphcode-0.1.14-ue5.8-win64.tar.xz) for Unreal 5.8 (one click; every release is on the
+1. **Download** the package for your engine: [`graphcode-0.1.15-ue5.7-win64.tar.xz`](https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.15/graphcode-0.1.15-ue5.7-win64.tar.xz) for Unreal 5.7 or
+   [`graphcode-0.1.15-ue5.8-win64.tar.xz`](https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.15/graphcode-0.1.15-ue5.8-win64.tar.xz) for Unreal 5.8 (one click; every release is on the
    [Releases](https://github.com/xiangjie9999/GraphCode/releases) page) and unpack it.
 2. **Copy** the folders in its `Plugins` folder into your project's `Plugins` folder, open the project,
    tick the GraphCode plugins in **Edit > Plugins** and restart.

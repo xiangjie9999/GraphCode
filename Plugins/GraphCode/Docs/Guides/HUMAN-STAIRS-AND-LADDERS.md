@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person climbs and descends stairs and uses a ladder.
-
 # Human movement: stairs and ladders
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person climbs and descends stairs and uses a ladder.
 
 This guide says how stairs are built, how fast people climb them, what the leg does, where the foot lands, how the
 trunk leans and how the handrail is used. It also gives the design rules for ladders. How to author a climb is

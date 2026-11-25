@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // PROMOTION — `region Crypt  from: FloorSlab_01 { }`. §21.8's C3, taken by the user 2026-08-11.
 //

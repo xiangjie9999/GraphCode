@@ -29,6 +29,7 @@ class AActor;
 class UBlueprint;
 class UMaterialInterface;
 class UAnimSequenceBase;
+class USkeletalMesh;
 class UObject;
 class UWorld;
 class FSceneInterface;

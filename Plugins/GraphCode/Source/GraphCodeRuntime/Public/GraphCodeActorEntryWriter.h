@@ -330,7 +330,7 @@ struct FGraphCodeActorEntryOptions
 	 *
 	 * **`SplineReference`'S ARGUMENT, ON THE ONE THING THAT CAN BE REACHED FROM TWO ENTRIES.** A
 	 * curve belongs to exactly one component, so moving it out is only about size. An owned
-	 * sub-object is pointed at by whoever needs it: MEASURED on `L_OraStudio.gc`, `BP_Wall_C_5`
+	 * sub-object is pointed at by whoever needs it: MEASURED on `L_MyLevel.gc`, `BP_Wall_C_5`
 	 * inlines the `BP_Surface` objects it outers and `BP_ItemManager_C_2` and four
 	 * `BP_FloorCeiling`s reference the same ones by path. Inlining at every site writes one
 	 * object's fields once per pointer and gives the file no single place to edit them.

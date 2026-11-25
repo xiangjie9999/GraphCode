@@ -1,7 +1,7 @@
 gc 1  kind:blueprint  asset:/Game/GraphCodeExamples/VRHandRig_20261001/BP_VRHandPistol  sig:42977bd90ad1fb048c82afad6247cfb9  bin:696a3ad7016b6c6272a5d8f51977bd48
 parent: /Script/Engine.Actor
 omits: blueprint_extensions blueprint_metadata variable_metadata collision_geometry
-source: OraStudio 5.7.4-51494982+++UE5+Release-5.7  projector:32  ir: blueprintir/2 actorir/1
+source: MyGame 5.7.4-51494982+++UE5+Release-5.7  projector:32  ir: blueprintir/2 actorir/1
 
 settings {
 }

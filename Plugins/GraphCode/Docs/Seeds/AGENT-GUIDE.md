@@ -31,7 +31,7 @@ re-run, this is what says what was already settled.*
 For customer access, follow `<plugin>/SETUP.md` step 2a after involvement is agreed: check installed
 status/help first. Record only status, date and a non-sensitive reason. Unsupported or deferred
 access stays unticked with a reason; tick only after installed status confirms the chosen access.
-Customer activation and native licence enforcement are still pending; do not invent tools or a
+Do not invent activation tools or a
 portal. Keep contact details, verification codes, tokens and PC secrets out of this guide.
 
 ## What this project is

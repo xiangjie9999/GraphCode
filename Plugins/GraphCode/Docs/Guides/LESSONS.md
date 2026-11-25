@@ -225,7 +225,7 @@ and end poses first, then the motion between them ([GCMOVE.md](GCMOVE.md),
   gait landing at the seam kept its unsolved drawing and the paw came in 3.9 cm high. *Do instead:* read a pose of a list with the list's windows
   pinned at that pose's own moment, as the cycle's join reads it.
 - **Reading a built clip in the shared editor holds it** (measured): the next headless spec could not save over it and failed "could not be
-  saved". *Do instead:* `Tools/GaitCheck/gaitcheck.py release` after reading, `reload` before (its README, `Tools/GaitCheck/README.md` in the OraStudio checkout: a link from here would leave the plugin).
+  saved". *Do instead:* `Tools/GaitCheck/gaitcheck.py release` after reading, `reload` before (its README, `Tools/GaitCheck/README.md` in the GraphCode development checkout: a link from here would leave the plugin).
 - **A green spec is not a pose within its give** (measured, 2026-11-01). The cat's rule walk passed every gait spec while its right foreleg landed with
   the wrist 34 degrees and the shoulder 19 past their give: the specs read footfalls and timing, the give is in the build's notes. *Do instead:*
   read every `PAST ITS GIVE` and `at its stop` note of a gait after each build, all four legs.

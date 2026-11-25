@@ -188,7 +188,7 @@ Real files from the reference project. Nothing here is hand-written.
 ```gc
 gc 1  kind:user_enum  asset:/Game/Blueprints/Enums/BevelType  sig:82e3645134a35bcc…  bin:65124fbaf619b784…
 omits: none
-source: OraStudio 5.7.4-51494982+++UE5+Release-5.7  ir: schemacode/1
+source: MyGame 5.7.4-51494982+++UE5+Release-5.7  ir: schemacode/1
 
 settings {
   description = ""
@@ -208,7 +208,7 @@ from `BP_TeleportVisualizer.gc`:
 gc 1  kind:blueprint  asset:/Game/XRFramework/Blueprints/BP_TeleportVisualizer  sig:9bf3fd44…  bin:a8127795…
 parent: /Script/Engine.Actor
 omits: blueprint_extensions blueprint_metadata variable_metadata collision_geometry
-source: OraStudio 5.7.4…  ir: blueprintir/2 actorir/1
+source: MyGame 5.7.4…  ir: blueprintir/2 actorir/1
 
 class_defaults {
   PrimaryActorTick.bCanEverTick = true

@@ -3,8 +3,8 @@
 Assemble meshes in GraphCode `.gcshape` recipes. Do not join, union or assemble the character in
 Blender as a substitute for its GraphCode recipe. Blender may inspect or prepare individual source
 assets; import those parts and preserve the assembly's sockets, bands and operations in GraphCode.
-Tripo and other generative 3D services are retired for new production work; references to generated
-sources below also cover existing assets already supplied by the user.
+Generated sources below include meshes made with an AI image- or text-to-3D model, the recommended route for organic
+forms (see [CAPABILITY-MAP.md](CAPABILITY-MAP.md)), as well as assets the user already supplied.
 
 Use this guide when a model is generated or supplied as separate meshes and the intended result is
 one repairable organic source. The common character route is:

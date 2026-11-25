@@ -1,6 +1,6 @@
-[Animation](ANIMATION.md) · [Rig calibration](RIG.md) · [Animation layers](ANIMATION-LAYERS.md)
-
 # Align a standing foot to a slope
+
+[Animation](ANIMATION.md) · [Rig calibration](RIG.md) · [Animation layers](ANIMATION-LAYERS.md)
 
 Use `align=surface` when a declared foot should follow the real collision beneath it.
 The foot moves up or down and tilts toward the local support plane, as far as its

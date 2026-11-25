@@ -110,6 +110,7 @@ enum class EGraphCodeRenderAnchorMode : uint8
  * the wind is three float curves on it, the air's velocity in metres a second in the character's component space.
  */
 class UAnimSequenceBase;
+class UMaterial;
 
 namespace GraphCodeClipAir
 {

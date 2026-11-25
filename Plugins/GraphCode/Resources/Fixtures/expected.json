@@ -41,7 +41,7 @@
     "timelines",
     "delegate_signatures"
    ],
-   "source_name": "OraStudio",
+   "source_name": "MyGame",
    "source_version": "5.7.4",
    "ir": [
     "widgetir/2",
@@ -97,7 +97,7 @@
    "omits": [
     "none"
    ],
-   "source_name": "OraStudio",
+   "source_name": "MyGame",
    "source_version": "5.7.4",
    "ir": [
     "blueprintir-schema/1"
@@ -129,7 +129,7 @@
    "omits": [
     "transient"
    ],
-   "source_name": "OraStudio",
+   "source_name": "MyGame",
    "source_version": "5.7.4",
    "ir": [
     "btir/1",

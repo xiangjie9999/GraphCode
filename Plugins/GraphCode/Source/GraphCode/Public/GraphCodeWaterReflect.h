@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // The seam between real water and the `water { }` block — `GC-TERRAIN-DESIGN.md` §12i, row L8's
 // engine half, first direction.

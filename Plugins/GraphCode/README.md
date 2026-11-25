@@ -4,6 +4,9 @@ GraphCode makes Unreal's authored content readable and writable as deterministic
 Unreal asset as the engine artifact and gives people and AIs a reviewable source beside it: assets,
 procedural programs, runtime captures and the lessons needed to use them safely.
 
+GraphCode 0.1.15 supports Unreal Engine 5.7 and 5.8 (one download per engine). Core, Shape and Integrate
+are free for personal use; the trial of every product lasts 21 days. Contact: admin@graphcode.dev.
+
 ## Start here
 
 **Any AI working with GraphCode reads [GRAPHCODE.md](GRAPHCODE.md) first, every session**: the rules,
@@ -13,10 +16,11 @@ the order of authority (the installed tools over memory) and the map of the docu
 new installation
 ├─ connect an AI client .............. Docs/CONNECTING.md
 ├─ configure the project ............. SETUP.md
+├─ what it can and cannot do ......... Docs/Guides/CAPABILITY-MAP.md
 └─ begin normal work ................. Docs/Guides/AI-COLD-START.md
 
 normal work
-├─ choose product/document ownership . Docs/Guides/CAPABILITY-MAP.md
+├─ what it can/cannot do, workarounds  Docs/Guides/CAPABILITY-MAP.md
 ├─ choose a verb and write safely .... Docs/Guides/TOOLS.md
 ├─ choose a focused workflow ......... Docs/Guides/README.md
 └─ diagnose a surprising result ...... Docs/Guides/LESSONS.md
@@ -26,7 +30,7 @@ normal work
 - [Set up a new project](SETUP.md)
 - [Cold-start an AI](Docs/Guides/AI-COLD-START.md)
 - [Browse the guide tree](Docs/Guides/README.md)
-- [Map products, documents and current kinds](Docs/Guides/CAPABILITY-MAP.md)
+- [What GraphCode can and cannot do, and the workaround for each gap](Docs/Guides/CAPABILITY-MAP.md)
 
 The installed build is the authority. Ask `unreal_info` what is present, call a verb with
 `{ "help": true }`, and use `gc_describe` for the exact kind, block, program, token or native type.
@@ -52,9 +56,10 @@ no reflective `.gc` asset kind.
 | **Garment** | clothing construction and fitted garment output | `.gcgarment` |
 | **Integrate** | supported external-source translation and import | source files and import records |
 
-The [capability map](Docs/Guides/CAPABILITY-MAP.md) lists the current registry by product and makes
-the important distinctions: installed, available, readable, writable, creatable, existing-only,
-conditional, unsupported and merely planned.
+The [capability map](Docs/Guides/CAPABILITY-MAP.md) says per product what you can make, what it does
+not do and the workaround (for organic objects such as creatures: generate the mesh, then clean and
+rig it with GraphCode). It also lists the registry's kinds and the status words: readable, writable,
+creatable, existing-only, conditional, unsupported and planned.
 
 ## One source, several kinds of proof
 

@@ -1,6 +1,6 @@
 """Install this directory as a Blender add-on, or use build-addon.py to make its ZIP."""
 bl_info = {
-    "name":"GraphCode Integrate", "author":"OraStudio", "version":(0,3,0),
+    "name":"GraphCode Integrate", "author":"GraphCode Sdn Bhd", "version":(0,3,0),
     "blender":(4,3,0), "location":"3D View / Shader Editor > Sidebar > GraphCode",
     "description":"Send Blender meshes and editable materials to Unreal through GraphCode",
     "category":"Material",

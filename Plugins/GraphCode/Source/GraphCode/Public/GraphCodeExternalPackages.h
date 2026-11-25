@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // WHAT ONE WRITE MUST SAVE ON A MAP WHOSE ACTORS ARE NOT IN IT — `GC-WORLD-PARTITION-DESIGN.md` §7
 // rows 1a/1b. The measurements are `GC-WORLD-PARTITION-AUDIT.md` §2.2 and §2.2a.

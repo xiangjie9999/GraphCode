@@ -1,11 +1,12 @@
 {
   "FileVersion": 3,
   "Version": 1,
-  "VersionName": "0.1.14",
+  "VersionName": "0.1.15",
   "FriendlyName": "GraphCode Shape",
   "Description": "Shapes made from nothing — a .gcshape declares an intent and builds a mesh asset from it.",
   "Category": "Editor",
-  "CreatedBy": "OraStudio",
+  "CreatedBy": "GraphCode Sdn Bhd",
+  "CreatedByURL": "https://graphcode.dev",
   "CanContainContent": true,
   "IsBetaVersion": true,
   "Modules": [

@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // DID THIS ACTOR MOVE SINCE THE LAST SAVE? — `GC-WORLD-GENERATION-DESIGN.md` §13.6, the witness
 // half of the `Reflect` hook.

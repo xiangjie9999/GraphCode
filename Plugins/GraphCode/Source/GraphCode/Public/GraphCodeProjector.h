@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/Blueprint.h"
 #include "GraphCodeProducts.h"
 #include "GraphCodeSidecarWriter.h"
 

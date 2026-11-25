@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // The GraphCode Market client (Docs/GC-MARKET-DESIGN.md R7-R12, §3, §5, §9). ONE client, two faces: the
 // editor tab and the `gc_market` MCP verb both call this and neither has logic of its own (R9).

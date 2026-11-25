@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person turns while walking.
-
 # Human movement: turning while walking
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person turns while walking.
 
 This guide says how a person changes direction while walking: which foot strategy, how often, and in what order the
 eyes, head, shoulders, pelvis and feet move. It gives timings and distances. Walking itself, with its foot rolls and

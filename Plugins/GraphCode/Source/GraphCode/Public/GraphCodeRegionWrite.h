@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // WRITING A `.gcw` — `GC-SPATIAL-AUTHORING-DESIGN.md` §21, task R5.
 //

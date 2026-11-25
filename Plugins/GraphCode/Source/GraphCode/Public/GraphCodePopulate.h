@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // The `populate { }` block — WHAT FILLS A PLACE, `GC-TERRAIN-DESIGN.md` §12a.3.
 //

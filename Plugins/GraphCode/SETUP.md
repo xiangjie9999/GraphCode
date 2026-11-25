@@ -2,7 +2,7 @@
 
 *Customer setup seed. This file ships with the plugin and is read in the customer's project.*
 
-`setup-revision: 15`
+`setup-revision: 16`
 
 <sub>That number changes only when this document changes in a way that makes a project's existing docs
 wrong — a new product, a renamed verb, a changed default. A project records the revision it was set up
@@ -26,17 +26,11 @@ route into the project's agent guide. Resolve each still-ambiguous step and reco
 and success check before spending production effort on it. Continue already authorized
 implementation after planning.
 
-For Shape work, carry the [asset quality guide](Docs/Guides/ASSET-QUALITY.md) into that route:
-prepare dedicated part reference images when the whole-object concept cannot explain construction
-or assembly, and choose each `add` join deliberately. `join=none` is not a universal default.
-
-For all game content and presentation, teach the quality guide's default: exceed minimum detail with purposeful
-craft that fits the whole aesthetic of the theme, unless the owner explicitly requests simplicity.
-Straight edges and simple geometry, including bare spheres, require an explicit design reason.
-Repeatedly render, inspect, repair and re-render every seam, connection and detail, and judge the
-whole asset in context. Carry this rule and the guide link into the project's agent instructions.
-Apply the same standard to animation, VFX, UI, audio, cinematics and other media, using repeated
-playback, listening and interaction to verify every relevant phase, state and transition.
+For anything a player will see or hear, carry the [asset quality guide](Docs/Guides/ASSET-QUALITY.md) into
+the project's agent instructions: exceed minimum detail with purposeful craft that fits the theme (unless
+the owner asks for simplicity), choose each Shape `add` join deliberately (`join=none` is not a default),
+and render, inspect, repair and re-render every seam and detail. Verify animation, VFX, UI, audio and
+cinematics the same way, by repeated playback, listening and interaction.
 
 **If the task is a production game or polished vertical slice, read
 [the production workflow](Docs/Guides/PRODUCTION.md) before choosing the first build.** Preserve
@@ -69,14 +63,17 @@ where you work.
 
 ## 2. What is installed, and what each part is for
 
-GraphCode is a product line. **Core is required; the rest are optional and may not be here.** Ask
+GraphCode 0.1.15 supports Unreal Engine 5.7 and 5.8 (one download per engine). It is a product line.
+**Core is required; the rest are optional and may not be here.** Core, Shape and Integrate are free for
+personal use; the trial of every product lasts 21 days. What each product can and cannot do, with the
+workaround for each gap, is one page: [CAPABILITY-MAP.md](Docs/Guides/CAPABILITY-MAP.md). Ask
 `unreal_info` for the installed environment and `gc_describe` for the kind you intend to use. Never
 promise a capability from this table without checking the installed package and its tool help.
 
 | Product | Reach for it when you need to | Learn it by asking |
 |---|---|---|
 | **GraphCode** (Core, required) | author ordinary assets — Blueprints (including Gameplay Ability System assets), widgets, materials, data tables, input, structs and enums, the level and the actors in it | `gc_describe kind:` lists every kind it covers; `{help:true}` on each verb |
-| **GraphCode Shape** | make geometry from nothing. A `.gcshape` declares the intent — a wall, a column, a stair — and builds a real mesh asset from it. This is how you block out a level without sourcing a single model | the `.gcshape` grammar through `gc_describe`; `gc_apply` builds it |
+| **GraphCode Shape** | make geometry from nothing. A `.gcshape` declares the intent — a wall, a column, a stair — and builds a real mesh asset from it. This is how you block out a level without sourcing a single model. Sculpted organic forms (creatures, characters) are not its strength: generate and clean them instead (step 2b) | the `.gcshape` grammar through `gc_describe`; `gc_apply` builds it |
 | **GraphCode World** | levels at scale — the places somebody named, terrain, water, foliage, PCG, navigation. Owns the `.gcw` region file beside a level and the `.gcs` spatial file | `gcw_ask {help:true}` for spatial questions; `gc_describe` for the world kinds |
 | **GraphCode Move** | anything that happens over time — animation, state machines, sequences, Niagara, and the AI graphs that decide and drive motion | `gc_describe kind:` for its kinds |
 | **GraphCode Play** | the game while it is running. Capture the live world to a `.gcp`, start and drive a session, watch what it actually did. **This is how you play-test what you built** | `gc_play {help:true}` |
@@ -93,15 +90,12 @@ and ordinary assets are Core; World adds spatial and environmental authoring. As
 tools which parts of each product are available before making a promise. The [authoring
 guide](Docs/Guides/AUTHORING.md) explains the workflow and visual checks for each product.
 
-**For Blender imports, use Integrate for static meshes, their materials and managed reimport.**
-Assembly belongs in GraphCode: do not join or union character parts in Blender as a replacement
-for a `.gcshape` assembly. Blender may inspect or prepare individual source assets. Follow
-[organic part assembly](Docs/Guides/ORGANIC-PART-ASSEMBLY.md) for sockets, bands and imported parts.
-The AI handles downloads, installation, configuration and verification using
-[Blender setup](Docs/Guides/BLENDER-SETUP.md); handing the user a ZIP or menu checklist does not
-complete the task. Carry that setup link and the [Blender import route](Docs/Guides/AUTHORING.md#integrate-bring-an-external-source-across-a-boundary)
-into the project's agent guide, including for BlenderKit sources. Check Integrate availability
-and its conversion report before choosing a fallback.
+**For Blender imports, use Integrate** for static meshes, their materials and managed reimport; assembly
+belongs in GraphCode, never in Blender ([organic part assembly](Docs/Guides/ORGANIC-PART-ASSEMBLY.md)).
+The AI does the downloads, installation, configuration and verification itself with
+[Blender setup](Docs/Guides/BLENDER-SETUP.md); handing the user a ZIP or a menu checklist does not
+complete the task. Carry that link and the [import route](Docs/Guides/AUTHORING.md#integrate-bring-an-external-source-across-a-boundary)
+into the project's agent guide, BlenderKit sources included.
 
 For native Landscape brushes, see [the native terrain guide](Docs/Guides/NATIVE-TERRAIN.md).
 Water, PCG, MetaHuman (including Chaos Cloth and Chaos Outfit), MVVM and MetaSound are optional
@@ -213,7 +207,7 @@ write.
 
 # Part B — the setup run
 
-Eight main steps, with GraphCode activation at step 2a. Steps 1 and 2 always happen. How heavy
+Nine main steps, with GraphCode activation at step 2a and the capability briefing at 2b. Steps 1 and 2 always happen. How heavy
 the rest are depends on the answer to step 2.
 
 **How to ask, throughout: one question at a time.** Where your harness has a native multiple-choice
@@ -237,6 +231,7 @@ Put it at the top of the project's own routing doc, where it is read at the star
 - [ ] Looked at the project — what is here already
 - [ ] Involvement level agreed
 - [ ] GraphCode activated on this PC — status: not checked
+- [ ] Told what GraphCode can and cannot do (CAPABILITY-MAP.md)
 - [ ] Project questions answered — what we are making, how serious, how big
 - [ ] Assets: where content may come from
 - [ ] Sidecars: on or off
@@ -329,43 +324,72 @@ step 6, which is where the decision goes once it is made, so it is made once.
 
 ## Step 2a — Activate GraphCode on this PC
 
-Before it writes, `unreal_gc_apply` checks one file for this Windows user:
-`%USERPROFILE%\.graphcode\activation.txt`, outside every project (Apply creates it when it is
-missing). Not under `AppData`: Windows gives a packaged AI app its own private copy of `AppData`,
-which the editor cannot see. Until it is filled in, Apply does not run, and its reply names the next step. You fill it
-in for the person:
+GraphCode 0.1.15 runs on Unreal Engine 5.7 and 5.8. Core, Shape and Integrate are free for personal use;
+the trial of every product lasts 21 days. Before it writes, `unreal_gc_apply` checks one file for this
+Windows user: `%USERPROFILE%\.graphcode\activation.txt`, outside every project (Apply creates it when it
+is missing). Not under `AppData`: Windows gives a packaged AI app its own private copy of `AppData`, which
+the editor cannot see. Until it is filled in, Apply does not run, and its reply names the next step. You
+fill it in for the person:
 
-**The licence comes with this file already filled in.** Ask the person for it first — it is usually
-in their downloads as `graphcode-activation-<their-email>.txt`, sent with the GraphCode folder. Save
-it as `%USERPROFILE%\.graphcode\activation.txt`, replacing whatever is there, and activation is done:
-there is nothing to type and nothing to guess. Then run the Apply again.
+**A licence comes with this file already filled in.** Ask the person for it first — it is usually in
+their downloads as `graphcode-activation-<their-email>.txt`, sent with the GraphCode folder. Save it as
+`%USERPROFILE%\.graphcode\activation.txt`, replacing whatever is there, and activation is done: there is
+nothing to type and nothing to guess. Then run the Apply again.
 
-Only if they cannot find it, fill the three lines in yourself. **All three come from the licence, and
+Only if they cannot find it, fill the lines in yourself. **They come from the licence or the person, and
 none of them can be worked out** — never guess any from OS accounts, repositories or other files:
 
-1. **Email.** The address the licence was sold to: `email = <their email>`.
-2. **Activation code.** The licence's own code, four groups of four like `XXXX-XXXX-XXXX-XXXX`:
-   `code = <their code>`. It is used once, to register this PC. A free trial has no code — leave the
-   line empty. (Before 2026-10-25 this was the constant `000000`; that is now always refused.)
-3. **Licence server.** The address the licence came with: `server = <https address>`. **This is the
-   one an AI most often leaves out, and it cannot be derived from anything on the machine.** Without
-   it Apply refuses with "there is no licence server to ask", however correct the other two lines are.
+1. **Email.** The address the licence was sold to, or the one for the trial: `email = <their email>`.
+2. **Activation code.** A paid licence's own code, four groups of four like `XXXX-XXXX-XXXX-XXXX`:
+   `code = <their code>`. It is used once, to register this PC. **A trial starts with the line empty:**
+   the first Apply is held while GraphCode emails a code to the address (from `noreply@graphcode.dev`);
+   the person gives you that code, you put it in the `code =` line, and the trial starts. It works once,
+   on this PC, for 15 minutes; if it ran out, run the Apply again for a new one.
+3. **Licence server.** The address the licence came with: `server = <https address>`. **This is the one an
+   AI most often leaves out, and it cannot be derived from anything on the machine.** Without it Apply
+   refuses with "there is no licence server to ask", however correct the other lines are. For a trial it
+   is `https://rlzbzhcrwvdxoriwgajn.supabase.co/functions/v1/gc-license-device`.
 4. **Run the Apply again.** Apply's reply is the only explanation GraphCode gives for an activation
    refusal; follow what it says.
 
 In the checklist, record `activated` and the date. Keep the email and code out of project docs and
 commits: the file belongs to this Windows user, not to the project.
 
-**If they want to sign out or remove this PC later:** inspect installed help again and use the
-supported action only. Explain which action exists before obtaining their explicit confirmation.
-Local sign-out clears the local session, cached permits and remembered contact; it does not delete
-projects or establish remote removal. Removing this PC withdraws its approval for the selected
-licence and keeps its protected PC identity and original trial history. Never delete identity data
-to reset a trial or silently register/approve the PC again. If these controls are unavailable, say
-so and use only an existing support/recovery route; do not invent a button or claim removal worked.
-An offline or failed request cannot confirm server revocation. Existing authoring permits and the
-fixed fifteen-minute reservation can last until their original deadline: sign-out or removal does
-not free that window early. Report the confirmed waiting deadline when available.
+**Activation happens once.** The first Apply after the file is filled in activates this PC online; from
+then on GraphCode works offline and sends nothing over the network. A paid licence stays active; a trial
+ends 21 days after it starts, and then Core, Shape and Integrate keep working free for personal use while
+the other products need a licence. One trial per email and one per PC.
+
+**One PC at a time. To move the licence to another PC,** deactivate it on this one first — only at the
+person's explicit word, because this PC then stops writing: add the line `deactivate = yes` to
+`activation.txt` and run any Apply. That Apply does not run; it signs this PC out (it needs the network
+once), deletes this PC's GraphCode key so that activation can never write again, and its reply says
+whether the licence was freed. Then activate the other PC with the same lines. While `deactivate = yes`
+stays, this PC writes nothing and never re-activates by itself; removing the line activates it again,
+which needs the licence to be free. If the old PC cannot be reached (dead, lost, sold), the licence's
+activation code, or a one-time code GraphCode mails to the licence's email, moves it to the new PC
+instead. Never delete identity data to reset a trial; if a refusal is unclear, use the support route it
+names, or write to admin@graphcode.dev.
+
+## Step 2b — Say what GraphCode can and cannot do
+
+Before the questions, give the person the honest shape of the product, in a few lines of their own
+project's terms, from [CAPABILITY-MAP.md](Docs/Guides/CAPABILITY-MAP.md) — the one page for what each
+product makes, what it does not do, and the workaround. Read it now; do not summarise it from memory.
+The gaps people meet most:
+
+- **Organic objects** (creatures, characters, sculpted organic forms) are not Shape's strength. The
+  workaround: generate the mesh with an AI image or text-to-3D model, then clean it with the Market guide
+  **GraphCode/CleanGeneratedMesh**, rig it with `.gcrig` and animate it with `.gcmove`.
+- **Textures, voices and music** come from outside (an image generator, ElevenLabs, recordings); GraphCode
+  imports and wires them.
+- **Blender** sends static meshes and materials; skeletons and animation are rebuilt or imported another way.
+- **Caves and overhangs** are geometry, not terrain height.
+- **Whether a game is fun** is theirs to judge; Play supplies the evidence.
+
+Record any gap that matters to this project in the design docs of step 6, with its workaround, so nobody
+rediscovers it.
+
 
 ## Step 3 — Ask the gaps, one at a time
 
@@ -593,7 +617,7 @@ finished — name it rather than handing back a project that looks done.
 
 ```ini
 [GraphCodeSetup]
-Revision=14
+Revision=16
 Date=<YYYY-MM-DD>
 ```
 
@@ -638,8 +662,9 @@ content in the file read when the subject comes up.
 | work where somebody else is working in the same project | [`Docs/Guides/TEAM.md`](Docs/Guides/TEAM.md) |
 | choose the right tool and finish its verification loop | [`Docs/Guides/TOOLS.md`](Docs/Guides/TOOLS.md) — then `{help:true}` on the chosen verb |
 | arrive cold and find the smallest route through the product | [`Docs/Guides/AI-COLD-START.md`](Docs/Guides/AI-COLD-START.md) |
-| map product ownership, documents and current capability states | [`Docs/Guides/CAPABILITY-MAP.md`](Docs/Guides/CAPABILITY-MAP.md) |
+| know what GraphCode can and cannot do, the workaround for each gap, and which product owns which document | [`Docs/Guides/CAPABILITY-MAP.md`](Docs/Guides/CAPABILITY-MAP.md) — read it at step 2b |
 | build with Shape, World, Move, Play, Rig, Groom, Garment or Human | [`Docs/Guides/AUTHORING.md`](Docs/Guides/AUTHORING.md); then read the matching focused guide |
+| clean a generated 3D model (organic objects: creatures, characters) | Market guide `GraphCode/CleanGeneratedMesh` (`unreal_gc_market`), then [`Docs/Guides/CAPABILITY-MAP.md`](Docs/Guides/CAPABILITY-MAP.md#organic-objects-and-characters-the-generated-model-route) |
 | generate a 3D model by part and combine prepared organic connections | [`Docs/Guides/ORGANIC-PART-ASSEMBLY.md`](Docs/Guides/ORGANIC-PART-ASSEMBLY.md) |
 | combine Human, MetaHuman, Rig, body animation and facial animation | [`Docs/Guides/CHARACTERS.md`](Docs/Guides/CHARACTERS.md) |
 | learn from recurring authoring, visual, runtime and recovery failures | [`Docs/Guides/LESSONS.md`](Docs/Guides/LESSONS.md) |
@@ -682,10 +707,15 @@ When you finish, raise the stamp in `Config/GraphCodeSetup.ini` to this file's c
 
 What each revision changed, so a re-run knows what the project's docs are missing:
 
-- **15 (2026-10-20): activation is a file Apply checks.** Step 2a now fills
-  `%USERPROFILE%\.graphcode\activation.txt` for the person (first shipped as
-  `%LOCALAPPDATA%\GraphCode\`, superseded the same day; projects never recorded the path): ask for their email, write
-  `code = 000000` while email verification is not live, and follow Apply's reply when it refuses.
+- **16 (2026-11-25): release 0.1.15 facts, and the capability page.** GraphCode 0.1.15 supports Unreal
+  Engine 5.7 and 5.8 (one download per engine). The trial lasts 21 days; Core, Shape and Integrate are
+  free for personal use. Contact is admin@graphcode.dev. New step 2b: tell the person what GraphCode can
+  and cannot do, and the workaround for each gap, from `Docs/Guides/CAPABILITY-MAP.md`. Add its route to
+  the project's agent guide and the matching checklist line. Activation: a trial needs only an email; the
+  first change emails a code that goes in the `code =` line (revision 15's `code = 000000` is gone).
+- **15 (2026-10-20): activation is a file Apply checks.** Step 2a fills
+  `%USERPROFILE%\.graphcode\activation.txt` for the person (first shipped as `%LOCALAPPDATA%\GraphCode\`,
+  superseded the same day; projects never recorded the path) and follows Apply's reply when it refuses.
   Replace any recorded "unsupported — activation unavailable" status; keep email and code out of
   project docs.
 - **14 (2026-10-18): customer-access status without collecting credentials.** Add the step 2a

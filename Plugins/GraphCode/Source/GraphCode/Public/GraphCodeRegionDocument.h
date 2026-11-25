@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // WHERE A LEVEL'S `.gcw` IS — `GC-SPATIAL-AUTHORING-DESIGN.md` §21, tasks R2 and R4.
 //

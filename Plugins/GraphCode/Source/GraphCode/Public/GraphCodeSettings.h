@@ -332,7 +332,7 @@ public:
 	 */
 	UPROPERTY(Config, EditAnywhere, Category="Local history",
 		meta=(ClampMin="0", ClampMax="65536", DisplayName="Local history budget, whole project (MB)"))
-	int32 LocalHistoryBudgetMegabytes = 256;
+	int32 LocalHistoryBudgetMegabytes = 2048; // 2 GB (owner, 2026-11-24); was 256
 
 	/**
 	 * Say on screen when a save regenerated a `.gc` that no longer matched its own `sig:`. E6.6.
@@ -354,7 +354,7 @@ public:
 	 * other workflow: an agent that writes a `.gc` and then applies it leaves the file briefly out
 	 * of step with its own `sig:`, so in a project authored that way the notice fires all day about
 	 * text nothing lost — which is how a warning stops being read. User-directed 2026-09-02.
-	 * OraStudio turns it off in `Config/DefaultGraphCode.ini`, where the rest of its preferences are.
+	 * Our development project turns it off in `Config/DefaultGraphCode.ini`, where the rest of its preferences are.
 	 */
 	UPROPERTY(Config, EditAnywhere, Category="Notifications",
 		meta=(DisplayName="Warn when a save regenerates over an edited .gc"))

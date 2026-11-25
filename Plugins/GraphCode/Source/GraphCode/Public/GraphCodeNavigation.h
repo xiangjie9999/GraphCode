@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // Navigation's WORLD half — `GC-NAVIGATION-DESIGN.md` §0 ruling 1, task N1.
 //

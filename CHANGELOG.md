@@ -4,6 +4,20 @@ Each release is published on the [Releases](https://github.com/xiangjie9999/Grap
 signed manifest, signature and archive. The editor offers new releases itself. Longer notes with pictures:
 [graphcode.dev/whats-new](https://graphcode.dev/whats-new). All releases are for Unreal Engine 5.7.4, Win64.
 
+## 0.1.15 (25 November 2026)
+
+- **Unreal Engine 5.8 support.** GraphCode now ships one download per engine: pick the package for Unreal 5.7 or Unreal 5.8. The in-editor updater offers each editor the build for its own engine.
+- **21-day trial** of all ten products (was 14 days), still started with just your email.
+- **Works offline after activation.** Activate once online; after that a licence keeps working without a connection.
+- **Move:** an `[over]` modifier for layering a part over a motion; a limb that starts inside the body is turned out on the first frame (with a warning, never a refusal); optional own-face collision (`gc.Move.FaceCollision`).
+- **Market:** showcase photos get their own slides in the Market tab.
+- **Privacy:** every GraphCode request now identifies itself only as `GraphCode`; the project name, engine build and OS are no longer sent.
+- **Docs:** a new "what GraphCode can and can't do" page with a workaround for each limit (organic shapes: generate the mesh with an AI model, then clean, rig and animate it in GraphCode), a refreshed setup guide and one organised guide index.
+- **Contact:** admin@graphcode.dev.
+
+Archive SHA-256: `b866e51ce6973d93b0a1fba87bb2075dca3ed62b41df709898ffd928997f259c` (132,140,192 bytes),
+signed by `release-backup-1`.
+
 ## 0.1.14 (23 November 2026)
 
 - **Move:** hold a sword or any handle firmly from three posed values (new guide HOLDING-A-SWORD and a SwordGrip example); faster balance builds and quicker collision checks; the motion-from-video tools now ship inside Move.

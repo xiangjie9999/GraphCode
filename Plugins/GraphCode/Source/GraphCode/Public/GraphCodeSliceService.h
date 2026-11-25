@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // The live/file boundary for spatial tracking. The pure language remains in SliceGenerator.
 

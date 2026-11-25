@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // The two read routes — `GC-SPATIAL-AUTHORING-DESIGN.md` §14.2 and §14.6, task Z2.
 //

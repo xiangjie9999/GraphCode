@@ -240,8 +240,8 @@ off the head.
 ## Human eyebrows example
 
 `Content/__MCPTests/GroomMetaHuman/MH_Brows.gcgroom` (Unreal path `/Game/__MCPTests/GroomMetaHuman/MH_Brows`)
-grows both brows on a MetaHuman character, so any MetaHuman can wear its binding `GB_MH_Brows`. It is an
-OraStudio project fixture. Its research, with sources, is `Docs/Research/human-eyebrow-construction.md`.
+grows both brows on a MetaHuman character, so any MetaHuman can wear its binding `GB_MH_Brows`. It is a
+GraphCode development-project fixture. Its research, with sources, is `Docs/Research/human-eyebrow-construction.md`.
 
 - **Place the brow by the face, then measure it.** The head sits above the inner eye corner, the arch on
   the line from the nose wing through the pupil, the tail on the line from the nose wing through the
@@ -276,7 +276,7 @@ OraStudio project fixture. Its research, with sources, is `Docs/Research/human-e
   into wisps.
 - **Judge it close.** At a head-and-shoulders view a light brow reads as a soft band; check the pattern
   in a close-up of one brow, its flatness from the side and the tails from above (they must follow the
-  face's outline, not stand past it). Colour is the material's choice. In OraStudio the spec
+  face's outline, not stand past it). Colour is the material's choice. In GraphCode's development project the spec
   `GraphCode.Groom.Look.HumanBrows` builds the example and draws those views under `Saved/GroomBrows/`.
 - **A brow from a photo.** Trace its upper and lower edges against the photo's pupils, in units of the
   distance between them, and place them by the character's own pupils (its eye joints) at that scale;
@@ -286,12 +286,12 @@ OraStudio project fixture. Its research, with sources, is `Docs/Research/human-e
 
 ## British shorthair example: coat, whiskers and eyes
 
-OraStudio's British shorthair is a worked example of **Shape + Groom + materials**. The coat and
+GraphCode's British shorthair is a worked example of **Shape + Groom + materials**. The coat and
 whiskers are `.gcgroom` recipes; the eyes are material assets fitted through `.gcshape`. Use this
 composition as a reference for an animal, measuring its own skin and eye geometry first.
 
 The local example is under `Content/__MCPTests/GroomCat/BritishShorthairBare/` (Unreal path
-`/Game/__MCPTests/GroomCat/BritishShorthairBare/`). These are OraStudio project fixtures, not a
+`/Game/__MCPTests/GroomCat/BritishShorthairBare/`). These are GraphCode development-project fixtures, not a
 shipped preset or assets guaranteed to exist in a new project.
 
 | Read this example | What it demonstrates |
@@ -342,7 +342,7 @@ The reusable lessons are:
   The recorded result is static look development, not proof of animated binding, runtime cost or
   final user acceptance. The older `GrayCat` coat is a separate baseline on a different mesh.
 
-In the OraStudio repository, the fur evidence and remaining differences are in
+In GraphCode's development repository, the fur evidence and remaining differences are in
 `Docs/GC-GROOM-BRITISH-BLENDER-LOOKDEV.md`; the current eye/face asset map and superseded eye
 experiments are in `Docs/Design/Assets/BritishShorthair/FACE-MATERIALS.md`. Read those records before
 rebuilding the example; do not copy an older experiment merely because its filename says "final".

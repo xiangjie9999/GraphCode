@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person sits, stands, crouches, kneels and gets up from the floor.
-
 # Human movement: sit to stand, stand to sit, crouch, kneel and the floor
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person sits, stands, crouches, kneels and gets up from the floor.
 
 This guide says how a person gets up from a chair and sits down again, how deep a squat or a kneel goes, and how a
 person gets up off the floor. It gives phases, durations and joint angles. The GraphCode guides have no sit, squat or

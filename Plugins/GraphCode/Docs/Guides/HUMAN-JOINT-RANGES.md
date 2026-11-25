@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: how far each joint of a healthy adult goes, and how to type it into a rig.
-
 # Human movement: joint ranges, how far each joint really goes
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: how far each joint of a healthy adult goes, and how to type it into a rig.
 
 This guide gives the range of motion of every joint of a healthy adult, in degrees, with the study each number comes
 from. Use it to write the `range=`, `side=` and `twists=` of a `.gcrig`, and to judge whether a pose bends a joint

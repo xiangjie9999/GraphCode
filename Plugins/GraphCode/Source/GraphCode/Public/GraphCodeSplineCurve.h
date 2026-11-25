@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // A spline's curve, as a level document records it — `GC-WORLD-GENERATION-DESIGN.md` §12.10.
 //

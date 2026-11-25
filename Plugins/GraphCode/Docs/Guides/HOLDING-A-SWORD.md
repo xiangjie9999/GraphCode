@@ -1,8 +1,8 @@
 # Holding a sword (or any handle) firmly
 
-*Placed 20 Nov 2026 by the Move lead (owner: "so next time sword holding etc. will be made very fast"). Written from the work records in `Saved/Research/MOVE-PARAM1/`
-(GRIP-BY-VALUES, POWER-GRIP-NOTES, BLADE-DIR, CODER-NOTES-16, REVIEW-GRASP-DESIGN, ruling 114). Everything below is grammar the
-published build accepted when the PresetSlash keys were built (20 Nov; the three-pose method of section 2A on 21 Nov). What is not shipped says "not available yet".
+*How to make a hand hold a sword, or any handle, firmly and fast: the three-pose grip written by values.
+Everything below is grammar the published build accepted when the PresetSlash keys were built.
+What is not shipped says "not available yet".
 Route: [GCMOVE.md](GCMOVE.md) -> [HANDS.md](HANDS.md) "Holding on a MetaHuman body" -> this recipe.*
 
 Measured on the BlueEdge MetaHuman sword body, right hand. Copy [Examples/SwordGrip/SwordGrip.gcmove](../Examples/SwordGrip/SwordGrip.gcmove) into your file; the

@@ -319,7 +319,7 @@ joints {
 ## A twist range that follows the bone's elevation: `twists_raised=`
 
 A person turns the upper arm out further with the arm raised than with it hanging (outward 55-74 hanging, about 90 at the arm
-level, active, in clinical studies: `Docs/Research/shoulder-rotation-by-arm-elevation.md` in the OraStudio project). `twists=` is one pair
+level, active, in clinical studies: `Docs/Research/shoulder-rotation-by-arm-elevation.md` in the GraphCode development project). `twists=` is one pair
 for every arm position; `twists_raised=` is the same roll's pair with the bone LEVEL, 90 degrees up from the trunk's down:
 
 ```gcrig

@@ -1,6 +1,6 @@
-[Back to animation](ANIMATION.md)
-
 # Walk, breathe and act together
+
+[Back to animation](ANIMATION.md)
 
 Use Unreal's native Animation Blueprint to combine motions during gameplay. Walking with
 breathing is a normal example: the legs keep their walking rhythm while the chest follows

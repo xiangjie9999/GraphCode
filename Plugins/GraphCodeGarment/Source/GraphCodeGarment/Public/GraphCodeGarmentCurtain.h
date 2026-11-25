@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // A curtain's words (CLOTH-CURTAIN1 slice A1, Docs/GC-CLOTH-CURTAIN-DESIGN.md sections 5 and 9; the code plan
 // Saved/Research/CLOTH-CURTAIN1/SLICE-A-CODE-PLAN.md section 1 with the lead's decisions of its section 8):

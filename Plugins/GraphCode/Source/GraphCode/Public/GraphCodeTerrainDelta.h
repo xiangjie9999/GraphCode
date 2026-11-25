@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 //
 // Delta files — `GC-TERRAIN-DESIGN.md` §6 and row L4. The blob a `sculpt(source=file'…')` reads,
 // the map that turns it into centimetres, and the hash that says which ground it was cut from.

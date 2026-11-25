@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // The authored-region kernel — `GC-SPATIAL-AUTHORING-DESIGN.md` §21, task R0.
 //

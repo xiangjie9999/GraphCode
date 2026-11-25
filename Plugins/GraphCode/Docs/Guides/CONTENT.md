@@ -26,9 +26,12 @@ and ImageGen for textures and motif artwork. Keep simple or naturally parametric
 Trace or redraw generated raster motifs into clean SVG paths before using them as Shape outlines.
 Keep editable sources and verify the final material bake and texture budget.
 
-**User direction, 8 October 2026: Tripo and other generative 3D model approaches are retired for
-unreliability.** Use native construction, SVG and controlled brush operations for authored forms.
-The [earlier Tripo guide](TRIPO3D.md) is retained as superseded history.
+**Authored forms** (props, architecture, hard-surface, kits) are built with native construction, SVG and
+controlled brush operations. **Organic forms** (creatures, characters, sculpted shapes) are the exception:
+generate the mesh with an AI image- or text-to-3D model, import it, clean it with the Market guide
+`CleanGeneratedMesh`, then rig and animate it with GraphCode (owner, 25 November 2026; this replaces the
+8 October 2026 retirement of generated models). The route is in [CAPABILITY-MAP.md](CAPABILITY-MAP.md);
+the [earlier Tripo guide](../Historical/TRIPO3D.md) records one service's details.
 
 For game UI, use [UI-UX.md](UI-UX.md) for the design and [UI-TOOLS.md](UI-TOOLS.md) for external
 prototypes, image generation through available tools or service APIs, editable vector/raster

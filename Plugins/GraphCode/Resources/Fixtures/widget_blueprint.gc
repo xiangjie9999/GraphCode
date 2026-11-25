@@ -1,7 +1,7 @@
 gc 1  kind:widget_blueprint  asset:/Game/UI/WBP_FixtureScreen  sig:3f9a1c7e  bin:9c4e17ab
 parent: /Script/UMG.UserWidget
 omits: components cdo_defaults timelines delegate_signatures
-source: OraStudio 5.7.4  ir: widgetir/2 blueprintir/2
+source: MyGame 5.7.4  ir: widgetir/2 blueprintir/2
 
 defaults {
   replicated = false

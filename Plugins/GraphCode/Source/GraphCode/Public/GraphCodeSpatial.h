@@ -1,4 +1,4 @@
-// Copyright OraStudio. All Rights Reserved.
+// Copyright GraphCode Sdn Bhd. All Rights Reserved.
 
 // The spatial kernel — `GC-SPATIAL-AUTHORING-DESIGN.md` §14, task Z0.
 //

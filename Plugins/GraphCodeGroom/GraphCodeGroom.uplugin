@@ -1,11 +1,12 @@
 {
   "FileVersion": 3,
   "Version": 1,
-  "VersionName": "0.1.14",
+  "VersionName": "0.1.15",
   "FriendlyName": "GraphCode Groom",
   "Description": "Declarative .gcgroom hair authoring, native Groom publication and Groom asset projection.",
   "Category": "Editor",
-  "CreatedBy": "OraStudio",
+  "CreatedBy": "GraphCode Sdn Bhd",
+  "CreatedByURL": "https://graphcode.dev",
   "CanContainContent": true,
   "IsBetaVersion": true,
   "Modules": [

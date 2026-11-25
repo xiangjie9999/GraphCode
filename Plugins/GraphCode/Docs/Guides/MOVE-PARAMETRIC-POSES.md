@@ -601,6 +601,28 @@ The claw is also two files today. The keys (`ZombieClawV4_Keys.gcmove`) build fi
 back with `pose(source=/Game/.../A_ZCV4_Contact, from=reference)`. The keys must be built first: a cut whose source clip is not
 built is refused (`$K0: source=/Game/__MCPTests/Param1/Docs/A_NoSuchKey must name a native AnimSequence with animation data`).
 
+### A part takes over: `[over]` (25 Nov 2026)
+
+The owner asked for "a way to declare what part to use/override? Like how to blend pose". A pose reference written with `[over]`
+takes the parts it poses from what the same pose's earlier lines gave them, and leaves every other part as they were:
+
+```gcmove
+Key = pose(from=reference) {
+  $Fighter
+  $Punch(angle=0, travel=1, right=false) [over]
+}
+```
+
+- It is entered from the reference, as a `pose(from=reference)` is: each earlier line on the bones it moves gives way by its
+  weight, so at 100% it replaces and `$Block@50% [over]` blends half and half.
+- An earlier hold of a chain it holds (an arm preset's aim) gives way to its own, where without `[over]` two aims on one chain
+  in one pose are refused ("a chain has one goal"). The build says what gave way.
+- Two arm presets on DIFFERENT arms need no `[over]`: each sided preset writes only its own side (a right punch and a left block).
+- A hold is one goal and does not blend: at `@50%` the earlier aim is replaced whole while the swings blend. Bones the `[over]` pose
+  does not move keep what the earlier lines gave them (an earlier shrug the punch does not write stays).
+- A `pose(from=reference)` called later in a pose takes over the same way (it was refused as two goals before 25 Nov). Two presets
+  of one use (two plain arm presets in one key) are still refused. Test: GraphCode.Move.Over.TakesThePart.
+
 ## 6. A pose back to preset values, and bone overrides
 
 A key you already have (built from reaches and plants, a frame of an animation, a key of direct lines) can be written again as

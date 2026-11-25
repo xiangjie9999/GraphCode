@@ -13,7 +13,7 @@ native and separate (§9).
 
 **Set up one character:**
 
-1. Copy [Examples/MetaHumanBody.gcrig](Examples/MetaHumanBody.gcrig) into your project, for example to `Content/Rig/MetaHumanBody.gcrig`. It contains no mesh or positions. In OraStudio, reuse the installed `/Game/GraphCode/Rig/MetaHumanBody` as `parent:` instead of making another copy. Keep character-specific changes in the child so updates to the shared map carry through.
+1. Copy [Examples/MetaHumanBody.gcrig](Examples/MetaHumanBody.gcrig) into your project, for example to `Content/Rig/MetaHumanBody.gcrig`. It contains no mesh or positions. In GraphCode's development project, reuse the installed `/Game/GraphCode/Rig/MetaHumanBody` as `parent:` instead of making another copy. Keep character-specific changes in the child so updates to the shared map carry through.
 2. Next to it, write the character's file, `Content/Rig/AvaBody.gcrig`, with your own body mesh and folder:
 
    ```gcrig
@@ -89,7 +89,7 @@ to bake the result. There is no single automatic transfer-and-repair command.
 For named `smile`, `blink` and `jaw_open` controls, use the separate
 [FaceExpressions adapter](FACE-EXPRESSIONS.md) on `part:Face`; it does not rebuild the native face.
 
-**What choosing a MetaHuman does not give you yet** (each is in the OraStudio project's
+**What choosing a MetaHuman does not give you yet** (each is in GraphCode's development project's
 `Content/GraphCodeExamples/BlueEdge_20261013/BUILD.md`, "THE WORK", with its fix):
 
 - **A palm carrier bone** for a held thing to ride (HANDS.md): a bone is a mesh change, so it goes in the character's file

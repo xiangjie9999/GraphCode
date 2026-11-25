@@ -1,6 +1,6 @@
-[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person jumps and lands.
-
 # Human movement: jumping and landing
+
+[Human movement guides](HUMAN-MOVEMENT.md) · this page: how a person jumps and lands.
 
 This guide says what a body does in a standing jump: the dip, the push-off, the flight and the landing. It gives
 timings, joint angles, and how hard a landing is. How to build a jump clip in GraphCode is split across

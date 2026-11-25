@@ -1,11 +1,12 @@
 {
   "FileVersion": 3,
   "Version": 1,
-  "VersionName": "0.1.14",
+  "VersionName": "0.1.15",
   "FriendlyName": "GraphCode Play",
   "Description": "Runtime capture, restore and scenario play. Owns the .gcp format and the Blueprint nodes.",
   "Category": "Editor",
-  "CreatedBy": "OraStudio",
+  "CreatedBy": "GraphCode Sdn Bhd",
+  "CreatedByURL": "https://graphcode.dev",
   "CanContainContent": false,
   "IsBetaVersion": true,
   "Modules": [

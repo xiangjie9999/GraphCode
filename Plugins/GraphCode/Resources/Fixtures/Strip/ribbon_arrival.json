@@ -174,7 +174,7 @@
     {
       "id": "captured_native_ribbon_static_audit",
       "input": {
-        "path": "C:\\Users\\PC\\Documents\\Unreal Projects\\OraStudio\\Saved\\GarmentClothReview\\SolverResearch\\native\\ribbon_final_state.json",
+        "path": "Saved/GarmentClothReview/SolverResearch/native/ribbon_final_state.json",
         "sha256": "06ece2f9022274006ed9cc605ac8ebca7f6e8bdec3c28c2288b78877a289c315"
       },
       "expected": {
