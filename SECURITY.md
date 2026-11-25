@@ -2,7 +2,7 @@
 
 ## Reporting a problem
 
-Please **do not open a public issue** for a security problem. Email **support@graphcode.dev** with
+Please **do not open a public issue** for a security problem. Email **admin@graphcode.dev** with
 `Security` in the subject, or use GitHub's private vulnerability reporting on this repository.
 Include the GraphCode version, what you did, and what happened. We will acknowledge your report
 within [3] working days and keep you informed until it is fixed.

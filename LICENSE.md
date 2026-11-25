@@ -13,7 +13,7 @@ you agree on its behalf and confirm you may do so.
 
 ## 1. What you may do
 
-1. **Trial.** You may use every GraphCode product free for 14 days from the first activation on a
+1. **Trial.** You may use every GraphCode product free for 21 days from the first activation on a
    computer. One trial is available per email address and one per computer.
 2. **Free products.** You may use GraphCode Core, Shape and Integrate free for personal use, with no
    time limit, on one computer at a time.
@@ -91,4 +91,4 @@ ends, the content you made stays yours.
 rest still applies. This is the whole agreement about GraphCode between you and us; a written,
 signed agreement with a studio overrides it where the two differ.
 
-Contact: support@graphcode.dev
+Contact: admin@graphcode.dev

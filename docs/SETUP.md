@@ -4,7 +4,7 @@ From download to your AI building in your project: about 15 minutes. You do step
 PC (step 2 once per project); after that you just open Unreal and your AI client and ask.
 
 **At the end you will have:** your Unreal project open with the GraphCode plugins enabled, your AI
-client connected to that editor, the 14-day trial active, and your AI having looked at your project
+client connected to that editor, the 21-day trial active, and your AI having looked at your project
 and built a first thing in it.
 
 **You need:**
@@ -12,7 +12,7 @@ and built a first thing in it.
 | | |
 |---|---|
 | Windows | 64-bit (Windows 10 or 11). |
-| Unreal Engine | Exactly **5.7.4** (check **Help > About Unreal Editor**). Any project: Blueprint-only works. |
+| Unreal Engine | **5.7 or 5.8** (check **Help > About Unreal Editor**). Each engine has its own download; take the one that matches. Any project: Blueprint-only works. |
 | Not needed | A C++ compiler, Visual Studio, Node.js or Python. Everything ships precompiled. |
 | An AI client | One that supports MCP: Claude Code, Cursor, Claude Desktop, Codex, or any other MCP client, with your own subscription. |
 | An email | For the trial. No card. |
@@ -21,14 +21,14 @@ and built a first thing in it.
 
 ## 1. Download
 
-Download [`graphcode-0.1.14-win64.tar.xz`](https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.14/graphcode-0.1.14-win64.tar.xz) (132 MB), from the
-[latest release](https://github.com/xiangjie9999/GraphCode/releases/latest). Optionally, [check it is ours](STUDIOS.md#release-signing-and-keys)
+From the [latest release](https://github.com/xiangjie9999/GraphCode/releases/latest) download the
+`graphcode-0.1.15` package for your engine (5.7 or 5.8). Optionally, [check it is ours](STUDIOS.md#release-signing-and-keys)
 with `release.json` and `release.sig.json` from the same page.
 
-Unpack it (Windows has `tar` built in):
+Unpack it (Windows has `tar` built in; use the file name you downloaded):
 
 ```powershell
-mkdir GraphCode; tar -xf graphcode-0.1.14-win64.tar.xz -C GraphCode
+mkdir GraphCode; tar -xf <the-file-you-downloaded>.tar.xz -C GraphCode
 ```
 
 **You get:**
@@ -71,7 +71,7 @@ Copy-Item GraphCode\Plugins\* "C:\Path\To\YourProject\Plugins\" -Recurse
    Move, Geometry Scripting for Shape). Accept, then click **Restart Now**.
 
 **It worked if** the project reopens without errors and **Tools > GraphCode Market** is in the menu.
-If Unreal says modules are missing or were built for another version, your engine is not 5.7.4.
+If Unreal says modules are missing or were built for another version, you took the download for the other engine: use the one for your 5.7 or 5.8.
 
 Opening the project with GraphCode enabled also writes the file your AI client needs (step 5):
 `YourProject\Saved\UnrealAIBridge\mcp-config.json`. The **Output Log** shows its path in the line
@@ -80,7 +80,7 @@ Opening the project with GraphCode enabled also writes the file your AI client n
 ## 4. Start the trial
 
 The trial needs only your email: no card, no account. GraphCode emails you a code to confirm the email is yours,
-and the 14 days start when you use it.
+and the 21 days start when you use it.
 
 **Easiest:** once your AI is connected (step 5), send it this, with your own email:
 
@@ -118,9 +118,9 @@ One trial per email and one per PC. A new email on a PC that already had a trial
 (it confirms its email with an emailed code the same way). If you later move to another PC, GraphCode emails you a one-time
 code for that move.
 
-The trial is checked the first time your AI changes something, and the 14 days start then. Until then
+The trial is checked the first time your AI changes something, and the 21 days start then. Until then
 your AI can already read, search and render. There is no sign-in window: if anything is missing, the
-AI's first change is refused with a message that says what to do. When the 14 days end, Core, Shape and
+AI's first change is refused with a message that says what to do. When the 21 days end, Core, Shape and
 Integrate keep working, free for personal use, for ever; the other products need a licence.
 
 ## 5. Connect your AI client
@@ -187,13 +187,29 @@ What to expect each time: your AI says what it will change, makes the change, re
 check, and shows you the picture. Every change is saved as a version you can compare and restore
 (the **GraphCode** button in the status bar).
 
+## 8. What it can and cannot do
+
+[What GraphCode can build](PRODUCTS.md) lists each product's range. Every product also has limits, and
+each limit has a workaround. The page for that is `Plugins/GraphCode/Docs/Guides/CAPABILITY-MAP.md` in your
+project; your AI reads it during setup and applies it, and you can ask it: *"What can GraphCode not do for
+this game, and what do we do instead?"* The common ones:
+
+- **Creatures, characters and other sculpted organic forms** are not Shape's strength. Your AI generates the
+  mesh with an AI image or text-to-3D model, cleans it with the Market guide `CleanGeneratedMesh`, rigs it
+  with GraphCode Rig and animates it with Move.
+- **Textures, voices and music** are made with an image generator or audio service (or recorded), then
+  imported and wired by GraphCode.
+- **Blender** brings in static meshes and materials; skeletons and animation come another way.
+- **Caves and overhangs** are built as geometry; terrain height cannot form them.
+- **Whether the game is fun** is your call; GraphCode plays and records it for you to judge.
+
 ---
 
 ## If something goes wrong
 
 | What you see | What to do |
 |---|---|
-| Unreal: modules missing or built for another engine version | Use exactly Unreal Engine 5.7.4. |
+| Unreal: modules missing or built for another engine version | Use the download that matches your engine, 5.7 or 5.8. |
 | No `Saved\UnrealAIBridge\mcp-config.json` | Open the project once with the GraphCode plugin enabled; the Output Log shows the path. |
 | The AI client cannot start the server | Check the `command` path points at `graphcode-bridge.exe` in your project's `Plugins\GraphCode`. If you moved the project, open it again and copy the new file. |
 | *NOT CONNECTED* | Open the project in Unreal and keep it open; then ask again. |
@@ -204,5 +220,5 @@ check, and shows you the picture. Every change is saved as a version you can com
 | A licence refusal naming another PC | A licence runs on one PC at a time; the message says how to move it. |
 | *trial used* or *trial ended* | One trial per email and per PC. Core, Shape and Integrate keep working for free; for the other products get a licence at [graphcode.dev/pricing](https://graphcode.dev/pricing). |
 
-Still stuck: [open an issue](https://github.com/xiangjie9999/GraphCode/issues) or email support@graphcode.dev.
+Still stuck: [open an issue](https://github.com/xiangjie9999/GraphCode/issues) or email admin@graphcode.dev.
 Your AI can also read `Plugins/GraphCode/Docs/CONNECTING.md` and fix the connection itself.

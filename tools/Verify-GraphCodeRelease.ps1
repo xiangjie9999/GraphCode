@@ -135,5 +135,5 @@ if ($Folder) {
     }
 }
 
-if ($failed) { Write-Host "Do not install this download. Report it to support@graphcode.dev." -ForegroundColor Red; exit 1 }
+if ($failed) { Write-Host "Do not install this download. Report it to admin@graphcode.dev." -ForegroundColor Red; exit 1 }
 Write-Host "All checks passed: this is the GraphCode release we signed." -ForegroundColor Green

@@ -2,7 +2,7 @@
 
 The questions a technical director or security reviewer asks before letting a closed plugin into a
 team's editor, answered as plainly as we can. If something you need is missing, open an issue or
-write to support@graphcode.dev.
+write to admin@graphcode.dev.
 
 - [Decision facts](#decision-facts)
 - [Threat model: who can talk to the editor](#threat-model-who-can-talk-to-the-editor)
@@ -18,10 +18,10 @@ write to support@graphcode.dev.
 
 | | |
 |---|---|
-| Platform | Windows 64-bit, Unreal Engine 5.7.4 (build 47537391) only. A new engine version needs a matching release. |
+| Platform | Windows 64-bit, Unreal Engine 5.7.4 (build 47537391) or 5.8.4 (build 55116800): one download for each engine. A new engine version gets its own download. |
 | What you install | Precompiled editor plugins with public C++ headers and build rules. No implementation source. |
 | Code signing | Releases are signed with our own ES256 keys (see below). The DLLs and the bridge `.exe` are **not Authenticode-signed**, so SmartScreen or endpoint tools may ask about them. |
-| Licence | Per user, per product or all products, one PC at a time; a 14-day trial of everything first. [Pricing](https://graphcode.dev/pricing). |
+| Licence | Per user, per product or all products, one PC at a time; a 21-day trial of everything first. [Pricing](https://graphcode.dev/pricing). |
 | Network | Licence tokens before writes, an update check (can be switched off), Market downloads when used. No project content, no telemetry. [Full table](../README.md#trust-and-privacy). |
 | AI | GraphCode calls no AI provider. Your AI client does, with the provider you chose. MetaHuman rigging and assembly use Epic's services. |
 | Version control | Plain-text sidecars beside each asset, with any VCS. Git has a recommended setup and an optional three-way `.gc` merge driver; in Perforce, check files out before a write. |

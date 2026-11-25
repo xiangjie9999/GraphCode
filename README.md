@@ -3,8 +3,9 @@
 <p align="center"><b>Tell your AI what to build in Unreal Engine. It builds it, in your editor.</b></p>
 
 <p align="center">
-<a href="https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.14/graphcode-0.1.14-win64.tar.xz"><b>Download 0.1.14</b></a> ·
-<a href="docs/SETUP.md#4-start-the-trial"><b>Start the 14-day trial</b></a> ·
+<a href="https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.14/graphcode-0.1.14-ue5.7-win64.tar.xz"><b>Download 0.1.14 for UE 5.7</b></a> ·
+<a href="https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.14/graphcode-0.1.14-ue5.8-win64.tar.xz"><b>for UE 5.8</b></a> ·
+<a href="docs/SETUP.md#4-start-the-trial"><b>Start the 21-day trial</b></a> ·
 <a href="#what-your-ai-can-build">Capabilities</a> ·
 <a href="docs/SETUP.md"><b>Setup guide</b></a> ·
 <a href="#questions">FAQ</a> ·
@@ -25,11 +26,11 @@ relationship, eyes to check its work, and a history it can restore. [Why that ma
 
 | | |
 |---|---|
-| **Runs on** | Unreal Engine 5.7.4, Windows 64-bit. Blueprint-only projects work; no compiler needed. |
+| **Runs on** | Unreal Engine 5.7 and 5.8 (one download for each), Windows 64-bit. Blueprint-only projects work; no compiler needed. |
 | **Works with** | The AI you already use, through MCP: Claude Code, Codex, Cursor, Claude Desktop or any MCP client. |
 | **Includes** | Ten products in one package, a free Market of ready-made packs, and about 100 guides the AI reads as it works. |
 | **Setup** | About 15 minutes: copy the plugins in, connect your AI, ask it to set up your project. [The setup guide](docs/SETUP.md). |
-| **Try it** | 14 days of everything with just an email. No card. |
+| **Try it** | 21 days of everything with just an email. No card. |
 | **Then** | Core, Shape and Integrate stay free for personal use, for ever. The rest: a [one-time licence](https://graphcode.dev/pricing) per product or for all of them. |
 
 **[Skip to Get started](#get-started)** · [See what each product builds](#what-your-ai-can-build)
@@ -257,10 +258,11 @@ top of that foundation:
 
 ## Get started
 
-**You need:** Windows 64-bit, Unreal Engine **exactly 5.7.4**, and an AI client that supports MCP
+**You need:** Windows 64-bit, Unreal Engine **5.7 or 5.8**, and an AI client that supports MCP
 (Claude Code, Cursor, Claude Desktop, Codex or any other). No compiler, Visual Studio or Node.js.
 
-1. **Download** [`graphcode-0.1.14-win64.tar.xz`](https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.14/graphcode-0.1.14-win64.tar.xz) (one click; every release is on the
+1. **Download** the package for your engine: [`graphcode-0.1.14-ue5.7-win64.tar.xz`](https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.14/graphcode-0.1.14-ue5.7-win64.tar.xz) for Unreal 5.7 or
+   [`graphcode-0.1.14-ue5.8-win64.tar.xz`](https://github.com/xiangjie9999/GraphCode/releases/download/v0.1.14/graphcode-0.1.14-ue5.8-win64.tar.xz) for Unreal 5.8 (one click; every release is on the
    [Releases](https://github.com/xiangjie9999/GraphCode/releases) page) and unpack it.
 2. **Copy** the folders in its `Plugins` folder into your project's `Plugins` folder, open the project,
    tick the GraphCode plugins in **Edit > Plugins** and restart.
@@ -272,7 +274,7 @@ top of that foundation:
    > https://rlzbzhcrwvdxoriwgajn.supabase.co/functions/v1/gc-license-device
    > Then read Plugins/GraphCode/SETUP.md and set up this project for GraphCode.
 
-   GraphCode emails you a code (from noreply@graphcode.dev). Give it to your AI, and your 14-day trial starts.
+   GraphCode emails you a code (from noreply@graphcode.dev). Give it to your AI, and your 21-day trial starts.
 
    It reads your existing project first, asks how hands-on you want to be (for game, art, mechanics and sound separately), saves what you decide in your project, and builds a first thing so you see it working.
 
@@ -741,7 +743,7 @@ The full technical reference, for your AI and your team: [docs/REFERENCE.md](doc
 
 | | |
 |---|---|
-| **Trial** | 14 days of all ten products from the first sign-in on your PC. One trial per email and one per PC. No card. |
+| **Trial** | 21 days of all ten products from the first sign-in on your PC. One trial per email and one per PC. No card. |
 | **After the trial** | Core, Shape and Integrate keep building, free for personal use, for ever. The other products need a licence; everything you made stays, and the AI can still read and look. |
 | **Licence** | One-time purchase with no time limit, per product or all products, for individuals or per studio seat: [pricing](https://graphcode.dev/pricing). |
 | **Computers** | A licence works on one PC at a time; move it by signing the old PC out. |
@@ -836,12 +838,12 @@ server, so it needs a connection.
 
 <details><summary><b>Which Unreal versions and platforms?</b></summary>
 
-Unreal Engine 5.7.4 on Windows 64-bit. Each new engine version comes with a matching GraphCode release.
+Unreal Engine 5.7 and 5.8 on Windows 64-bit, one download for each engine. Each new engine version comes with a matching GraphCode download.
 </details>
 
-<details><summary><b>What happens when Unreal 5.8 comes out?</b></summary>
+<details><summary><b>What happens when a new Unreal version comes out?</b></summary>
 
-Each GraphCode release targets one exact engine build, and a new engine version comes with a matching GraphCode release. Until you move, nothing changes: updates never install without a person clicking, you can turn the automatic check off, and every release stays downloadable with its signature and checksums, so you can stay on the version that matches your engine.
+Each GraphCode download targets one engine build, and every release ships one download per supported engine (5.7 and 5.8 today); a new engine version gets its own download. Until you move, nothing changes: updates never install without a person clicking, you can turn the automatic check off, and every release stays downloadable with its signature and checksums, so you can stay on the version that matches your engine.
 </details>
 
 <details><summary><b>Does it work for a team?</b></summary>
@@ -860,6 +862,6 @@ Everything the AI made stays in your project.
 
 [Setup guide](docs/SETUP.md) · [Market packs and presets](docs/MARKET.md) · [Case studies and samples](docs/EXAMPLES.md) ·
 [For studios](docs/STUDIOS.md) · [Changelog](CHANGELOG.md) · [Licence agreement](LICENSE.md) ·
-[Issues](https://github.com/xiangjie9999/GraphCode/issues) · support@graphcode.dev
+[Issues](https://github.com/xiangjie9999/GraphCode/issues) · admin@graphcode.dev
 
 <sub>Unreal Engine is a trademark of Epic Games, Inc. GraphCode is independent and not affiliated with or endorsed by Epic Games.</sub>

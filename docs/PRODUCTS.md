@@ -1,6 +1,6 @@
 # What GraphCode can build
 
-Ten products in one package and one 14-day trial. You tell your AI what you want; with these it builds
+Ten products in one package and one 21-day trial. You tell your AI what you want; with these it builds
 it in Unreal Engine as ordinary assets in your project.
 
 ## GraphCode Core

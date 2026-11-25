@@ -3,7 +3,7 @@
 > **DRAFT for legal review, 23 November 2026.** Written from what the software actually sends.
 > Items in `[brackets]` are for the owner to complete.
 
-**Who we are:** [legal name and address of the GraphCode owner], contact support@graphcode.dev.
+**Who we are:** [legal name and address of the GraphCode owner], contact admin@graphcode.dev.
 
 ## The short version
 
@@ -40,7 +40,7 @@ receives one trial.
 ## Your choices and rights
 
 - You can switch off update checks in Project Settings > Plugins > GraphCode Updates.
-- You can ask us for a copy of your data, to correct it, or to delete it, at support@graphcode.dev.
+- You can ask us for a copy of your data, to correct it, or to delete it, at admin@graphcode.dev.
   Deleting licence records ends the licence on that email.
 - [Owner: add the rights statement for the jurisdictions you sell into, such as GDPR and UK GDPR.]
 
