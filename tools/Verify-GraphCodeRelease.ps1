@@ -11,11 +11,11 @@
   Nothing is sent anywhere and nothing is changed. PowerShell 7 or Windows PowerShell 5.1.
 
 .EXAMPLE
-  ./tools/Verify-GraphCodeRelease.ps1 -Archive ~/Downloads/graphcode-0.1.15-win64.tar.xz `
+  ./tools/Verify-GraphCodeRelease.ps1 -Archive ~/Downloads/graphcode-0.1.16-win64.tar.xz `
       -Manifest ~/Downloads/release.json -Signature ~/Downloads/release.sig.json
 
 .EXAMPLE
-  ./tools/Verify-GraphCodeRelease.ps1 -Archive .\graphcode-0.1.15-win64.tar.xz -Folder .\GraphCode-0.1.15
+  ./tools/Verify-GraphCodeRelease.ps1 -Archive .\graphcode-0.1.16-win64.tar.xz -Folder .\GraphCode-0.1.16
 #>
 [CmdletBinding()]
 param(

@@ -477,7 +477,8 @@ A_Claw = $FastestAt(poses=$Keys, at=$Contact1K, point=$MClaw, effort=270)
 ```
 
 - `pace=Preset.Even` (top in the middle), `Preset.FastStop` (top late, hard stop), `Preset.FastStart` (top early, long settle),
-  `Preset.Flat` (alone, no contact). Even and FastStop are peak 0.5 and 2/3; `peak=` writes any number.
+  `Preset.Flat` (alone, no contact). Even and FastStop are peak 0.5 and 2/3; `peak=` writes any number. Beside a list it
+  is written per stretch but read per STAGE: a stage has one top, placed by the first of its stretches written off 0.5.
 - `seconds=` times by length: the first line lasted 0.315 s, the second 0.450 s and its note said `seconds=0.45: needs 129.2% effort`. Write one of the two.
 - `FastestAt` is in the library (`presets:/GraphCodeMove/Presets/Human/HumanBody`): one effort across, the point fastest at `at=`, a stop curve
   (`stop=`). It gave the same timing as the first line. A refusal inside it (`at=` the last pose) names the library's line, not yours.
@@ -735,7 +736,7 @@ face's keys can land on the body's poses as the body's build times them (`body:`
 - Trailing of a loose part (a tail, a cloth, hair) on a list of built keys: a `follow=` line beside the list builds, but it
   takes that part out of the travel, so it does not trail.
 - A part starting before another by a word under a list: `[phase=]` is refused beside a list. `stagger=` still works inside the
-  strike's stage.
+  strike's stage, or, with no strike, in the stretch into the pose its `into=` names (`stagger=(into=$Reach, pelvis=0.25, arm_r=-0.1)`).
 - An effort on an aimed preset (one that works by `aim(...)`, as every arm and leg said by direction does). Do not use one. It
   is not refused, but it is timed by the collar bones alone, a few degrees, so the time is wrong. Time the move as a built key
   (a pose of joint turns) instead, or time the list of poses.

@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
   "Version": 1,
-  "VersionName": "0.1.15",
+  "VersionName": "0.1.16",
   "FriendlyName": "GraphCode Move",
   "Description": "Animation, state machines and the AI graphs that decide and drive motion.",
   "Category": "Editor",

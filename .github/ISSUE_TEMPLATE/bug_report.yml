@@ -6,7 +6,7 @@ body:
     id: version
     attributes:
       label: GraphCode version and engine
-      description: From BUNDLE-MANIFEST.json or `unreal_info`, e.g. "0.1.15, UE 5.7.4".
+      description: From BUNDLE-MANIFEST.json or `unreal_info`, e.g. "0.1.16, UE 5.7.4".
     validations:
       required: true
   - type: textarea

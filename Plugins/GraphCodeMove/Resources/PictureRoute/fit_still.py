@@ -140,8 +140,15 @@ def fit_free(model, peaks, size, **kw):
     return (got[0],) + tuple(got[1][0])
 
 
+TURN_WEIGHT = 100.0   # px a radian: the solved angle between two pictures' cameras held to the asked one (fit_views_free `turns`)
+# ~~A left/right exchange check in the pair fit~~ (25 Nov, jab, picture item 1; TAKEN OUT on the lead's ruling): per picture and limb, the
+# left and right reads exchanged and the fit solved again, kept at 25% less cost. On S1 it never fired (the arm exchange cost 609.7 ->
+# 2302.3 / 3154.9) because the reads agree in both pictures; the fit had turned the front picture's body the wrong way round (cameras
+# 135 apart, asked 45): the cure is `turns` (below). It fired on none of the 17 held-out pairs and cost 58 -> 143 s a run. Do not re-add.
+
+
 def fit_views_free(model, views, rounds=2, yaws=tuple(range(0, 360, 45)), keep=2, fov=40.0, down=(), floor=30.0, tol=1e-6, mirror=10.0,
-                   support=1.0, lateral=0.3, level=None, stand=0.0, natural=10.0):
+                   support=1.0, lateral=0.3, level=None, stand=0.0, natural=10.0, turns=None, turn_weight=TURN_WEIGHT):
     """Pictures of ONE pose, each its own camera unknown (one picture, or several from different sides): the pose, how the body is turned and placed before a Lens, and the focal length (a factor on the
     lens's, kept near it). The lens is level and tipped down by a pitch solved here, and the body's root stands upright on the floor
     (`upright`), so the body's lean is its pelvis's, inside the rig's limits; a lean toward or away from the lens, which one picture
@@ -203,6 +210,22 @@ def fit_views_free(model, views, rounds=2, yaws=tuple(range(0, 360, 45)), keep=2
     import itertools
     from scipy.optimize import least_squares
     prof = PROFILE
+    # THE ASKED CAMERA TURNS (lead 25 Nov, the picture route item 2): `turns`, each picture's camera turned round the body from the first
+    # picture's, in degrees, as the pictures were ASKED (stills.json "turns"; the size only: a three-quarter may be either side). The
+    # whole fit starts only from pairs of camera turns that stand that far apart (within 22.5 deg, either side), and holds the solved
+    # angle between them to it softly (`turn_weight` px a radian). S1's pair, asked 45 apart, came out 90 / 315 (135 apart): its front
+    # picture's body turned the wrong way round, its left arm on the right arm's reads (191-256 px).
+    asked = [abs(float(t)) for t in turns] if turns and len(turns) == len(views) else None
+    # A SIGNED turn (lead 25 Nov): written as a string with its sign, "+45" / "-45", it says WHICH side: positive, the camera went round the
+    # body counterclockwise seen from above (the world's azimuth grows). The fit's own yaw runs the other way (measured on the 17 held-out
+    # pairs: solved -88.7..-90.6 where the cameras stand +90 apart), so it holds its yaw difference to MINUS that. A plain number stays
+    # the size only, as before.
+    signed = [(-float(t) if isinstance(t, str) and t.strip()[:1] in '+-' else None) for t in turns] if asked else None
+    nturn = (len(views) - 1) if asked else 0
+    def turn_err(x, v):   # how far the solved angle between picture v's camera and the first's is from the asked one (radians)
+        d = x[off(v)] - x[off(0)]
+        return wrap(d - np.radians(signed[v])) if signed[v] is not None else abs(wrap(d)) - np.radians(asked[v])
+    wrap = lambda a: (a + np.pi) % (2 * np.pi) - np.pi
     if level is None: level = prof.level
     V = len(views)
     lenses = [Lens(size[0], size[1], fov) for _, size in views]
@@ -274,13 +297,14 @@ def fit_views_free(model, views, rounds=2, yaws=tuple(range(0, 360, 45)), keep=2
             return np.concatenate([robust(pixels(x, P))[0] if hard else pixels(x, P), pull * x[3:n], 2.0 * x[[off(v) + 5 for v in range(V)]],
                                          floor * C @ ((np.array([z for z, _, _ in lowest(x, P, soles)]) - base) if soles else P[toes, 2] - P0[toes, 2]) if nf else [], [support * (P[toes, 0].mean() - P[mids, 0].mean() - s0)] if ns else [],
                                          lateral * (np.array([P[t, 0] - P[r, 0] for t, r in roots]) - wide)]
-                                  + [[stand * (model.carried(x[:n], s, side)[0] @ up) for s, side in stands]])
+                                  + [[stand * (model.carried(x[:n], s, side)[0] @ up) for s, side in stands]]
+                                  + [[turn_weight * turn_err(x, v) for v in range(1, V)] if nturn else []])
         def jac(x):
             # Exact, from the rig's own derivative (fit_rig.Model.jacobian): the pose's columns through each picture's turn, place and
             # lens; the yaws' and pitches' by differences of the turn alone, which costs no forward pass.
             G, J = model.jacobian(x[:n])
             B = np.einsum('ij,mjk->mik', M, J)                             # every node's cm by each pose parameter
-            out = np.zeros((2 * sum(ms) + n - 3 + V + nf + ns + len(roots) + nt, len(x)))
+            out = np.zeros((2 * sum(ms) + n - 3 + V + nf + ns + len(roots) + nt + nturn, len(x)))
             r0 = 0
             for v in range(V):
                 o, m, W = off(v), ms[v], Ws[v]
@@ -307,6 +331,9 @@ def fit_views_free(model, views, rounds=2, yaws=tuple(range(0, 360, 45)), keep=2
             for k, (t, r) in enumerate(roots): out[r0 + k, :n] = lateral * (B[t, 0] - B[r, 0])
             r0 += len(roots)
             for s, side in stands: out[r0, :n] = stand * (up @ model.carried(x[:n], s, side)[1]); r0 += 1
+            for v in range(1, V if nturn else 1):
+                g = 1.0 if signed[v] is not None else (np.sign(wrap(x[off(v)] - x[off(0)])) or 1.0)
+                out[r0, off(v)] = turn_weight * g; out[r0, off(0)] = -turn_weight * g; r0 += 1
             if hard: out[:2 * sum(ms)] *= robust(pixels(x, gltf_rig.to_unreal(G)))[1][:, None]
             return out
         r = least_squares(resid, np.clip(x0, lo, hi), jac=jac, bounds=(lo, hi), max_nfev=400, xtol=tol, ftol=tol,
@@ -339,11 +366,16 @@ def fit_views_free(model, views, rounds=2, yaws=tuple(range(0, 360, 45)), keep=2
                 r = least_squares(rigid, np.concatenate([np.radians([yaw, 15.0]), ray * depth, [0.0]]), args=(b, T, W, lens),
                                   bounds=(lo[n:n + 6], hi[n:n + 6]), loss='soft_l1', f_scale=3.0)
                 tried.append((r.cost, yaw, r.x))
-            mine += [(swap, yaw, y, (seen, weight)) for _, yaw, y in sorted(tried, key=lambda t: t[0])[:keep if V == 1 else 1]]
+            mine += [(swap, yaw, y, (seen, weight)) for _, yaw, y in sorted(tried, key=lambda t: t[0])[:keep if V == 1 else (3 if v == 0 else len(tried)) if asked else 1]]
         if not mine: return None
         choices.append(mine)
     best = None
-    for combo in itertools.product(*choices):                             # the whole fit from each combination of starts
+    combos = list(itertools.product(*choices))
+    if asked:
+        near = lambda c, v: (abs(wrap(np.radians(c[v][1] - c[0][1] - signed[v]))) if signed[v] is not None else abs(abs(wrap(np.radians(c[v][1] - c[0][1]))) - np.radians(asked[v]))) <= np.radians(22.5) + 1e-9
+        combos = [c for c in combos if all(near(c, v) for v in range(1, V))]
+        if not combos: return None
+    for combo in combos:                                                  # the whole fit from each combination of starts
         # Kept by the whole cost, the priors with the pixels: from the side a leg crossed in depth and one where it belongs match the
         # picture alike, and choosing by pixels alone kept crossed forelegs (an elbow inside the chest, Codex's sit, 2026-10-26). The floor
         # under the pads does not vote: it says where the pose may go, not how the picture reads; with it, the seated still's reading
@@ -369,7 +401,7 @@ def fit_views_free(model, views, rounds=2, yaws=tuple(range(0, 360, 45)), keep=2
         for v, (peaks, size) in enumerate(views):
             Q = placed(x, v)
             seens.append(apart(nearest(peaks, names, {j: lenses[v].project(Q[model.rig.index(j)], np.exp(x[off(v) + 5]))[0] for j in names}), size))
-        if all(len(seen) >= 6 for seen, _ in seens): x, pxs, _ = solve(x, seens)
+        if all(len(seen) >= 6 for seen, _ in seens): x, pxs, cost = solve(x, seens)
 
     def copied(x, seens, sure=0.5):
         """The fitted pose with each unseen leg copying its seen partner mirrored, the rest held: only the unseen leg's joints turn (its
@@ -542,10 +574,18 @@ def test_unknown(a, model, rows, peaks):
         down = [p for p, steps in stance.items() if r['frame'] in steps]
         if a.views > 1:
             others = [q for q in group[(r['frame'], r['look'])] if q['image'] != r['image']][:a.views - 1]
-            got = fit_views_free(model, [(peaks[q['image']], (q['width'], q['height'])) for q in [r] + others], down=down, tol=a.tol)
+            az = lambda q: np.degrees(np.arctan2(q['camera']['location'][1] - q['camera']['look_at'][1], q['camera']['location'][0] - q['camera']['look_at'][0]))
+            rel = [(az(q) - az(r) + 180.0) % 360.0 - 180.0 for q in others]
+            turns = ([0.0] + ([("%+.1f" % d) for d in rel] if os.environ.get('GC_TEST_TURNS') == 'signed' else [abs(d) for d in rel])) if os.environ.get('GC_TEST_TURNS') else None   # the asked turns, as an author states them (item 2's test)
+            got = fit_views_free(model, [(peaks[q['image']], (q['width'], q['height'])) for q in [r] + others], down=down, tol=a.tol, turns=turns)
             if got is None:   # the reader found fewer than six joints (a reader taught a pass or two): said, not a crash (slice 5, CODER-NOTES-13.md)
                 print('%s  not fitted: the reader found fewer than six joints' % r['image'], flush=True); unfitted += 1; continue
             p, (turn, place, factor, px, how, pitch) = got[0], got[1][0]
+            if os.environ.get('GC_TEST_TURNS') and len(got[1]) > 1:   # the solved angle between the two cameras against the labels' signed one
+                def yaw(cam):   # upright = rotation((0, -pitch, 0)) @ rotation((0, 0, yaw)): undo the pitch, read the turn round up
+                    Z = rotation(np.array([0.0, cam[5], 0.0])) @ rotation(np.asarray(cam[0], float)); return np.degrees(np.arctan2(Z[1, 0], Z[0, 0]))
+                print('    cameras: solved %.1f apart (second minus first, the fit\'s yaw), the labels %.1f (second minus first, world azimuth)'
+                      % (((yaw(got[1][1]) - yaw(got[1][0]) + 180) % 360) - 180, ((az(others[0]) - az(r) + 180) % 360) - 180), flush=True)
         else:
             p, turn, place, factor, px, how, pitch = fit_free(model, peaks[r['image']], (r['width'], r['height']), down=down, tol=a.tol)
         Q = gltf_rig.to_unreal(model.positions(p))

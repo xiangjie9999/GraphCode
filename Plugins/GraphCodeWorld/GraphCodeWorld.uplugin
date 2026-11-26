@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
   "Version": 1,
-  "VersionName": "0.1.15",
+  "VersionName": "0.1.16",
   "FriendlyName": "GraphCode World",
   "Description": "Environment systems, and the level facets that only matter at streaming scale.",
   "Category": "Editor",

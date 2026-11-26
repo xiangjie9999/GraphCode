@@ -6,7 +6,7 @@
 # Usage: python restate_clip.py <clip now.gltf (rig_now.py)> <rig.gltf> <ikrig.gc> <calibration.gltf> <out.gltf> [/Game/.../A_Name]
 import sys
 import numpy as np
-import capture, fit_rig, gltf_rig, run_take, twist_helpers, write_gltf
+import capture, characters, fit_rig, gltf_rig, run_take, twist_helpers, write_gltf
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
     write_gltf.write(rig, R, np.array(T), clip.anim_t[:, root], out, True)
     print('fitted to the clip\'s joints: worst joint per frame mean %.3f cm, max %.3f cm' % (np.mean(worst), max(worst)))
     if len(sys.argv) > 6:
-        run_take.import_clip(__import__('os').path.abspath(out), sys.argv[6])
+        run_take.import_clip(__import__('os').path.abspath(out), sys.argv[6], characters.ACTIVE.mesh, run_take.gltf_rate(out))
         print('imported', sys.argv[6])
 
 

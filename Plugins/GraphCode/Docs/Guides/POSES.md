@@ -471,7 +471,11 @@ collision form, under a point (`is not shaped on a point yet`).
 **Not built yet:** the leads and lags are still yours, by hand with `phase=`. One top speed serves the whole travel, so
 a recovery asked fast can hold the top down, and the point's speed at the contact with it; this is being worked on. The
 point's speed that shapes the pace is read from the poses alone (clip-time lines and leads and lags left out); the "as
-timed" notes give the result. `phase=` cannot make the body go first inside the cut (see "Lead and lag" above); a stagger between poses is planned.
+timed" notes give the result. `phase=` cannot make the body go first inside the cut (see "Lead and lag" above); `stagger=` does
+(MOVE-STAGGER1): each part plays one stretch early or late and every part passes both its poses together. With `strike=` it plays
+into the strike pose. With no strike it names the pose it plays into: `$Cross [effort=100%, stagger=(into=$Reach, pelvis=0.25,
+spine=0, arm_r=-0.1)]`. `into=` beside `strike=` is refused (one stretch). A late arm covers its turn in less time, so where the arm
+is already near its rows the clock lengthens the whole move; the note names the joint that sets it.
 
 ## Describe a form, then fit it
 

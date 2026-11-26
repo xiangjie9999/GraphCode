@@ -22,7 +22,7 @@ and built a first thing in it.
 ## 1. Download
 
 From the [latest release](https://github.com/xiangjie9999/GraphCode/releases/latest) download the
-`graphcode-0.1.15` package for your engine (5.7 or 5.8). Optionally, [check it is ours](STUDIOS.md#release-signing-and-keys)
+`graphcode-0.1.16` package for your engine (5.7 or 5.8). Optionally, [check it is ours](STUDIOS.md#release-signing-and-keys)
 with `release.json` and `release.sig.json` from the same page.
 
 Unpack it (Windows has `tar` built in; use the file name you downloaded):

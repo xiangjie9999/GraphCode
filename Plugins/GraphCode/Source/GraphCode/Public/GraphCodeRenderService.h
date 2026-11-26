@@ -604,6 +604,23 @@ namespace GraphCodeRender
 	GRAPHCODE_API bool Render(const FGraphCodeRenderRequest& Request, FResult& OutResult,
 		TArray<FString>& OutErrors, const TArray<FTrailPoint>& TrailPoints);
 
+	/**
+	 * GHOSTS of view Request.Views[View] (25 Nov 2026, Saved/Research/FIGHT/GHOSTS-PLAN.md): Count moments evenly from From to To seconds
+	 * (negative: the clip's start or end), each the body's outline from the view coloured light (early) to dark (late); Of: bone names, each
+	 * with the bones under it (empty: the whole body). CARRIED BESIDE THE REQUEST as FTrailPoint is: FGraphCodeRenderView keeps its layout.
+	 */
+	struct FGhosts
+	{
+		int32 View = 0;
+		int32 Count = 7;
+		double From = -1.0;
+		double To = -1.0;
+		TArray<FString> Of;
+	};
+	/** Render, with trail points and ghosts beside the request. Empty Ghosts is exactly Render(Request, OutResult, OutErrors, TrailPoints). */
+	GRAPHCODE_API bool Render(const FGraphCodeRenderRequest& Request, FResult& OutResult,
+		TArray<FString>& OutErrors, const TArray<FTrailPoint>& TrailPoints, const TArray<FGhosts>& Ghosts);
+
 	// ---- `kind:"thumbnail"` — the engine's own renderer, `GC-VISION-DESIGN.md` §6.5 -------------
 	//
 	// **A TEXTURE CASE WOULD HAVE BEEN THE WRONG FIX, which is the whole of §6.5's ruling.** The

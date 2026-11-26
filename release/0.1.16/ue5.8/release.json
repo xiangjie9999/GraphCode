@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "suite": "GraphCode",
+  "version": "0.1.16",
+  "platform": "Win64",
+  "format": "tar.xz",
+  "engine": "5.8.4",
+  "engineBuildId": "55116800",
+  "products": [
+    "GraphCode",
+    "GraphCodePlay",
+    "GraphCodeMove",
+    "GraphCodeWorld",
+    "GraphCodeShape",
+    "GraphCodeRig",
+    "GraphCodeGroom",
+    "GraphCodeCoreExtension",
+    "GraphCodeGarment",
+    "GraphCodeIntegrate"
+  ],
+  "size": 136355524,
+  "sha256": "278bed22f4e905efd12b519e74b6420d4d3a1d1a923a8bf2f03adc519b31f619",
+  "files": 1046,
+  "parts": [
+    {
+      "index": 1,
+      "name": "part-001.bin",
+      "size": 50331648,
+      "sha256": "1fbfdccdbf97863d169bff6030656d8e0f97bbee98892a16d81155cc4cfd3b43"
+    },
+    {
+      "index": 2,
+      "name": "part-002.bin",
+      "size": 50331648,
+      "sha256": "1541e37720b5e349d5a8f0a8cc942f2d4909cb1d64cdb551b589c49190734989"
+    },
+    {
+      "index": 3,
+      "name": "part-003.bin",
+      "size": 35692228,
+      "sha256": "6da20cf8a1cb296793839e2ebfb1b73db764da1656daedf68328662cf33757d1"
+    }
+  ],
+  "notes": "- **Move: strikes that hold and travel straight.** `stops=($Reach=0.2)` holds a pose for a stated time, also with one effort (`[effort=80%, stops=($Reach=0.2)]`). `path=(arm_r: straight)` carries the fist on a straight line instead of the shoulder's arc. `stagger=` can name the pose it leads into (`into=$Pose`).\n- **Move: steadier in-betweens.** A planted leg's shape is chosen in every frame of a stance, so the one-frame knee or foot snap is gone. Between poses the elbow's side is walked instead of jumping, so the arm no longer makes a late half-turn. When every stretch of a stage declares `seconds=`, each key lands on its declared second. A rig joint can declare no acceleration of its own (`accel=none`, `twist_accel=none` in a `.gcrig`). A clip built again with this version may differ a little in its in-between frames and timing.\n- **Move: trailing cuts.** A `path=trailing` cut whose walk strays up to 30 degrees past a joint's range now builds, each joint put back and named, where it used to refuse (`gc.Move.TrailingLeastPastMax 0` brings the refusal back). Two authoring mistakes are refused by name again instead of building an empty result: a point measured on a whole cycle, and a point that moves under 0.01 cm over the travel.\n- **gc_render.** The `ghosts` highlight draws the whole dressed figure as translucent shapes, blue before the chosen moment and orange after. On a skeletal figure, azimuth 0 and the named views (front, rear, left, right) are the figure's own front; add `basis` set to `world` for the previous meaning. With `rig:`, the bones legend reads in that rig's own words.\n- **Experimental, off by default:** per-stretch timing (`gc.Move.StretchScale 1`).\n- **Known:** a motion that crosses a joint's limit between two frames can take minutes to build while it retries at higher frame rates. This is also true of 0.1.15; a fix is in work.",
+  "publishedAt": "2026-11-26T14:31:02Z",
+  "source": {
+    "commit": "8ac8b11216316e2810ccf9e3a069050ab10de26b",
+    "dirty": true,
+    "builtAtUtc": "11/26/2026 14:27:00"
+  }
+}

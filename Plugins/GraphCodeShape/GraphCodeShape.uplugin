@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
   "Version": 1,
-  "VersionName": "0.1.15",
+  "VersionName": "0.1.16",
   "FriendlyName": "GraphCode Shape",
   "Description": "Shapes made from nothing — a .gcshape declares an intent and builds a mesh asset from it.",
   "Category": "Editor",

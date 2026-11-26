@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
   "Version": 3,
-  "VersionName": "0.1.15",
+  "VersionName": "0.1.16",
   "FriendlyName": "GraphCode Integrate",
   "Description": "Import Blender static meshes and translate their materials, with selective texture baking and managed reimport.",
   "Category": "Editor",

@@ -4,6 +4,18 @@ Each release is published on the [Releases](https://github.com/xiangjie9999/Grap
 signed manifest, signature and archive. The editor offers new releases itself. Longer notes with pictures:
 [graphcode.dev/whats-new](https://graphcode.dev/whats-new). All releases are for Unreal Engine 5.7.4, Win64.
 
+## 0.1.16 (26 November 2026)
+
+- **Move: strikes that hold and travel straight.** `stops=($Reach=0.2)` holds a pose for a stated time, also with one effort (`[effort=80%, stops=($Reach=0.2)]`). `path=(arm_r: straight)` carries the fist on a straight line instead of the shoulder's arc. `stagger=` can name the pose it leads into (`into=$Pose`).
+- **Move: steadier in-betweens.** A planted leg's shape is chosen in every frame of a stance, so the one-frame knee or foot snap is gone. Between poses the elbow's side is walked instead of jumping, so the arm no longer makes a late half-turn. When every stretch of a stage declares `seconds=`, each key lands on its declared second. A rig joint can declare no acceleration of its own (`accel=none`, `twist_accel=none` in a `.gcrig`). A clip built again with this version may differ a little in its in-between frames and timing.
+- **Move: trailing cuts.** A `path=trailing` cut whose walk strays up to 30 degrees past a joint's range now builds, each joint put back and named, where it used to refuse (`gc.Move.TrailingLeastPastMax 0` brings the refusal back). Two authoring mistakes are refused by name again instead of building an empty result: a point measured on a whole cycle, and a point that moves under 0.01 cm over the travel.
+- **gc_render.** The `ghosts` highlight draws the whole dressed figure as translucent shapes, blue before the chosen moment and orange after. On a skeletal figure, azimuth 0 and the named views (front, rear, left, right) are the figure's own front; add `basis` set to `world` for the previous meaning. With `rig:`, the bones legend reads in that rig's own words.
+- **Experimental, off by default:** per-stretch timing (`gc.Move.StretchScale 1`).
+- **Known:** a motion that crosses a joint's limit between two frames can take minutes to build while it retries at higher frame rates. This is also true of 0.1.15; a fix is in work.
+
+Archive SHA-256: `e2e25d0e04d013c96d4a1d8878be1001fab7722ae2044ffc7aea2a2a9c22f0b1` (131,001,716 bytes),
+signed by `release-backup-1`.
+
 ## 0.1.15 (25 November 2026)
 
 - **Unreal Engine 5.8 support.** GraphCode now ships one download per engine: pick the package for Unreal 5.7 or Unreal 5.8. The in-editor updater offers each editor the build for its own engine.

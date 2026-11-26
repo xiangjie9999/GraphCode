@@ -49,9 +49,18 @@ def places(view):
     return {b['bone']: [float(x) for x in re.findall(r'[-0-9.]+', b['centre'])] for b in view.get('bubbles', [])}
 
 
+# PHOTO (25 Nov 2026, the jab session's cure (b), claude/move-lead approved): GC_PHOTO=1 draws cameras as a studio photo is taken (chest to eye
+# height, a portrait lens) and every picture lit; unset, the draws are exactly as before.
+PHOTO = os.environ.get('GC_PHOTO') == '1'
+
+
 def random_camera(rng, width, height):
-    az, el = np.radians(rng.uniform(0, 360)), np.radians(rng.uniform(-5, 50))
-    fov = rng.uniform(30, 60)
+    if PHOTO:
+        az, el = np.radians(rng.uniform(0, 360)), np.radians(rng.uniform(0, 25))
+        fov = rng.uniform(18, 40)
+    else:
+        az, el = np.radians(rng.uniform(0, 360)), np.radians(rng.uniform(-5, 50))
+        fov = rng.uniform(30, 60)
     fill = rng.uniform(*characters.ACTIVE.fill)                    # the character's share of the picture's width (the cat's 0.35-0.8)
     d = (characters.ACTIVE.length / fill) / (2 * np.tan(np.radians(fov) / 2))
     at = np.array(characters.ACTIVE.centre) + OFFSET + rng.normal(0, characters.ACTIVE.look_jitter, 3)
@@ -130,12 +139,12 @@ def main():
         per, assets = int(sys.argv[3]), expand(sys.argv[4:])
         measure_offset(assets[0])
         rng = np.random.default_rng(len(rows) + seed)
-        size = (768, 576)
+        size = (576, 864) if PHOTO else (768, 576)
         for asset in assets:
             L = length_of(asset)
             times = [0.0] if L == 0 else sorted(rng.uniform(0, L, per))
             for t in times:
-                looks = rng.choice(['lit', 'unlit', 'drawn'], 7, p=[0.6, 0.25, 0.15])
+                looks = ['lit'] * 7 if PHOTO else rng.choice(['lit', 'unlit', 'drawn'], 7, p=[0.6, 0.25, 0.15])
                 cams = [(random_camera(rng, *size), str(look)) for look in looks]
                 rows += shoot(asset, float(t), cams, out, len(rows), size)
             json.dump(rows, open(path, 'w'))

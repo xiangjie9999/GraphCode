@@ -3,13 +3,13 @@
   "phase": "binary-only-product",
   "readyToSend": false,
   "plugin": "GraphCodeIntegrate",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "engine": "5.7.4",
   "engineBuildId": "47537391",
   "platform": "Win64",
-  "sourceRevision": "589f294b0d2d04efd4e6a6e790ba1a2bb460509c",
+  "sourceRevision": "5751da4f8ab1da1dd805c6186de50ff0a39acfd8",
   "sourceWasDirty": true,
-  "packagedAtUtc": "2026-11-25T02:48:09.4652522Z",
+  "packagedAtUtc": "2026-11-26T10:15:44.1295825Z",
   "fileCount": 32,
   "privateImplementationIncluded": false
 }

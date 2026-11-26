@@ -640,6 +640,9 @@ namespace GraphCodeRenderHighlight
 	inline constexpr const TCHAR* Bones = TEXT("bones");
 	/** The clip trajectory: each selected bone's path over the whole clip, a dot per sample (plan §3.9). */
 	inline constexpr const TCHAR* Trails = TEXT("trails");
+	/** GHOSTS (25 Nov 2026, the owner: "shadow animation ... different shading represent different time"): the clip's body at N moments in
+	 * one picture, each its outline from the view, coloured by its time (GraphCodeRenderGhosts). Its options ride beside the request. */
+	inline constexpr const TCHAR* Ghosts = TEXT("ghosts");
 	/**
 	 * A face's named points, drawn and labelled ON the face by the subject that knows them (a MetaHuman:
 	 * its fit points and Move handles), so an author sees what each name means before measuring the

@@ -278,7 +278,12 @@ the image model's.
   is not needed. Each picture's camera is solved and kept with the clip, so the built move can be rendered from it beside the picture.
 - **The pictures give the whole pose; what they cannot show takes the natural pose; the author writes the detail** (user, 2026-10-27:
   "macro and micro"). The joint reader marks where joints are, not which way a bone is turned along its length, so a turn no picture
-  shows (a forearm's or a thigh's twist) stays at the character's rest. A paw said to be down stands flat, as `plant(leg, on=$Floor)`
+  shows (a forearm's or a thigh's twist) stays at the character's rest. For a person the reader reads two knuckles (index and pinky)
+  beside the wrist, so the fit does turn the palm, but **from pictures the forearm's roll is a guess: an author states it or takes the
+  preset's** (measured 2026-11-26 on 17 held-out pairs of our MetaHuman: the palm's turn about the forearm 13-21 degrees off at the median,
+  up to 70; the knuckle points land 5-6 cm off for knuckles 7 cm apart). **Pictures do not tell a closed hand either: say it** in
+  `stills.json`, `"hands": "fist"` (or `"fist_left"`, `"fist_right"`), and the route writes the hand's body word over that key
+  (`$Hand(curl=1)`, with the presets line it needs). A paw said to be down stands flat, as `plant(leg, on=$Floor)`
   stands it, and the `.gcmove` plants it so (`roll=` keeps the drawn turn instead: a walk's rolling paws). Where the built move still
   reads wrong (a paw, where the head looks), edit the `.gcmove`'s keys and plants as for any authored move; the pictures stay as they are.
 - **The result** is one clip, a frame a picture, and a `.gcmove` keying each frame with `pose(source=<clip>, at=frame(n),

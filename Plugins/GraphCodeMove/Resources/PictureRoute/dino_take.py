@@ -7,7 +7,7 @@
 #        [--model D:/VideoCaptureML/models/cat.pt] [--rig rig.gltf] [--ikrig IKR.gc] [--calib calibration.gltf]
 import argparse, glob, json, os, subprocess, sys
 import numpy as np
-import fit_rig, fit_views, gltf_rig, track_all, twist_helpers, travel, write_gltf
+import characters, fit_rig, fit_views, gltf_rig, track_all, twist_helpers, travel, write_gltf
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
@@ -132,9 +132,9 @@ def main():
     # 6. Imported as clips (new names: an import over an existing clip stops on a modal question): the take walking, and in place.
     if a.clip:
         import run_take
-        run_take.import_clip(os.path.abspath(out), a.clip)
+        run_take.import_clip(os.path.abspath(out), a.clip, characters.ACTIVE.mesh, a.fps)
         if a.loop: run_take.play_like_the_source(a.clip, os.path.join(ROOT, 'Content'))
-        run_take.import_clip(os.path.abspath(in_place), a.clip + '_InPlace')
+        run_take.import_clip(os.path.abspath(in_place), a.clip + '_InPlace', characters.ACTIVE.mesh, a.fps)
         print('imported', a.clip, 'and', a.clip + '_InPlace')
 
 

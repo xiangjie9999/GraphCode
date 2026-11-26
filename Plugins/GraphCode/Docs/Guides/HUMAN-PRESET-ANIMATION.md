@@ -232,6 +232,10 @@ as the effort says. The older words (`accel=`, `strike=`, `Preset.Attack`, `Pres
   and a harder stop; toward 0.26 a snap and a long settle. The claw, 270% (measured with the older `accel=270%, strike=` words): `peak` 0.5: 0.304 s, 12.30 m/s; 0.6: 0.310 s, 12.27 m/s, fall 0.100 s;
   0.7: 0.318 s, fall 0.092 s but the left hand reaches 51% of the claw's top (over the gate); 0.74 the same fall, 53%. Keep 0.6.
   The top stays on the contact for every peak. Any number builds; the stage holds it to what the shape allows and says so.
+  **A peak belongs to a STAGE, not a stretch.** Beside an effort list it is written one value per stretch, but a stage (the
+  stretches between two rests; a passed pose starts none) has ONE top, placed by the first of its stretches written off 0.5.
+  A four-pose cross with K1 and K4 passed, `[effort=(100%), peak=(0.5, 0.8, 0.5)]`, leaned the whole stage K0..K6 (held at
+  0.75) and left the fist's top where it was (`S39_FourPeak`, 26 Nov 2026). No word places a top inside one passed stretch.
 - **A hard stop comes from a short follow-through pose, not from the speed shape.** A pose just past the contact (22 cm for the
   claw: key `KHitStop`, the contact's values blended 0.35 toward B, with its own `reach(... to=$HTarget) [share=0.2]`) stops the
   hand soon after the contact. As built (`ZombieClawClawStrikeStop.gcmove`, 0.317 s, 9.68 m/s, 92% at the contact, fall 0.050 s):

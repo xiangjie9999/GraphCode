@@ -54,7 +54,7 @@ def main():
         name = '%s%02d' % (sys.argv[8] if len(sys.argv) > 8 else characters.ACTIVE.random_prefix, k)
         path = os.path.join(out, name + '.gltf')
         write_gltf.write(rig, R, T, np.repeat(rig.rest_t[root][None], frames, 0), path)
-        run_take.import_clip(os.path.abspath(path), folder.rstrip('/') + '/' + name)
+        run_take.import_clip(os.path.abspath(path), folder.rstrip('/') + '/' + name, characters.ACTIVE.mesh, run_take.gltf_rate(path))
         print('imported', folder.rstrip('/') + '/' + name, flush=True)
         made.append(folder.rstrip('/') + '/' + name)
     open(os.path.join(out, 'assets.txt'), 'w').write('\n'.join(made + authored) + '\n')

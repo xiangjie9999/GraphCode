@@ -12,6 +12,14 @@
 #              seconds:   {"stills": [{"image": "k1.png", "down": [...], "at": 0.0}, ...], "seconds": 1.2}   (the clip's length; default the
 #                         last still's moment)
 # "collision": a seconds-timed move keeps the body clear of itself between keys (collision(self), on unless false); a travel, if true.
+# "turns" (several pictures of one still): SAY HOW FAR ROUND THE BODY EACH PICTURE IS TAKEN FROM THE FIRST, AND WHICH SIDE: "turns": [0, "+45"]
+#   (a string with its sign: positive = the camera went counterclockwise round the body seen from above); a plain number, [0, 45], is the
+#   size only. The pair fit starts and stays near it (fit_still.fit_views_free turns=). On our man's 17 held-out pairs: 6.63 cm mean with
+#   no turns, 4.68 with the size, 2.88 with the side (lead 25 Nov); S1's left arm 190-256 px -> 5-26 px with the size alone.
+# "hands" (26 Nov, lead 02:59Z): A PICTURE DOES NOT TELL A CLOSED HAND (the reader reads two knuckles a hand, not the fingers' closure, so
+#   the fit leaves every finger at rest): SAY IT. "hands": "fist" closes both, "fist_left" / "fist_right" one; the key is then written
+#   with the hand's body word over it ($Hand(curl=1), HumanBody's: a closed hand is a fist with the thumb over the index and middle) and
+#   the presets line that word needs. Absent, the hands are as the fit left them (today's file).
 # "down" lists the paws planted in that still, about to lift first and the one staying down longest last (the travel carries the body by
 # the paw written last; take_gcmove.py). The paw names and their legs are the cat's (take_gcmove.LEGS).
 # A move that keeps the body clear of itself has each key that lies inside the body pushed out first: the key held one frame, its down
@@ -92,7 +100,7 @@ def fits(a, spec):
         missing = [n for n in pictures(s) if n not in by]
         if missing: raise SystemExit('%s was not read: is it in %s?' % (missing, a.stills))
         # A stance's down paws lie pads to the floor; a travel's tip as they lift (fit_still.fit_views_free, `stand`).
-        got = fit_still.fit_views_free(model, [by[n] for n in pictures(s)], down=s.get('down', []),
+        got = fit_still.fit_views_free(model, [by[n] for n in pictures(s)], down=s.get('down', []), turns=s.get('turns'),
                                        stand=0.0 if 'velocity' in spec else fit_still.STAND)
         if got is None: raise SystemExit('%s: the reader found fewer than six joints; is the whole character in the picture?' % label(s))
         print('%-24s fitted: %s' % (label(s), '; '.join('%.1f px, focal x%.2f, %s' % (c[3], c[2], c[4]) for c in got[1])), flush=True)
@@ -127,6 +135,7 @@ def main():
     for s in stills:
         bad = [p for p in s.get('down', []) if p not in take_gcmove.LEGS]
         if bad: raise SystemExit('%s: %s are not paws (%s)' % (label(s), bad, ', '.join(take_gcmove.LEGS)))
+        hand_lines(s)                                                  # an unknown "hands" refused before the fit, not after it
     if timed and any(not s.get('down') for s in stills):
         raise SystemExit('a travel carries the body by a planted paw: every still needs one down (or time them with "at")')
     model, got = fits(a, spec)
@@ -151,7 +160,7 @@ def main():
     if a.fit_only: return
     if not a.no_import:
         import run_take
-        run_take.import_clip(os.path.abspath(gltf), a.clip)
+        run_take.import_clip(os.path.abspath(gltf), a.clip, characters.ACTIVE.mesh, FPS)
         print('imported', a.clip)
     keys = [(a.clip, k) for k in range(len(stills))]
     if collides(spec) and not a.raw_keys: keys = clean_keys(spec, a.clip, a.out)
@@ -215,6 +224,18 @@ def clean_keys(spec, clip, out):
     return keys
 
 
+HAND_PRESETS = '/GraphCodeMove/Presets/Human/HumanBody'     # the hand's body word ($Hand) the "hands" statement writes
+HANDS = {'fist': ['  $Hand(curl=1)'], 'fist_left': ['  $Hand(curl=1, right=false)'], 'fist_right': ['  $Hand(curl=1, left=false)']}
+
+
+def hand_lines(s):
+    """The key's hand lines from the author's "hands" statement in stills.json (none when absent); an unknown value is refused by name."""
+    h = s.get('hands')
+    if not h: return []
+    if h not in HANDS: raise SystemExit('%s: "hands": %r is not one of %s' % (label(s), h, ', '.join(sorted(HANDS))))
+    return list(HANDS[h])
+
+
 def profile(points):
     """profile(...) through (fraction, value) points, 0 and 1 included, one value a fraction (the later wins)."""
     keyed = {}
@@ -253,7 +274,8 @@ def write_move(spec, clip, out, name=None, prints=None, moves=3.0, keys=None, mo
     keys = keys or [(clip, k) for k in range(len(stills))]                # each still's (clip, frame): clean_keys's, or the fit's own
     name = name or 'A_' + os.path.splitext(os.path.basename(out))[0]
     travel = 'velocity' in spec
-    lines = [take_gcmove.HEADER + '         into:%s fps:%d' % (clip.rsplit('/', 1)[0], FPS), 'build {',
+    hands = any(s.get('hands') for s in stills)
+    lines = [take_gcmove.HEADER + ('         presets:(%s)\n' % HAND_PRESETS if hands else '') + '         into:%s fps:%d' % (clip.rsplit('/', 1)[0], FPS), 'build {',
              '  %s = $Move [%sreadings%s]' % (name, 'loop, ' if loop else '', ', root_motion' if travel else ''), '}',
              '# Written by Tools/VideoCapture/still_gcmove.py (MOVE-CAP1 E20): %d key poses read off still pictures, a frame of %s each, the' % (
                  len(stills), clip),
@@ -262,10 +284,9 @@ def write_move(spec, clip, out, name=None, prints=None, moves=3.0, keys=None, mo
     if any(s.get('down') for s in stills): lines.append('Floor = ground(z=0)')
     for k, s in enumerate(stills, 1):
         down = s.get('down', []) if travel else []                      # timed by seconds, the clip plants them (below)
-        lines.append('K%d = pose(source=%s, at=frame(%d), from=reference) {%s   # %s' % ((k,) + keys[k - 1] + ('' if down else ' }', label(s))))
-        if down:
-            for p in down: lines.append('  plant(%s, on=$Floor, roll=(%s))' % take_gcmove.LEGS[p])
-            lines.append('}')
+        inner = hand_lines(s) + ['  plant(%s, on=$Floor, roll=(%s))' % take_gcmove.LEGS[p] for p in down]
+        lines.append('K%d = pose(source=%s, at=frame(%d), from=reference) {%s   # %s' % ((k,) + keys[k - 1] + ('' if inner else ' }', label(s))))
+        if inner: lines += inner + ['}']
     if travel:
         steps = ', '.join('$K%d' % k for k in range(1, len(stills) + 1)) + (', $K1' if loop else '')
         lines += ['Steps = pose(steps) { %s }' % steps, 'Move = clip() {', '  $Steps [clock=root]',
@@ -299,10 +320,16 @@ def write_move(spec, clip, out, name=None, prints=None, moves=3.0, keys=None, mo
         # stopped at its middle picture (pelvis 1 cm/s at 0.5 s, 32 at its fastest) and halted at the seat in one frame. GraphCode places
         # the in-between stills by their share of the turn (`moments`, joined_moments), and the plants are timed to them.
         if moments: at = list(moments)
-        lines.append('Steps = pose(steps) { %s }' % ', '.join('$K%d' % k for k in order))
-        lines.append('Pace = profile(0=1, 1=1)')
-        lines.append('Move = clip(frames=%d) {' % frames)
-        lines.append('  $Steps [pace=$Pace]')
+        if len(order) == 1:
+            # ONE STILL (25 Nov 2026, the jab session's S1 test): a pose(steps) of one pose has nothing to time and the build refuses it
+            # ("no joint the pose names turns between its first and last source frame ... nothing to time"); one still is a HELD pose.
+            lines.append('Move = clip(frames=1) {')
+            lines.append('  $K%d' % order[0])
+        else:
+            lines.append('Steps = pose(steps) { %s }' % ', '.join('$K%d' % k for k in order))
+            lines.append('Pace = profile(0=1, 1=1)')
+            lines.append('Move = clip(frames=%d) {' % frames)
+            lines.append('  $Steps [pace=$Pace]')
         for paw in [p for p in take_gcmove.LEGS if any(p in d for d in downs)]:
             points = [(t / total, 1.0 if paw in d else 0.0) for t, d in zip(at, downs)]
             for i in range(len(at) - 1):
